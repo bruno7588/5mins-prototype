@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import { useHeaderTheme } from '@/data/brandTheme'
 import Button from '@/components/Button/Button'
 import { useEffect, useMemo, useState } from 'react'
@@ -45,6 +44,7 @@ import avatar4 from './assets/m4.jpg'
 import { formatRelative } from './relativeTime'
 import { coursesTotal, type CourseStatus } from './memberStatus'
 import { COURSE_STATUS_CARDS, type CourseStatusCard } from '@/data/courseStatusCards'
+import StatTile from '@/components/StatTile/StatTile'
 import './MyTeam.css'
 import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 
@@ -84,22 +84,6 @@ function ProgressBar({ value, muted }: { value: number; muted?: boolean }) {
       {Array.from({ length: segments }).map((_, i) => (
         <span key={i} className={`mt-cp__progress-seg${i < filled ? ' mt-cp__progress-seg--filled' : ''}`} />
       ))}
-    </div>
-  )
-}
-
-/* Single-line stat (Figma 10859:28432) — icon, value, label + info anchor, the
-   same card the user profile uses. The DS Tooltip supplies the info icon at
-   16px, so the hand-rolled SVG this card carried is gone. */
-function StatCard({ icon, label, value, tooltip }: { icon: ReactNode; label: string; value: string; tooltip?: string }) {
-  return (
-    <div className="mt-stat-card">
-      <span className="mt-stat-icon">{icon}</span>
-      <span className="mt-stat-value">{value}</span>
-      <span className="mt-stat-label">
-        {label}
-        {tooltip && <Tooltip text={tooltip} position="Top" alignment="Center" iconSize={16} />}
-      </span>
     </div>
   )
 }
@@ -691,7 +675,8 @@ function MyTeam() {
 
             <div className="mt-cp__stats">
               {COURSE_STATUS_CARDS.map((c) => (
-                <StatCard
+                <StatTile
+                  layout="inline"
                   key={c.key}
                   icon={c.icon}
                   label={c.label}

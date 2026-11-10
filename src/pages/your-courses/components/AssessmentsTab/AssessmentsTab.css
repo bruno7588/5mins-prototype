@@ -58,69 +58,6 @@
   }
 }
 
-/* ── Summary stats ──────────────────────────────────────────────────────────
-   Deliberately the same anatomy as the Enrolments tab's `.cd-stat`, so the two
-   tabs read as siblings rather than as two different products. */
-.asm-stats {
-  display: flex;
-  gap: var(--space-m);
-  flex-wrap: wrap;
-}
-
-.asm-stat {
-  flex: 1 0 0;
-  min-width: 200px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-}
-
-/* The status icon keeps its 32px box however narrow the card gets. */
-.asm-stat > svg {
-  flex: 0 0 auto;
-  width: 32px;
-  height: 32px;
-}
-
-.asm-stat__info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  min-width: 0;
-}
-
-.asm-stat__label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  font-size: var(--font-size-md);
-  color: var(--text-secondary);
-}
-
-.asm-stat__value {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-s);
-}
-
-.asm-stat__figure {
-  font-size: var(--font-size-h2);
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-}
-
-.asm-stat__sub {
-  font-size: var(--font-size-sm);
-  line-height: 1.2;
-  color: var(--text-tertiary);
-}
-
 .asm-typefilter {
   flex: 0 0 200px;
 }

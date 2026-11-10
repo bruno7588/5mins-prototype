@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useState } from 'react'
 import { useHeaderTheme } from '@/data/brandTheme'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ArrowDown, ArrowDown2, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus, Mobile, Add, FlashCircle } from 'iconsax-react'
@@ -21,6 +21,7 @@ import GiveAnotherAttemptModal from './components/GiveAnotherAttemptModal/GiveAn
 import AssignCoursesWizard from '@/pages/your-courses/components/AssignCoursesWizard/AssignCoursesWizard'
 import type { AssignCourse } from '@/pages/your-courses/components/AssignCoursesWizard/schedule'
 import { COURSE_STATUS_CARDS, type CourseStatusCard } from '@/data/courseStatusCards'
+import StatTile from '@/components/StatTile/StatTile'
 import ProfileMenu from '@/components/ProfileMenu/ProfileMenu'
 import { Logo, learnerSideItems, teamProfiles } from '../my-team/MyTeam'
 import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
@@ -260,31 +261,6 @@ function DateCell({ value }: { value: string | null }) {
       <span className="day">{d.toLocaleString('en-US', { month: 'short' })} {d.getDate()},</span>
       <span className="year">{d.getFullYear()}</span>
     </span>
-  )
-}
-
-/* Single-line stat (Figma 9193:44018): icon, share, label + info anchor. */
-function StatCard({ icon, label, tooltip, share }: {
-  icon: ReactNode
-  label: string
-  tooltip?: string
-  share: number
-}) {
-  return (
-    <div className="up-stat">
-      <span className="up-stat-icon">{icon}</span>
-      <span className="up-stat-value">{share}%</span>
-      <span className="up-stat-label">
-        {label}
-        {tooltip && (
-          <Tooltip
-            position="Top"
-            text={<span className="up-stat-tooltip-text">{tooltip}</span>}
-            iconSize={16}
-          />
-        )}
-      </span>
-    </div>
   )
 }
 
@@ -731,12 +707,13 @@ function UserProfile() {
               the table, never this. */}
           <div className="up-stats">
             {COURSE_STATUS_CARDS.map((c) => (
-              <StatCard
+              <StatTile
+                layout="inline"
                 key={c.key}
                 icon={c.icon}
                 label={c.label}
                 tooltip={c.tooltip}
-                share={shareOf(COURSES.filter(inView), STAT_GROUPS[c.key])}
+                value={`${shareOf(COURSES.filter(inView), STAT_GROUPS[c.key])}%`}
               />
             ))}
           </div>

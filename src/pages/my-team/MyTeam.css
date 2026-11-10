@@ -284,44 +284,10 @@
 
 /* One line: icon · value · label + info anchor (Figma 10859:28432) — the same
    card as the user profile's .up-stat. */
-.mt-stat-card {
-  flex: 1 0 0;
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  min-width: 0;
-}
+.mt-cp__stats > .ds-stat { flex: 1 0 0; }
 
 /* 12px to the value, not the 8px the rest of the row uses — the icon needs the
    extra separation to read as a marker rather than part of the number. */
-.mt-stat-icon {
-  display: flex;
-  flex-shrink: 0;
-  margin-right: var(--space-xs);
-}
-
-.mt-stat-value {
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.5;
-  white-space: nowrap;
-}
-
-.mt-stat-label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  color: var(--text-secondary);
-  line-height: 1.5;
-  white-space: nowrap;
-}
-
 /* Toolbar: search + timeframe + Send Reminders */
 .mt-cp__toolbar {
   display: flex;
@@ -820,13 +786,13 @@
   .mt-cp__stats {
     flex-wrap: wrap;
   }
-  .mt-stat-card {
+  .mt-cp__stats > .ds-stat {
     flex: 1 0 calc(50% - var(--space-m));
   }
 }
 
 @media (max-width: 640px) {
-  .mt-stat-card {
+  .mt-cp__stats > .ds-stat {
     flex: 1 0 100%;
   }
 }

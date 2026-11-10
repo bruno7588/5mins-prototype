@@ -4,6 +4,7 @@ import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import { OpenResponse, OptionBars } from '@/pages/chart-lab/components/Charts'
 import '@/pages/chart-lab/chart-lab.css'
 import Badge from '@/components/Badge/Badge'
+import StatTile from '@/components/StatTile/StatTile'
 import ProgressCell from './ProgressCell'
 import '@/pages/my-team/MyTeam.css'
 import {
@@ -76,17 +77,6 @@ function arrange(rows: AssessmentResult[]): AssessmentResult[] {
 }
 
 const share = (n: number, of: number) => (of ? Math.round((n / of) * 100) : 0)
-
-/** The single-line summary stat My Team and the user profile use (mt-stat-card). */
-function StatCard({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
-  return (
-    <div className="mt-stat-card">
-      <span className="mt-stat-icon">{icon}</span>
-      <span className="mt-stat-value">{value}</span>
-      <span className="mt-stat-label">{label}</span>
-    </div>
-  )
-}
 
 /** The format's own illustration and name, as the learner met it. */
 function Head({ a }: { a: AssessmentResult }) {
@@ -301,22 +291,26 @@ function AssessmentGrid({ rows, stats, onView }: Props) {
   return (
     <div className="asg">
       <div className="asg-stats">
-        <StatCard
+        <StatTile
+          layout="inline"
           icon={<TickCircle size={24} color="var(--success-500)" variant="Linear" />}
           label="Completed"
           value={`${share(stats.completed, stats.enrolled)}%`}
         />
-        <StatCard
+        <StatTile
+          layout="inline"
           icon={<Chart size={24} color="var(--primary-600)" variant="Linear" />}
           label="Average score"
           value={stats.average === null ? '—' : `${stats.average}%`}
         />
-        <StatCard
+        <StatTile
+          layout="inline"
           icon={<Danger size={24} color="var(--warning-600)" variant="Linear" />}
           label="Failed"
           value={`${share(stats.failed, stats.graded)}%`}
         />
-        <StatCard
+        <StatTile
+          layout="inline"
           icon={<People size={24} color="var(--text-primary)" variant="Linear" />}
           label="Not started"
           value={`${share(stats.enrolled - stats.responders, stats.enrolled)}%`}

@@ -27,6 +27,7 @@ import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import Badge from '../../components/Badge/Badge'
 import Table, { type Column } from '@/components/Table/Table'
 import Tabs from '@/components/Tabs/Tabs'
+import StatTile from '@/components/StatTile/StatTile'
 import WorkflowsTab from '../your-courses/components/WorkflowsTab/WorkflowsTab'
 import {
   findCatalogCourseByName,
@@ -1293,37 +1294,22 @@ function Automations() {
           <div className="automations-activity">
             {automations.length > 0 && (
             <div className="automations-stat-cards">
-              <div className="automations-stat-card">
-                <span className="automations-stat-icon">
-                  <Activity size={40} color="var(--primary-button-background)" variant="Linear" />
-                </span>
-                <div className="automations-stat-info">
-                  <p className="automations-stat-label">Total triggers</p>
-                  <p className="automations-stat-value">{totalTriggersCount.toLocaleString()}</p>
-                </div>
-              </div>
-
-              <div className="automations-stat-card">
-                <span className="automations-stat-icon">
-                  <Calendar size={40} color="var(--lesson-quiz)" variant="Linear" />
-                </span>
-                <div className="automations-stat-info">
-                  <p className="automations-stat-label">
-                    This month <span className="automations-stat-label-meta">({currentMonthLabel})</span>
-                  </p>
-                  <p className="automations-stat-value">{thisMonthTriggersCount}</p>
-                </div>
-              </div>
-
-              <div className="automations-stat-card">
-                <span className="automations-stat-icon">
-                  <Flash size={40} color="var(--success-500)" variant="Linear" />
-                </span>
-                <div className="automations-stat-info">
-                  <p className="automations-stat-label">Active automations</p>
-                  <p className="automations-stat-value">{activeAutomationsCount}</p>
-                </div>
-              </div>
+              <StatTile
+                icon={<Activity size={32} color="var(--primary-button-background)" variant="Linear" />}
+                label="Total triggers"
+                value={totalTriggersCount.toLocaleString()}
+              />
+              <StatTile
+                icon={<Calendar size={32} color="var(--lesson-quiz)" variant="Linear" />}
+                label="This month"
+                labelMeta={`(${currentMonthLabel})`}
+                value={thisMonthTriggersCount}
+              />
+              <StatTile
+                icon={<Flash size={32} color="var(--success-500)" variant="Linear" />}
+                label="Active automations"
+                value={activeAutomationsCount}
+              />
             </div>
             )}
 

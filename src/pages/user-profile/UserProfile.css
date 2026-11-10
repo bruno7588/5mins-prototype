@@ -77,53 +77,17 @@
 }
 
 /* One line: icon · share · label + info anchor (Figma 9193:44018). */
-.up-stat {
+.up-stats > .ds-stat {
   /* 4 up while each stat gets 200px (4 × 200 + 3 × 16 gaps = 848px), otherwise 2×2,
      never 3 + 1: the middle term flips from negative to huge at 848px. */
   flex: 1 0 clamp(calc(25% - 12px), calc((848px - 100%) * 999), calc(50% - 8px));
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
 }
 
 /* 12px to the share, not the 8px the rest of the row uses — the icon needs the
    extra separation to read as a marker rather than part of the number. */
-.up-stat-icon {
-  display: flex;
-  flex-shrink: 0;
-  margin-right: var(--space-xs);
-}
-
-.up-stat-value {
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-  white-space: nowrap;
-}
-
-.up-stat-label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-secondary);
-  white-space: nowrap;
-}
-
 /* The stat tooltips centre their text. Applied to the text the call site passes rather
    than to .tooltip__content, which is portalled to <body> and shared with 38 other
    tooltips — several of them multi-line paragraphs that read worse centred. */
-.up-stat-tooltip-text {
-  display: block;
-  text-align: center;
-}
-
 /* ── Table cell helpers (DS classes live in Table.css; these are page-local) ── */
 .up-course {
   display: flex;

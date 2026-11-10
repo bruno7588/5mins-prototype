@@ -348,52 +348,7 @@
   width: 100%;
 }
 
-.automations-stat-card {
-  flex: 1 0 0;
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm); /* 12px */
-  padding: var(--space-m); /* 16px */
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm); /* 12px */
-  min-width: 0;
-}
-
-.automations-stat-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-}
-
-.automations-stat-info {
-  display: flex;
-  flex-direction: column;
-  flex: 1 0 0;
-  min-width: 0;
-  line-height: 1.5;
-}
-
-.automations-stat-label {
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  color: var(--text-tertiary);
-  line-height: 1.5;
-}
-
-.automations-stat-value {
-  font-size: var(--font-size-h2);
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.5;
-}
-
-.automations-stat-label-meta {
-  color: var(--text-tertiary);
-  font-weight: 400;
-}
+.automations-stat-cards > .ds-stat { flex: 1 0 0; }
 
 /* ── Filter bar ── */
 .automations-filter-bar {

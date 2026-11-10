@@ -21,7 +21,7 @@
 /* Where the card's own fill is doing the separating, the stats inside it need an edge of
    their own — a card on a card is two fills a step apart, which dark mode does not have
    to spare. */
-[data-theme='dark'] .asmi-stats .asm-stat {
+[data-theme='dark'] .asmi-stats .ds-stat {
   border-color: var(--border-elevated);
 }
 
@@ -262,23 +262,22 @@
   gap: var(--space-sm);
 }
 
-/* The Enrolments stat card, stacked rather than icon-left: at ~155px a row of
-   icon plus text leaves the label nowhere to go. */
-.asmi-stats .asm-stat {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-xxs);
-  min-width: 0;
+/* The shared stat tile, compact: four figures in a 360px column inside the card. */
+.asmi-stats .ds-stat {
   padding: var(--space-s) var(--space-sm);
 }
 
-.asmi-stats .asm-stat__label {
+.asmi-stats .ds-stat__body {
+  gap: var(--space-xxs);
+}
+
+.asmi-stats .ds-stat__label {
   gap: var(--space-xs);
   font-size: var(--font-size-sm);
   line-height: 1.2;
 }
 
-.asmi-stats .asm-stat__figure {
+.asmi-stats .ds-stat__value {
   font-size: var(--font-size-h3);
 }
 

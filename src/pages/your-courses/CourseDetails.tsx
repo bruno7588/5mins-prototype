@@ -5,19 +5,22 @@ import {
   CalendarAdd,
   CalendarEdit,
   Clock,
-  Danger,
   ImportCurve,
   Link2,
   MedalStar,
   PlayCircle,
   Repeat,
   RotateRight,
-  StatusUp,
   TaskSquare,
   TickCircle,
   UserMinus,
 } from 'iconsax-react'
 import Table, { type Column } from '@/components/Table/Table'
+import StatTile from '@/components/StatTile/StatTile'
+import { COURSE_STATUS_CARDS, type CourseStatusCard } from '@/data/courseStatusCards'
+
+/* Demo shares for the Enrolments summary stats. */
+const CD_STAT_SHARES: Record<CourseStatusCard['key'], number> = { completed: 48, 'in-progress': 21, 'at-risk': 11, overdue: 20 }
 import CourseIcon from '@/components/icons/CourseIcon'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Search from '../../components/Search/Search'
@@ -580,53 +583,15 @@ function CourseDetails() {
           <section className="cd-enrolments">
             {/* Stats */}
             <div className="cd-stats">
-              <div className="cd-stat">
-                <TickCircle size={32} color="var(--success-500)" variant="Linear" />
-                <div className="cd-stat-info">
-                  <div className="cd-stat-label">
-                    <span>Completed</span>
-                    <InfoMark />
-                  </div>
-                  <div className="cd-stat-value">
-                    <span className="cd-stat-pct">48%</span>
-                  </div>
-                </div>
-              </div>
-              <div className="cd-stat">
-                <StatusUp size={32} color="var(--primary-500)" variant="Linear" />
-                <div className="cd-stat-info">
-                  <div className="cd-stat-label">
-                    <span>In progress</span>
-                    <InfoMark />
-                  </div>
-                  <div className="cd-stat-value">
-                    <span className="cd-stat-pct">21%</span>
-                  </div>
-                </div>
-              </div>
-              <div className="cd-stat">
-                <Danger size={32} color="var(--warning-500)" variant="Linear" />
-                <div className="cd-stat-info">
-                  <div className="cd-stat-label">
-                    <span>At risk!</span>
-                    <InfoMark />
-                  </div>
-                  <div className="cd-stat-value">
-                    <span className="cd-stat-pct">11%</span>
-                  </div>
-                </div>
-              </div>
-              <div className="cd-stat">
-                <Clock size={32} color="var(--danger-400)" variant="Linear" />
-                <div className="cd-stat-info">
-                  <div className="cd-stat-label">
-                    <span>Overdue</span>
-                  </div>
-                  <div className="cd-stat-value">
-                    <span className="cd-stat-pct">20%</span>
-                  </div>
-                </div>
-              </div>
+              {COURSE_STATUS_CARDS.map((c) => (
+                <StatTile
+                  key={c.key}
+                  icon={c.icon}
+                  label={c.label}
+                  tooltip={c.tooltip}
+                  value={`${CD_STAT_SHARES[c.key]}%`}
+                />
+              ))}
             </div>
 
             {/* Filters (DS Filter bar, via the user profile's enrolment filters) */}

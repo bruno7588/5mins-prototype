@@ -4,6 +4,7 @@ import SparkleIcon from '@/components/icons/SparkleIcon'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import Avatar from '@/components/Avatar/Avatar'
 import Button from '@/components/Button/Button'
+import StatTile from '@/components/StatTile/StatTile'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import SectionHeader from '../SectionHeader/SectionHeader'
 import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
@@ -200,37 +201,11 @@ function InsightsCard({ responseCount, autoStart, onClose, stats }: Props) {
           summary below is read against, so it opens the panel. Same stat card as the
           Enrolments tab, two by two in the column's width. */}
       <div className="asmi-stats asmi-region">
-        <div className="asm-stat">
-          <span className="asm-stat__label">Assessments</span>
-          <span className="asm-stat__value">
-            <span className="asm-stat__figure">{stats.assessments}</span>
-          </span>
-        </div>
-
-        <div className="asm-stat">
-          <span className="asm-stat__label">Responded</span>
-          <span className="asm-stat__value">
-            <span className="asm-stat__figure">{stats.responders}</span>
-            <span className="asm-stat__sub">of {stats.enrolled}</span>
-          </span>
-        </div>
-
-        <div className="asm-stat">
-          <span className="asm-stat__label">Average score</span>
-          <span className="asm-stat__value">
-            <span className="asm-stat__figure">{stats.average === null ? '—' : `${stats.average}%`}</span>
-          </span>
-        </div>
-
-        <div className="asm-stat">
-          <span className="asm-stat__label">Need attention</span>
-          <span className="asm-stat__value">
-            {/* The flag the icon used to carry: without it the count reads as any
-                other figure. */}
-            <span className="asm-stat__figure asmi-stat__warn">{stats.attention}</span>
-            <span className="asm-stat__sub">learners</span>
-          </span>
-        </div>
+        <StatTile label="Assessments" value={stats.assessments} />
+        <StatTile label="Responded" value={stats.responders} sub={`of ${stats.enrolled}`} />
+        <StatTile label="Average score" value={stats.average === null ? '—' : `${stats.average}%`} />
+        {/* The flag the icon used to carry: without it the count reads as any other figure. */}
+        <StatTile label="Need attention" value={<span className="asmi-stat__warn">{stats.attention}</span>} sub="learners" />
       </div>
 
       {/* Until it has been run, the card says so and offers the one thing to press,

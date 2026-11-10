@@ -21,6 +21,7 @@ import Button from '@/components/Button/Button'
 import Avatar from '@/components/Avatar/Avatar'
 import AvatarGroup from '@/components/AvatarGroup/AvatarGroup'
 import Tabs from '@/components/Tabs/Tabs'
+import StatTile from '@/components/StatTile/StatTile'
 
 const TABS = ['Courses', 'Enrolments', 'Settings']
 const PAGE_SIZE = 10
@@ -421,37 +422,16 @@ function ProgramAdminDetails() {
       ) : (
         <>
           <div className="pad-stats">
-            <div className="pad-stat">
-              <Profile size={32} color="var(--primary-600)" variant="Linear" />
-              <div className="pad-stat__body">
-                <span className="pad-stat__label">Total people enrolled</span>
-                <span className="pad-stat__valuerow">
-                  <span className="pad-stat__value">{learnerCount}</span>
-                  <span className="pad-stat__delta">+12 this month</span>
-                </span>
-              </div>
-            </div>
-            <div className="pad-stat">
-              <TickCircle size={32} color="var(--success-500)" variant="Linear" />
-              <div className="pad-stat__body">
-                <span className="pad-stat__label">Completed</span>
-                <span className="pad-stat__value">{completedPct}%</span>
-              </div>
-            </div>
-            <div className="pad-stat">
-              <Clock size={32} color="var(--warning-500)" variant="Linear" />
-              <div className="pad-stat__body">
-                <span className="pad-stat__label">In progress</span>
-                <span className="pad-stat__value">{inProgressPct}%</span>
-              </div>
-            </div>
-            <div className="pad-stat">
-              <Danger size={32} color="var(--danger-500)" variant="Linear" />
-              <div className="pad-stat__body">
-                <span className="pad-stat__label">Not started</span>
-                <span className="pad-stat__value">{notStartedPct}%</span>
-              </div>
-            </div>
+            <StatTile
+              icon={<Profile size={32} color="var(--primary-600)" variant="Linear" />}
+              label="Total people enrolled"
+              value={learnerCount}
+              sub="+12 this month"
+              subTone="success"
+            />
+            <StatTile icon={<TickCircle size={32} color="var(--success-500)" variant="Linear" />} label="Completed" value={`${completedPct}%`} />
+            <StatTile icon={<Clock size={32} color="var(--warning-500)" variant="Linear" />} label="In progress" value={`${inProgressPct}%`} />
+            <StatTile icon={<Danger size={32} color="var(--danger-500)" variant="Linear" />} label="Not started" value={`${notStartedPct}%`} />
           </div>
 
           <div className="pad-enrol-bar">

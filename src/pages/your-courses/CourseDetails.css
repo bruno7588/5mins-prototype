@@ -135,50 +135,7 @@
 }
 
 /* Icon on the left at 32px, then a column with the label above the figure. */
-.cd-stat {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-}
-
 /* The status icon keeps its 32px box however narrow the card gets. */
-.cd-stat > svg {
-  flex: 0 0 auto;
-  width: 32px;
-  height: 32px;
-}
-
-.cd-stat-info {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.cd-stat-label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  font-size: var(--font-size-md);
-  color: var(--text-tertiary);
-}
-
-.cd-stat-value {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-}
-
-.cd-stat-pct {
-  font-size: var(--font-size-h2);
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.5;
-}
-
 /* Actions row */
 .cd-actions {
   display: flex;

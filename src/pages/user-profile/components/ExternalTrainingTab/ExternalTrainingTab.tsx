@@ -57,11 +57,8 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast }: Props)
 
   return (
     <div className="uet">
-      {rows.length > 0 && (isAdmin || viewer === 'learner') && (
+      {rows.length > 0 && isAdmin && (
         <div className="uet-toolbar">
-          {viewer === 'learner' && (
-            <p className="uet-text">Training you've done outside 5Mins. Your admin records it from your certificate.</p>
-          )}
           {isAdmin && (
             <Button
               variant="outlined"
