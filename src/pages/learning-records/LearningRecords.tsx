@@ -609,7 +609,7 @@ function LearningRecords() {
                 <label htmlFor="lrp-show-archived" className="lrp-also-text">Archived enrolments</label>
                 <Tooltip
                   position="Top"
-                  text="Previous enrolment records kept when a learner is re-enrolled or a course is restarted. Off by default so each learner appears once per course."
+                  text="Include past enrolments from before a learner was re-enrolled. Off by default."
                 />
               </div>
               <div className="lrp-also-item">
@@ -622,7 +622,7 @@ function LearningRecords() {
                 <label htmlFor="lrp-show-deactivated" className="lrp-also-text">Deactivated users</label>
                 <Tooltip
                   position="Top"
-                  text="Include learners whose accounts were deactivated in People (Permanent or Long Leave). Off by default."
+                  text="Include learners whose account was deactivated in the People page. Off by default."
                 />
               </div>
 
@@ -686,7 +686,7 @@ function LearningRecords() {
               /* Nothing matches the search and filters. */
               <EmptyState
                 illustration={<img src={noResults} alt="" width={72} height={72} />}
-                title="No records found"
+                title="No results"
                 description="Try a different learner or course, or remove a filter."
               />
             )
