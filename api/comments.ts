@@ -206,10 +206,11 @@ async function notifySlack(c: StoredComment, request: Request, image: string | n
     if (data.ok && data.ts && !c.parentId) {
       await redis('HSET', keyFor(c.route), c.id, JSON.stringify({ ...c, slackTs: data.ts }))
     }
-    // The page picture goes into the message's thread. `data.channel` is the real channel id
-    // (a DM id when SLACK_CHANNEL_ID is a member id), which the file upload needs.
+    // The page picture posts straight after the message, so its preview shows in the
+    // conversation without opening the thread. `data.channel` is the real channel id (a DM
+    // id when SLACK_CHANNEL_ID is a member id), which the file upload needs.
     if (image && data.ts && data.channel) {
-      const imageError = await uploadToSlack(token, data.channel, data.ts, image, c)
+      const imageError = await uploadToSlack(token, data.channel, image, c)
       if (imageError) return `ok (image: ${imageError})`
     }
     return 'ok'
@@ -218,9 +219,9 @@ async function notifySlack(c: StoredComment, request: Request, image: string | n
   }
 }
 
-/* Slack's three-step upload: ask for an upload URL, send the bytes, attach the file to the
-   thread. Needs the files:write scope. Returns an error code, or null when it worked. */
-async function uploadToSlack(token: string, channel: string, threadTs: string, base64: string, c: StoredComment) {
+/* Slack's three-step upload: ask for an upload URL, send the bytes, share the file in the
+   conversation. Needs the files:write scope. Returns an error code, or null when it worked. */
+async function uploadToSlack(token: string, channel: string, base64: string, c: StoredComment) {
   const bytes = Uint8Array.from(atob(base64), (ch) => ch.charCodeAt(0))
   const auth = { Authorization: `Bearer ${token}` }
   const start = (await (
@@ -237,7 +238,7 @@ async function uploadToSlack(token: string, channel: string, threadTs: string, b
     await fetch('https://slack.com/api/files.completeUploadExternal', {
       method: 'POST',
       headers: { ...auth, 'Content-Type': 'application/json; charset=utf-8' },
-      body: JSON.stringify({ files: [{ id: start.file_id, title: `${c.route} at ${c.viewport.w}x${c.viewport.h}` }], channel_id: channel, thread_ts: threadTs }),
+      body: JSON.stringify({ files: [{ id: start.file_id, title: `${c.route} at ${c.viewport.w}x${c.viewport.h}` }], channel_id: channel }),
     })
   ).json()) as { ok: boolean; error?: string }
   return done.ok ? null : (done.error ?? 'upload failed')
