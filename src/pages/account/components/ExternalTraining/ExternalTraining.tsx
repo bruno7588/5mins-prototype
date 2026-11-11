@@ -208,10 +208,9 @@ function ExternalTraining() {
   const dialog = (() => {
     if (!confirm) return null
     if (confirm.kind === 'archive-course') {
-      const n = courseRecords(confirm.course.id)
       return {
         title: `Archive ${confirm.course.name}?`,
-        body: `Archived courses can't be picked for new training records. Its ${recordCount(n)} ${n === 1 ? 'stays' : 'stay'} on learner profiles and still count${n === 1 ? 's' : ''} towards expiry.`,
+        body: "It won't be available for new records. Existing records and expiry dates are kept.",
         cta: 'Archive Course',
         danger: false,
         run: () => {
@@ -241,13 +240,12 @@ function ExternalTraining() {
         !c.providerIds.some((id) => id !== provider.id && providers.find((p) => p.id === id && !p.archived)),
     )
     const strandedLine = stranded.length
-      ? ` ${stranded.map((c) => c.name).join(', ')} ${stranded.length === 1 ? 'has' : 'have'} no other provider, so ${stranded.length === 1 ? 'it' : 'they'} can't be recorded until you add one.`
+      ? ` ${stranded.map((c) => c.name).join(', ')} can't be recorded until you add another provider.`
       : ''
     if (confirm.kind === 'archive-provider') {
-      const n = providerRecords(provider.id)
       return {
         title: `Archive ${provider.name}?`,
-        body: `Archived providers can't be picked for new training records. Its ${recordCount(n)} ${n === 1 ? 'stays' : 'stay'} on learner profiles.${strandedLine}`,
+        body: `It won't be available for new records. Existing records are kept.${strandedLine}`,
         cta: 'Archive Provider',
         danger: false,
         run: () => {
