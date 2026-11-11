@@ -13,7 +13,9 @@ import './CommentLayer.css'
    numbered pins mark existing ones, the panel lists every comment on the page. Prototype
    chrome, so shadcn-style and off the 5Mins brand. Prefix: pcm- */
 
-const AUTHOR_KEY = 'pcm-author'
+// The commenter's work email (was a typed name under `pcm-author` until 2026-11-11).
+const AUTHOR_KEY = 'pcm-email'
+const WORK_EMAIL = /^[a-z0-9._%+-]+@5mins\.ai$/i
 const POP_W = 300
 
 const readAuthor = () => {
@@ -300,7 +302,7 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
             onSubmit={async (text, author, website) => {
               // A picture of the page with a pin at the click, for the Slack message.
               const image = await capturePage(draft.x, draft.y)
-              const created = await onAdd({ text, author, website, anchor: draft.anchor, place: draft.where, steps: currentTrail(), image })
+              const created = await onAdd({ text, author, email: author, website, anchor: draft.anchor, place: draft.where, steps: currentTrail(), image })
               setDraft(null)
               if (created) setOpenId(created.id)
             }}
@@ -406,7 +408,7 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
             placeholder="Reply"
             submitLabel="Reply"
             onSubmit={async (text, author, website) => {
-              await onAdd({ text, author, website, parentId: open.id })
+              await onAdd({ text, author, email: author, website, parentId: open.id })
             }}
           />
         </div>
@@ -496,7 +498,7 @@ function Composer({ placeholder, submitLabel, onSubmit, onCancel }: ComposerProp
 
   const submit = async (e: FormEvent) => {
     e.preventDefault()
-    if (!text.trim() || !author.trim() || busy) return
+    if (!text.trim() || !WORK_EMAIL.test(author.trim()) || busy) return
     setBusy(true)
     setErr(null)
     try {
@@ -515,10 +517,11 @@ function Composer({ placeholder, submitLabel, onSubmit, onCancel }: ComposerProp
       {needsName && (
         <input
           className="pcm-input"
-          placeholder="Your name"
-          aria-label="Your name"
+          type="email"
+          placeholder="Work email (@5mins.ai)"
+          aria-label="Work email"
           value={author}
-          maxLength={60}
+          maxLength={120}
           autoFocus
           onChange={(e) => setAuthor(e.target.value)}
         />
@@ -553,7 +556,7 @@ function Composer({ placeholder, submitLabel, onSubmit, onCancel }: ComposerProp
             Cancel
           </button>
         )}
-        <button type="submit" className="pcm-btn pcm-btn--primary" disabled={busy || !text.trim() || !author.trim()}>
+        <button type="submit" className="pcm-btn pcm-btn--primary" disabled={busy || !text.trim() || !WORK_EMAIL.test(author.trim())}>
           {busy ? 'Posting…' : submitLabel}
         </button>
       </div>

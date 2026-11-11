@@ -21,6 +21,8 @@ export interface PrototypeComment {
 export interface NewComment {
   text: string
   author: string
+  /** Work email; the API turns it into the Slack name shown on the comment. */
+  email?: string
   anchor?: Anchor | null
   parentId?: string | null
   steps?: string[]

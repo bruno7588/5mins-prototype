@@ -18,6 +18,14 @@ const MAX_PLACE = 140
 const POSTS_PER_MINUTE = 10
 const MAX_IMAGE = 4_000_000 // base64 characters, about 3MB; Vercel caps the request body at 4.5MB
 const IMAGE_PREFIX = 'data:image/jpeg;base64,'
+// Everyone who comments is at 5Mins, so the work email doubles as their Slack identity.
+const EMAIL_RE = /^[a-z0-9._%+-]+@5mins\.ai$/
+// Comments from before emails were asked for carry only a typed first name.
+const LEGACY_EMAILS: Record<string, string> = {
+  divjot: 'divjot@5mins.ai',
+  nicolas: 'nicolas@5mins.ai',
+  nicholas: 'nicolas@5mins.ai',
+}
 
 export interface StoredComment {
   id: string
@@ -36,6 +44,9 @@ export interface StoredComment {
   place?: string
   /** Slack message id of a top-level comment, so replies post in its thread. Server only. */
   slackTs?: string
+  /** The commenter's work email and Slack member id, for sending them replies. Server only. */
+  authorEmail?: string
+  slackUserId?: string
 }
 
 // Same-origin in production; the dev build calls the deployed API cross-origin.
@@ -74,6 +85,35 @@ async function redisPipeline(commands: (string | number)[][]): Promise<unknown[]
 }
 
 const keyFor = (route: string) => `pcm:${route}`
+
+// What viewers get: the server-only fields (email, Slack ids) never leave the API.
+const publicView = ({ authorEmail: _e, slackUserId: _u, slackTs: _t, ...rest }: StoredComment) => rest
+
+const emailOf = (c: StoredComment) => c.authorEmail ?? LEGACY_EMAILS[c.author.trim().toLowerCase().split(/\s+/)[0]]
+
+const nameFromEmail = (email: string) =>
+  email
+    .split('@')[0]
+    .split(/[._-]+/)
+    .filter(Boolean)
+    .map((p) => p[0].toUpperCase() + p.slice(1))
+    .join(' ')
+
+/** The Slack member behind a work email (needs users:read.email); null when Slack can't say. */
+async function slackUser(email: string): Promise<{ id: string; name: string } | null> {
+  const token = process.env.SLACK_BOT_TOKEN
+  if (!token) return null
+  try {
+    const res = await fetch(`https://slack.com/api/users.lookupByEmail?email=${encodeURIComponent(email)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    const data = (await res.json()) as { ok: boolean; user?: { id: string; real_name?: string; profile?: { real_name?: string } } }
+    if (!data.ok || !data.user) return null
+    return { id: data.user.id, name: data.user.real_name || data.user.profile?.real_name || nameFromEmail(email) }
+  } catch {
+    return null
+  }
+}
 
 // HGETALL returns a flat [field, value, field, value, ...] list.
 const parseHash = (flat: string[] | null): StoredComment[] => {
@@ -120,7 +160,7 @@ export async function GET(request: Request) {
     ? parseHash((await redis('HGETALL', keyFor(route))) as string[] | null)
     : await allComments()
   comments.sort((a, b) => a.createdAt.localeCompare(b.createdAt))
-  return json({ comments })
+  return json({ comments: comments.map(publicView) })
 }
 
 export async function POST(request: Request) {
@@ -133,8 +173,13 @@ export async function POST(request: Request) {
 
   const route = str(body.route, MAX_ROUTE)
   const text = str(body.text, MAX_TEXT)
-  const author = str(body.author, MAX_AUTHOR)
-  if (!route || !text || !author) return json({ error: 'route, text and author are required' }, 400)
+  // The form asks for a work email; the name shown comes from that person's Slack profile.
+  // A bare `author` is still accepted from pages loaded before the change.
+  const email = str(body.email, 120).toLowerCase()
+  if (email && !EMAIL_RE.test(email)) return json({ error: 'Use your @5mins.ai work email.' }, 400)
+  const who = email ? await slackUser(email) : null
+  const author = email ? (who?.name ?? nameFromEmail(email)).slice(0, MAX_AUTHOR) : str(body.author, MAX_AUTHOR)
+  if (!route || !text || !author) return json({ error: 'route, text and email are required' }, 400)
 
   const rawAnchor = body.anchor as Record<string, unknown> | null | undefined
   const rawViewport = (body.viewport ?? {}) as Record<string, unknown>
@@ -158,13 +203,15 @@ export async function POST(request: Request) {
       ? body.steps.slice(-MAX_STEPS).map((s) => str(s, MAX_SELECTOR)).filter(Boolean)
       : [],
     place: str(body.place, MAX_PLACE),
+    ...(email && { authorEmail: email }),
+    ...(who && { slackUserId: who.id }),
   }
   await redis('HSET', keyFor(route), comment.id, JSON.stringify(comment))
   // `slack` reports how the Slack post went ("ok", "off" or Slack's error code), for setup checks.
   const rawImage = typeof body.image === 'string' ? body.image : ''
   const image = rawImage.startsWith(IMAGE_PREFIX) && rawImage.length <= MAX_IMAGE ? rawImage.slice(IMAGE_PREFIX.length) : null
   const slack = await notifySlack(comment, request, image)
-  return json({ comment, slack }, 201)
+  return json({ comment: publicView(comment), slack }, 201)
 }
 
 /* New comments go to a Slack channel, and replies land in the same Slack thread, so the
@@ -190,6 +237,10 @@ async function notifySlack(c: StoredComment, request: Request, image: string | n
       await fetch(webhook!, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) })
       return 'ok (webhook)'
     }
+    // A reply also goes to everyone else in its thread, as a direct message.
+    const dmNote = c.parentId ? await notifyThread(c, token, channel, text) : ''
+    // The owner wrote this reply themselves: nothing to tell them.
+    if (c.parentId && c.slackUserId === channel) return `ok${dmNote}`
     // A reply threads under its parent's Slack message, when that message exists.
     let threadTs: string | undefined
     if (c.parentId) {
@@ -213,10 +264,45 @@ async function notifySlack(c: StoredComment, request: Request, image: string | n
       const imageError = await uploadToSlack(token, data.channel, image, c)
       if (imageError) return `ok (image: ${imageError})`
     }
-    return 'ok'
+    return `ok${dmNote}`
   } catch {
     return 'failed' // the comment is saved either way
   }
+}
+
+/* A reply is sent as a Slack DM to everyone else in its thread: whoever wrote the original
+   comment and anyone who replied, but not the reply's own author and not the owner (who
+   gets every comment through SLACK_CHANNEL_ID already). Returns a note for the status. */
+async function notifyThread(c: StoredComment, token: string, owner: string, text: string): Promise<string> {
+  const all = parseHash((await redis('HGETALL', keyFor(c.route))) as string[] | null)
+  const thread = all.filter((x) => x.id !== c.id && (x.id === c.parentId || x.parentId === c.parentId))
+  const mine = emailOf(c)
+  // One entry per person, keeping a Slack id from any of their comments.
+  const people = new Map<string, string | undefined>()
+  for (const x of thread) {
+    const email = emailOf(x)
+    if (!email || email === mine) continue
+    people.set(email, people.get(email) ?? x.slackUserId)
+  }
+  let sent = 0
+  let failed = ''
+  for (const [email, known] of people) {
+    const id = known ?? (await slackUser(email))?.id
+    if (!id) {
+      failed = 'no Slack user'
+      continue
+    }
+    if (id === owner) continue
+    const res = await fetch('https://slack.com/api/chat.postMessage', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({ channel: id, text, unfurl_links: false }),
+    })
+    const data = (await res.json()) as { ok: boolean; error?: string }
+    if (data.ok) sent++
+    else failed = data.error ?? 'failed'
+  }
+  return ` (dm: ${sent} sent${failed ? `, ${failed}` : ''})`
 }
 
 /* Slack's three-step upload: ask for an upload URL, send the bytes, share the file in the
@@ -256,7 +342,7 @@ export async function PATCH(request: Request) {
   if (!raw) return json({ error: 'Not found' }, 404)
   const comment = { ...(JSON.parse(raw) as StoredComment), resolved: body.resolved }
   await redis('HSET', keyFor(route), id, JSON.stringify(comment))
-  return json({ comment })
+  return json({ comment: publicView(comment) })
 }
 
 /* Delete a comment and, for a top-level comment, its whole thread. There are no accounts,
