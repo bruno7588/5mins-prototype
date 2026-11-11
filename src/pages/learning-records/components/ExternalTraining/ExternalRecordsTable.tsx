@@ -46,7 +46,7 @@ export function RetrainingDueCell({ record, all }: { record: ExternalRecord; all
   return (
     <span className="tbl-stack">
       {/* Overdue and due soon put the date inside the badge, with the state as words
-          ("Overdue 12 May 2026", "Due 10 Nov 2026"), so it never rests on colour alone. */}
+          ("Overdue May 12, 2026", "Due Nov 10, 2026"), so it never rests on colour alone. */}
       <span className="primary">
         {state === 'overdue' || state === 'due-soon' ? (
           <Badge

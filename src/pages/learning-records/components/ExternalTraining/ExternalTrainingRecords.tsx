@@ -276,8 +276,8 @@ function ExternalTrainingRecords({ showToast }: Props) {
       ) : (
         <EmptyState
           illustration={<img src={noResults} alt="" width={72} height={72} />}
-          title="No external training found"
-          description="Try removing a filter."
+          title="No results"
+          description="Try a different learner or course, or change a filter."
         />
       )}
 
