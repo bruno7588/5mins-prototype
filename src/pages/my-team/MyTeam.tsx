@@ -1,4 +1,5 @@
 import { useHeaderTheme } from '@/data/brandTheme'
+import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
 import Button from '@/components/Button/Button'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -45,6 +46,7 @@ import { formatRelative } from './relativeTime'
 import { coursesTotal, type CourseStatus } from './memberStatus'
 import { COURSE_STATUS_CARDS, type CourseStatusCard } from '@/data/courseStatusCards'
 import StatTile from '@/components/StatTile/StatTile'
+import Chip from '@/components/Chip/Chip'
 import './MyTeam.css'
 import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 
@@ -640,6 +642,11 @@ function MyTeam() {
         </aside>
 
         <section className="mt-body">
+          {/* Mobile web only: the Progress tab holds My Team and My Progress (not built yet). */}
+          <div className="mt-mobile-chips">
+            <Chip label="My Team" selected />
+            <Chip label="My Progress" disabled />
+          </div>
           <header className="mt-pageheader">
             <div className="mt-pageheader__row">
               <div className="mt-pageheader__headline">
@@ -753,6 +760,7 @@ function MyTeam() {
           </section>}
         </section>
       </div>
+      <LearnerMobileNav />
 
       {(() => {
         const member = drawerMemberId ? team.find((m) => m.id === drawerMemberId) : undefined
@@ -791,13 +799,12 @@ function MyTeam() {
       {/* Bulk actions live in the floating bar, same pattern as People —
           mounted unconditionally so `count` drives its own enter/exit. */}
       <BulkActionBar count={selectedCount} onClear={() => setSelectedIds(new Set())}>
-        <button
-          className="bulk-bar-btn bulk-bar-btn--primary"
+        <Button
+          icon={<SmsNotification size={20} color="currentColor" variant="Linear" />}
           onClick={() => setReminderOpen(true)}
         >
-          <SmsNotification size={20} color="currentColor" variant="Linear" />
           Send Reminders
-        </button>
+        </Button>
       </BulkActionBar>
 
       <ToastContainer toasts={toast.toasts} />

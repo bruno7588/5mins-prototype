@@ -1,0 +1,112 @@
+/* Learner web app, mobile web chrome (under 600px): app banner + bottom tab bar + More menu.
+   Tab bar per navigation.md "Bottom tab bar": 66px, 24px Bold icons, label Regular 10/1.4. */
+
+.lmn {
+  display: none;
+}
+
+@media (max-width: 599px) {
+  .lmn {
+    display: block;
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+  }
+
+  /* The floating bulk bar clears the tab bar and banner. */
+  .lmn ~ .bulk-bar-layer .bulk-bar {
+    bottom: calc(var(--space-l) + 120px);
+  }
+}
+
+.lmn-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-s) var(--space-m) var(--space-s) var(--space-s);
+  background: var(--tooltip-background);
+  /* stylelint-disable-next-line -- on-dark label, same as the Tooltip text */
+  color: var(--neutral-25);
+}
+
+.lmn-banner__close {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: var(--space-xs);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.lmn-banner__close:focus-visible,
+.lmn-tab:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: -2px;
+}
+
+.lmn-banner__text {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font: 400 var(--font-size-md) / 1.5 Poppins, sans-serif;
+  text-align: center;
+}
+
+.lmn-tabs {
+  display: flex;
+  align-items: center;
+  padding: var(--space-s) var(--space-m);
+  background: var(--page-background);
+  border-top: 1px solid var(--border);
+}
+
+.lmn-tab,
+.lmn-more {
+  flex: 1 0 0;
+  min-width: 0;
+}
+
+.lmn-more {
+  position: relative;
+  display: flex;
+}
+
+.lmn-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs);
+  border: 0;
+  border-radius: var(--radius-s);
+  background: none;
+  cursor: pointer;
+  color: var(--brand-nav, var(--text-secondary));
+}
+
+.lmn-tab--selected {
+  color: var(--brand-selected, var(--selected));
+}
+
+.lmn-tab__label {
+  /* stylelint-disable-next-line -- tab label: 10px per the DS tab bar spec, below the type scale */
+  font: 400 10px/1.4 Poppins, sans-serif;
+  color: inherit;
+  white-space: nowrap;
+}
+
+/* Opens upward from the More tab, anchored to the bar's right edge. */
+.lmn-more__menu {
+  left: auto;
+  right: 0;
+  width: 240px;
+  bottom: calc(100% + var(--space-s));
+}
+
+.lmn-more__menu .profile-menu__item {
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  font-size: var(--font-size-lg);
+}

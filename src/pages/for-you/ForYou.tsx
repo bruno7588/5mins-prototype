@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
 import { useHeaderTheme } from '@/data/brandTheme'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Add, ArrowDown2, FlashCircle, Mobile } from 'iconsax-react'
@@ -117,6 +118,7 @@ function ForYou() {
           </div>
         </section>
       </div>
+      <LearnerMobileNav />
 
       {feedIndex !== null && (
         <LessonFeed

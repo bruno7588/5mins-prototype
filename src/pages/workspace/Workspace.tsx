@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
 import { useHeaderTheme } from '@/data/brandTheme'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
@@ -189,6 +190,7 @@ function Workspace() {
           </div>
         </section>
       </div>
+      <LearnerMobileNav />
 
       <EventDetailsDrawer
         open={selectedEvent !== null}

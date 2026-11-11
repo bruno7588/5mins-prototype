@@ -1,4 +1,5 @@
 import { Navigate, useNavigate, useLocation, useParams } from 'react-router-dom'
+import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
 import { useHeaderTheme } from '@/data/brandTheme'
 import {
   Add,
@@ -277,6 +278,7 @@ function ProgramDetails() {
           </section>
         </section>
       </div>
+      <LearnerMobileNav />
 
       <ToastContainer toasts={toasts} />
     </div>

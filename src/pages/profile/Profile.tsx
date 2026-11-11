@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { Add, FlashCircle, Mobile } from 'iconsax-react'
 import { useHeaderTheme } from '@/data/brandTheme'
@@ -162,6 +163,7 @@ function Profile() {
           </div>
         </section>
       </div>
+      <LearnerMobileNav />
 
       <ToastContainer toasts={toasts} />
     </div>

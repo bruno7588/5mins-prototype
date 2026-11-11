@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
 import { useHeaderTheme } from '@/data/brandTheme'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ArrowDown, ArrowDown2, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus, Mobile, Add, FlashCircle } from 'iconsax-react'
@@ -927,6 +928,7 @@ function UserProfile() {
 
           <section className="mt-body">{page}</section>
         </div>
+        <LearnerMobileNav />
 
         {overlays}
       </div>

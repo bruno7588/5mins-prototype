@@ -1,4 +1,5 @@
 import { Fragment, useState } from 'react'
+import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
 import { useHeaderTheme } from '@/data/brandTheme'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import {
@@ -413,6 +414,7 @@ function ProgramCourseDetails() {
           </div>
         </section>
       </div>
+      <LearnerMobileNav />
       {signOffOpen ? (
         <SignOffModal
           courseId={course.id}

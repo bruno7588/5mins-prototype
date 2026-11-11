@@ -155,7 +155,7 @@
 }
 
 .mt-side__item:hover {
-  background: var(--input-background-hover);
+  background: var(--input-background);
 }
 
 .mt-side__item--active {
@@ -794,5 +794,97 @@
 @media (max-width: 640px) {
   .mt-cp__stats > .ds-stat {
     flex: 1 0 100%;
+  }
+}
+
+/* ── Responsive shell (learner web app; every page that uses .mt-app) ──
+   Under 1200px the side panel collapses to an icon rail (navigation.md "Collapsed side
+   panel"); under 600px the top nav and side panel give way to LearnerMobileNav. */
+.mt-mobile-chips {
+  display: none;
+}
+
+@media (max-width: 1199px) {
+  .mt-side {
+    width: 72px;
+    flex-shrink: 0;
+  }
+
+  .mt-side__menu {
+    padding: var(--space-m) var(--space-s);
+    align-items: center;
+  }
+
+  .mt-side__item {
+    position: relative;
+    width: auto;
+    justify-content: center;
+  }
+
+  /* The label becomes the flyout tooltip, shown on hover and keyboard focus. */
+  .mt-side__item > span {
+    position: absolute;
+    left: calc(100% + var(--space-s));
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 200;
+    padding: var(--space-s) var(--space-sm);
+    border-radius: var(--radius-s);
+    background: var(--tooltip-background);
+    /* stylelint-disable-next-line -- on-dark label, same as the Tooltip text */
+    color: var(--neutral-25);
+    font-size: var(--font-size-md);
+    font-weight: 400;
+    white-space: nowrap;
+    box-shadow: var(--shadow-l);
+    pointer-events: none;
+    /* Clipped, not hidden, so the label stays the button's accessible name. */
+    clip-path: inset(50%);
+  }
+
+  .mt-side__item:hover > span,
+  .mt-side__item:focus-visible > span {
+    clip-path: none;
+  }
+
+  /* Profile card shrinks to its settings icon; its menu keeps a readable width. */
+  .mt-side__profile-wrap .mt-side__profile {
+    justify-content: center;
+    padding: var(--space-m);
+  }
+
+  .mt-side__profile-info,
+  .mt-side__powered {
+    display: none;
+  }
+
+  .mt-side__profile-wrap .profile-menu {
+    right: auto;
+    width: 220px;
+  }
+}
+
+@media (max-width: 599px) {
+  .mt-topnav,
+  .mt-side {
+    display: none;
+  }
+
+  .mt-body {
+    padding: var(--space-m);
+  }
+
+  .mt-mobile-chips {
+    display: flex;
+    gap: var(--space-s);
+    margin-bottom: var(--space-m);
+  }
+}
+
+/* Mobile web: a tab row wider than the screen scrolls sideways instead of clipping. */
+@media (max-width: 599px) {
+  .mt-body .ds-tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
   }
 }
