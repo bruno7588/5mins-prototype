@@ -158,8 +158,9 @@ export async function POST(request: Request) {
     place: str(body.place, MAX_PLACE),
   }
   await redis('HSET', keyFor(route), comment.id, JSON.stringify(comment))
-  await notifySlack(comment, request)
-  return json({ comment }, 201)
+  // `slack` reports how the Slack post went ("ok", "off" or Slack's error code), for setup checks.
+  const slack = await notifySlack(comment, request)
+  return json({ comment, slack }, 201)
 }
 
 /* New comments go to a Slack channel, and replies land in the same Slack thread, so the
@@ -168,11 +169,11 @@ export async function POST(request: Request) {
    stored on the top-level comment and reused as `thread_ts` for its replies. Without the
    token it falls back to the incoming webhook (SLACK_WEBHOOK_URL), which cannot thread.
    A Slack failure never blocks the comment. */
-async function notifySlack(c: StoredComment, request: Request) {
+async function notifySlack(c: StoredComment, request: Request): Promise<string> {
   const token = process.env.SLACK_BOT_TOKEN
   const channel = process.env.SLACK_CHANNEL_ID
   const webhook = process.env.SLACK_WEBHOOK_URL
-  if (!(token && channel) && !webhook) return
+  if (!(token && channel) && !webhook) return 'off'
   const origin = new URL(request.url).origin
   const link = `${origin}${c.route}?comment=${c.parentId ?? c.id}`
   const action = c.parentId ? 'replied on' : 'commented on'
@@ -183,7 +184,7 @@ async function notifySlack(c: StoredComment, request: Request) {
   try {
     if (!(token && channel)) {
       await fetch(webhook!, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) })
-      return
+      return 'ok (webhook)'
     }
     // A reply threads under its parent's Slack message, when that message exists.
     let threadTs: string | undefined
@@ -197,12 +198,13 @@ async function notifySlack(c: StoredComment, request: Request) {
       body: JSON.stringify({ channel, text, thread_ts: threadTs, unfurl_links: false }),
     })
     const data = (await res.json()) as { ok: boolean; ts?: string; error?: string }
-    if (!data.ok) console.error('Slack chat.postMessage failed:', data.error)
+    if (!data.ok) return data.error ?? 'failed'
     if (data.ok && data.ts && !c.parentId) {
       await redis('HSET', keyFor(c.route), c.id, JSON.stringify({ ...c, slackTs: data.ts }))
     }
+    return 'ok'
   } catch {
-    /* the comment is saved either way */
+    return 'failed' // the comment is saved either way
   }
 }
 
