@@ -20,7 +20,7 @@
   cursor: pointer;
 }
 
-.instructor-card--interactive:hover {
+.instructor-card:hover {
   background: var(--cards-background-hover);
 }
 
