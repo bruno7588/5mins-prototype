@@ -4,7 +4,7 @@ import Tabs from '@/components/Tabs/Tabs'
 import EmptyState from '@/components/EmptyState/EmptyState'
 import noResults from '@/assets/empty-state-illustrations/no-results.svg'
 import ExternalTraining from '@/pages/account/components/ExternalTraining/ExternalTraining'
-import { isFullAdmin, useExternalTraining } from '@/data/externalTraining'
+import { isFullAdmin } from '@/data/externalTraining'
 import Button from '@/components/Button/Button'
 import Table, { type Column } from '@/components/Table/Table'
 import { Calendar, Note1 } from 'iconsax-react'
@@ -147,7 +147,6 @@ function LearningRecords() {
   /* External Training's own tabs: Records, and Approved list (?tab=approved-list). */
   const [searchParams, setSearchParams] = useSearchParams()
   const extTab = isFullAdmin() && searchParams.get('tab') === 'approved-list' ? 'approved' : 'records'
-  const ext = useExternalTraining()
   const [query, setQuery] = useState('')
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [filtersExpanded, setFiltersExpanded] = useState(false)
@@ -561,9 +560,9 @@ function LearningRecords() {
                 activeKey={extTab}
                 onChange={(key) => setSearchParams(key === 'approved' ? { tab: 'approved-list' } : {})}
                 items={[
-                  { key: 'records', label: 'Records', counter: ext.records.length },
-                  // Only full admins manage the approved list (DES-336 D21). Counts its live courses.
-                  ...(isFullAdmin() ? [{ key: 'approved', label: 'Approved list', counter: ext.courses.filter((c) => !c.archived).length }] : []),
+                  { key: 'records', label: 'Records' },
+                  // Only full admins manage the approved list (DES-336 D21).
+                  ...(isFullAdmin() ? [{ key: 'approved', label: 'Approved list' }] : []),
                 ]}
               />
             )}

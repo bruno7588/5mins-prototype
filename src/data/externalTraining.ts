@@ -184,6 +184,8 @@ const seedProviders: ExternalProvider[] = [
   { id: 'p5', name: 'SafeWork Training', archived: false },
   { id: 'p6', name: 'RTITB', archived: false },
   { id: 'p7', name: 'Allergen Aware Ltd', archived: false },
+  // No training records and no courses: Delete shows the real delete dialog.
+  { id: 'p8', name: 'City & Guilds', archived: false },
 ]
 
 const seedCourses: ExternalCourse[] = [
@@ -195,6 +197,8 @@ const seedCourses: ExternalCourse[] = [
   { id: 'c6', name: 'Personal Licence Holder', providerIds: ['p4'], duration: { value: 1, unit: 'days' }, retrainingMonths: 120, otherNames: [], archived: false },
   { id: 'c7', name: 'Allergen Awareness', providerIds: ['p7', 'p4'], duration: { value: 90, unit: 'minutes' }, retrainingMonths: 12, otherNames: [], archived: false },
   { id: 'c8', name: 'Emergency First Aid', providerIds: ['p2'], duration: { value: 1, unit: 'days' }, retrainingMonths: 36, otherNames: [], archived: true },
+  // No training records: Delete shows the real delete dialog.
+  { id: 'c9', name: 'Manual Handling', providerIds: ['p5'], duration: { value: 3, unit: 'hours' }, retrainingMonths: 36, otherNames: [], archived: false },
 ]
 
 const rec = (

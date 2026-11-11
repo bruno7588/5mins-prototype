@@ -11,7 +11,6 @@ import {
   recordDurationLabel,
   recordProviderName,
   recordTrainingName,
-  supersededBy,
   type ExternalRecord,
 } from '@/data/externalTraining'
 
@@ -43,7 +42,6 @@ export function downloadCertificate(r: ExternalRecord) {
 
 export function RetrainingDueCell({ record, all }: { record: ExternalRecord; all: ExternalRecord[] }) {
   if (!record.retrainingDueDate) return <span className="lret-dash">–</span>
-  const renewed = supersededBy(record, all)
   const state = dueState(record, all)
   return (
     <span className="tbl-stack">
@@ -59,7 +57,6 @@ export function RetrainingDueCell({ record, all }: { record: ExternalRecord; all
           <DateCell iso={record.retrainingDueDate} />
         )}
       </span>
-      {renewed && <span className="supporting">Renewed {formatDay(renewed.completionDate)}</span>}
     </span>
   )
 }
