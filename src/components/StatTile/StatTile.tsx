@@ -5,7 +5,7 @@ import './StatTile.css'
 interface StatTileProps {
   /** `stacked`: label above a large value. `inline`: value then label on one line. */
   layout?: 'stacked' | 'inline'
-  /** An Iconsax Linear glyph coloured by meaning; the tile sizes it to 32px. */
+  /** An Iconsax Linear glyph coloured by meaning; the tile sizes it (32px stacked, 24px inline). */
   icon?: ReactNode
   label: ReactNode
   /** Quieter text after the label, e.g. "(Nov)". */

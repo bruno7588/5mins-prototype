@@ -6,6 +6,7 @@ Add new entries here, not in the docs.
 
 ## Library-wide
 
+- 2026-11-11: Summary stat synced to the Library (`12636:76`): label `--text-tertiary` (was `--text-secondary`); Inline icon 24px (was 32px) with an 8px gap to the value (was 12px); Inline value line height 1 (was 1.5). New doc summary-stat.md.
 - 2026-11-10: Learner Profile page (`/profile`, the learner side panel's Profile item): profile header, tabs Bookmarks (Lessons / Courses content switcher), Likes, Following and External Training (the learner's own records; they add training with the admin Add external training drawer, locked to themselves, without the option to add to the approved list). New shared desktop `InstructorCard` (src/components/InstructorCard) built from the cards.md spec.
 - 2026-11-10: Approved Courses merged into External Training: Learning Records has two sub-items (5Mins Courses, External Training); the External Training page has tabs "Records" and "Approved list" (full admins, `?tab=approved-list`), each with a counter. `/learning-records/approved-courses` redirects there.
 - 2026-11-10: Learning Records became a sidebar group: 5Mins Courses (`/learning-records`), External Training (`/learning-records/external`) and Approved Courses (`/learning-records/approved-courses`, full admins). The approved courses and providers page moved there from Account & Settings, whose External Training tab is removed; this reverses DES-336 decision D1. The Learning Records page lost its tab bar; its title follows the sidebar item.
