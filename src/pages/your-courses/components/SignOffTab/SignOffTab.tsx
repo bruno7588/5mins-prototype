@@ -262,14 +262,12 @@ function SignOffTab() {
       )}
 
       <BulkActionBar count={selected.size} onClear={() => setSelected(new Set())}>
-        <button
-          type="button"
-          className="bulk-bar-btn bulk-bar-btn--primary"
+        <Button
+          icon={<SmsNotification size={20} color="currentColor" variant="Linear" />}
           onClick={() => remind([...selected])}
         >
-          <SmsNotification size={20} color="currentColor" variant="Linear" />
           Send Reminders
-        </button>
+        </Button>
       </BulkActionBar>
       <ReminderDrawerShell
         open={recipients !== null}

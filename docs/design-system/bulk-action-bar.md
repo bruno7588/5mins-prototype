@@ -8,8 +8,8 @@ description: BulkActionBar for 5Mins.ai - the floating dark pill that slides up 
 The floating pill at the bottom centre of the page that, once rows are selected, shows how many, lets the user clear the selection, and holds the actions that apply to all of them; it uses the same dark surface as the tooltip, so its light text reads in both modes.
 
 **Code:** `import BulkActionBar from '@/components/BulkActionBar/BulkActionBar'` (`src/components/BulkActionBar/BulkActionBar.tsx` + `BulkActionBar.css`; code is the reference)
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, no component (light not recorded / dark not recorded)
-**Last verified:** 2026-09-29
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `12632:98` (one component set, Actions = Buttons / Menu; contents use dark-mode tokens in both themes)
+**Last verified:** 2026-11-11
 
 ## Usage
 
@@ -27,7 +27,7 @@ The floating pill at the bottom centre of the page that, once rows are selected,
 **Do**
 - Mount it unconditionally and let `count` drive it; the bar animates itself in above 0 and out at 0.
 - Pass `onClear` that empties the selection, and a `label` noun when "selected" alone is vague ("enrolments selected").
-- Render actions as plain `<button>` elements with `.bulk-bar-btn` plus one of `--primary`, `--danger` or `--outlined`.
+- Render filled actions with the shared `Button` (`src/components/Button`): default for the primary action, `semantic="danger"` for destructive ones, leading icons through its `icon` prop.
 - Order actions by how the flow reads; there is no fixed position for the filled action (People puts Reactivate before Delete).
 - Group several actions behind an "Actions" dropdown: a `RowActionsMenu` with `placement="top"`, `caret={false}` and `triggerClassName="bulk-bar-btn bulk-bar-btn--outlined bulk-bar-trigger"`, with an `ArrowDown2` chevron in `.bulk-bar-trigger-chevron`.
 - Route destructive bulk actions through a `ConfirmModal` ([doc](confirm-modal.md)) before they run.
@@ -35,21 +35,22 @@ The floating pill at the bottom centre of the page that, once rows are selected,
 
 **Don't**
 - Don't guard it with `count > 0 &&`; that unmounts it before the exit animation can play.
-- Don't use mode-aware surface text and border tokens such as `--border` or `--text-primary` for bar content; the pill is dark in both modes, so they flip and wash out. The built-in fills and states (`--input-background`, `--text-disabled`, `--primary-button-background`) are fine.
+- Don't hard-code light-on-dark colours for bar content. `.bulk-bar-content` carries `data-theme="dark"`, so semantic tokens (`--text-primary`, `--text-secondary`, `--border-elevated`, `--input-background`) already resolve to their dark values in both modes.
 
-**Canonical spec:** surface `var(--tooltip-background)` (Neutral-800 light / Neutral-900 dark); radius `var(--radius-m)` (16px); padding and gaps `var(--space-sm)` (12px); anchored `var(--space-l)` (24px) from the bottom, centred in the content area (offset 240px for the side panel), `z-index: 100`; clear button 32px circle `var(--radius-full)` on `var(--input-background)`; count 14px Regular `var(--neutral-200)`; action buttons 14px Bold, padding `var(--space-s)` `var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px); primary `var(--primary-button-background)`, danger `var(--danger-500)`; dropdown trigger open and focus `var(--selected)`.
+**Canonical spec:** surface `var(--tooltip-background)` (Neutral-800 light / Neutral-900 dark); radius `var(--radius-m)` (16px); padding and gaps `var(--space-sm)` (12px); anchored `var(--space-l)` (24px) from the bottom, centred in the content area (offset 240px for the side panel), `z-index: 100`; shadow `var(--shadow-xl)`; clear button 32px circle `var(--radius-full)` on `var(--input-background)`; count 14px Regular `var(--text-secondary)`; divider 1 x 24px `var(--border-elevated)`; action buttons are the shared `Button`, Medium (41px tall); the Actions dropdown trigger matches Dropdown medium: 8px 12px, 37px tall, 1px `var(--border-elevated)`, hover `var(--border-hover)`; dropdown trigger open and focus `var(--selected)`.
 
 ## Figma to code
 
-There is no Bulk action bar component in the Figma Library; the bar is specified by code. Its action buttons map to CSS classes, not to the DS `Button`.
+The Library component draws its actions with `Buttons` (Medium) and `Dropdown` instances. In code the buttons are the shared `Button`; the dropdown is a `RowActionsMenu` trigger styled by the bar's CSS.
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
-| n/a | n/a | child class | `.bulk-bar-btn--primary` / `--danger` / `--outlined` | Action button look, set by class on each child `<button>` |
-| n/a | n/a | child class | `.bulk-bar-trigger` | Adds the dropdown look to an outlined `RowActionsMenu` trigger |
+| Count (text) | "3 selected" | `count`, `label` | `number`, `string` | rendered as `{count} {label}` |
+| Actions | Buttons | children | `<Button>` / `<Button semantic="danger">` | shared Button, Medium |
+| Actions | Menu | child class | `.bulk-bar-btn--outlined` + `.bulk-bar-trigger` | Dropdown look on a `RowActionsMenu` trigger |
 
 - **Figma only:** none.
-- **Code only:** `count`, `onClear`, `label`, `children`.
+- **Code only:** `onClear`, `children`.
 
 **Props**
 
@@ -57,7 +58,7 @@ There is no Bulk action bar component in the Figma Library; the bar is specified
 |---|---|---|---|
 | `count` | `number` | required | Selected rows; drives show and hide. `> 0` shows the bar; `0` animates it out. |
 | `onClear` | `() => void` | required | Called by the ✕ button (`aria-label="Clear selection"`). |
-| `children` | `ReactNode` | required | The actions: `.bulk-bar-btn` buttons, or a `RowActionsMenu` styled as the "Actions" trigger. |
+| `children` | `ReactNode` | required | The actions: shared `Button`s, and/or a `RowActionsMenu` styled as the "Actions" trigger. |
 | `label` | `string` | `'selected'` | Word after the count, rendered as `{count} {label}`. |
 
 **Production:**
@@ -87,9 +88,7 @@ There is no Bulk action bar component in the Figma Library; the bar is specified
 
 | Class | Look |
 |---|---|
-| `.bulk-bar-btn--primary` | Filled primary, hover `--primary-button-background-hover` |
-| `.bulk-bar-btn--danger` | Filled `--danger-500`, hover `--danger-600` |
-| `.bulk-bar-btn--outlined` | Transparent, white hairline, brighter on hover |
+| `.bulk-bar-btn--outlined` | Transparent, `--border-elevated` hairline, `--border-hover` on hover |
 | `.bulk-bar-trigger` | Adds dropdown look to an outlined button: Regular weight, chevron right, `--selected` border when open |
 
 ## States
@@ -99,20 +98,20 @@ There is no Bulk action bar component in the Figma Library; the bar is specified
 | Entering | Framer Motion slides the pill 16px up and fades it in over 140ms. |
 | Leaving | Leaves a little faster (100ms) so dismissal feels responsive. AnimatePresence keeps the last selected render while the bar leaves, so the count holds its value rather than flashing to zero. |
 | Reduced motion | `prefers-reduced-motion` removes the motion. |
-| Action hover | See the child classes under Variants. |
-| Action disabled | `.bulk-bar-btn:disabled` takes `--text-disabled` on a transparent fill. |
+| Action hover | Buttons follow buttons.md; the trigger follows the child classes under Variants. |
+| Action disabled | Buttons follow buttons.md; a disabled trigger takes `--text-disabled` on a transparent fill. |
 | Trigger open | `.bulk-bar-trigger` border `var(--selected)`. |
-| Focus-visible | Only `.bulk-bar-trigger` defines a `:focus-visible` ring (`--selected`); the clear button and the other `.bulk-bar-btn` variants have none yet. Add one when touching them. |
+| Focus-visible | `.bulk-bar-trigger` and the shared `Button` have `:focus-visible` rings; the clear button has none yet. Add one when touching it. |
 
 ## Tokens
 
-`var(--tooltip-background)`, `var(--radius-m)`, `var(--radius-sm)`, `var(--radius-full)`, `var(--space-sm)`, `var(--space-s)`, `var(--space-l)`, `var(--input-background)`, `var(--neutral-200)`, `var(--primary-button-background)`, `var(--primary-button-background-hover)`, `var(--danger-500)`, `var(--danger-600)`, `var(--text-disabled)`, `var(--selected)`.
+`var(--tooltip-background)`, `var(--radius-m)`, `var(--radius-sm)`, `var(--radius-full)`, `var(--space-sm)`, `var(--space-s)`, `var(--space-l)`, `var(--input-background)`, `var(--text-primary)`, `var(--text-secondary)`, `var(--border-elevated)`, `var(--border-hover)`, `var(--shadow-xl)`, `var(--text-disabled)`, `var(--selected)`.
 
 ## Accessibility
 
 - **Role:** `.bulk-bar` is `role="region"` with `aria-label="Bulk actions"`.
 - **Labels:** the clear button is `aria-label="Clear selection"`.
-- **Focus-visible:** see States; the clear button and plain `.bulk-bar-btn` variants still need a ring.
+- **Focus-visible:** see States; the clear button still needs a ring.
 
 ## Content
 

@@ -15,13 +15,15 @@
   overflow: hidden; /* clips content while the width animates */
   background: var(--tooltip-background);
   border-radius: var(--radius-m); /* 16px */
-  box-shadow: 0 8px 32px color-mix(in srgb, var(--neutral-900) 24%, transparent), 0 2px 8px color-mix(in srgb, var(--neutral-900) 12%, transparent);
+  box-shadow: var(--shadow-xl); /* Library effect style Shadow/XL */
   pointer-events: auto;
   /* Enter/exit (opacity + 16px slide) is owned by Framer in BulkActionBar.tsx —
      a CSS keyframe can only play on mount, so it can't animate the bar out. */
 }
 
-/* Measured by BulkActionBar.tsx; padding lives here so focus rings aren't clipped. */
+/* Measured by BulkActionBar.tsx; padding lives here so focus rings aren't clipped.
+   Carries data-theme="dark", so every token inside resolves to its dark value in both
+   modes (Library: "contents use dark-mode tokens in both themes"). */
 .bulk-bar-content {
   display: flex;
   align-items: center;
@@ -39,7 +41,7 @@
   border: none;
   border-radius: var(--radius-full);
   background: var(--input-background);
-  color: var(--neutral-200);
+  color: var(--text-secondary);
   cursor: pointer;
   transition: background 150ms ease, color 150ms ease;
   flex-shrink: 0;
@@ -53,14 +55,14 @@
 .bulk-bar-count {
   font-size: var(--font-size-md);
   font-weight: 400;
-  color: var(--neutral-200);
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 
 .bulk-bar-divider {
   width: 1px;
   height: 24px;
-  background: color-mix(in srgb, var(--neutral-0) 16%, transparent);
+  background: var(--border-elevated);
   flex-shrink: 0;
 }
 
@@ -70,12 +72,14 @@
   gap: var(--space-sm);
 }
 
-/* ── Action buttons (children) ── */
+/* ── Actions dropdown trigger base ──
+   Filled actions are the shared Button (src/components/Button); only the "Actions"
+   dropdown trigger is styled here. */
 .bulk-bar-btn {
   display: inline-flex;
   align-items: center;
   gap: var(--space-s);
-  padding: var(--space-s) var(--space-sm);
+  line-height: 1.5;
   font-family: 'Poppins', sans-serif;
   font-size: var(--font-size-h5);
   font-weight: 700;
@@ -96,25 +100,14 @@
   cursor: not-allowed;
 }
 
-.bulk-bar-btn--primary {
-  background: var(--primary-button-background);
-  color: var(--text-button-foreground);
-}
-.bulk-bar-btn--primary:hover { background: var(--primary-button-background-hover); }
-
-.bulk-bar-btn--danger {
-  background: var(--danger-500);
-  color: var(--neutral-0);
-}
-.bulk-bar-btn--danger:hover { background: var(--danger-600); }
-
 /* ── Actions dropdown trigger ──
    The DS dropdown trigger (dropdown.md): transparent fill, hairline border,
    12px radius, chevron on the right, `--selected` amber border while open.
-   The hairline and label come from .bulk-bar-btn--outlined below rather than
-   the mode-aware --border / --text-primary the doc names: this pill is dark in
-   both modes, so those tokens would flip light and wash out here. */
+   The hairline and label come from .bulk-bar-btn--outlined below; the dark-pinned
+   content keeps them on their dark values in both modes. */
 .bulk-bar-trigger {
+  /* Library Dropdown, medium: 8px 12px, 37px tall. */
+  padding: calc(var(--space-s) - 1px) calc(var(--space-sm) - 1px);
   /* Reads as a field, not a button: Regular 14 with the chevron on the right,
      sized to its content. */
   justify-content: space-between;
@@ -150,10 +143,9 @@
 /* Outlined action — neutral hairline when Enabled, brighter on Hover. */
 .bulk-bar-btn--outlined {
   background: transparent;
-  border-color: color-mix(in srgb, var(--neutral-0) 24%, transparent);
-  color: var(--neutral-0);
+  border-color: var(--border-elevated);
+  color: var(--text-primary);
 }
 .bulk-bar-btn--outlined:hover {
-  background: color-mix(in srgb, var(--neutral-0) 8%, transparent);
-  border-color: color-mix(in srgb, var(--neutral-0) 40%, transparent);
+  border-color: var(--border-hover);
 }

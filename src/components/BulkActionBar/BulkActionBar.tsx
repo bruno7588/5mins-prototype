@@ -7,7 +7,7 @@ interface BulkActionBarProps {
   /** Selected row count. Drives visibility: the bar slides in above 0, out at 0. */
   count: number
   onClear: () => void
-  /** Action buttons — use the .bulk-bar-btn (--primary / --danger / --outlined) classes. */
+  /** Actions: shared `Button`s (filled primary or danger), and/or a RowActionsMenu "Actions" trigger. */
   children: ReactNode
   /** Word after the count, e.g. "selected". */
   label?: string
@@ -67,7 +67,7 @@ function BulkActionBar({ count, onClear, children, label = 'selected' }: BulkAct
             exit={{ opacity: 0, y: 16 }}
             {...motionProps}
           >
-            <div ref={contentRef} className="bulk-bar-content">
+            <div ref={contentRef} className="bulk-bar-content" data-theme="dark">
               <button className="bulk-bar-close" aria-label="Clear selection" onClick={onClear}>
                 <Add size={20} color="currentColor" style={{ transform: 'rotate(45deg)' }} />
               </button>

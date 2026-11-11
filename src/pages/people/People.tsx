@@ -957,30 +957,29 @@ function People() {
       {/* Tab picks which bar; `count` drives show/hide so it can animate out. */}
       {!isDeactivatedTab && (
         <BulkActionBar count={selectedIds.size} onClear={() => setSelectedIds(new Set())}>
-          <button
-            className="bulk-bar-btn bulk-bar-btn--danger"
+          <Button
+            semantic="danger"
             onClick={() => setModal({ type: 'deactivate-bulk', persons: selectedPeoplePersons })}
           >
             Deactivate {selectedIds.size} {selectedIds.size === 1 ? 'User' : 'Users'}
-          </button>
+          </Button>
         </BulkActionBar>
       )}
 
       {/* ═══ Bulk action bar — Deactivated ═══ */}
       {isDeactivatedTab && (
         <BulkActionBar count={selectedIds.size} onClear={() => setSelectedIds(new Set())}>
-          <button
-            className="bulk-bar-btn bulk-bar-btn--primary"
+          <Button
             onClick={() => setModal({ type: 'reactivate-bulk', persons: selectedPersons })}
           >
             Reactivate {selectedIds.size} {selectedIds.size === 1 ? 'User' : 'Users'}
-          </button>
-          <button
-            className="bulk-bar-btn bulk-bar-btn--danger"
+          </Button>
+          <Button
+            semantic="danger"
             onClick={() => setModal({ type: 'delete-bulk', persons: selectedPersons })}
           >
             Delete {selectedIds.size} Permanently
-          </button>
+          </Button>
         </BulkActionBar>
       )}
 
@@ -1163,7 +1162,8 @@ function People() {
             </div>
             <div className="confirm-modal-actions">
               <Button variant="outlined-2" onClick={closeModal}>Cancel</Button>
-              <Button semantic="danger"
+              <Button
+                semantic="danger"
                 disabled={confirmInput !== 'Delete'}
                 onClick={() => handleDeleteSingle(modal.person)}
               >
@@ -1201,7 +1201,8 @@ function People() {
             </div>
             <div className="confirm-modal-actions">
               <Button variant="outlined-2" onClick={closeModal}>Cancel</Button>
-              <Button semantic="danger"
+              <Button
+                semantic="danger"
                 disabled={confirmInput !== 'Delete'}
                 onClick={() => handleDeleteBulk(modal.persons)}
               >

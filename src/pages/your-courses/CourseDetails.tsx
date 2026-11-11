@@ -733,15 +733,14 @@ function CourseDetails() {
             }
           />
           {/* The filled button is the bar's primary action, so it ends the row. */}
-          <button
-            className="bulk-bar-btn bulk-bar-btn--primary"
+          <Button
             onClick={() => {
               showToast('success', `Reminder sent to ${selected.size} ${selected.size === 1 ? 'learner' : 'learners'}`)
               setSelected(new Set())
             }}
           >
             Send Reminder
-          </button>
+          </Button>
         </BulkActionBar>
 
         {completeTarget && (
