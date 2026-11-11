@@ -1,5 +1,5 @@
 /* Desktop Instructor card — cards.md "Instructor card", Library 5149:27386 (Desktop 6124:3237, Hover 9590:2718).
-   404 x 160; photo 120 wide, full height; info padding 16, gap 12. */
+   404 x 160; square 160 x 160 photo; info padding 16, gap 12. */
 
 .instructor-card {
   box-sizing: border-box;
@@ -32,7 +32,7 @@
 .instructor-card__photo {
   align-self: stretch;
   flex-shrink: 0;
-  width: 120px;
+  width: 160px;
   background-color: var(--border);
   background-size: cover;
   background-position: center;

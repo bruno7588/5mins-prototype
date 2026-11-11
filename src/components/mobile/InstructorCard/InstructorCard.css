@@ -2,7 +2,7 @@
 
 .m-instructor-card {
   width: 100%;
-  min-height: 137px;
+  height: 137px;
   display: flex;
   align-items: center;
   background: var(--cards-background);
@@ -24,7 +24,7 @@
 .m-instructor-card__photo {
   align-self: stretch;
   flex-shrink: 0;
-  width: 120px;
+  width: 137px;
   background-color: var(--border);
   background-size: cover;
   background-position: center;

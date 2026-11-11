@@ -97,6 +97,7 @@ Add new entries here, not in the docs.
 
 ## [cards.md](cards.md)
 
+- 2026-11-11: Instructor card photo made square (was 120px wide, full height): 160 x 160 desktop, 137 x 137 mobile, since most instructor photos are square. Card sizes unchanged, so the info column narrows (desktop 284 to 244, mobile 220 to 203). Library `Card/Instructor` (`5149:27386`) updated in all five variants; mobile card height fixed at 137 in code (was min-height).
 - 2026-10-14: Figma to code updated for the Library settings rework: TEXT and icon swap properties on the card sets, Card/ Category `New` is now a boolean, and every web card has a `State=Focus` variant mapped to `:focus-visible`.
 - 2026-10-14: Cards carry Shadow S in both modes. Figma: Shadow S added to the dark Lesson, Resources, Courses, Instructor, External training and Marketplace sets and their light copies merged (Lesson titles bound to Text-primary); Type thumbnail merged too. Code: `--shadow-card` no longer drops to none in dark, and the Lesson grid tile now carries it (was "no shadow").
 - 2026-10-13: **Pressed (2026-10-13, Bruno's ruling):** a mobile card that is tappable as a whole (`role="button"`, or the program course card's tappable variant) lightens its fill to `--cards-background-hover` while pressed (`:active`, 150ms, none under reduced motion).

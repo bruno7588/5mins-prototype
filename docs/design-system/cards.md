@@ -737,13 +737,14 @@ An instructor presented as a compact horizontal card: photo, name, short bio, an
 | | Desktop | Mobile |
 |---|---|---|
 | Card | 404 x 160 | 340 x 137 |
+| Photo | 160 x 160 | 137 x 137 |
 | Info padding / gap | 16px / 12px | 12px / 16px |
 | Name | Poppins Bold 16px/1.5 | Poppins Bold 14px/1.5 |
 | Bio | Poppins Regular 14px/1.5 | Poppins Regular 12px/1.2 |
 
 Shared anatomy, left to right (horizontal flex, items centered, radius 12px, `overflow: hidden` so the card radius clips the photo, `--cards-background`, Shadow S):
 
-- **Photo** 120px wide, full card height, `object-fit: cover`, no own radius.
+- **Photo** square, the full card height: 160 x 160 desktop, 137 x 137 mobile (instructor photos are mostly square, so they show uncropped). `object-fit: cover`, no own radius.
 - **Info column** fills the rest:
   - **Instructor block**, 8px gap: name in `--text-primary`; bio in `--text-secondary` (clamp to fit: desktop shows ~2 lines, mobile 1-2).
   - **Skills block**, 8px gap, up to 2 rows. Each row: 4px gap, items centered, radius 8px: a **16px skill-category icon** (the multi-color skill icons from `src/assets/skill-icons/`) + label Poppins Regular 12px/1.2 `--text-tertiary`, single line, ellipsis.
