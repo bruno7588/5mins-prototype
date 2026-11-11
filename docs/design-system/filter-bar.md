@@ -72,7 +72,7 @@ A card that holds a list's field filters. The head always shows **Filters** and 
 | Chevron | 16px `ArrowDown2`, `--text-tertiary`, in a 28px circle (hover `--cards-background-hover`); rotates 180° when expanded |
 | Body (expanded) | column, gap `--space-sm` (12); `--space-m` (16) under the head, `--space-sm` (12) when empty |
 | Filter row | 20px field icon (`--text-secondary`), "<Field> is" Regular 14 `--text-primary`, the control, 16px CloseButton remove (hover: `--cards-background-hover` circle, glyph `--text-error`, Tooltip "Remove <Field> filter"); gap `--space-s` (8), min height 37 |
-| Actions | Add Filter + Clear All text buttons, gap `--space-m` (16). Clear All rests `--text-primary`, disabled `--text-disabled` |
+| Actions | Add Filter + Clear All text buttons, gap `--space-m` (16). Clear All rests `--text-primary`, hover and pressed `--text-error`, disabled `--text-disabled` |
 
 The collapsed summary fades out (220ms) while the body opens with `Collapse` (GSAP), so the head never jumps. Reduced motion turns both off.
 
@@ -89,6 +89,7 @@ The collapsed summary fades out (220ms) while the body opens with `Collapse` (GS
 |---|---|
 | Chevron hover | 28px circle `--cards-background-hover` |
 | Row remove hover | `--cards-background-hover` circle, glyph `--text-error` |
+| Clear All hover, pressed | label `--text-error` |
 | Clear All disabled | `--text-disabled`, tooltip "No filters to clear" |
 | Add Filter disabled | tooltip gives the reason ("All filters are already added") |
 | Focus-visible | cyan `--primary-button-background` ring, 2px, offset 2 |

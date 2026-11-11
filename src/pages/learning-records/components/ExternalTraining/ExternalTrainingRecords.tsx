@@ -256,7 +256,7 @@ function ExternalTrainingRecords({ showToast }: Props) {
           <Button
             variant="outlined-2"
             icon={<CsvIcon size={20} color="currentColor" />}
-            onClick={() => showToast('success', 'Downloading current view (CSV)')}
+            onClick={() => showToast('success', 'Downloading CSV')}
           >
             Download Report
           </Button>

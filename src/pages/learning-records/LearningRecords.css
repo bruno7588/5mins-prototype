@@ -225,23 +225,29 @@
   min-width: 0;
 }
 
-/* Keep the DS Badge from being squeezed by a long name; Body Small / Medium (per Figma) */
+/* Keep the DS Badge from being squeezed by a long name. Compact badge (per
+   Figma 12425:4181): 20px tall, Paragraph S regular, so it sits inside the
+   name's 21px line. */
 .lrp-name-row .badge {
   flex-shrink: 0;
+  height: var(--space-ml);
+  padding: 0 var(--space-xss);
   font-size: var(--font-size-sm);
-  line-height: 1.2;
-  font-weight: 500;
-  padding: var(--space-xs) var(--space-s);
+  font-weight: 400;
 }
 
-/* Deactivated rows carry no fill (per Figma) — the dimmed identity text is the
-   signal; the Permanent / Long Leave status shows in the badge/column. */
+/* Deactivated rows carry no fill (per Figma 12425:4212): the name steps down to
+   --text-secondary and every other plain-text cell to --text-tertiary. Badges
+   keep their own colours. */
 .lrp-stack--deactivated .lrp-name {
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
 }
 
+.tbl-row:has(.lrp-stack--deactivated) .tbl-cell,
+.tbl-row:has(.lrp-stack--deactivated) .lrp-date-1,
+.tbl-row:has(.lrp-stack--deactivated) .lrp-date-2,
 .lrp-stack--deactivated .lrp-email {
-  color: var(--text-disabled);
+  color: var(--text-tertiary);
 }
 
 /* Course is the one cell allowed to wrap to a second line. */

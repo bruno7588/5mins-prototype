@@ -152,9 +152,15 @@
   display: inline-flex;
 }
 
-/* Clear All rests in --text-primary (Library); hover, pressed and disabled keep the DS Text ladder. */
+/* Clear All rests in --text-primary (Library) and turns --text-error on hover
+   and press, as it removes every filter; disabled keeps the DS Text ladder. */
 .ds-btn--text.filter-bar__clear:not(:hover):not(:active):not(:disabled) {
   color: var(--text-primary);
+}
+
+.ds-btn--text.filter-bar__clear:hover:not(:disabled),
+.ds-btn--text.filter-bar__clear:active:not(:disabled) {
+  color: var(--text-error);
 }
 
 .filter-bar__toggle:focus-visible,

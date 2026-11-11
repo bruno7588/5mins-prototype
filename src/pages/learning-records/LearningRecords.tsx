@@ -252,15 +252,15 @@ function LearningRecords() {
 
   // Download the report now (prototype: confirms the action).
   const downloadReport = useCallback(
-    (report: SavedReport) => {
-      showToast('success', `Downloading “${report.name}”`)
+    (_report: SavedReport) => {
+      showToast('success', 'Downloading CSV')
     },
     [showToast],
   )
 
   // Quick export of the current table view, without saving a report (prototype).
   const downloadCurrentView = useCallback(() => {
-    showToast('success', 'Downloading current view (CSV)')
+    showToast('success', 'Downloading CSV')
   }, [showToast])
 
   const openCreateReport = useCallback(() => {
@@ -687,7 +687,7 @@ function LearningRecords() {
               <EmptyState
                 illustration={<img src={noResults} alt="" width={72} height={72} />}
                 title="No results"
-                description="Try a different learner or course, or remove a filter."
+                description="Try a different learner or course, or change a filter."
               />
             )
           ) : extTab === 'approved' ? (
