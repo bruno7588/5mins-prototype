@@ -63,7 +63,7 @@ const PEOPLE: Record<string, ProfilePerson> = {
   '5': { name: 'Erik Johansson', role: 'Data Analyst', email: 'erik.j@email.com', avatar: 'EJ' },
 }
 
-const TABS = ['Engagement', 'Skills', 'Course Progress', 'Certificates', 'External Training'] as const
+const TABS = ['Engagement', 'Skills', 'Course Progress', 'External Training'] as const
 type Tab = (typeof TABS)[number]
 
 /* Enrolment lifecycle. Scheduled = start date still ahead, so the learner
@@ -538,6 +538,17 @@ function UserProfile() {
       return next
     })
 
+  /* Prototype download, as on External Training: no certificate file is stored, so this saves a stand-in. */
+  const downloadCourseCertificate = (row: CourseProgress) => {
+    const body = `Certificate for ${row.course}\nLearner: ${person.name}\nCompleted: ${row.completionDate}\n`
+    const url = URL.createObjectURL(new Blob([body], { type: 'text/plain' }))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${row.course} certificate.txt`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const columns: Column<CourseProgress>[] = [
     {
       key: 'course',
@@ -605,6 +616,19 @@ function UserProfile() {
       sortable: true,
       width: '0 0 150px',
       render: (row) => <DateCell value={row.completionDate} />,
+    },
+    {
+      key: 'certificate',
+      header: 'Certificate',
+      width: '0 0 120px',
+      render: (row) =>
+        row.status === 'Completed' ? (
+          <Button size="sm" variant="outlined" onClick={() => downloadCourseCertificate(row)}>
+            Download
+          </Button>
+        ) : (
+          <span className="up-muted">–</span>
+        ),
     },
     {
       key: 'actions',
