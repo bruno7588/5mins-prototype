@@ -4,6 +4,7 @@ import { TickCircle, Trash } from 'iconsax-react'
 import { anchorFor, locate, placeFor, type Anchor } from './commentAnchor'
 import { currentTrail, isReplaying, recordClicks, replayTrail, resetTrail } from './clickTrail'
 import { sendToClaude, type SendResult } from './sendToClaude'
+import { capturePage } from './capturePage'
 import SparkleIcon from '@/components/icons/SparkleIcon'
 import type { NewComment, PrototypeComment } from './useComments'
 import './CommentLayer.css'
@@ -297,7 +298,9 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
             submitLabel="Post"
             onCancel={() => setDraft(null)}
             onSubmit={async (text, author, website) => {
-              const created = await onAdd({ text, author, website, anchor: draft.anchor, place: draft.where, steps: currentTrail() })
+              // A picture of the page with a pin at the click, for the Slack message.
+              const image = await capturePage(draft.x, draft.y)
+              const created = await onAdd({ text, author, website, anchor: draft.anchor, place: draft.where, steps: currentTrail(), image })
               setDraft(null)
               if (created) setOpenId(created.id)
             }}

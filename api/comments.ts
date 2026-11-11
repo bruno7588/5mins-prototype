@@ -16,6 +16,8 @@ const MAX_SELECTOR = 1000
 const MAX_STEPS = 60
 const MAX_PLACE = 140
 const POSTS_PER_MINUTE = 10
+const MAX_IMAGE = 4_000_000 // base64 characters, about 3MB; Vercel caps the request body at 4.5MB
+const IMAGE_PREFIX = 'data:image/jpeg;base64,'
 
 export interface StoredComment {
   id: string
@@ -159,7 +161,9 @@ export async function POST(request: Request) {
   }
   await redis('HSET', keyFor(route), comment.id, JSON.stringify(comment))
   // `slack` reports how the Slack post went ("ok", "off" or Slack's error code), for setup checks.
-  const slack = await notifySlack(comment, request)
+  const rawImage = typeof body.image === 'string' ? body.image : ''
+  const image = rawImage.startsWith(IMAGE_PREFIX) && rawImage.length <= MAX_IMAGE ? rawImage.slice(IMAGE_PREFIX.length) : null
+  const slack = await notifySlack(comment, request, image)
   return json({ comment, slack }, 201)
 }
 
@@ -169,7 +173,7 @@ export async function POST(request: Request) {
    stored on the top-level comment and reused as `thread_ts` for its replies. Without the
    token it falls back to the incoming webhook (SLACK_WEBHOOK_URL), which cannot thread.
    A Slack failure never blocks the comment. */
-async function notifySlack(c: StoredComment, request: Request): Promise<string> {
+async function notifySlack(c: StoredComment, request: Request, image: string | null): Promise<string> {
   const token = process.env.SLACK_BOT_TOKEN
   const channel = process.env.SLACK_CHANNEL_ID
   const webhook = process.env.SLACK_WEBHOOK_URL
@@ -197,15 +201,46 @@ async function notifySlack(c: StoredComment, request: Request): Promise<string> 
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json; charset=utf-8' },
       body: JSON.stringify({ channel, text, thread_ts: threadTs, unfurl_links: false }),
     })
-    const data = (await res.json()) as { ok: boolean; ts?: string; error?: string }
+    const data = (await res.json()) as { ok: boolean; ts?: string; channel?: string; error?: string }
     if (!data.ok) return data.error ?? 'failed'
     if (data.ok && data.ts && !c.parentId) {
       await redis('HSET', keyFor(c.route), c.id, JSON.stringify({ ...c, slackTs: data.ts }))
+    }
+    // The page picture goes into the message's thread. `data.channel` is the real channel id
+    // (a DM id when SLACK_CHANNEL_ID is a member id), which the file upload needs.
+    if (image && data.ts && data.channel) {
+      const imageError = await uploadToSlack(token, data.channel, data.ts, image, c)
+      if (imageError) return `ok (image: ${imageError})`
     }
     return 'ok'
   } catch {
     return 'failed' // the comment is saved either way
   }
+}
+
+/* Slack's three-step upload: ask for an upload URL, send the bytes, attach the file to the
+   thread. Needs the files:write scope. Returns an error code, or null when it worked. */
+async function uploadToSlack(token: string, channel: string, threadTs: string, base64: string, c: StoredComment) {
+  const bytes = Uint8Array.from(atob(base64), (ch) => ch.charCodeAt(0))
+  const auth = { Authorization: `Bearer ${token}` }
+  const start = (await (
+    await fetch('https://slack.com/api/files.getUploadURLExternal', {
+      method: 'POST',
+      headers: { ...auth, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ filename: 'prototype-comment.jpg', length: String(bytes.length) }),
+    })
+  ).json()) as { ok: boolean; upload_url?: string; file_id?: string; error?: string }
+  if (!start.ok || !start.upload_url || !start.file_id) return start.error ?? 'upload failed'
+  const put = await fetch(start.upload_url, { method: 'POST', body: bytes })
+  if (!put.ok) return 'upload failed'
+  const done = (await (
+    await fetch('https://slack.com/api/files.completeUploadExternal', {
+      method: 'POST',
+      headers: { ...auth, 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({ files: [{ id: start.file_id, title: `${c.route} at ${c.viewport.w}x${c.viewport.h}` }], channel_id: channel, thread_ts: threadTs }),
+    })
+  ).json()) as { ok: boolean; error?: string }
+  return done.ok ? null : (done.error ?? 'upload failed')
 }
 
 export async function PATCH(request: Request) {

@@ -25,6 +25,8 @@ export interface NewComment {
   parentId?: string | null
   steps?: string[]
   place?: string
+  /** JPEG data URL of the page when the comment was placed; sent to Slack, never stored. */
+  image?: string
   /** Honeypot; always empty from real people. */
   website?: string
 }
