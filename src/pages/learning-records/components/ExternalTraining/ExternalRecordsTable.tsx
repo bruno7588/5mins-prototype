@@ -144,7 +144,7 @@ function ExternalRecordsTable({ rows, all, showLearner = true, showDuration = tr
     {
       key: 'result',
       header: 'Result',
-      width: '0 0 112px',
+      width: '0 0 128px',
       render: (r) => <Badge type={r.result === 'Passed' ? 'success' : 'error'} icon={false} label={r.result} />,
     },
     {
