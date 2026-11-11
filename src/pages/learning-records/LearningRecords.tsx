@@ -560,7 +560,7 @@ function LearningRecords() {
                 activeKey={extTab}
                 onChange={(key) => setSearchParams(key === 'approved' ? { tab: 'approved-list' } : {})}
                 items={[
-                  { key: 'records', label: 'Records' },
+                  { key: 'records', label: 'Training records' },
                   // Only full admins manage the approved list (DES-336 D21).
                   ...(isFullAdmin() ? [{ key: 'approved', label: 'Approved list' }] : []),
                 ]}

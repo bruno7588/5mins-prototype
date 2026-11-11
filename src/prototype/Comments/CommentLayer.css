@@ -8,6 +8,9 @@
   /* Below the Demos switcher, above the app and PhoneFrame. */
   z-index: 2147481000;
   pointer-events: none;
+  /* The comment cursor is set on the page and inherits; the panel and popovers
+     reset it to the arrow (inputs, buttons and drag handles set their own). */
+  cursor: default;
   font: 400 14px/20px ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   color: #fafafa;
 }
@@ -116,6 +119,8 @@ html.pcm-active *:not([data-inspect-ignore], [data-inspect-ignore] *) {
 
 .pcm-msg__text {
   margin: 2px 0 0;
+  /* Selectable copy: show the text cursor so it reads as such. */
+  cursor: text;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
