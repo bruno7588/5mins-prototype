@@ -32,6 +32,8 @@ export interface StoredComment {
   steps?: string[]
   /** Readable location of the anchor, shown when it cannot be reopened. */
   place?: string
+  /** Slack message id of a top-level comment, so replies post in its thread. Server only. */
+  slackTs?: string
 }
 
 // Same-origin in production; the dev build calls the deployed API cross-origin.
@@ -160,25 +162,45 @@ export async function POST(request: Request) {
   return json({ comment }, 201)
 }
 
-/* New comments and replies go to the #prototype-comments Slack channel through an
-   incoming webhook (SLACK_WEBHOOK_URL). A Slack failure never blocks the comment. */
+/* New comments go to a Slack channel, and replies land in the same Slack thread, so the
+   commenter sees the answer where they were told about the comment. Uses a bot token
+   (SLACK_BOT_TOKEN + SLACK_CHANNEL_ID): chat.postMessage returns the message `ts`, which is
+   stored on the top-level comment and reused as `thread_ts` for its replies. Without the
+   token it falls back to the incoming webhook (SLACK_WEBHOOK_URL), which cannot thread.
+   A Slack failure never blocks the comment. */
 async function notifySlack(c: StoredComment, request: Request) {
+  const token = process.env.SLACK_BOT_TOKEN
+  const channel = process.env.SLACK_CHANNEL_ID
   const webhook = process.env.SLACK_WEBHOOK_URL
-  if (!webhook) return
+  if (!(token && channel) && !webhook) return
   const origin = new URL(request.url).origin
   const link = `${origin}${c.route}?comment=${c.parentId ?? c.id}`
   const action = c.parentId ? 'replied on' : 'commented on'
   // Slack treats <...> as links and mentions (<!channel>), so viewer text is escaped.
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   const quote = esc(c.text).split('\n').map((line) => `> ${line}`).join('\n')
+  const text = `*${esc(c.author)}* ${action} \`${esc(c.route)}\`\n${quote}\n<${link}|Open in prototype>`
   try {
-    await fetch(webhook, {
+    if (!(token && channel)) {
+      await fetch(webhook!, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) })
+      return
+    }
+    // A reply threads under its parent's Slack message, when that message exists.
+    let threadTs: string | undefined
+    if (c.parentId) {
+      const raw = (await redis('HGET', keyFor(c.route), c.parentId)) as string | null
+      threadTs = raw ? (JSON.parse(raw) as StoredComment).slackTs : undefined
+    }
+    const res = await fetch('https://slack.com/api/chat.postMessage', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text: `*${esc(c.author)}* ${action} \`${esc(c.route)}\`\n${quote}\n<${link}|Open in prototype>`,
-      }),
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({ channel, text, thread_ts: threadTs, unfurl_links: false }),
     })
+    const data = (await res.json()) as { ok: boolean; ts?: string; error?: string }
+    if (!data.ok) console.error('Slack chat.postMessage failed:', data.error)
+    if (data.ok && data.ts && !c.parentId) {
+      await redis('HSET', keyFor(c.route), c.id, JSON.stringify({ ...c, slackTs: data.ts }))
+    }
   } catch {
     /* the comment is saved either way */
   }
