@@ -666,7 +666,7 @@ function MyTeam() {
           </header>
 
           {currentTab === 'engagement' && <EngagementTab />}
-          {currentTab === 'learning-records' && <LearningRecordsTab />}
+          {currentTab === 'learning-records' && <LearningRecordsTab showToast={toast.show} />}
 
           {currentTab === 'course-tracker' && <section className="mt-course-progress" aria-label="Course Progress">
             <ContentSwitcher

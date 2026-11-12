@@ -101,6 +101,18 @@
   text-decoration: none;
 }
 
+/* The whole learner cell is the link: the anchor's hit area stretches over the cell.
+   A sticky cell already positions it; otherwise the cell does. */
+.lret-learner-cell:not(.is-sticky) {
+  position: relative;
+}
+
+.lret-learner-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
 .lret-learner-link .primary {
   display: block;
   font-weight: 500;
@@ -108,6 +120,12 @@
 
 .lret-learner-link:hover .primary,
 .lret-learner-link:focus-visible .primary {
+  color: var(--primary-button-background-hover);
+}
+
+/* The email turns with the name on row hover. */
+.tbl-row:hover .lret-learner-cell .supporting,
+.lret-learner-link:focus-visible ~ .supporting {
   color: var(--primary-button-background-hover);
 }
 

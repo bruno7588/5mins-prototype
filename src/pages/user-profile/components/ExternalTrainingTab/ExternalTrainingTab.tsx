@@ -80,7 +80,7 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast, addButto
 
   return (
     <div className="uet">
-      {rows.length > 0 && !(canAddTraining && !addButtonTarget) && <div className="uet-toolbar">{downloadAll}</div>}
+      {!isLearner && rows.length > 0 && !(canAddTraining && !addButtonTarget) && <div className="uet-toolbar">{downloadAll}</div>}
       {rows.length > 0 && canAddTraining && (() => {
         const addButton = (
           /* Filled on the learner Profile's tabs row; outlined on the admin profile. */

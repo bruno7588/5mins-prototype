@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState, type ReactNode } from 'react'
-import { Book1, Buildings2, Calendar, Category, Global, People, Profile, TickCircle } from 'iconsax-react'
+import { Book1, Buildings2, Calendar, Category, DocumentDownload, Global, People, Profile, TickCircle } from 'iconsax-react'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import CsvIcon from '../../components/icons/CsvIcon'
 import Button from '../../components/Button/Button'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
@@ -394,7 +395,7 @@ const RESULT_OPTIONS: Option[] = [
   { value: 'Not Passed', label: 'Not Passed' },
 ]
 
-function LearningRecordsTab() {
+function LearningRecordsTab({ showToast }: { showToast: (type: 'success', message: string) => void }) {
   const [activeChip, setActiveChip] = useState<ChipType>('5mins')
   const [query, setQuery] = useState('')
   const { records } = useExternalTraining()
@@ -448,6 +449,8 @@ function LearningRecordsTab() {
         dueRank(dueState(a, records)) - dueRank(dueState(b, records)) || b.completionDate.localeCompare(a.completionDate),
     )
 
+  const withCertificate = teamRecords.filter((r) => r.certificate).length
+
   const noResultsState = (
     <EmptyState
       illustration={<img src={noResults} alt="" width={72} height={72} />}
@@ -480,6 +483,19 @@ function LearningRecordsTab() {
           <Button variant="outlined-2" icon={<CsvIcon size={20} color="currentColor" />}>
             Download Report
           </Button>
+          {activeChip === 'external' && (
+            /* Every certificate the table lists, as one ZIP. The prototype stores no files, so it confirms with a toast. */
+            <Tooltip text="No certificates to download" icon={false} disabled={withCertificate > 0}>
+              <Button
+                variant="outlined-2"
+                icon={<DocumentDownload size={20} color="currentColor" variant="Linear" />}
+                disabled={!withCertificate}
+                onClick={() => showToast('success', `Downloading ${withCertificate} certificate${withCertificate === 1 ? '' : 's'}`)}
+              >
+                Download Certificates
+              </Button>
+            </Tooltip>
+          )}
         </div>
       </div>
 

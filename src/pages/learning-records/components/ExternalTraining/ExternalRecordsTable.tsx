@@ -71,7 +71,7 @@ function ExternalRecordsTable({ rows, all, showLearner = true, showDuration = tr
             key: 'learner',
             header: 'Learner',
             width: '0 0 240px',
-            cellClassName: learnerHref ? 'is-link' : undefined,
+            cellClassName: learnerHref ? 'is-link lret-learner-cell' : undefined,
             render: (r: ExternalRecord) => {
               const p = personById(r.personId)
               const href = learnerHref?.(r.personId) ?? null
