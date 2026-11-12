@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Edit2 } from 'iconsax-react'
+import { Edit } from 'iconsax-react'
+import Button from '@/components/Button/Button'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
-import Tooltip from '@/components/Tooltip/Tooltip'
 import EmailEditorModal, { type EmailEditorTarget } from './email/EmailEditorModal'
 import {
   INVITE_DEFAULT,
@@ -114,16 +114,14 @@ function WelcomeEmailsCard({ emails, onChange }: Props) {
                   <span className="welcome-row__sub">{e.sub}</span>
                 </div>
                 <span className="course-reminders-row__actions">
-                  <Tooltip text={`Edit ${e.name}`} icon={false}>
-                    <button
-                      type="button"
-                      className="course-reminders-row__icon-btn"
-                      onClick={() => setEditing(e.key)}
-                      aria-label={`Edit ${e.name}`}
-                    >
-                      <Edit2 size={20} color="currentColor" variant="Linear" />
-                    </button>
-                  </Tooltip>
+                  <Button
+                    variant="text"
+                    icon={<Edit size={20} color="currentColor" variant="Linear" />}
+                    onClick={() => setEditing(e.key)}
+                    aria-label={`Edit ${e.name}`}
+                  >
+                    Edit
+                  </Button>
                 </span>
               </div>
             ))}
