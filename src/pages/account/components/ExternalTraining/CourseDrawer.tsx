@@ -51,7 +51,6 @@ function CourseDrawer({ open, course, initialName = '', onClose, onSaved }: Prop
   const [submitted, setSubmitted] = useState(false)
 
   const recordCount = course ? records.filter((r) => r.courseId === course.id).length : 0
-  const ruleChanged = !!course && (retrains ? months : null) !== course.retrainingMonths
   const renamed = !!course && name.trim() !== '' && name.trim() !== course.name
 
   const providerOptions = providers
@@ -95,7 +94,11 @@ function CourseDrawer({ open, course, initialName = '', onClose, onSaved }: Prop
         open={open}
         onClose={onClose}
         title={course ? 'Edit course' : 'Add course'}
-        subtitle="Courses on the approved list can be recorded on people's profiles and in uploads."
+        subtitle={
+          course && recordCount > 0
+            ? `Expiry changes apply to new records only. The ${recordCount} existing record${recordCount === 1 ? '' : 's'} keep their expiry dates.`
+            : "Courses on the approved list can be recorded on people's profiles and in uploads."
+        }
         footer={<Button onClick={save}>{course ? 'Save Changes' : 'Save Course'}</Button>}
       >
         <div className="aet-form">
@@ -187,12 +190,6 @@ function CourseDrawer({ open, course, initialName = '', onClose, onSaved }: Prop
                 disabled={!retrains}
               />
             </div>
-            {ruleChanged && recordCount > 0 && (
-              <Alert
-                type="Callout"
-                message={`Changes apply to new records only. The ${recordCount} existing record${recordCount === 1 ? '' : 's'} keep their expiry dates.`}
-              />
-            )}
           </div>
 
           {otherNames.length > 0 && (
