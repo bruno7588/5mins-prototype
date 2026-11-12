@@ -5,7 +5,6 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
 import { arriveTransition } from '@/components/AIWorkingCard/arrive'
 import Alert from '@/components/Alert/Alert'
-import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import Checkbox from '@/components/Checkbox/Checkbox'
 import CloseButton from '@/components/CloseButton/CloseButton'
@@ -21,7 +20,6 @@ import '@/pages/account/components/ExternalTraining/ExternalTraining.css'
 import {
   courseThumb,
   TRAINING_PEOPLE,
-  dueState,
   formatDay,
   isFullAdmin,
   newId,
@@ -364,13 +362,6 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
     : course && completionDate
       ? retrainingDueDate(completionDate, retrains ? months : null, result)
       : null
-  const preview: ExternalRecord | null = completionDate
-    ? {
-        id: '_preview', personId, courseId, providerId, completionDate,
-        retrainingDueDate: dueDate, result, score: null, certificate: null, source: 'manual',
-      }
-    : null
-  const due = preview ? dueState(preview, []) : null
 
   const errors = {
     learner: personId ? '' : 'Select a learner',
@@ -752,14 +743,13 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
                           suffix="months"
                           disabled={!retrains}
                         />
+                        {/* The date the rule gives, on the stepper's row. */}
+                        {dueDate && (
+                          <div className="aetd-due" role="status">
+                            <span className="aetd-value">Expires {formatDay(dueDate)}</span>
+                          </div>
+                        )}
                       </div>
-                      {dueDate && (
-                        <div className="aetd-due" role="status">
-                          <span className="aetd-value">Expires {formatDay(dueDate)}</span>
-                          {due === 'overdue' && <Badge type="error" label="Overdue" />}
-                          {due === 'due-soon' && <Badge type="warning" label="Due soon" />}
-                        </div>
-                      )}
                     </div>
                   ))}
 

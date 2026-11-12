@@ -5,7 +5,6 @@ import Button from '@/components/Button/Button'
 import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
 import Table, { type Column } from '@/components/Table/Table'
 import {
-  dueState,
   formatDay,
   personById,
   recordDurationLabel,
@@ -41,24 +40,11 @@ export function downloadCertificate(r: ExternalRecord) {
 }
 
 export function RetrainingDueCell({ record, all }: { record: ExternalRecord; all: ExternalRecord[] }) {
+  /* Plain date, no Overdue / Due badge (Divjot, 2026-11-12): a status on every row
+     reads wrong once a record has been renewed. `all` stays for callers. */
+  void all
   if (!record.retrainingDueDate) return <span className="lret-dash">–</span>
-  const state = dueState(record, all)
-  return (
-    <span className="tbl-stack">
-      {/* Overdue and due soon put the date inside the badge, with the state as words
-          ("Overdue May 12, 2026", "Due Nov 10, 2026"), so it never rests on colour alone. */}
-      <span className="primary">
-        {state === 'overdue' || state === 'due-soon' ? (
-          <Badge
-            type={state === 'overdue' ? 'error' : 'warning'}
-            label={`${state === 'overdue' ? 'Overdue' : 'Due'} ${formatDay(record.retrainingDueDate)}`}
-          />
-        ) : (
-          <DateCell iso={record.retrainingDueDate} />
-        )}
-      </span>
-    </span>
-  )
+  return <DateCell iso={record.retrainingDueDate} />
 }
 
 interface Props {
