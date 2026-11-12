@@ -295,7 +295,9 @@ Darkens on interaction in **both** modes:
                                 color: var(--text-error); border-color: var(--text-error); } /* light #DF1642 / dark Danger-400 #E95C7B */
 .btn-danger-outlined:active   { background: transparent;
                                 color: var(--button-danger-hover); border-color: var(--button-danger-pressed); } /* text and border differ, per Figma */
-.btn-danger-text     { background: transparent; border: none; padding: 0; color: var(--danger-500); }
+.btn-danger-text     { background: transparent; border: none; padding: 0; color: var(--text-error); }
+.btn-danger-text:hover  { color: var(--text-error-hover); }   /* light Danger-600 / dark Danger-300 */
+.btn-danger-text:active { color: var(--button-danger-pressed); }
 ```
 
 #### Warning (caution actions)
@@ -495,7 +497,7 @@ Everything else is the plain Loading state: disabled background, 20px `currentCo
 
 **Outlined chrome:** `--text-button-outlined`, `--text-button-hover`, `--text-disabled` (values in the Outlined table above).
 
-**Danger:** `--danger-500`, `--button-danger-hover` (Danger-600 `#9C0F2E`), `--button-danger-pressed` (Danger-700 `#59091A`), `--text-error` (light `#DF1642` / dark Danger-400 `#E95C7B`).
+**Danger:** `--danger-500`, `--button-danger-hover` (Danger-600 `#9C0F2E`), `--button-danger-pressed` (Danger-700 `#59091A`), `--text-error` (light `#DF1642` / dark Danger-400 `#E95C7B`), `--text-error-hover` (light Danger-600 `#9C0F2E` / dark Danger-300 `#F2A2B3`, Danger Text hover).
 
 **Warning** (Figma Library variables):
 

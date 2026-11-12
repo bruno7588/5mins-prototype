@@ -57,7 +57,7 @@ The prototype ships **light and dark mode**: light values live in `src/styles/to
 | Filled-button label | `--text-button-foreground` |
 | Selected tab/chip - border/fill vs label | `--selected` vs `--text-selected` |
 | Label sitting ON the amber fill | `--text-on-selected` (weight 500) |
-| Success / warning / error text | `--text-success` / `--text-warning` / `--text-error` |
+| Success / warning / error text | `--text-success` / `--text-warning` / `--text-error` (hover `--text-error-hover`) |
 | Progress labels | `--text-progress` |
 | Quiz badges | `--blaze-quiz` `--flash-poll` `--lesson-quiz` `--certificate-quiz` `--course-assessments` |
 | Success / warning / error badge fill | 16% tint of `--success-500` / `--warning-500` / `--danger-500`, same in both modes ([badges.md](badges.md)) |
@@ -249,6 +249,7 @@ Backgrounds, borders, and button fills.
 | Text-success | `--text-success` | Success-500 `#18A957` | Success-600 `#11763D` | Success messages, completed labels |
 | Text-warning | `--text-warning` | Warning-500 `#FFA538` | Warning-600 `#E88206` | Warning messages, deadline labels; warning-outlined button hover chrome |
 | Text-error | `--text-error` | Danger-400 `#E95C7B` | Danger-500 `#DF1642` | Error messages, failed validation |
+| Text-error-hover | `--text-error-hover` | Danger-300 `#F2A2B3` | Danger-600 `#9C0F2E` | Hover on the Danger Text button |
 | Text-selected | `--text-selected` | Secondary-500 `#FFBB38` | Secondary-600 `#EDA30D` | Selected tab label, active chip label |
 | code only | `--text-on-selected` | Neutral-800 `#20222A` | Neutral-800 `#20222A` | Knockout label ON the amber `--selected` fill - chips, switcher pills, selected menu options, selected day cells. Mode-invariant; pair with weight 500 |
 | Text-progress | `--text-progress` | Primary-500 `#00CEE6` | Primary-700 `#008393` | Progress labels, "In Progress", step counters |

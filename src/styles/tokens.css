@@ -137,6 +137,7 @@
   --text-success: var(--success-600);
   --text-warning: var(--warning-600);
   --text-error: var(--danger-500);
+  --text-error-hover: var(--danger-600);
   --text-selected: var(--secondary-600);
   /* Knockout label on the amber --selected fill (chips, switcher pills, selected
      menu options, selected day cells). Mode-invariant: the fill is the same amber
@@ -283,6 +284,7 @@
   --text-success: var(--success-500);
   --text-warning: var(--warning-500);
   --text-error: var(--danger-400);
+  --text-error-hover: var(--danger-300);
   --text-selected: var(--secondary-500);
   --text-progress: var(--primary-500);
   --text-quiz: var(--warning-200);
