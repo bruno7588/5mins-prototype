@@ -457,7 +457,7 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
         subtitle="Record training done outside 5Mins against an approved course."
         footer={
           !blocked && (
-            <Button onClick={save} disabled={reading || hasErrors}>
+            <Button onClick={save} loading={reading} disabled={hasErrors}>
               {editing || duplicate ? 'Update Training' : 'Add Training'}
             </Button>
           )
