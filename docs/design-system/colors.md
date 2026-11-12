@@ -60,7 +60,7 @@ The prototype ships **light and dark mode**: light values live in `src/styles/to
 | Success / warning / error text | `--text-success` / `--text-warning` / `--text-error` (hover `--text-error-hover`) |
 | Progress labels | `--text-progress` |
 | Quiz badges | `--blaze-quiz` `--flash-poll` `--lesson-quiz` `--certificate-quiz` `--course-assessments` |
-| Success / warning / error badge fill | 16% tint of `--success-500` / `--warning-500` / `--danger-500`, same in both modes ([badges.md](badges.md)) |
+| Success / warning / error badge fill | `--badge-success-background` / `--badge-warning-background` / `--badge-danger-background` (16% tint of the 500 colour), same in both modes ([badges.md](badges.md)) |
 
 ### The three-amber system
 
@@ -263,7 +263,8 @@ Backgrounds, borders, and button fills.
 | `--selected-tint` | `rgba(237, 163, 13, 0.15)` | `rgba(255, 187, 56, 0.15)` | Highlight fill derived from `--selected` (table rows use `--selected-row`) |
 | `--selected-tint-hover` | `rgba(237, 163, 13, 0.24)` | `rgba(255, 187, 56, 0.24)` | Hover state of `--selected-tint` rows |
 | `--primary-button-background-ghost` | Primary-500 @ 16% | same | Library Surface colours `Primary-Button-background-ghost`: Outlined and Outlined-2 hover fill, In progress badge |
-| `--alert-background` | Warning-500 @ 12% | same | Library Surface colours `Alert-background`: Alert banner and Warning badge |
+| `--alert-background` | Warning-500 @ 12% | same | Library Surface colours `Alert-background`: Alert banner |
+| `--badge-success-background` / `--badge-warning-background` / `--badge-danger-background` | Success-500 / Warning-500 / Danger-500 @ 16% | same | Library Surface colours `Badge-success-background` / `Badge-warning-background` / `Badge-danger-background`: Success, Warning and Error badge fills |
 | `--success-tint` / `--warning-tint` / `--primary-tint` / `--danger-tint` / `--ai-tint` / `--course-assessments-tint` | the 500 colour (Blaze, Course assessments) @ 16% | same | Status backgrounds behind badges, chips and callouts. For another opacity use `color-mix(in srgb, var(--success-500) 32%, transparent)` |
 | `--selected-fill` | Secondary-100 `#FFF8EB` | Secondary-800 `#33250B` | Opaque fill for sticky cells over scrolling content |
 | `--selected-fill-hover` | `#FDECC5` | `rgba(255, 187, 56, 0.24)` | Hover state of `--selected-fill` / selected rows. The dark value is a translucent stand-in pending designer review |

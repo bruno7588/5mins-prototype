@@ -175,12 +175,16 @@
   /* Status tints: the 16% fills behind badges, chips and callouts. Identical in both modes. */
   --success-tint: rgba(24, 169, 87, 0.16); /* Success-500 @ 16% */
   --warning-tint: rgba(255, 165, 56, 0.16); /* Warning-500 @ 16% */
-  /* Surface colours (Library): Alert-background, Warning-500 @ 12%. The Alert banner and the
-     Warning badge. */
+  /* Surface colours (Library): Alert-background, Warning-500 @ 12%. The Alert banner. */
   --alert-background: rgba(255, 165, 56, 0.12);
   --alert-warning-background: var(--alert-background);
   --primary-tint: rgba(0, 206, 230, 0.16); /* Primary-500 @ 16% */
   --danger-tint: rgba(223, 22, 66, 0.16); /* Danger-500 @ 16% */
+  /* Surface colours (Library): Badge-success / -warning / -danger-background, the 500 colour
+     @ 16%. The Success, Warning and Error badge fills; identical in both modes. */
+  --badge-success-background: var(--success-tint);
+  --badge-warning-background: var(--warning-tint);
+  --badge-danger-background: var(--danger-tint);
   --ai-tint: rgba(129, 88, 236, 0.16); /* Blaze @ 16% */
   --course-assessments-tint: rgba(42, 144, 216, 0.16); /* Course assessments @ 16% */
   --selected-tint-hover: rgba(237, 163, 13, 0.24); /* hover state of --selected-tint rows */

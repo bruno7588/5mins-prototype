@@ -6,6 +6,7 @@ Add new entries here, not in the docs.
 
 ## Library-wide
 
+- 2026-11-12: Three Surface colours added in the Library for badge fills: `Badge-success-background`, `Badge-warning-background` and `Badge-danger-background` (Success-500 / Warning-500 / Danger-500 @ 16%, both modes; `--badge-success-background`, `--badge-warning-background`, `--badge-danger-background`). The Success, Warning and Error badges use them. The Warning badge is back to 16% (was `Alert-background` at 12%); `Alert-background` is now the Alert banner only.
 - 2026-11-12: Danger menu items (RowActionsMenu `danger`) colour their supporting text `--text-error` as well as the label and icon (was `--text-tertiary`); disabled danger items stay `--text-disabled`.
 - 2026-11-12: Alert and Callout with supporting text: the action moved from under the text to the far right, centred on the alert, 24px from the text (was under the supporting text, 8px below). Library variants and the shared Alert component updated.
 - 2026-11-12: Text buttons (Text, Danger / Warning / Success Text) with an icon: Medium icon gap is now 4px (`--space-xs`, was 8px), matching Small; Large keeps 8px. The four Medium Loading variants aligned in the Library.

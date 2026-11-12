@@ -49,9 +49,9 @@
 
 /* Fills are 16% tints of the type's 500 colour and do not change per mode;
    text tokens resolve per mode (see badges.md colour table). */
-.badge--success      { background: var(--success-tint);  color: var(--text-success); }
-.badge--warning      { background: var(--alert-background); color: var(--text-warning); }
-.badge--error        { background: var(--danger-tint);  color: var(--text-error); }
+.badge--success      { background: var(--badge-success-background);  color: var(--text-success); }
+.badge--warning      { background: var(--badge-warning-background); color: var(--text-warning); }
+.badge--error        { background: var(--badge-danger-background);  color: var(--text-error); }
 .badge--in-progress  { background: var(--primary-button-background-ghost);  color: var(--text-progress); }
 .badge--informative  { background: var(--input-background); color: var(--text-secondary); }
 .badge--new          { background: var(--danger-400); color: var(--neutral-25); }

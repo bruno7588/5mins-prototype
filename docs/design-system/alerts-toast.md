@@ -153,7 +153,7 @@ Alert and Callout are static; only the action and the close × are interactive. 
 | Token | Used for |
 |---|---|
 | `--input-background` | Callout surface |
-| `--alert-background` (Warning-500 @ 12%) | Alert surface (also the Warning badge) |
+| `--alert-background` (Warning-500 @ 12%) | Alert surface |
 | `--text-warning` | Alert glyph, title, message |
 | `--text-primary` / `--text-secondary` | Title and one-line message / supporting text, Callout icon, close × |
 | `--radius-sm`, `--space-sm`, `--space-m`, `--space-xs`, `--space-s` | radius, padding, icon gap, title gap, action gap |

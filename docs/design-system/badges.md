@@ -166,13 +166,13 @@ The ✕ is io5 `IoCloseOutline` as drawn in the Library: a 1px stroked path in a
 
 ## Variants
 
-Fills are literal 16% tints of the type's 500-level colour and are **the same in both modes** (Informative uses the mode-aware `--input-background`). Text is a semantic token that resolves per mode; icons inherit it via `currentColor`.
+Fills are 16% tints of the type's 500-level colour and are **the same in both modes**. Success, Warning and Error use the Library Surface colours `Badge-success-background`, `Badge-warning-background` and `Badge-danger-background` (`--badge-*-background`); In Progress uses `--primary-button-background-ghost`; Informative uses the mode-aware `--input-background`. Text is a semantic token that resolves per mode; icons inherit it via `currentColor`.
 
 | Type | Fill (both modes) | Text token | Light | Dark | Leading icon (Iconsax Linear) | Default label |
 |------|-------------------|------------|-------|------|-------------------------------|---------------|
-| **Success** | `rgba(24, 169, 87, 0.16)` Success-500 | `--text-success` | `#11763D` | `#18A957` | `TickCircle` | Success |
-| **Warning** | `rgba(255, 165, 56, 0.16)` Warning-500 | `--text-warning` | `#E88206` | `#FFA538` | `InfoCircle` | Warning |
-| **Error** | `rgba(223, 22, 66, 0.16)` Danger-500 | `--text-error` | `#DF1642` | `#E95C7B` | `Danger` | Error |
+| **Success** | `var(--badge-success-background)` Success-500 @ 16% | `--text-success` | `#11763D` | `#18A957` | `TickCircle` | Success |
+| **Warning** | `var(--badge-warning-background)` Warning-500 @ 16% | `--text-warning` | `#E88206` | `#FFA538` | `InfoCircle` | Warning |
+| **Error** | `var(--badge-danger-background)` Danger-500 @ 16% | `--text-error` | `#DF1642` | `#E95C7B` | `Danger` | Error |
 | **In Progress** | `rgba(0, 206, 230, 0.16)` Primary-500 | `--text-progress` | `#008393` | `#00CEE6` | `TaskSquare` | In Progress |
 | **Informative** | `var(--input-background)` Neutral @ 16% | `--text-secondary` | `#454C5E` | `#BFC2CC` | `InfoCircle` ¹ | Information |
 | **New** | `var(--danger-400)` `#E95C7B` **solid** | `--neutral-25` | `#F9F9FA` | `#F9F9FA` | none, never | New |
