@@ -143,7 +143,7 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast, addButto
               'success',
               isLearner
                 ? `${name} ${isNew ? 'added to' : 'updated in'} your records`
-                : isNew ? `${name} added for ${personName}` : `${name} updated for ${personName}`,
+                : isNew ? `${name} added for ${personName}` : `${name} updated`,
             )
           }}
         />
@@ -160,7 +160,7 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast, addButto
               <h2 className="confirm-modal-title">
                 Delete {recordTrainingName(toDelete)} from {personById(toDelete.personId)?.name ?? personName}'s profile?
               </h2>
-              <p className="confirm-modal-body">The record and its certificate are removed and can't be recovered.</p>
+              <p className="confirm-modal-body">The record will be removed and can't be recovered.</p>
             </div>
             <div className="confirm-modal-actions">
               <Button variant="outlined-2" onClick={() => setToDelete(null)}>

@@ -266,7 +266,7 @@ function ExternalTrainingRecords({ showToast }: Props) {
             saveRecord(r)
             closeDrawer()
             const who = personById(r.personId)?.name ?? ''
-            showToast('success', isNew ? `${recordTrainingName(r)} added for ${who}` : `${recordTrainingName(r)} updated for ${who}`)
+            showToast('success', isNew ? `${recordTrainingName(r)} added for ${who}` : `${recordTrainingName(r)} updated`)
           }}
         />
       )}
@@ -294,7 +294,7 @@ function ExternalTrainingRecords({ showToast }: Props) {
               <h2 className="confirm-modal-title">
                 Delete {recordTrainingName(toDelete)} from {personById(toDelete.personId)?.name}'s profile?
               </h2>
-              <p className="confirm-modal-body">The record and its certificate are removed and can't be recovered.</p>
+              <p className="confirm-modal-body">The record will be removed and can't be recovered.</p>
             </div>
             <div className="confirm-modal-actions">
               <Button variant="outlined-2" onClick={() => setToDelete(null)}>
