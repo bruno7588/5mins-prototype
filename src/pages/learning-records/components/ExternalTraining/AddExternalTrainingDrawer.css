@@ -189,15 +189,16 @@
   outline-offset: 2px;
 }
 
-/* The preview's close sits in the top-right corner of the screen: --input-background
-   disc (the full-screen close), icon in --text-primary so it reads over the scrim. */
+/* The preview's close sits in the top-right corner of the screen: Neutral-900 at 50%
+   with a Neutral-25 icon, as the thumbnail's old preview badge. */
 .close-btn--fullscreen.aetd-cert-full__close {
   position: fixed;
   z-index: 1;
   top: var(--space-l);
   right: var(--space-l);
-  background: var(--input-background);
-  color: var(--text-primary);
+  /* Reads on any certificate and on the scrim, in both modes: a dark glass disc. */
+  background: color-mix(in srgb, var(--neutral-900) 50%, transparent);
+  color: var(--neutral-25);
 }
 
 

@@ -97,6 +97,34 @@ const MAX_PREVIEW_PAGES = 10
 
 /* A PDF certificate's pages as PNG data URLs (up to MAX_PREVIEW_PAGES), plus its page count.
    pdf.js loads only when a PDF is picked. */
+/* A saved record keeps only its certificate's file name in the prototype, so the box
+   draws a stand-in page (learner, course, provider, date) for the thumbnail and preview.
+   Production shows the stored file. Colours are certificate artwork, not UI. */
+function standInCertificate(learner: string, course: string, provider: string, date: string): string {
+  const c = document.createElement('canvas')
+  c.width = 1200
+  c.height = 848
+  const g = c.getContext('2d')
+  if (!g) return ''
+  g.fillStyle = '#FFFFFF'
+  g.fillRect(0, 0, c.width, c.height)
+  g.strokeStyle = '#C9A43A'
+  g.lineWidth = 28
+  g.strokeRect(14, 14, c.width - 28, c.height - 28)
+  g.fillStyle = '#20222A'
+  g.textAlign = 'center'
+  const line = (text: string, y: number, size: number, weight = 400) => {
+    g.font = `${weight} ${size}px Poppins, sans-serif`
+    g.fillText(text, c.width / 2, y)
+  }
+  line('Certificate of Completion', 270, 64, 700)
+  line('This certifies that', 350, 30)
+  line(learner, 440, 56, 700)
+  line(`has completed ${course}`, 520, 32)
+  line(`${provider} · ${date}`, 580, 28)
+  return c.toDataURL('image/png')
+}
+
 async function pdfPages(file: File): Promise<{ pages: string[]; total: number }> {
   const pdfjs = await import('pdfjs-dist')
   const { default: workerSrc } = await import('pdfjs-dist/build/pdf.worker.min.mjs?url')
@@ -132,6 +160,19 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
   // url: page 1, for the box. pages: what the preview stacks. total: the file's page count.
   const [certificateFile, setCertificateFile] = useState<{ url: string; pages: string[]; total: number } | null>(null)
   useEffect(() => () => { if (certificateFile) URL.revokeObjectURL(certificateFile.url) }, [certificateFile])
+  // A saved certificate gets a stand-in image, so the box shows a thumbnail and opens the preview.
+  useEffect(() => {
+    const r = initialRecord
+    if (!r?.certificate) return
+    const url = standInCertificate(
+      personById(r.personId)?.name ?? '',
+      courses.find((c) => c.id === r.courseId)?.name ?? '',
+      providers.find((p) => p.id === r.providerId)?.name ?? '',
+      formatDay(r.completionDate),
+    )
+    if (url) setCertificateFile({ url, pages: [url], total: 1 })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const [reading, setReading] = useState(false)
   const [read, setRead] = useState<Read | null>(null)
   /* A file the drawer can't take (type or size): it isn't kept or read. */
@@ -749,7 +790,7 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
                         {/* The date the rule gives, on the stepper's row. */}
                         {dueDate && (
                           <div className="aetd-due" role="status">
-                            <span className="aetd-value">Expires {formatDay(dueDate)}</span>
+                            <span className="aetd-value">{formatDay(dueDate)}</span>
                           </div>
                         )}
                       </div>
