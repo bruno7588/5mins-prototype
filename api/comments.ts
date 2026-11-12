@@ -238,7 +238,7 @@ async function notifySlack(c: StoredComment, request: Request, image: string | n
       return 'ok (webhook)'
     }
     // A reply also goes to everyone else in its thread, as a direct message.
-    const dmNote = c.parentId ? await notifyThread(c, token, channel, text) : ''
+    const dmNote = c.parentId ? await notifyThread(c, token, channel, text, image) : ''
     // The owner wrote this reply themselves: nothing to tell them.
     if (c.parentId && c.slackUserId === channel) return `ok${dmNote}`
     // A reply threads under its parent's Slack message, when that message exists.
@@ -261,7 +261,7 @@ async function notifySlack(c: StoredComment, request: Request, image: string | n
     // conversation without opening the thread. `data.channel` is the real channel id (a DM
     // id when SLACK_CHANNEL_ID is a member id), which the file upload needs.
     if (image && data.ts && data.channel) {
-      const imageError = await uploadToSlack(token, data.channel, image, c)
+      const imageError = await uploadToSlack(token, data.channel, image, c, threadTs)
       if (imageError) return `ok (image: ${imageError})`
     }
     return `ok${dmNote}`
@@ -273,7 +273,7 @@ async function notifySlack(c: StoredComment, request: Request, image: string | n
 /* A reply is sent as a Slack DM to everyone else in its thread: whoever wrote the original
    comment and anyone who replied, but not the reply's own author and not the owner (who
    gets every comment through SLACK_CHANNEL_ID already). Returns a note for the status. */
-async function notifyThread(c: StoredComment, token: string, owner: string, text: string): Promise<string> {
+async function notifyThread(c: StoredComment, token: string, owner: string, text: string, image: string | null): Promise<string> {
   const all = parseHash((await redis('HGETALL', keyFor(c.route))) as string[] | null)
   const thread = all.filter((x) => x.id !== c.id && (x.id === c.parentId || x.parentId === c.parentId))
   const mine = emailOf(c)
@@ -298,16 +298,22 @@ async function notifyThread(c: StoredComment, token: string, owner: string, text
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json; charset=utf-8' },
       body: JSON.stringify({ channel: id, text, unfurl_links: false }),
     })
-    const data = (await res.json()) as { ok: boolean; error?: string }
-    if (data.ok) sent++
-    else failed = data.error ?? 'failed'
+    const data = (await res.json()) as { ok: boolean; channel?: string; error?: string }
+    if (data.ok) {
+      sent++
+      // The page picture follows the DM, as on the channel message.
+      if (image && data.channel) {
+        const imageError = await uploadToSlack(token, data.channel, image, c)
+        if (imageError) failed = `image: ${imageError}`
+      }
+    } else failed = data.error ?? 'failed'
   }
   return ` (dm: ${sent} sent${failed ? `, ${failed}` : ''})`
 }
 
 /* Slack's three-step upload: ask for an upload URL, send the bytes, share the file in the
    conversation. Needs the files:write scope. Returns an error code, or null when it worked. */
-async function uploadToSlack(token: string, channel: string, base64: string, c: StoredComment) {
+async function uploadToSlack(token: string, channel: string, base64: string, c: StoredComment, threadTs?: string) {
   const bytes = Uint8Array.from(atob(base64), (ch) => ch.charCodeAt(0))
   const auth = { Authorization: `Bearer ${token}` }
   const start = (await (
@@ -324,7 +330,12 @@ async function uploadToSlack(token: string, channel: string, base64: string, c: 
     await fetch('https://slack.com/api/files.completeUploadExternal', {
       method: 'POST',
       headers: { ...auth, 'Content-Type': 'application/json; charset=utf-8' },
-      body: JSON.stringify({ files: [{ id: start.file_id, title: `${c.route} at ${c.viewport.w}x${c.viewport.h}` }], channel_id: channel }),
+      body: JSON.stringify({
+        files: [{ id: start.file_id, title: `${c.route} at ${c.viewport.w}x${c.viewport.h}` }],
+        channel_id: channel,
+        // A reply's picture stays in its thread, under the reply.
+        ...(threadTs && { thread_ts: threadTs }),
+      }),
     })
   ).json()) as { ok: boolean; error?: string }
   return done.ok ? null : (done.error ?? 'upload failed')

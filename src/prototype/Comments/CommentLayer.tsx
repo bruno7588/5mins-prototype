@@ -408,7 +408,10 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
             placeholder="Reply"
             submitLabel="Reply"
             onSubmit={async (text, author, website) => {
-              await onAdd({ text, author, email: author, website, parentId: open.id })
+              // The same page picture as a new comment, pinned where this thread sits, so the
+              // Slack reply shows what it is about. No pin on screen → no picture.
+              const image = openAt ? await capturePage(openAt.x, openAt.y) : undefined
+              await onAdd({ text, author, email: author, website, parentId: open.id, image })
             }}
           />
         </div>
