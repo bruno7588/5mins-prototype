@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Add, Danger, DocumentDownload } from 'iconsax-react'
+import { Add, Danger, ImportCurve } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
@@ -68,8 +68,8 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast, addButto
   const downloadAll = (
     <Tooltip text="No certificates to download" icon={false} disabled={withCertificate > 0}>
       <Button
-        variant="outlined-2"
-        icon={<DocumentDownload size={20} color="currentColor" variant="Linear" />}
+        variant="outlined"
+        icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
         disabled={!withCertificate}
         onClick={() => showToast('success', `Downloading ${withCertificate} certificate${withCertificate === 1 ? '' : 's'}`)}
       >

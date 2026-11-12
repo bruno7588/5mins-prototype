@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
 import { useHeaderTheme } from '@/data/brandTheme'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { ArrowDown, ArrowDown2, DocumentDownload, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus, Mobile, Add, FlashCircle } from 'iconsax-react'
+import { ArrowDown, ArrowDown2, ImportCurve, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus, Mobile, Add, FlashCircle } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Badge from '../../components/Badge/Badge'
@@ -729,7 +729,7 @@ function UserProfile() {
                   <Tooltip text="No certificates to download" icon={false} disabled={n > 0}>
                     <Button
                       variant="outlined-2"
-                      icon={<DocumentDownload size={20} color="currentColor" variant="Linear" />}
+                      icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
                       disabled={!n}
                       onClick={() => showToast('success', `Downloading ${n} certificate${n === 1 ? '' : 's'}`)}
                     >

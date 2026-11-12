@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState, type ReactNode } from 'react'
-import { Book1, Buildings2, Calendar, Category, DocumentDownload, Global, People, Profile, TickCircle } from 'iconsax-react'
+import { Book1, Buildings2, Calendar, Category, ImportCurve, Global, People, Profile, TickCircle } from 'iconsax-react'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import CsvIcon from '../../components/icons/CsvIcon'
 import Button from '../../components/Button/Button'
@@ -487,8 +487,8 @@ function LearningRecordsTab({ showToast }: { showToast: (type: 'success', messag
             /* Every certificate the table lists, as one ZIP. The prototype stores no files, so it confirms with a toast. */
             <Tooltip text="No certificates to download" icon={false} disabled={withCertificate > 0}>
               <Button
-                variant="outlined-2"
-                icon={<DocumentDownload size={20} color="currentColor" variant="Linear" />}
+                variant="outlined"
+                icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
                 disabled={!withCertificate}
                 onClick={() => showToast('success', `Downloading ${withCertificate} certificate${withCertificate === 1 ? '' : 's'}`)}
               >
