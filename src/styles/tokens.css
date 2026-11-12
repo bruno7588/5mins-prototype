@@ -163,7 +163,10 @@
   --button-outline-hover: rgba(0, 206, 230, 0.16); /* Primary-500 @ 16% — generic Outlined/Text button hover/active tint; translucent so it reads correctly in both light & dark (DS buttons.md) */
   /* Outlined-button fill ladder (buttons.md 2026-08-04): transparent rest → 16% hover → transparent pressed */
   --button-outline-fill: transparent;
-  --button-outline-fill-hover: rgba(0, 206, 230, 0.16); /* Primary-500 @ 16% */
+  /* Surface colours (Library): Primary-Button-background-ghost, Primary-500 @ 16%. The fill
+     behind Outlined / Outlined-2 on hover and the In progress badge. */
+  --primary-button-background-ghost: rgba(0, 206, 230, 0.16);
+  --button-outline-fill-hover: var(--primary-button-background-ghost);
   --button-outline-fill-pressed: transparent;
   --button-outline-fill-disabled: transparent;
   --selected: var(--secondary-600);
@@ -171,7 +174,10 @@
   /* Status tints: the 16% fills behind badges, chips and callouts. Identical in both modes. */
   --success-tint: rgba(24, 169, 87, 0.16); /* Success-500 @ 16% */
   --warning-tint: rgba(255, 165, 56, 0.16); /* Warning-500 @ 16% */
-  --alert-warning-background: rgba(255, 165, 56, 0.12); /* Warning-500 @ 12%: Alert banner fill (Library Alert 3658:32304) */
+  /* Surface colours (Library): Alert-background, Warning-500 @ 12%. The Alert banner and the
+     Warning badge. */
+  --alert-background: rgba(255, 165, 56, 0.12);
+  --alert-warning-background: var(--alert-background);
   --primary-tint: rgba(0, 206, 230, 0.16); /* Primary-500 @ 16% */
   --danger-tint: rgba(223, 22, 66, 0.16); /* Danger-500 @ 16% */
   --ai-tint: rgba(129, 88, 236, 0.16); /* Blaze @ 16% */

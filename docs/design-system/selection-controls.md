@@ -148,9 +148,10 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 |---|---|---|---|---|
 | Toggle | true / false | `checked` | `true` / `false` | On / Off |
 | State | Enabled / Focus | n/a | CSS `:focus-visible` | ring around the track; axis added 2026-10-14 |
+| Size | Medium / Small | `size` | `'md'` (default) / `'sm'` | Small is the compact 16px-high toggle; see Sizes |
 
 - **Figma only:** none.
-- **Code only:** `size` (`'md' | 'sm'`), `label`, `labelPosition` (`'left' | 'right'`), `disabled` and the disabled states, `className`.
+- **Code only:** `label`, `labelPosition` (`'left' | 'right'`), `live`, `disabled` and the disabled states, `className`.
 
 ### Props
 
@@ -211,12 +212,14 @@ Checkbox has three checked variants: Not checked, Checked (tick) and Indetermina
 
 ## Sizes
 
-Checkbox and Radio have one size. Toggle has two:
+Checkbox and Radio have one size. Toggle has two, both in the Library (`Size` property):
 
-| Size | Track | Track radius | Thumb | Thumb travel |
-|---|---|---|---|---|
-| `md` (default) | 36 × 20 px | 10 px | 16 × 16 px | 16 px |
-| `sm` | 28 × 16 px | 8 px | 12 × 12 px | 12 px |
+| Figma Size | Code `size` | Track | Track radius | Thumb | Thumb travel | Focus ring |
+|---|---|---|---|---|---|---|
+| Medium (default) | `md` | 36 × 20 px | 10 px | 16 × 16 px | 16 px | 44 × 28 px |
+| Small (compact) | `sm` | 28 × 16 px | 8 px | 12 × 12 px | 12 px | 36 × 24 px |
+
+The thumb sits 2px inside the track in both sizes. Use Small where a 20px track would set the row height: menu items, settings cards, table toolbars and other dense rows.
 
 ## States
 

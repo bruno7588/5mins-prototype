@@ -25,7 +25,7 @@ Pick by persistence and placement:
 | Purpose | guidance / tips | warnings needing attention | action feedback | nonessential context |
 | Dismissal | persistent | persistent | auto (~5s) | on leave/blur |
 | Fill | translucent neutral | Warning-500 @ 12% tint | solid semantic colour | `--tooltip-background` |
-| Type scale | Regular/Medium 14 | Regular 16 (title Bold 14) | **Bold 16** | Regular 14 |
+| Type scale | Regular 14 (title SemiBold 14) | SemiBold 14 one line; title SemiBold 14 + Regular 14 | **Bold 16** | Regular 14 |
 
 - Use **Callout** for tips, guidance, onboarding hints, feature announcements.
 - Use **Alert** for system warnings, expiring content, required actions.
@@ -64,12 +64,12 @@ Inline banners: one React component, `type="Callout"` or `type="Alert"`.
 - Keep the button label short (1-2 words) and in Title Case
 
 **Don't**
-- Don't hand-roll a grey guidance box with its own colours; the Callout is `--text-secondary` on `--input-background`
+- Don't hand-roll a grey guidance box with its own colours; use the Callout
 - Don't use `supportingText`; it is not a prop in code
 - Don't use both `illustration` and `icon` together in Callout; pick one
-- Don't mix the button styles: a one-line Callout uses a text button on the right, a Callout with a body an outlined button below it; the Alert's text button is `--text-warning`
+- Don't swap the action style: a Callout uses the Text button, an Alert the Filled Warning button
 
-**Canonical spec:** background `var(--input-background)`; radius `var(--radius-sm)` (12px); padding `var(--space-s) var(--space-sm)` (8px 12px), with or without a body; gap `var(--space-s)` (8px); text 14px Regular `var(--text-secondary)`, title 14px SemiBold, 8px above the body; icon 20px. Button: one line, a text button on the right (Medium 14, `--text-primary`, 24px from the message); with a body, an outlined button 16px below it (`--border-elevated`, `8px 16px`, Bold 14). Figma: Library `EC26cSVe9KNTCWXvYovakw`, Alert `3658:32304`.
+**Canonical spec:** see [Shared spec](#shared-spec); background `var(--input-background)`, icon `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, Alert `3658:32304`.
 
 #### Alert
 
@@ -91,13 +91,13 @@ Inline banners: one React component, `type="Callout"` or `type="Alert"`.
 - Use `title` + `message` when the warning needs a headline and an explanation
 - `message` takes a node when part of it needs weight, e.g. a SemiBold course name in running text
 - Show one Alert at a time in a drawer or modal; when two apply, show the one the admin must fix first
-- Use `button` for the fix; it renders a text button (Medium 14, `--text-warning`, no underline), label in Title Case
+- Use `button` for the fix; it renders a Filled Warning button, label in Title Case
 
 **Don't**
 - Don't pass `bullets`; the Alert type ignores them; use `title` + `message`
 - Don't hardcode the warning colour; use `var(--text-warning)` (resolves per mode)
 
-**Canonical spec:** background `var(--alert-warning-background)` (Warning-500 at 12%); radius `var(--radius-sm)` (12px); padding `var(--space-s) var(--space-sm)` (8px 12px); gap `var(--space-s)` (8px) icon to text, 24px to the button; text `var(--text-warning)`: one line without a title is Paragraph M SemiBold (14px / 600), a title is 14px SemiBold over a 14px Regular message; icon 20px; button Medium 14 `--text-warning`, no underline. Figma: Library `EC26cSVe9KNTCWXvYovakw`, Alert `3658:32304`.
+**Canonical spec:** see [Shared spec](#shared-spec); background `var(--alert-background)` (Warning-500 at 12%, Library Surface colours `Alert-background`), warning glyph `--text-warning`; a one-line Alert without a title is Paragraph M SemiBold. Figma: Library `EC26cSVe9KNTCWXvYovakw`, Alert `3658:32304`.
 
 ### Figma to code
 
@@ -107,7 +107,7 @@ Inline banners: one React component, `type="Callout"` or `type="Alert"`.
 | Illustration | false / true | `illustration` | `false` (default) / `true` | in code, Alert only: a bell before the text. For a Callout illustration, pass it as `customIcon` |
 | Icon | false / true | `icon` | `false` (default) / `true` | the platform `InfoIcon` (20px on Callout, 24px on Alert). For the Alert warning triangle, pass Iconsax `Danger` Bold as `customIcon`. Use icon *or* illustration, not both |
 | Button | false / true | `button` | `false` (default) / `true` | label from `buttonLabel`, handler `onButtonClick` |
-| Supporting text | false / true | n/a | `title` + `bullets` (Callout) or `title` + `message` (either type) | no 1:1 prop; these render the body |
+| Supporting text | false / true | n/a | `title` + `message` (both types) or `title` + `bullets` (Callout) | no 1:1 prop; these render the body. Alert gained Supporting text on 2026-11-11 |
 | Title | text | `title` | string | the title line of a Supporting text variant, and the Alert line |
 | Message | text | `message` | string | the single line of a Callout without Supporting text |
 | Body | text | `bullets` (Callout) or `message` | string[] / string | the body under the title in Supporting text variants |
@@ -115,7 +115,7 @@ Inline banners: one React component, `type="Callout"` or `type="Alert"`.
 | Warning glyph | instance swap (default `Danger` Bold) | `customIcon` | ReactNode | Alert icon slot; Iconsax `Danger` Bold, `color="currentColor"` |
 
 - **Figma only:** `Supporting text` as a boolean (code has no `supportingText` prop).
-- **Code only:** `buttonLabel` (set on the nested Buttons instance in Figma), `onButtonClick`, `onClose` (renders a 24px close × at row end), `className`. The `title` + `message` body (title + paragraph instead of bullets, 2px gap) is a code extension; keep it.
+- **Code only:** `buttonLabel` (set on the nested Buttons instance in Figma), `onButtonClick`, `onClose` (renders a 24px close × at row end), `className`.
 
 **Production:**
 
@@ -124,138 +124,46 @@ Inline banners: one React component, `type="Callout"` or `type="Alert"`.
 | Callout | _to be mapped by engineering_ | | |
 | Alert | _to be mapped by engineering_ | | |
 
-### Anatomy
+### Shared spec
 
-All variants use `12px 16px` padding, rising to `16px` all round when a title/bullets body is present.
-
-#### Callout (left → right)
+Both types follow common practice across mature design systems (Polaris Banner, Atlassian Section message, Carbon inline notification, Apple HIG): one padding, the icon on the first line, the title and supporting text read as one group, and one action. The Callout is neutral (Text-primary / Text-secondary, Text button); the Alert keeps every line in `--text-warning` with a Filled Warning button.
 
 ```
-[ icon? ] [ text / body ] [ outlined button? ] [ close? ]
+One line:        [ icon ] [ message ...................... ] [ Action ] [ × ]
+Supporting text: [ icon ] [ Title                          ]            [ × ]
+                          [ Supporting text                ]
+                          [ Action ]
 ```
 
-```
-Background:    var(--input-background)          /* translucent, per mode */
-Border-radius: 12px   (--radius-sm)
-Padding:       12px 16px  (--space-sm --space-m); 16px (--space-m) with a body
-Gap:           8px    (--space-s)
-Text:          Poppins 14px / 1.5, Regular, var(--text-secondary)
-Alignment:     center (single line)  →  flex-start (with a body)
-```
-
-- **icon**: 20×20px, `shrink-0`; `icon` renders the platform `InfoIcon`, `customIcon` renders any node (use it for an illustration)
-- **text area**: `flex: 1; min-width: 0`, contains either:
-  - Simple: single `<p>` 14px Regular `--text-secondary`
-  - Body: title `<p>` 14px **Medium** + `<ul>` 14px Regular bullets (21px indent, 4px apart) or a message `<p>`; column gap 8px (2px between title and message)
-- **button**: always outlined; at the row end with no body, or inside the body 8px below the text
-
-Callout button:
-
-```css
-border: 1px solid var(--text-primary);
-border-radius: 12px;             /* --radius-sm */
-padding: 8px 16px;               /* --space-s --space-m */
-color: var(--text-primary);
-font: 700 14px/1.5 Poppins;      /* no underline */
-background: transparent;
-/* hover: background var(--page-background-hover) */
-```
-
-#### Alert (left → right)
-
-```
-[ icon? / bell? ] [ message, or title + message ] [ underline button? ] [ close? ]
-```
-
-```
-Background:    var(--alert-warning-background)   /* Warning-500 @ 12%, same in both modes */
-Border-radius: 12px   (--radius-sm)
-Padding:       12px 16px  (--space-sm --space-m); 16px with title + message
-Gap:           12px icon → text; 24px between info area and button
-Text:          Poppins 16px / 1.5, Regular (400), var(--text-warning);
-               with title + message: title 14px SemiBold, message 14px Regular
-```
-
-- **bell**: `illustration` renders a 🔔 emoji in a 21×21px box, `shrink-0`; hidden when `icon` is set
-- **icon**: warning triangle, Iconsax `Danger` **Bold**, 24px, passed as `customIcon`; the `icon` prop renders the 24px `InfoIcon` instead
-- **text**: `message` alone renders one 16px Regular line in `--text-warning`; `title` + `message` renders a 14px **Bold** title over a 14px Regular message. A `title` without `message` renders nothing
-- **button**: text button (Medium 14, no underline), right of the text
-
-Alert button:
-
-```css
-color: var(--text-warning);
-font: 700 16px/1.5 Poppins;
-text-decoration: underline;
-text-decoration-skip-ink: none;
-background: transparent;
-border: none;
-padding: 0;
-margin-left: 12px;   /* + the row's 12px gap = 24px */
-```
-
-#### Key values from `Alert.css`
-
-- Body column (`.alert__body`) gap `var(--space-s)` (8px), tightened to `var(--space-xxs)` (2px) between a title and message; bullets sit `var(--space-xs)` (4px) apart with a 21px indent
-- The Callout's outlined button sits inside the body, 8px below the text; with no body it sits at the row end
-- The Alert's text button (Medium 14) adds a 16px left margin to the row's 8px gap, so it is 24px from the text
-- `onClose` adds a 24px circular dismiss button at the row end
-
-### Variants
-
-#### Callout variants
-
-All variants share the same `12px 16px` padding (`16px` with a body).
-
-| Leading | Body (`title` + `bullets`/`message`) | button | Layout notes |
-|---|---|---|---|
-| none | ✗ | ✗ | Text only |
-| `customIcon` (illustration) | ✗ | ✗ | Illustration + text |
-| `icon` | ✗ | ✗ | Info icon + text |
-| any | ✗ | ✓ | + **outlined** button at row end |
-| any | ✓ | ✗ | Title + bullets or message, align top |
-| any | ✓ | ✓ | … + **outlined** button below (8px gap) |
-
-#### Alert variants
-
-| Prop | Leading element |
+| Part | Spec |
 |---|---|
-| none | none, `message` only |
-| `illustration` | bell emoji (21px box) |
-| `icon` | platform `InfoIcon` (24px) |
-| `customIcon` | any node; pass Iconsax `Danger` Bold (24px) for the warning triangle |
-
-The text is always `message`, or `title` + `message`; a `title` on its own renders nothing. Each can carry the text button on the right (24px gap).
+| Container | radius `var(--radius-sm)` (12px); padding `var(--space-sm) var(--space-m)` (12px 16px) in every variant; no border |
+| Icon | 20px; centred on a one-line row, on the first line with supporting text; 12px (`--space-sm`) to the text |
+| Title | Paragraph M SemiBold (14 / 600); Callout `--text-primary`, Alert `--text-warning` |
+| Supporting text | 14px, 4px (`--space-xs`) under the title; Callout Paragraph M Regular `--text-secondary`, Alert Paragraph M Medium `--text-warning`; bullets 21px indent, 4px apart |
+| One-line message | Callout: Paragraph M Regular, `--text-primary`. Alert: Paragraph M SemiBold, `--text-warning` |
+| Action | Callout: shared `Button variant="text"`; Alert: `Button variant="filled" semantic="warning"` (Medium). One line: on the right, 24px from the message; with supporting text: under it, 8px below, lined up with the text |
+| Close × (`onClose`) | 24px round button at the row end, `--text-secondary`, `--text-primary` on hover |
 
 ### States
 
-Alert and Callout are static; only their buttons are interactive.
-
-| Element | Rest | Hover | Focus-visible |
-|---|---|---|---|
-| Callout outlined button | transparent, 1px `--text-primary` border | `var(--page-background-hover)` fill | 2px `--primary-button-background` outline, 2px offset |
-| Alert text button | `--text-warning`, no underline | no hover style | 2px `--primary-button-background` outline, 2px offset |
-| Close × (`onClose`) | transparent 24px circle | `var(--page-background-hover)` | 2px `--primary-button-background` outline, 2px offset |
+Alert and Callout are static; only the action and the close × are interactive. The action has the Text button states ([buttons.md](buttons.md)); the close × fills `--page-background-hover` on hover; both show the 2px `--primary-button-background` ring on focus-visible.
 
 ### Tokens
 
-| Token | Light mode | Dark mode | Used for |
-|---|---|---|---|
-| `--input-background` | `#BFC2CC` @ 16% | `#454C5E` @ 16% | Callout background |
-| `--alert-warning-background` (`rgba(255,165,56,0.12)`) | same | same | Alert background (Warning-500 @ 12%) |
-| `--text-secondary` | Neutral-500 `#454C5E` | Neutral-200 `#BFC2CC` | Callout text |
-| `--text-warning` | Warning-600 `#E88206` | Warning-500 `#FFA538` | Alert text + button |
-| `--text-primary` | Neutral-800 `#20222A` | Neutral-25 `#F9F9FA` | Callout button border + label |
-| `--page-background-hover` | per mode | per mode | Callout button and close hover |
-| `--radius-sm` | 12px | - | Container and outlined button radius |
-| `--space-sm` / `--space-m` | 12px / 16px | - | Container padding (vertical / horizontal); `--space-m` all round with a body |
-| `--space-s` / `--space-l` | 8px / 24px | - | Callout body↔button gap / Alert info↔button gap (12px gap + 12px margin) |
+| Token | Used for |
+|---|---|
+| `--input-background` | Callout surface |
+| `--alert-background` (Warning-500 @ 12%) | Alert surface (also the Warning badge) |
+| `--text-warning` | Alert glyph, title, message |
+| `--text-primary` / `--text-secondary` | Title and one-line message / supporting text, Callout icon, close × |
+| `--radius-sm`, `--space-sm`, `--space-m`, `--space-xs`, `--space-s` | radius, padding, icon gap, title gap, action gap |
 
 ### Accessibility
 
-- The close × is a button named "Dismiss".
-- The bell emoji is decorative (`aria-hidden`).
-- Alert text and button use `--text-warning`, which resolves per mode for contrast; never a hardcoded colour.
+- Callout text is `--text-primary` / `--text-secondary`. Alert text is `--text-warning` on its tint, which measures about 2.4:1 in light mode, under the 4.5:1 AA minimum; keep Alert copy short and paired with the warning glyph.
+- The warning glyph and the word in the title carry the meaning together; colour is never the only signal.
+- The close × is a button named "Dismiss". The bell emoji is decorative (`aria-hidden`).
 
 ### Examples
 
@@ -266,7 +174,7 @@ import Alert from '@/components/Alert/Alert'
 // Callout: one line with the info icon
 <Alert icon message="Learners see this change the next time they open the course." />
 
-// Callout with a body and an outlined button below it
+// Callout with a body and a text button under it
 <Alert
   icon
   title="What happens:"

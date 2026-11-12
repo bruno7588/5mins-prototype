@@ -80,7 +80,7 @@ All colours are semantic tokens. Both light- and dark-mode resolutions are liste
 | AI feature | Filled (gradient) | AI | Medium |
 | Mark complete | Filled | Success | Medium |
 
-**Canonical spec:** height Small 33px / Medium 41px / Large 48px; radius `var(--radius-sm)` (12px); Poppins Bold 12px / 14px / 16px; Medium padding 10px `var(--space-ml)` (20px); icon gap `var(--space-xs)` (4px) Small, `var(--space-s)` (8px) Medium and Large. Filled `var(--primary-button-background)` with `var(--text-button-foreground)` label; Outlined-2 `var(--border-elevated)` 1px border with `var(--text-primary)` label; disabled `var(--button-background-disabled)` + `var(--text-button-disabled)`; focus 2px `var(--primary-button-background)` outline, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `10825:3269` (parent frame `5453:38273`).
+**Canonical spec:** height Small 33px / Medium 41px / Large 48px; radius `var(--radius-sm)` (12px); Poppins Bold 12px / 14px / 16px (H6 / H5 / H4); Link is Paragraph S / M / L medium, underlined; Medium padding 10px `var(--space-ml)` (20px); icon gap `var(--space-xs)` (4px) Small, `var(--space-s)` (8px) Medium and Large. Filled `var(--primary-button-background)` with `var(--text-button-foreground)` label; Outlined-2 `var(--border-elevated)` 1px border with `var(--text-primary)` label; disabled `var(--button-background-disabled)` + `var(--text-button-disabled)`; focus 2px `var(--primary-button-background)` outline, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `10825:3269` (parent frame `5453:38273`).
 
 ## Figma to code
 
@@ -233,7 +233,7 @@ Neutral at rest: `--border-elevated` hairline + `--text-primary` label, transpar
 
 ### Text
 
-No background, border, or padding, just the bold label. Same chrome ladder as Outlined:
+No background, border, or padding, just the label. Same chrome ladder as Outlined:
 
 ```css
 .btn-text {
@@ -249,7 +249,7 @@ No background, border, or padding, just the bold label. Same chrome ladder as Ou
 
 ### Link
 
-Use for navigation-like actions within content. No box, no padding, no icon. Link is **Medium (500), not Bold**, it takes the **Filled button's colour ladder** rather than the Text/Outlined chrome ladder, and the underline **skips descenders** (`skip-ink: auto`).
+Use for navigation-like actions within content. No box, no padding, no icon. Link is **Medium (500), not Bold**, and the only underlined button; it takes the **Filled button's colour ladder** rather than the Text/Outlined chrome ladder, and the underline **skips descenders** (`skip-ink: auto`).
 
 | Size | Text style | Font | Line height |
 |---|---|---|---|
@@ -421,7 +421,7 @@ The ring is drawn as a **masked pseudo-element**, not a border: the button is tr
 
 ## Sizes
 
-All sizes share `border-radius: var(--radius-sm)` (12px) and Poppins **Bold** labels (Link is Medium, see Variants).
+All sizes share `border-radius: var(--radius-sm)` (12px) and Poppins **Bold** labels: H4 (Large, 16), H5 (Medium, 14), H6 (Small, 12). Link is the exception: Paragraph L / M / S medium, underlined.
 
 | Size | Height | Padding (no icon) | Padding (with icon) | Icon gap | Font | Icon |
 |------|--------|-------------------|---------------------|----------|------|------|

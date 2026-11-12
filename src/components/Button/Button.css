@@ -16,6 +16,7 @@
   border: var(--btn-bw) solid transparent;
   border-radius: var(--radius-sm); /* 12px */
   font-family: 'Poppins', sans-serif;
+  /* Labels are Bold: H4 / H5 / H6 (16 / 14 / 12) by size. Link is the exception (Medium, underlined). */
   font-weight: 700;
   line-height: 1.5;
   white-space: nowrap;
@@ -95,7 +96,7 @@
   border-color: var(--text-button-outlined);
 }
 .ds-btn--outlined:hover:not(:disabled) {
-  background: var(--button-outline-fill-hover);
+  background: var(--primary-button-background-ghost);
   color: var(--text-button-hover);
   border-color: var(--text-button-hover);
 }
@@ -117,7 +118,7 @@
   border-color: var(--border-elevated);
 }
 .ds-btn--outlined-2:hover:not(:disabled) {
-  background: var(--button-outline-fill-hover);
+  background: var(--primary-button-background-ghost);
   color: var(--text-button-hover);
   border-color: var(--text-button-hover);
 }

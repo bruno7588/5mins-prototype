@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react'
 import InfoIcon from '../icons/InfoIcon'
+import Button from '../Button/Button'
 import './Alert.css'
 
 export type AlertType = 'Callout' | 'Alert'
@@ -39,6 +40,10 @@ function Alert({
   const hasTitleAndMessage = !!title && !!message
   const hasBody = hasTitleAndMessage || (!isAlert && (!!title || hasBullets))
   const showIcon = icon || !!customIcon
+  /* The action: a Text button on the Callout, a Filled Warning button on the Alert (Library). */
+  const actionStyle = isAlert
+    ? ({ variant: 'filled', semantic: 'warning' } as const)
+    : ({ variant: 'text' } as const)
 
   return (
     <div
@@ -70,30 +75,22 @@ function Alert({
               ))}
             </ul>
           )}
-          {button && !isAlert && (
-            <button
-              type="button"
-              className="alert__btn alert__btn--outlined"
-              onClick={onButtonClick}
-            >
+          {/* With supporting text the action sits under it, lined up with the text. */}
+          {button && (
+            <Button {...actionStyle} className="alert__action alert__action--below" onClick={onButtonClick}>
               {buttonLabel}
-            </button>
+            </Button>
           )}
         </div>
       ) : (
         message && <p className="alert__message">{message}</p>
       )}
 
-      {button && (!hasBody || isAlert) && (
-        <button
-          type="button"
-          className={`alert__btn ${
-            isAlert ? 'alert__btn--inline' : 'alert__btn--text'
-          }`}
-          onClick={onButtonClick}
-        >
+      {/* One line: the action sits on the right. */}
+      {button && !hasBody && (
+        <Button {...actionStyle} className="alert__action" onClick={onButtonClick}>
           {buttonLabel}
-        </button>
+        </Button>
       )}
 
       {onClose && (

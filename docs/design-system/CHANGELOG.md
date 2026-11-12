@@ -6,6 +6,7 @@ Add new entries here, not in the docs.
 
 ## Library-wide
 
+- 2026-11-11: Two Surface colours added in the Library: `Primary-Button-background-ghost` (Primary-500 @ 16%, `--primary-button-background-ghost`) for the Outlined / Outlined-2 hover fill and the In progress badge, and `Alert-background` (Warning-500 @ 12%, `--alert-background`) for the Alert banner and the Warning badge (Warning badge was 16%). `--button-outline-fill-hover` and `--alert-warning-background` now point at them.
 - 2026-11-11: Bulk action bar synced to the Library component (`12632:98`): content pinned to dark tokens (`data-theme="dark"` on `.bulk-bar-content`), shadow `--shadow-xl` (was a custom two-layer shadow), count `--text-secondary`, divider `--border-elevated` (was white at 16%), filled actions are now the shared `Button` (Medium, 41px; were `.bulk-bar-btn--primary` / `--danger` at 8px 12px), Actions trigger at Dropdown medium (37px) with `--border-elevated` and `--border-hover` (was white at 24% and 40%).
 - 2026-11-11: Learner web app shell is responsive. Under 1200px the side panel collapses to a 72px icon rail (labels become the flyout tooltip on hover and focus; profile card shrinks to its settings icon). Under 600px the top nav and side panel are replaced by `LearnerMobileNav` (src/components/LearnerMobileNav): bottom tab bar (Home, Search, Progress, Feed, More), a More menu (Admin, Your Workspace, Profile, Knowledge Hub, Dark Mode, Log Out) and a dismissible "Get the full experience on the app" banner. My Team is the first page body tuned for both sizes; tables scroll sideways. Web app side menu hover is `--input-background`, matching Admin (was `--input-background-hover`).
 - 2026-11-11: Summary stat synced to the Library (`12636:76`): label `--text-tertiary` (was `--text-secondary`); Inline icon 24px (was 32px) with an 8px gap to the value (was 12px); Inline value line height 1 (was 1.5). New doc summary-stat.md.
@@ -21,6 +22,8 @@ Add new entries here, not in the docs.
 
 ## [alerts-toast.md](alerts-toast.md)
 
+- 2026-11-11: Alert follow-up from Bruno's Library edits: Alert text back to `--text-warning` (title and message), the Alert action is a Filled Warning button (Medium), and the action sits 8px under the supporting text on both types.
+- 2026-11-11: Alert and Callout redesigned to industry practice (Polaris, Atlassian, Carbon, Apple HIG): text is neutral (title `--text-primary`, supporting text `--text-secondary`; the Alert's warning colour stays on the tint and the glyph only, fixing 2.43:1 contrast); padding 12px 16px everywhere (was 8px 12px); icon gap 12px (was 8px); title to supporting text 4px (was 8px); the action is the shared Text button in every variant (was outlined below a body, `--text-warning` on Alert), 12px under supporting text; Alert gained Supporting text variants (title + message, with or without an action); Button=false variants no longer show a button. The Roles HRIS banner override was removed.
 - 2026-11-06: Alert and Callout synced to the Library Alert (`3658:32304`): padding 8px 12px in every variant (was 12px 16px, 16px with a body); icon 20px (Alert was 24px); title SemiBold (Callout was Medium, Alert Bold) with 8px to the body; one-line Alert text without a title is Paragraph M SemiBold 14 (was Regular 16); Alert button Medium 14 with no underline (was Bold 16, underlined); one-line Callout button is a text button on the right (was outlined); outlined Callout button border `--border-elevated` (was `--text-primary`), 16px below the body.
 - 2026-11-06: Alert background Warning-500 at 12% via the new `--alert-warning-background` token (was `--warning-tint`, 16%).
 - 2026-11-06: `message` accepts a ReactNode. Rule added: one Alert at a time in a drawer or modal.
@@ -62,6 +65,7 @@ Add new entries here, not in the docs.
 
 ## [buttons.md](buttons.md)
 
+- 2026-11-11: Button labels set by size in the Library: H4 / H5 / H6 (Bold 16 / 14 / 12) for every variant except Link, which is Paragraph L / M / S medium and the only underlined button (many variants had the wrong size or style). The Library Buttons set gained the missing sizes (58 variants, e.g. Text / Warning / Medium) so every variant and state has Large, Medium and Small, and is laid out in rows: one per Variant + Semantic (+ icon), each Large | Medium | Small with the states in fixed columns.
 - 2026-10-14: `semantic="ai"` is accepted only with `variant="filled"` or `"outlined"` (props type); the unstyled AI text and link combinations are gone.
 - 2026-10-14: Figma Buttons `Configuration` (16 values) split into `Variant` and `Semantic`, matching the code props one-to-one. Description updated.
 - 2026-10-14: Figma Buttons gained the 95 missing Small variants (Warning, Success, Danger families in filled, outlined and text, plus states), built from the Medium twins with Small spacing, radius, text style and icon size.
@@ -328,6 +332,7 @@ Add new entries here, not in the docs.
 
 ## [selection-controls.md](selection-controls.md)
 
+- 2026-11-11: Toggle gained a `Size` property in the Library (`8160:364`): Medium (36 × 20, the existing variants) and Small (compact, 28 × 16 track, 12px thumb, 36 × 24 focus ring). Small maps to the code's `size="sm"`, which already existed code only; no code change.
 - 2026-10-14: Checkbox gained its `:focus-visible` ring (2px `--primary-button-background`, 2px outside the box).
 - 2026-10-21: Toggle off track is `--text-disabled` in code and docs, matching the Library (code was raw `--neutral-400`, which does not flip in dark mode).
 - 2026-10-14: Figma to code updated: Checkbox and Radio gain `State=Focus` variants, Toggle gains a `State` axis (Enabled / Focus); the Checkbox focus ring is Figma only until `Checkbox.css` adds one.

@@ -1,48 +1,60 @@
-/* Alert / Callout — Figma Library Alert 3658:32304, docs/design-system/alerts-toast.md */
+/* Alert / Callout - Figma Library Alert 3658:32304, docs/design-system/alerts-toast.md
+
+   Callout: neutral text (Text-primary title, Text-secondary supporting text), Text button.
+   Alert: every line in Text-warning on the warning tint, Filled Warning button. */
 
 .alert {
   display: flex;
   align-items: center;
   border-radius: var(--radius-sm);
-  padding: var(--space-s) var(--space-sm); /* 8px 12px */
-  gap: var(--space-s);
+  padding: var(--space-sm) var(--space-m); /* 12px 16px */
+  gap: var(--space-sm); /* icon to text */
   width: 100%;
   box-sizing: border-box;
   position: relative;
   font-family: inherit;
-}
-
-/* ── Callout ── */
-.alert--callout {
-  background: var(--input-background);
-  color: var(--text-secondary);
   font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
+  color: var(--text-primary);
 }
 
-/* ── Alert (warning) ── */
+/* ── Callout: neutral guidance ── */
+.alert--callout {
+  background: var(--input-background);
+}
+
+.alert--callout .alert__icon {
+  color: var(--text-secondary);
+}
+
+/* ── Alert: warning ── */
 .alert--alert {
-  background: var(--alert-warning-background); /* Warning-500 @ 12% */
+  background: var(--alert-background); /* Warning-500 @ 12% */
   color: var(--text-warning);
-  /* One line, no title: Paragraph M semibold (Figma's single-line Alert). */
-  font-size: var(--font-size-md);
-  font-weight: 600;
-  line-height: 1.5;
-  /* 8px icon → text; the inline button adds 16px for the 24px info↔button gap. */
-  gap: var(--space-s);
 }
 
-/* Figma draws the warning glyph at 20px; callers pass Iconsax at 24. */
+/* One line without a title: the message is the headline, Paragraph M semibold. */
+.alert--alert:not(.alert--with-body) > .alert__message {
+  font-weight: 600;
+}
+
+/* The warning glyph carries the colour, at 20px (callers pass Iconsax at 24). */
 .alert--alert > svg {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
+  color: var(--text-warning);
 }
 
-/* ── With supporting text: align top (same 8px 12px padding) ── */
+/* ── With supporting text: icon on the first line ── */
 .alert--with-body {
   align-items: flex-start;
+}
+
+.alert--with-body > svg,
+.alert--with-body > .alert__bell {
+  margin-top: 0.5px; /* centres the 20px icon on the 21px first line */
 }
 
 /* ── Icon ── */
@@ -68,101 +80,65 @@
   font: inherit;
 }
 
-/* ── Body (title + bullets / title + message) ── */
+/* ── Body: title, then supporting text 4px under it ── */
 .alert__body {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-xs);
 }
-
-/* Title to body: 8px, as the Library (the .alert__body gap). */
 
 .alert__title {
   margin: 0;
   font-size: var(--font-size-md);
   font-weight: 600; /* Paragraph M semibold */
   line-height: 1.5;
+  color: inherit;
+}
+
+.alert--callout .alert__body .alert__message,
+.alert--callout .alert__bullets {
   color: var(--text-secondary);
 }
 
-.alert--alert .alert__title {
-  color: var(--text-warning);
-}
-
+/* Alert supporting text: Paragraph M medium (Library). */
 .alert--alert .alert__body .alert__message {
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  color: var(--text-warning);
+  font-weight: 500;
 }
 
 .alert__bullets {
   margin: 0;
-  /* reset.css clears list-style on every ul, which left this list indented for
-     markers it never drew. Restore them — the indent above assumes they exist. */
+  /* reset.css clears list-style on every ul; restore the markers the indent assumes. */
   list-style: disc;
   padding-left: 21px;
   font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
-  color: var(--text-secondary);
 }
 
 .alert__bullets li + li {
   margin-top: var(--space-xs);
 }
 
-/* ── Buttons ── */
-.alert__btn {
-  white-space: nowrap;
+/* ── Action: the shared Text button ── */
+.alert__action {
   flex-shrink: 0;
-  font-family: inherit;
-  font-weight: 700;
-  line-height: 1.5;
-  cursor: pointer;
+  white-space: nowrap;
 }
 
-/* Outlined — Callout with supporting text (Library: --border-elevated, 8px 16px, Bold 14),
-   16px below the body. */
-.alert__btn--outlined {
+/* One line: 12px row gap + 12px = 24px from the message. */
+.alert__action:not(.alert__action--below) {
+  margin-left: var(--space-sm);
+}
+
+/* Under the supporting text: 4px body gap + 4px = 8px (Library). */
+.alert__action--below {
   align-self: flex-start;
-  margin-top: var(--space-s);
-  font-size: var(--font-size-md);
-  color: var(--text-primary);
-  border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-sm);
-  padding: var(--space-s) var(--space-m);
-  background: transparent;
+  margin-top: var(--space-xs);
 }
 
-/* Text — one-line Callout: Medium 14, --text-primary, no border, on the right. */
-.alert__btn--text {
-  margin-left: var(--space-m); /* + the row's 8px gap = 24px from the message */
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  color: var(--text-primary);
-  background: transparent;
-  border: none;
-  padding: 0;
-}
-
-.alert__btn--outlined:hover {
-  background: var(--page-background-hover);
-}
-
-/* Inline — Alert: Medium 14, --text-warning, no underline (Library). */
-.alert__btn--inline {
-  margin-left: var(--space-m); /* + the row's 8px gap = 24px from the info area */
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  color: var(--text-warning);
-  background: transparent;
-  border: none;
-  padding: 0;
-}
-
-/* Close (X) — used when onClose is provided */
+/* Close (X) - used when onClose is provided */
 .alert__close {
   flex-shrink: 0;
   display: inline-flex;
@@ -173,19 +149,17 @@
   padding: 0;
   background: transparent;
   border: none;
-  color: inherit;
+  color: var(--text-secondary);
   cursor: pointer;
   border-radius: var(--radius-full);
-  opacity: 0.7;
-  transition: opacity 150ms ease, background 150ms ease;
+  transition: background 150ms ease, color 150ms ease;
 }
 
 .alert__close:hover {
-  opacity: 1;
+  color: var(--text-primary);
   background: var(--page-background-hover);
 }
 
-.alert__btn:focus-visible,
 .alert__close:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
