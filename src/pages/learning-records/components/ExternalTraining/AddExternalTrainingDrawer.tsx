@@ -56,6 +56,9 @@ import './AddExternalTrainingDrawer.css'
      ...mismatch...    → names someone else (Paul Whitaker)
      ...nomatch...     → a course that isn't on the approved list
      ...duplicate...   → the learner already has this course on this date
+     ...several...     → "S. Rivers": two learners fit, the admin picks one
+     ...nodate...      → no completion date on the certificate
+     ...toolarge...    → treated as over 10MB (a real file over 10MB, or not PDF/JPG/PNG, is refused too)
      anything else     → First Aid at Work, St John Ambulance, 28 Oct 2026
    Prefix: aetd- */
 
@@ -63,7 +66,19 @@ import './AddExternalTrainingDrawer.css'
     or records a one-off, in place (Revolut-style "not listed" link in the menu). */
 type Mode = 'course' | 'not-listed'
 type NotListedAs = 'list' | 'one-off'
-type Read = { learner: string | null; courseText: string | null; unreadable?: boolean }
+/** What the read found. `matches`: the learners whose name fits (more than one = ask).
+    `noDate`: the certificate shows no completion date. */
+type Read = { learner: string | null; courseText: string | null; unreadable?: boolean; matches?: string[]; noDate?: boolean }
+
+/* Files the drawer takes: PDF, JPG or PNG, up to 10MB. */
+const MAX_FILE_BYTES = 10 * 1024 * 1024
+type Problem = { title: string; message: React.ReactNode }
+const fileProblem = (file: File): Problem | null =>
+  !/\.(pdf|jpe?g|png)$/i.test(file.name)
+    ? { title: 'This file type isn’t supported', message: 'Upload the certificate as a PDF, JPG or PNG.' }
+    : file.size > MAX_FILE_BYTES || /toolarge/i.test(file.name)
+      ? { title: 'This file is too large', message: 'Upload a file under 10MB.' }
+      : null
 
 const RESULT_OPTIONS = [
   { value: 'Passed', label: 'Passed' },
@@ -153,6 +168,8 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
   useEffect(() => () => { if (certificateFile) URL.revokeObjectURL(certificateFile.url) }, [certificateFile])
   const [reading, setReading] = useState(false)
   const [read, setRead] = useState<Read | null>(null)
+  /* A file the drawer can't take (type or size): it isn't kept or read. */
+  const [fileError, setFileError] = useState<Problem | null>(null)
   const [personId, setPersonId] = useState(initialRecord?.personId ?? lockedPersonId ?? '')
   const [mode, setMode] = useState<Mode>(
     (initialRecord && !initialRecord.courseId) || (!initialRecord && listEmpty) ? 'not-listed' : 'course',
@@ -233,6 +250,7 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
 
   /* Trash beside Change File: drops the file and anything read from it; typed fields stay. */
   const removeCertificate = () => {
+    setFileError(null)
     clearReadTimers()
     setWriting(new Set())
     setCertificate(null)
@@ -243,6 +261,9 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
   }
 
   const onCertificate = (file: File) => {
+    const problem = fileProblem(file)
+    setFileError(problem)
+    if (problem) return
     setKeptFor(null) // a new file asks about a name mismatch again
     setCertificate(file.name)
     // A PDF shows as its first page drawn to an image, so no browser PDF viewer (toolbar,
@@ -288,7 +309,12 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
       ? personById(existing.personId)!.name
       : name.includes('mismatch')
         ? 'Paul Whitaker'
-        : personById(fixed ?? '2')!.name
+        : name.includes('several')
+          ? 'S. Rivers' // Samantha Rivers and Sam Rivers both fit
+          : personById(fixed ?? '2')!.name
+    // Everyone the name could be ("S. Chen" fits Sarah Chen and Sam Chen).
+    const matches = TRAINING_PEOPLE.filter((p) => samePerson(p.name, learner)).map((p) => p.id)
+    const noDate = name.includes('nodate')
     const courseText = existing
       ? courses.find((c) => c.id === existing.courseId)?.name ?? null
       : name.includes('nomatch')
@@ -306,9 +332,9 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
     const courseAt = fixed ? 2000 : 2300
     at(900, () => setReadStep(1))
     at(learnerAt, () => {
-      // Fill the learner only when nobody is chosen yet and the name is someone we know.
+      // Fill the learner only when nobody is chosen yet and exactly one person fits the name.
       if (existing) setPersonId(existing.personId)
-      else if (!fixed) setPersonId(TRAINING_PEOPLE.find((p) => samePerson(p.name, learner))?.id ?? '')
+      else if (!fixed) setPersonId(matches.length === 1 ? matches[0] : '')
       done('learner')
       if (!fixed) setReadStep(2)
     })
@@ -325,10 +351,10 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
       setReadStep(fixed ? 2 : 3)
     })
     at(3000, () => {
-      setCompletionDate(date)
+      if (!noDate) setCompletionDate(date)
       done('date')
       setReading(false)
-      setRead({ learner, courseText })
+      setRead({ learner, courseText, matches, noDate })
     })
   }
 
@@ -338,7 +364,9 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
   // The certificate names someone else; until the admin ticks the confirm box it blocks saving.
   const nameDiffers = !!(read?.learner && person && !samePerson(read.learner, person.name))
   const mismatch = nameDiffers && keptFor !== mismatchKey
-  const unknownLearner = !!(read?.learner && !person && !lockedPersonId)
+  // More than one person fits the name and nobody is picked yet.
+  const severalPeople = !!(read?.matches && read.matches.length > 1 && !person && !lockedPersonId)
+  const unknownLearner = !!(read?.learner && !person && !lockedPersonId && !severalPeople)
   const fromCertificate = mode === 'not-listed' && !!read?.courseText && newName === read.courseText
   const addingToList = mode === 'not-listed' && notListedAs === 'list'
   const listed = newName.trim()
@@ -451,6 +479,38 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
   const blocked = !editing && listEmpty && !allowOneOffs && !canAdd
   const bothWays = canAdd && canOneOff
 
+  /* Anything the certificate read couldn't settle, as one Alert. Order: the file, then
+     the read, then the learner, the course, the date, and last an existing record (D25). */
+  const certName = read?.learner ?? ''
+  const problem: Problem | null = fileError
+    ? fileError
+    : read?.unreadable
+      ? { title: "We couldn't read this certificate", message: 'Fill in the details below, or upload a clearer copy.' }
+      : unknownLearner
+        ? { title: 'Learner not found', message: `The certificate names ${certName}, who isn't in 5Mins. Pick the learner or change the file.` }
+        : severalPeople
+          ? { title: 'More than one learner matches', message: `${read!.matches!.length} people match ${certName}. Pick the right one.` }
+          : mismatch
+            ? { title: "The name doesn't match", message: `The certificate names ${certName}, not ${person?.name}. Confirm it's the same person, or change the file.` }
+            : fromCertificate
+              ? {
+                  title: 'Course not on your approved list',
+                  message: `${read!.courseText} isn't on the list. ${bothWays ? 'Add it to the list, or record it as a one-off.' : canAdd ? 'Add it to the list to record it.' : 'Record it as a one-off.'}`,
+                }
+              : read?.noDate && !completionDate
+                ? { title: "We couldn't find the completion date", message: 'Add the date the training was completed.' }
+                : duplicate
+                  ? {
+                      title: 'This record already exists',
+                      message: (
+                        <>
+                          {person?.name} already has <span className="aetd-strong">{course?.name}</span> completed on{' '}
+                          {formatDay(duplicate.completionDate)}. Update Training replaces it with these details.
+                        </>
+                      ),
+                    }
+                  : null
+
   const personOptions = TRAINING_PEOPLE.map((p) => ({
     value: p.id,
     label: p.name,
@@ -500,7 +560,7 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
               <div className="aetd-cert-row">
                 {/* Once a file is in, the whole box opens the preview. */}
                 <div
-                  className={`aetd-cert-box${certificate ? ' aetd-cert-box--filled' : ''}${certificateFile ? ' aetd-cert-box--previewable' : ''}${dragging ? ' aetd-cert-box--dragging' : ''}`}
+                  className={`aetd-cert-box${certificate ? ' aetd-cert-box--filled' : ' aetd-cert-box--empty'}${certificateFile ? ' aetd-cert-box--previewable' : ''}${dragging ? ' aetd-cert-box--dragging' : ''}`}
                   {...(certificateFile
                     ? {
                         role: 'button',
@@ -514,7 +574,22 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
                           }
                         },
                       }
-                    : {})}
+                    : !certificate
+                      ? {
+                          /* Empty: the box is a drop zone that also opens the file picker,
+                             as Upload Certificate does (file-uploader.md). */
+                          role: 'button',
+                          tabIndex: 0,
+                          'aria-label': 'Upload certificate',
+                          onClick: () => certInputRef.current?.click(),
+                          onKeyDown: (e: React.KeyboardEvent) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              certInputRef.current?.click()
+                            }
+                          },
+                        }
+                      : {})}
                   onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
                   onDragLeave={() => setDragging(false)}
                   onDrop={(e) => {
@@ -602,25 +677,18 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
               )}
             </AnimatePresence>
 
-            {read?.unreadable && <Alert type="Callout" message="We couldn't read this certificate. Fill in the details below." />}
+            {/* One Alert at a time, for the first problem the admin should fix (see `problem`). */}
+            {problem && !reading && (
+              <Alert
+                type="Alert"
+                customIcon={<Danger size={24} color="currentColor" variant="Bold" />}
+                title={problem.title}
+                message={problem.message}
+              />
+            )}
 
             <div>
               <div className="aet-form">
-                {/* One Alert at a time: a wrong-learner certificate comes first (fix the file),
-                    then an existing record (D25). */}
-                {duplicate && !mismatch && (
-                  <Alert
-                    type="Alert"
-                    customIcon={<Danger size={24} color="currentColor" variant="Bold" />}
-                    title="This record already exists"
-                    message={
-                      <>
-                        {person?.name} already has <span className="aetd-strong">{course?.name}</span> completed on{' '}
-                        {formatDay(duplicate.completionDate)}. Update Training replaces it with these details.
-                      </>
-                    }
-                  />
-                )}
                 {/* Learner. A certificate naming someone else is settled here, at the field:
                     the name it shows, and a box to confirm it is this learner (D8). */}
                 <div className={`aet-field aetd-full${writing.has('learner') ? ' aetd-writing is-writing' : ''}`}>
@@ -636,11 +704,12 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
                     onChange={setPersonId}
                     /* The certificate names someone who isn't in 5Mins: an error, since the
                        record can't go ahead until the right learner is picked or the file changed. */
+                    /* The Alert explains; the field gets the error border and a short hint. */
                     error={
-                      unknownLearner
-                        ? `The certificate names ${read!.learner}, who isn't in 5Mins. Pick a learner or change the file.`
+                      unknownLearner || severalPeople
+                        ? 'Pick a learner'
                         : mismatch
-                          ? `The certificate names ${read!.learner}.`
+                          ? `Certificate name: ${read!.learner}`
                           : err('learner')
                     }
                   />
@@ -844,7 +913,7 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
                       onChange={setCompletionDate}
                       maxDate={todayIso()}
                       ariaLabel="Completion date"
-                      error={err('date')}
+                      error={read?.noDate && !completionDate ? 'Add the date' : err('date')}
                     />
                   </div>
                   {mode === 'not-listed' && notListedAs === 'one-off' && result === 'Passed' && (

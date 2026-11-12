@@ -158,6 +158,8 @@ export const TRAINING_PEOPLE: TrainingPerson[] = [
   { id: '3', name: 'Carlos Mendes', email: 'carlos@example.com' },
   { id: '4', name: 'Diana Ross', email: 'diana.ross@company.com' },
   { id: '5', name: 'Erik Johansson', email: 'erik.j@email.com' },
+  // Shares "S. Rivers" with Samantha Rivers, for the more-than-one-match demo.
+  { id: '6', name: 'Sam Rivers', email: 'sam.rivers@example.com' },
   ...[
     'Michael Thompson', 'Jessica Hart', 'David Johnson', 'Noah Williams', 'Mei Tanaka', 'Ethan Brooks',
     'Priya Shah', 'Samantha Rivers', 'Laura Chen', 'Marcus Reid', 'Sofia Alvarez', 'Oliver Tran',
