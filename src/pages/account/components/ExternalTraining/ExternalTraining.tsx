@@ -92,16 +92,16 @@ function ExternalTraining() {
       {
         key: 'edit',
         label: 'Edit',
-        description: thing === 'course' ? 'Change its name, providers, duration or expiry' : 'Change its name',
+        description: thing === 'course' ? 'Update the name, providers, duration or expiry' : 'Update the provider name',
         icon: icon(Edit2),
       },
       archived
-        ? { key: 'unarchive', label: 'Unarchive', description: 'Offer it for new records again', icon: icon(ArrowRotateLeft) }
-        : { key: 'archive', label: 'Archive', description: 'Hide it from new records. Its records stay.', icon: icon(Archive) },
+        ? { key: 'unarchive', label: 'Unarchive', description: 'Make it available for new training again', icon: icon(ArrowRotateLeft) }
+        : { key: 'archive', label: 'Archive', description: 'Hide it from new records. Current records stay.', icon: icon(Archive) },
       {
         key: 'delete',
         label: 'Delete',
-        description: 'Remove it for good',
+        description: 'Permanently remove it from the approved list',
         icon: <Trash size={20} color="currentColor" variant="Linear" />,
         danger: true,
         disabled: records > 0,
@@ -222,7 +222,7 @@ function ExternalTraining() {
   const archiveBody = (thing: 'courses' | 'providers', n: number, expiry: boolean) =>
     `Archived ${thing} can't be picked for new training records.` +
     (n ? ` Its ${recordCount(n)} ${n === 1 ? 'stays' : 'stay'} on learner profiles${expiry ? ' and still count towards expiry' : ''}.` : '')
-  const deleteBody = "It has no training records. It's removed from the approved list and can't be recovered."
+  const deleteBody = "It will be removed from the approved list and can't be recovered."
   const dialog = (() => {
     if (!confirm) return null
     if (confirm.kind === 'archive-course') {
@@ -415,7 +415,7 @@ function ExternalTraining() {
         />
       )}
 
-      <ConfirmModal open={!!dialog} onClose={() => setConfirm(null)} ariaLabel={dialog?.title}>
+      <ConfirmModal open={!!dialog} onClose={() => setConfirm(null)} ariaLabel={dialog?.title} className={dialog?.danger ? 'aet-delete-dialog' : undefined}>
         {dialog && (
           <>
             <div className="confirm-modal-header confirm-modal-header--center">

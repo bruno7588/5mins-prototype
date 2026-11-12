@@ -44,7 +44,8 @@ function CourseDrawer({ open, course, initialName = '', onClose, onSaved }: Prop
   const [providerIds, setProviderIds] = useState<string[]>(course?.providerIds ?? [])
   const [duration, setDuration] = useState(course?.duration.value ?? 0)
   const [unit, setUnit] = useState<DurationUnit>(course?.duration.unit ?? 'hours')
-  const [retrains, setRetrains] = useState(course ? course.retrainingMonths != null : true)
+  // A new course starts on No expiry; the admin opts in to an expiry period.
+  const [retrains, setRetrains] = useState(course ? course.retrainingMonths != null : false)
   const [months, setMonths] = useState(course?.retrainingMonths ?? 12)
   const [otherNames, setOtherNames] = useState<string[]>(course?.otherNames ?? [])
   const [submitted, setSubmitted] = useState(false)

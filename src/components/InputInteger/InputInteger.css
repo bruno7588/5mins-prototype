@@ -68,6 +68,10 @@
   line-height: 1.5;
 }
 
+.input-integer__suffix--word {
+  margin-left: var(--space-xs);
+}
+
 .input-integer--disabled .input-integer__suffix {
   color: var(--text-disabled);
 }

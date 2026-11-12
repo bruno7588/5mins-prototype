@@ -29,7 +29,7 @@ The floating menu surface: a container of list items that appears from a trigger
 **Do**
 - Use `RowActionsMenu` for action menus; it already implements this spec, the caret, the portal and Escape to close.
 - Portal the menu to `<body>` and anchor it to the trigger's rect so a table cell, modal or drawer with `overflow: hidden` can't clip it.
-- Colour leading icons `--text-primary` (20px Iconsax Linear); in `RowActionsMenu` pass `color="currentColor"` and the item supplies it. Mark destructive items with `danger`, which turns the label `--text-error`; the icon only turns red if it has `color="currentColor"`.
+- Colour leading icons `--text-primary` (20px Iconsax Linear); in `RowActionsMenu` pass `color="currentColor"` and the item supplies it. Mark destructive items with `danger`, which turns the label and its supporting text `--text-error` (greyed to `--text-disabled` when the item is disabled); the icon only turns red if it has `color="currentColor"`.
 - Use `role="menu"` / `menuitem` for action menus and `role="listbox"` / `option` with `aria-selected` for value lists.
 - Add a supporting line (`description`) only when the label alone doesn't separate one action from its neighbours.
 - Use the Integer row when an option needs a number of days or weeks set inline, e.g. "After delay" / "X days after previous course enrolment" with the stepper and "day" / "days" under it.

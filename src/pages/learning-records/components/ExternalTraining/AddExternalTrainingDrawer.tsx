@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Danger, DocumentText, Eye, GalleryAdd, Trash } from 'iconsax-react'
+import { Danger, DocumentText, GalleryAdd, Trash } from 'iconsax-react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
 import { arriveTransition } from '@/components/AIWorkingCard/arrive'
@@ -144,6 +144,27 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
   const [completionDate, setCompletionDate] = useState(initialRecord?.completionDate ?? '')
   const [result, setResult] = useState<ExternalResult>(initialRecord?.result ?? 'Passed')
   const [score, setScore] = useState(initialRecord?.score ?? 0)
+  /* Expiry: a rule per record, the same control as Add course (No expiry, or Expires
+     after N months), pre-set from the course and open to change (2026-11-12). A saved
+     record starts from its stored date (D9) until the admin changes the rule, course,
+     date or result. */
+  const storedMonths = (() => {
+    const r = initialRecord
+    if (!r?.retrainingDueDate) return null
+    const [a, b] = [new Date(r.completionDate), new Date(r.retrainingDueDate)]
+    return Math.max(1, (b.getFullYear() - a.getFullYear()) * 12 + b.getMonth() - a.getMonth())
+  })()
+  const recordCourse = initialRecord ? courses.find((c) => c.id === initialRecord.courseId) : undefined
+  const [retrains, setRetrains] = useState(
+    initialRecord ? storedMonths != null || (initialRecord.result === 'Not Passed' && recordCourse?.retrainingMonths != null) : false,
+  )
+  const [months, setMonths] = useState(storedMonths ?? recordCourse?.retrainingMonths ?? 12)
+  const [expiryTouched, setExpiryTouched] = useState(false)
+  const touchExpiry = (on: boolean, n = months) => {
+    setRetrains(on)
+    setMonths(n)
+    setExpiryTouched(true)
+  }
   const [submitted, setSubmitted] = useState(false)
   /* The confirm box under Learner: the admin confirms the certificate is this learner's
      (married name, nickname, a misread). Tied to the pair, so changing either asks again. */
@@ -157,8 +178,15 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
     : []
 
   // A course with one provider fills it in; several → the admin picks one (D2).
+  // A newly picked course also resets the expiry rule to its own.
+  const seededCourse = useRef(initialRecord?.courseId ?? null)
   useEffect(() => {
     if (!course) return
+    if (course.id === seededCourse.current) seededCourse.current = null
+    else {
+      setRetrains(course.retrainingMonths != null)
+      setMonths(course.retrainingMonths ?? 12)
+    }
     if (courseProviders.length === 1) setProviderId(courseProviders[0].id)
     else if (!courseProviders.some((p) => p.id === providerId)) setProviderId('')
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -325,7 +353,17 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
     [records, record, courseId, personId, completionDate],
   )
 
-  const dueDate = course && completionDate ? retrainingDueDate(completionDate, course.retrainingMonths, result) : null
+  const keepStored =
+    !!initialRecord &&
+    !expiryTouched &&
+    courseId === initialRecord.courseId &&
+    completionDate === initialRecord.completionDate &&
+    result === initialRecord.result
+  const dueDate = keepStored
+    ? initialRecord!.retrainingDueDate
+    : course && completionDate
+      ? retrainingDueDate(completionDate, retrains ? months : null, result)
+      : null
   const preview: ExternalRecord | null = completionDate
     ? {
         id: '_preview', personId, courseId, providerId, completionDate,
@@ -500,11 +538,6 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
                     <GalleryAdd size={32} color="var(--text-secondary)" variant="Linear" />
                   )}
                   {/* Preview badge, as the lesson thumbnail (LessonEditorModal): a cue only, the box is the button. */}
-                  {certificateFile && (
-                    <span className="aetd-cert-preview-btn" aria-hidden="true">
-                      <Eye size={16} color="currentColor" variant="Linear" />
-                    </span>
-                  )}
                 </div>
                 <div className="aetd-cert-info">
                   {/* Same copy once a file is in: the box shows the certificate, its file name adds nothing. */}
@@ -685,25 +718,6 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
                       error={read?.noDate && !completionDate ? 'Add the date' : err('date')}
                     />
                   </div>
-                  {course && completionDate && (
-                    /* Worked out from the course, so a read-only field like Duration. */
-                    <div className="aet-field">
-                      <span className="aet-label">Expiry</span>
-                      <div className="aetd-due" role="status">
-                        {result === 'Not Passed' ? (
-                          <span className="aetd-value">No expiry date for a training that wasn't passed.</span>
-                        ) : dueDate ? (
-                          <>
-                            <span className="aetd-value">{formatDay(dueDate)}</span>
-                            {due === 'overdue' && <Badge type="error" label="Overdue" />}
-                            {due === 'due-soon' && <Badge type="warning" label="Due soon" />}
-                          </>
-                        ) : (
-                          <span className="aetd-value">No expiry</span>
-                        )}
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 <div className="aet-row">
@@ -719,6 +733,39 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
                     <InputInteger value={score} onChange={setScore} min={0} max={100} suffix="%" ariaLabel="Score" />
                   </div>
                 </div>
+
+                {/* Expiry: pre-set from the course rule, the admin can change it for this record. */}
+                {course &&
+                  (result === 'Not Passed' ? (
+                    <div className="aet-field">
+                      <span className="aet-label">Expiry</span>
+                      <span className="aetd-value">No expiry date for a training that wasn't passed.</span>
+                    </div>
+                  ) : (
+                    <div className="aet-field" role="radiogroup" aria-labelledby="aetd-expiry-label">
+                      <span id="aetd-expiry-label" className="aet-label">Expiry</span>
+                      <Radio name="aetd-expiry" label="No expiry" checked={!retrains} onChange={() => touchExpiry(false)} />
+                      <div className="aet-row aet-row--center">
+                        <Radio name="aetd-expiry" label="Expires after" checked={retrains} onChange={() => touchExpiry(true)} />
+                        <InputInteger
+                          ariaLabel="Expires after, in months"
+                          value={months}
+                          onChange={(v) => touchExpiry(true, v)}
+                          min={1}
+                          max={240}
+                          suffix="months"
+                          disabled={!retrains}
+                        />
+                      </div>
+                      {dueDate && (
+                        <div className="aetd-due" role="status">
+                          <span className="aetd-value">Expires {formatDay(dueDate)}</span>
+                          {due === 'overdue' && <Badge type="error" label="Overdue" />}
+                          {due === 'due-soon' && <Badge type="warning" label="Due soon" />}
+                        </div>
+                      )}
+                    </div>
+                  ))}
 
               </div>
             </div>

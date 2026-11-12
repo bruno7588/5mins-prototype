@@ -13,24 +13,21 @@
   color: var(--text-primary);
 }
 
-/* Expiry: a read-only field, filled and borderless like the read-only Duration. */
+/* Expiry: the date the rule gives, under the radios, with its due badge. */
 .aetd-due {
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  width: fit-content;
-  box-sizing: border-box;
-  padding: var(--space-s) var(--space-sm);
-  border-radius: var(--radius-sm);
-  background: var(--input-background);
 }
 
 .aetd-due .aetd-value {
   font-weight: 400;
+  color: var(--text-secondary);
 }
 
+/* Result: one width, sized to its longer value "Not Passed", so it does not jump. */
 .aetd-result {
-  width: 200px;
+  width: 132px;
 }
 
 .aetd-error {
@@ -169,8 +166,7 @@
   color: var(--text-secondary);
 }
 
-/* Filled box: the preview badge sits bottom-left, as the lesson thumbnail's eye
-   (.lesson-editor-thumb-preview). */
+/* Filled box: the whole box opens the preview; the zoom-in cursor says so. */
 .aetd-cert-box {
   position: relative;
 }
@@ -181,12 +177,6 @@
   font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
-}
-
-.aetd-cert-box > .aetd-cert-preview-btn {
-  position: absolute;
-  left: var(--space-xs);
-  bottom: var(--space-xs);
 }
 
 .aetd-cert-box--previewable {
@@ -209,16 +199,6 @@
   color: var(--text-primary);
 }
 
-.aetd-cert-preview-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-xs);
-  border: 0;
-  border-radius: var(--radius-full);
-  background: color-mix(in srgb, var(--neutral-900) 50%, transparent);
-  color: var(--neutral-25);
-}
 
 
 .aetd-cert-remove:focus-visible {

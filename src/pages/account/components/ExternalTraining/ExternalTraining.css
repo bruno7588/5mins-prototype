@@ -219,3 +219,9 @@
   align-items: center;
   gap: var(--space-xs);
 }
+
+/* The Delete course / provider dialog hugs its copy (up to the standard 560px). */
+.confirm-modal.aet-delete-dialog {
+  width: fit-content;
+  max-width: min(560px, 100%);
+}

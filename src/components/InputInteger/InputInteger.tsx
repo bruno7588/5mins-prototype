@@ -108,7 +108,8 @@ function InputInteger({
             aria-label={ariaLabel ?? label}
             style={suffix ? { width: `${String(draft ?? value).length}ch`, minWidth: 0 } : undefined}
           />
-          {suffix && <span className="input-integer__suffix">{suffix}</span>}
+          {/* A word unit ("12 months") takes a space; a symbol ("80%") sits tight. */}
+          {suffix && <span className={`input-integer__suffix${/^[a-z]/i.test(suffix) ? ' input-integer__suffix--word' : ''}`}>{suffix}</span>}
         </span>
         <button
           type="button"

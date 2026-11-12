@@ -134,15 +134,17 @@
   white-space: nowrap;
 }
 
-/* Danger (destructive) item — Unenrol */
+/* Danger (destructive) item — Unenrol. Its supporting line is red too. */
 .ram-item--danger .ram-item-icon,
-.ram-item--danger .ram-item-label {
+.ram-item--danger .ram-item-label,
+.ram-item--danger .ram-item-description {
   color: var(--text-error);
 }
 
 /* A greyed destructive item (e.g. Delete while records exist) reads disabled, not red. */
 .ram-item--danger.ram-item--disabled .ram-item-icon,
-.ram-item--danger.ram-item--disabled .ram-item-label {
+.ram-item--danger.ram-item--disabled .ram-item-label,
+.ram-item--danger.ram-item--disabled .ram-item-description {
   color: var(--text-disabled);
 }
 
