@@ -15,8 +15,16 @@
 }
 
 /* The Add Training button sits at the right even when there's no sentence. */
-.uet-toolbar > .ds-btn:only-child {
+.uet-toolbar > .ds-btn:only-child,
+.uet-toolbar > :only-child {
   margin-left: auto;
+}
+
+/* Download Certificates then Add Training, at the far right. */
+.uet-toolbar__ctas {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
 }
 
 .uet-text {

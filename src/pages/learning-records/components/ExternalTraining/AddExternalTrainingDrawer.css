@@ -124,6 +124,7 @@
 
 /* Empty box hover and drag-over share the File uploader Hover state (file-uploader.md). */
 .aetd-cert-box--empty {
+  background: var(--input-background);
   cursor: pointer;
   transition: border-color 150ms ease, background-color 150ms ease;
 }
@@ -131,7 +132,7 @@
 .aetd-cert-box--empty:hover,
 .aetd-cert-box--dragging {
   border: 1px dashed var(--border-hover);
-  background: var(--input-background);
+  background: var(--input-background-hover);
 }
 
 .aetd-cert-box--empty:focus-visible {

@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Add, Danger } from 'iconsax-react'
+import { Add, Danger, DocumentDownload } from 'iconsax-react'
 import Button from '@/components/Button/Button'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import EmptyState from '@/components/EmptyState/EmptyState'
 import certificatesIllustration from '@/assets/empty-state-illustrations/certificates.svg'
@@ -61,8 +62,25 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast, addButto
     [records, personId],
   )
 
+  /* Bulk download (Divjot, 2026-11-12): every certificate this tab lists, as one ZIP.
+     The prototype stores no files, so it confirms with a toast, as Download Report does. */
+  const withCertificate = rows.filter((r) => r.certificate).length
+  const downloadAll = (
+    <Tooltip text="No certificates to download" icon={false} disabled={withCertificate > 0}>
+      <Button
+        variant="outlined-2"
+        icon={<DocumentDownload size={20} color="currentColor" variant="Linear" />}
+        disabled={!withCertificate}
+        onClick={() => showToast('success', `Downloading ${withCertificate} certificate${withCertificate === 1 ? '' : 's'}`)}
+      >
+        Download Certificates
+      </Button>
+    </Tooltip>
+  )
+
   return (
     <div className="uet">
+      {rows.length > 0 && !(canAddTraining && !addButtonTarget) && <div className="uet-toolbar">{downloadAll}</div>}
       {rows.length > 0 && canAddTraining && (() => {
         const addButton = (
           /* Filled on the learner Profile's tabs row; outlined on the admin profile. */
@@ -74,7 +92,16 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast, addButto
             Add Training
           </Button>
         )
-        return addButtonTarget ? createPortal(addButton, addButtonTarget) : <div className="uet-toolbar">{addButton}</div>
+        return addButtonTarget ? (
+          createPortal(addButton, addButtonTarget)
+        ) : (
+          <div className="uet-toolbar">
+            <div className="uet-toolbar__ctas">
+              {downloadAll}
+              {addButton}
+            </div>
+          </div>
+        )
       })()}
 
       {rows.length ? (

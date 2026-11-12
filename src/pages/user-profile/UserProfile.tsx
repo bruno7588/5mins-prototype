@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
 import { useHeaderTheme } from '@/data/brandTheme'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { ArrowDown, ArrowDown2, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus, Mobile, Add, FlashCircle } from 'iconsax-react'
+import { ArrowDown, ArrowDown2, DocumentDownload, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus, Mobile, Add, FlashCircle } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Badge from '../../components/Badge/Badge'
@@ -720,11 +720,30 @@ function UserProfile() {
             />
             {/* Admin only, and a Course Progress action, so it lives in this tab: the
                 Assign Courses flow with this person already chosen (Courses → Review). */}
-            {!isLearnerView && (
-              <Button variant="outlined" onClick={() => setAssignOpen(true)}>
-                Assign Courses
-              </Button>
-            )}
+            <div className="up-view-ctas">
+              {/* Bulk download (Divjot, 2026-11-12): the certificates of the completed
+                  courses in view, as one ZIP; a toast stands in for the file. */}
+              {(() => {
+                const n = rows.filter((r) => r.status === 'Completed').length
+                return (
+                  <Tooltip text="No certificates to download" icon={false} disabled={n > 0}>
+                    <Button
+                      variant="outlined-2"
+                      icon={<DocumentDownload size={20} color="currentColor" variant="Linear" />}
+                      disabled={!n}
+                      onClick={() => showToast('success', `Downloading ${n} certificate${n === 1 ? '' : 's'}`)}
+                    >
+                      Download Certificates
+                    </Button>
+                  </Tooltip>
+                )
+              })()}
+              {!isLearnerView && (
+                <Button variant="outlined" onClick={() => setAssignOpen(true)}>
+                  Assign Courses
+                </Button>
+              )}
+            </div>
           </div>
 
           {/* Standing at a glance, before the rows (Figma People 9192:42911).

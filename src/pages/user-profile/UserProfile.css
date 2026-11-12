@@ -238,3 +238,10 @@
   justify-content: space-between;
   gap: var(--space-m);
 }
+
+/* Download Certificates and Assign Courses, at the far right of the view row. */
+.up-view-ctas {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}

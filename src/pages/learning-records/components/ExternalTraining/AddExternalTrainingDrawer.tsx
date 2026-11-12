@@ -375,7 +375,7 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
   const errors = {
     learner: personId ? '' : 'Select a learner',
     course: courseId ? '' : 'Select a course',
-    provider: courseId && !providerId ? 'Select a provider' : '',
+    provider: providerId ? '' : 'Select a provider',
     date: completionDate ? '' : 'Add the completion date',
   }
   const hasErrors = Object.values(errors).some(Boolean)
@@ -670,29 +670,25 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
                   />
                 </div>
 
-                {/* Provider, when the course has several (D2) */}
-                {course && courseProviders.length > 1 && (
-                  <div className="aet-field" role="radiogroup" aria-labelledby="aetd-provider-label">
-                    <span id="aetd-provider-label" className="aet-label">Provider</span>
-                    {courseProviders.map((p) => (
-                      <Radio key={p.id} name="aetd-provider" label={p.name} checked={providerId === p.id} onChange={() => setProviderId(p.id)} />
-                    ))}
-                    {err('provider') && <span className="aetd-error">{err('provider')}</span>}
-                  </div>
-                )}
-                {course && courseProviders.length === 1 && (
-                  /* A course's only provider can't be changed: the same filled, read-only
-                     field as the locked Learner and the read-only Duration. */
-                  <div className="aet-field aetd-full">
-                    <Dropdown
-                      label="Provider"
-                      options={[{ value: courseProviders[0].id, label: courseProviders[0].name }]}
-                      value={courseProviders[0].id}
-                      readOnly
-                      className="aetd-locked"
-                    />
-                  </div>
-                )}
+                {/* Provider: always a dropdown of the approved providers, so a record without a
+                    certificate can be filled by hand (2026-11-12). The course's single provider
+                    is pre-filled; with several, the admin picks. A plain alphabetical list. */}
+                <div className="aet-field aetd-full">
+                  <Dropdown
+                    label="Provider"
+                    placeholder="Select a provider"
+                    searchable
+                    searchPlaceholder="Search approved providers"
+                    options={[...providers]
+                      .filter((p) => !p.archived || p.id === providerId)
+                      .sort((x, y) => x.name.localeCompare(y.name))
+                      .map((p) => ({ value: p.id, label: p.name }))}
+                    value={providerId}
+                    onChange={setProviderId}
+                    error={err('provider')}
+                    emptyText={(q) => `No approved providers match “${q}”`}
+                  />
+                </div>
 
                 {/* Duration, completion date and expiry on one row: the dates that make the
                     record, read together. Result and score follow on their own row. */}
