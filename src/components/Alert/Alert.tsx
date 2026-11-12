@@ -75,19 +75,13 @@ function Alert({
               ))}
             </ul>
           )}
-          {/* With supporting text the action sits under it, lined up with the text. */}
-          {button && (
-            <Button {...actionStyle} className="alert__action alert__action--below" onClick={onButtonClick}>
-              {buttonLabel}
-            </Button>
-          )}
         </div>
       ) : (
         message && <p className="alert__message">{message}</p>
       )}
 
-      {/* One line: the action sits on the right. */}
-      {button && !hasBody && (
+      {/* The action sits on the far right, one line or with supporting text (Library). */}
+      {button && (
         <Button {...actionStyle} className="alert__action" onClick={onButtonClick}>
           {buttonLabel}
         </Button>

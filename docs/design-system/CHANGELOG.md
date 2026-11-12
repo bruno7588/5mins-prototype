@@ -6,6 +6,7 @@ Add new entries here, not in the docs.
 
 ## Library-wide
 
+- 2026-11-12: Alert and Callout with supporting text: the action moved from under the text to the far right, centred on the alert, 24px from the text (was under the supporting text, 8px below). Library variants and the shared Alert component updated.
 - 2026-11-12: Text buttons (Text, Danger / Warning / Success Text) with an icon: Medium icon gap is now 4px (`--space-xs`, was 8px), matching Small; Large keeps 8px. The four Medium Loading variants aligned in the Library.
 - 2026-11-12: Text colour `Text-error-hover` added in the Library (Danger-600 light / Danger-300 dark, `--text-error-hover`). Danger Text button now matches the Library: rest `--text-error` (was `--danger-500`, so dark mode is now Danger-400), hover `--text-error-hover`, pressed `--button-danger-pressed` (it had no hover or pressed state).
 - 2026-11-11: Two Surface colours added in the Library: `Primary-Button-background-ghost` (Primary-500 @ 16%, `--primary-button-background-ghost`) for the Outlined / Outlined-2 hover fill and the In progress badge, and `Alert-background` (Warning-500 @ 12%, `--alert-background`) for the Alert banner and the Warning badge (Warning badge was 16%). `--button-outline-fill-hover` and `--alert-warning-background` now point at them.

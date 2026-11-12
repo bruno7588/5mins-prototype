@@ -127,15 +127,11 @@
   white-space: nowrap;
 }
 
-/* One line: 12px row gap + 12px = 24px from the message. */
-.alert__action:not(.alert__action--below) {
+/* On the right: 12px row gap + 12px = 24px from the text. With supporting text it
+   centres on the alert while the icon stays on the first line. */
+.alert__action {
   margin-left: var(--space-sm);
-}
-
-/* Under the supporting text: 4px body gap + 4px = 8px (Library). */
-.alert__action--below {
-  align-self: flex-start;
-  margin-top: var(--space-xs);
+  align-self: center;
 }
 
 /* Close (X) - used when onClose is provided */

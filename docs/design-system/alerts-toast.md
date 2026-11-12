@@ -130,9 +130,8 @@ Both types follow common practice across mature design systems (Polaris Banner, 
 
 ```
 One line:        [ icon ] [ message ...................... ] [ Action ] [ × ]
-Supporting text: [ icon ] [ Title                          ]            [ × ]
-                          [ Supporting text                ]
-                          [ Action ]
+Supporting text: [ icon ] [ Title                          ]
+                          [ Supporting text                ] [ Action ] [ × ]
 ```
 
 | Part | Spec |
@@ -142,7 +141,7 @@ Supporting text: [ icon ] [ Title                          ]            [ × ]
 | Title | Paragraph M SemiBold (14 / 600); Callout `--text-primary`, Alert `--text-warning` |
 | Supporting text | 14px, 4px (`--space-xs`) under the title; Callout Paragraph M Regular `--text-secondary`, Alert Paragraph M Medium `--text-warning`; bullets 21px indent, 4px apart |
 | One-line message | Callout: Paragraph M Regular, `--text-primary`. Alert: Paragraph M SemiBold, `--text-warning` |
-| Action | Callout: shared `Button variant="text"`; Alert: `Button variant="filled" semantic="warning"` (Medium). One line: on the right, 24px from the message; with supporting text: under it, 8px below, lined up with the text |
+| Action | Callout: shared `Button variant="text"`; Alert: `Button variant="filled" semantic="warning"` (Medium). On the far right, 24px from the text; with supporting text it is centred on the alert (the icon stays on the first line) |
 | Close × (`onClose`) | 24px round button at the row end, `--text-secondary`, `--text-primary` on hover |
 
 ### States
