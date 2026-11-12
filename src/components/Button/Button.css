@@ -66,6 +66,13 @@
   border: none;
 }
 
+/* Text buttons pull the icon closer at Medium: 4px (Library), like Small. Large keeps 8px. */
+.ds-btn--md.ds-btn--text,
+.ds-btn--md.ds-btn--text-2,
+.ds-btn--md.ds-btn--danger-text,
+.ds-btn--md.ds-btn--warning-text,
+.ds-btn--md.ds-btn--success-text { gap: var(--space-xs); }
+
 /* Fill configurations have no border (buttons.md: `.btn-filled { border: none }`). */
 .ds-btn--filled,
 .ds-btn--danger,

@@ -80,7 +80,7 @@ All colours are semantic tokens. Both light- and dark-mode resolutions are liste
 | AI feature | Filled (gradient) | AI | Medium |
 | Mark complete | Filled | Success | Medium |
 
-**Canonical spec:** height Small 33px / Medium 41px / Large 48px; radius `var(--radius-sm)` (12px); Poppins Bold 12px / 14px / 16px (H6 / H5 / H4); Link is Paragraph S / M / L medium, underlined; Medium padding 10px `var(--space-ml)` (20px); icon gap `var(--space-xs)` (4px) Small, `var(--space-s)` (8px) Medium and Large. Filled `var(--primary-button-background)` with `var(--text-button-foreground)` label; Outlined-2 `var(--border-elevated)` 1px border with `var(--text-primary)` label; disabled `var(--button-background-disabled)` + `var(--text-button-disabled)`; focus 2px `var(--primary-button-background)` outline, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `10825:3269` (parent frame `5453:38273`).
+**Canonical spec:** height Small 33px / Medium 41px / Large 48px; radius `var(--radius-sm)` (12px); Poppins Bold 12px / 14px / 16px (H6 / H5 / H4); Link is Paragraph S / M / L medium, underlined; Medium padding 10px `var(--space-ml)` (20px); icon gap `var(--space-xs)` (4px) Small, `var(--space-s)` (8px) Medium and Large; Text buttons use 4px at Medium too. Filled `var(--primary-button-background)` with `var(--text-button-foreground)` label; Outlined-2 `var(--border-elevated)` 1px border with `var(--text-primary)` label; disabled `var(--button-background-disabled)` + `var(--text-button-disabled)`; focus 2px `var(--primary-button-background)` outline, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `10825:3269` (parent frame `5453:38273`).
 
 ## Figma to code
 
@@ -428,16 +428,20 @@ All sizes share `border-radius: var(--radius-sm)` (12px) and Poppins **Bold** la
 | Size | Height | Padding (no icon) | Padding (with icon) | Icon gap | Font | Icon |
 |------|--------|-------------------|---------------------|----------|------|------|
 | **Small** | 33px | 8px 16px | 8px **12px**/16px | 4px (`--space-xs`) | 12px / 1.4 (Button S) | 16px |
-| **Medium** | 41px | **10px** 20px (10px is intentionally off the 4px scale) | 10px **16px**/20px | 8px (`--space-s`) | 14px / 1.5 (H5) | 20px |
+| **Medium** | 41px | **10px** 20px (10px is intentionally off the 4px scale) | 10px **16px**/20px | 8px (`--space-s`); Text buttons 4px (`--space-xs`) | 14px / 1.5 (H5) | 20px |
 | **Large** | 48px | 12px 24px | 12px **20px**/24px | 8px (`--space-s`) | 16px / 1.5 (H4) | 24px |
 
 With an icon, the **icon-side (left) padding is one step tighter** than the label-side padding; the icon leads.
+
+Text buttons (Text and Danger / Warning / Success Text) have no padding; their icon gap is 4px at Small **and Medium**, 8px at Large.
 
 ```css
 .btn    { border-radius: var(--radius-sm); font-family: 'Poppins'; font-weight: 700; }
 .btn-sm { padding: var(--space-s) var(--space-m);  font-size: 12px; line-height: 1.4; gap: var(--space-xs); }
 .btn-md { padding: 10px var(--space-ml);           font-size: 14px; line-height: 1.5; gap: var(--space-s); }
 .btn-lg { padding: var(--space-sm) var(--space-l); font-size: 16px; line-height: 1.5; gap: var(--space-s); }
+/* Text buttons: 4px icon gap at Medium as well */
+.btn-md.btn-text { gap: var(--space-xs); }
 /* with icon: tighten the leading (icon) side one step */
 .btn-sm.has-icon { padding-left: var(--space-sm); }  /* 12px */
 .btn-md.has-icon { padding-left: var(--space-m); }   /* 16px */
