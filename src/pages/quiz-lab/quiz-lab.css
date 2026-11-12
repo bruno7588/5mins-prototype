@@ -1054,7 +1054,7 @@
   border-radius: 0 0 var(--radius-s) var(--radius-s);
   background: var(--input-background);
   font: 400 var(--font-size-md)/1.4 'Poppins', sans-serif;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   text-align: left;
   overflow-wrap: anywhere;
 }
@@ -1084,7 +1084,7 @@
 
 .ql-imgchoice__tile--partial .ql-imgchoice__label {
   background: var(--input-background);
-  color: var(--text-primary);
+  color: var(--text-secondary);
 }
 
 .ql-token--incorrect .ql-imgchoice__label {
