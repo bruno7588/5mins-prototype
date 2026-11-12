@@ -3,8 +3,8 @@ import { ArrangeHorizontal } from 'iconsax-react'
 import Dropdown, { type DropdownOption } from '@/components/Dropdown/Dropdown'
 
 /* "Names that aren't on your approved list" (D15): each course name found in an upload
-   that doesn't match an approved course, mapped once to a course, a one-off or skip.
-   Shared by the CSV review and the certificates review. Prefix: lret- */
+   that doesn't match an approved course, mapped once to a course or skipped.
+   Used by the CSV review. Prefix: lret- */
 
 interface Props {
   /** [name as found, how many rows use it] */

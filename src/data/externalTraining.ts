@@ -3,7 +3,7 @@ import { THUMBS } from '@/pages/automations/courseCatalog'
 
 /**
  * DES-336 external training: the approved list (providers, courses, retraining
- * rules), the one-off setting and every external training record.
+ * rules) and every external training record. Every record points to an approved course.
  *
  * One in-memory store, so Account and Settings, Learning Records, the person
  * profile and My Team stay in sync while you move around the prototype. A page
@@ -37,10 +37,8 @@ export interface ExternalCourse {
 export interface ExternalRecord {
   id: string
   personId: string
-  /** null for a one-off record. */
-  courseId: string | null
-  oneOff?: { name: string; provider: string; duration: string }
-  providerId: string | null
+  courseId: string
+  providerId: string
   /** ISO day, "2026-10-14". */
   completionDate: string
   /** ISO day; null for No retraining and for Not Passed (D18). Stored, not derived (D9). */
@@ -118,11 +116,7 @@ export const durationLabel = ({ value, unit }: ExternalCourse['duration']) =>
 
 /* ── Due state ── */
 
-const sameTraining = (a: ExternalRecord, b: ExternalRecord) =>
-  a.personId === b.personId &&
-  (a.courseId
-    ? a.courseId === b.courseId
-    : !b.courseId && a.oneOff?.name.trim().toLowerCase() === b.oneOff?.name.trim().toLowerCase())
+const sameTraining = (a: ExternalRecord, b: ExternalRecord) => a.personId === b.personId && a.courseId === b.courseId
 
 /** The newer passed record that replaces this one, if any (by completion date, not entry date). */
 export function supersededBy(record: ExternalRecord, all: ExternalRecord[]): ExternalRecord | null {
@@ -220,23 +214,6 @@ const rec = (
   }
 }
 
-const oneOff = (
-  id: string,
-  personId: string,
-  name: string,
-  provider: string,
-  duration: string,
-  completionDate: string,
-  dueDate: string | null,
-  result: ExternalResult,
-  score: number | null,
-  hasCertificate: boolean,
-): ExternalRecord => ({
-  id, personId, courseId: null, oneOff: { name, provider, duration }, providerId: null, completionDate,
-  retrainingDueDate: result === 'Not Passed' ? null : dueDate, result, score,
-  certificate: hasCertificate ? `${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.pdf` : null, source: 'manual',
-})
-
 /* Today is 5 Nov 2026 in the demo. The mix covers every due state: overdue, due
    soon (within 90 days), upcoming, superseded (renewed) and Not Passed. */
 const seedRecords: ExternalRecord[] = [
@@ -258,17 +235,17 @@ const seedRecords: ExternalRecord[] = [
   rec('r12', 'm5', 'c2', 'p4', '2025-05-14'),
   rec('r13', 'm9', 'c6', 'p4', '2021-07-01'),
   rec('r14', 'm11', 'c7', 'p4', '2025-10-30'), // overdue by a week
-  // Today's free-text records, carried over as one-offs keeping their expiration.
-  oneOff('e1', 'm1', 'Project Management Fundamentals', 'Leadership Academy', '2 days', '2026-04-25', '2026-05-10', 'Passed', 100, true),
-  oneOff('e2', 'm2', 'Advanced Excel for Finance', 'SkillBridge Online', '3 days', '2026-04-02', null, 'Not Passed', null, false),
-  oneOff('e3', 'm3', 'Data Analytics Bootcamp', 'TechForward Institute', '5 days', '2026-04-15', '2027-04-15', 'Passed', 92, true),
-  oneOff('e4', 'm4', 'Customer Experience Design', 'CX Academy', '2 days', '2026-03-22', '2026-09-22', 'Passed', 100, true),
-  oneOff('e5', 'm5', 'First Aid & CPR Certification', 'Red Cross Training', '1 day', '2026-02-16', null, 'Not Passed', null, false),
-  oneOff('e6', 'm6', 'Barista Mastery Program', 'Coffee Institute', '2 days', '2026-04-12', '2027-04-12', 'Passed', 100, true),
-  oneOff('e7', 'm7', 'Leadership & Team Management', 'Leadership Academy', '3 days', '2026-04-08', null, 'Not Passed', null, false),
-  oneOff('e8', 'm8', 'Financial Modelling Workshop', 'FinanceHub', '2 days', '2026-04-18', '2027-04-18', 'Passed', 95, true),
-  oneOff('e9', 'm9', 'ISO 27001 Auditor Training', 'CompliancePro', '5 days', '2026-03-15', '2027-03-15', 'Passed', 88, true),
-  oneOff('e10', 'm10', 'Workplace Safety Advanced', 'SafeWork Training', '2 days', '2026-03-05', '2026-09-05', 'Passed', 100, true),
+  // More of the team: overdue, Not Passed and upcoming, some without a certificate.
+  rec('e1', 'm1', 'c3', 'p5', '2025-05-10', 'Passed', 100, 'fire-marshal-thompson.pdf'), // overdue
+  rec('e2', 'm2', 'c2', 'p4', '2026-04-02', 'Not Passed', null, null),
+  rec('e3', 'm3', 'c4', 'p3', '2026-04-15', 'Passed', 92, 'nebosh-general-johnson.pdf'),
+  rec('e4', 'm4', 'c3', 'p5', '2025-09-22', 'Passed', 100, 'fire-marshal-williams.pdf'), // overdue
+  rec('e5', 'm5', 'c1', 'p2', '2026-02-16', 'Not Passed', null, null),
+  rec('e6', 'm6', 'c2', 'p4', '2026-04-12', 'Passed', 100, 'food-hygiene-brooks.pdf'),
+  rec('e7', 'm7', 'c5', 'p6', '2026-04-08', 'Not Passed', null, null),
+  rec('e8', 'm8', 'c6', 'p4', '2026-04-18', 'Passed', 95, 'personal-licence-rivers.pdf'),
+  rec('e9', 'm9', 'c7', 'p7', '2026-03-15', 'Passed', 88, 'allergen-awareness-chen.pdf'),
+  rec('e10', 'm10', 'c7', 'p4', '2025-09-05', 'Passed', 100, 'allergen-awareness-reid.pdf'), // overdue
 ]
 
 /* ── Store ── */
@@ -277,14 +254,12 @@ export interface ExternalTrainingState {
   providers: ExternalProvider[]
   courses: ExternalCourse[]
   records: ExternalRecord[]
-  allowOneOffs: boolean
 }
 
 let state: ExternalTrainingState = {
   providers: seedProviders,
   courses: seedCourses,
   records: seedRecords,
-  allowOneOffs: true,
 }
 const listeners = new Set<() => void>()
 
@@ -319,14 +294,12 @@ export const recordsForCourse = (id: string) => state.records.filter((r) => r.co
 export const recordsForProvider = (id: string) => state.records.filter((r) => r.providerId === id).length
 export const coursesForProvider = (id: string) => state.courses.filter((c) => c.providerIds.includes(id)).length
 
-/** Display name of a record's training: the course's current name (D19) or the one-off name. */
-export const recordTrainingName = (r: ExternalRecord) =>
-  r.courseId ? courseById(r.courseId)?.name ?? 'Unknown course' : r.oneOff?.name ?? ''
-export const recordProviderName = (r: ExternalRecord) =>
-  r.providerId ? providerById(r.providerId)?.name ?? '' : r.oneOff?.provider ?? ''
+/** Display name of a record's training: the course's current name (D19). */
+export const recordTrainingName = (r: ExternalRecord) => courseById(r.courseId)?.name ?? 'Unknown course'
+export const recordProviderName = (r: ExternalRecord) => providerById(r.providerId)?.name ?? ''
 export const recordDurationLabel = (r: ExternalRecord) => {
   const c = courseById(r.courseId)
-  return c ? durationLabel(c.duration) : r.oneOff?.duration ?? ''
+  return c ? durationLabel(c.duration) : ''
 }
 
 const sameName = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase()
@@ -340,7 +313,6 @@ export const duplicateProvider = (name: string, exceptId?: string) =>
   state.providers.find((p) => p.id !== exceptId && sameName(p.name, name))
 
 /* Mutations */
-export const setAllowOneOffs = (allowOneOffs: boolean) => set({ allowOneOffs })
 
 export const saveCourse = (course: ExternalCourse) =>
   set({
@@ -404,4 +376,4 @@ export const nameOwner = (name: string) =>
 
 /** Test hook: reset to the seed. */
 export const resetExternalTraining = () =>
-  set({ providers: seedProviders, courses: seedCourses, records: seedRecords, allowOneOffs: true })
+  set({ providers: seedProviders, courses: seedCourses, records: seedRecords })

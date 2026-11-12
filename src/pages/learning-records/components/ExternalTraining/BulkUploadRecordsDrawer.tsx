@@ -1,6 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
 import { Danger, ImportCurve } from 'iconsax-react'
-import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import Chip from '@/components/Chip/Chip'
 import CloseButton from '@/components/CloseButton/CloseButton'
@@ -28,7 +27,7 @@ import { DateCell } from './ExternalRecordsTable'
 import './ExternalTraining.css'
 
 /* Bulk upload CSV (PRD 2.10), from the Add Training menu: records only, no
-   certificates (a zip of certificates is CertificatesReview). Step 1 is the
+   certificates. Step 1 is the
    template, instructions and uploader; step 2
    reviews the file as Bulk manage people does: an error bar with Download Error
    File, tabs with counts, error-type chips, red cells with the fix on hover, and
@@ -71,7 +70,7 @@ const ERROR_META: Record<ErrorCategory, { column: ErrorColumn; label: string; so
 }
 const ERROR_ORDER: ErrorCategory[] = ['person-not-found', 'course-missing']
 
-/** A mapping for a name that isn't on the list: a course id, 'one-off' or 'skip'. */
+/** A mapping for a name that isn't on the list: an approved course id or 'skip'. */
 type Mapping = string
 
 type Status = 'ready' | 'exists' | 'error' | 'skipped'
@@ -80,7 +79,6 @@ interface Checked extends CsvRow {
   errors: Partial<Record<ErrorColumn, RowError>>
   personId: string | null
   courseId: string | null
-  oneOff: boolean
 }
 type Tab = 'all' | 'error' | 'ready' | 'exists'
 const ROWS_PER_PAGE = 10
@@ -105,7 +103,7 @@ interface Props {
 }
 
 function BulkUploadRecordsDrawer({ open, onClose, onAdded }: Props) {
-  const { courses, records, allowOneOffs, providers } = useExternalTraining()
+  const { courses, records, providers } = useExternalTraining()
   const [step, setStep] = useState<'upload' | 'review'>('upload')
   /* The upload step is a SideDrawer (it owns its focus trap); the review is full screen. */
   const panelRef = useRef<HTMLDivElement>(null)
@@ -141,12 +139,11 @@ function BulkUploadRecordsDrawer({ open, onClose, onAdded }: Props) {
         const errors: Checked['errors'] = {}
         if (!person) errors.learner = makeError('person-not-found')
         if (!r.course) errors.course = makeError('course-missing')
-        const base = { ...r, errors, personId: person?.id ?? null, courseId: null, oneOff: false }
+        const base = { ...r, errors, personId: person?.id ?? null, courseId: null }
         if (Object.keys(errors).length) return { ...base, status: 'error' }
         const matched = matchCourse(r.course)
         const mapping = matched ? matched.id : mappings[r.course]
         if (!mapping || mapping === 'skip') return { ...base, status: 'skipped' }
-        if (mapping === 'one-off') return { ...base, status: 'ready', oneOff: true }
         const exists = records.some((x) => x.personId === person!.id && x.courseId === mapping && x.completionDate === r.date)
         return { ...base, courseId: mapping, status: exists ? 'exists' : 'ready' }
       }),
@@ -222,19 +219,19 @@ function BulkUploadRecordsDrawer({ open, onClose, onAdded }: Props) {
     // Remember each mapped spelling on its course, so the next upload matches on its own (D15).
     for (const [name] of unmatched) {
       const m = mappings[name]
-      if (m && m !== 'skip' && m !== 'one-off') addOtherName(m, name)
+      if (m && m !== 'skip') addOtherName(m, name)
     }
     const added: ExternalRecord[] = ready.map((r) => {
-      const course = courses.find((c) => c.id === r.courseId)
-      const provider = providers.find((p) => p.name.toLowerCase() === r.provider.toLowerCase() && course?.providerIds.includes(p.id))
+      // Ready rows always point at an approved course.
+      const course = courses.find((c) => c.id === r.courseId)!
+      const provider = providers.find((p) => p.name.toLowerCase() === r.provider.toLowerCase() && course.providerIds.includes(p.id))
       return {
         id: newId('r'),
         personId: r.personId!,
-        courseId: r.oneOff ? null : r.courseId,
-        oneOff: r.oneOff ? { name: r.course, provider: r.provider, duration: '' } : undefined,
-        providerId: r.oneOff ? null : provider?.id ?? course?.providerIds[0] ?? null,
+        courseId: course.id,
+        providerId: provider?.id ?? course.providerIds[0],
         completionDate: r.date,
-        retrainingDueDate: r.oneOff ? null : retrainingDueDate(r.date, course?.retrainingMonths ?? null, r.result),
+        retrainingDueDate: retrainingDueDate(r.date, course.retrainingMonths, r.result),
         result: r.result,
         score: r.score,
         certificate: null,
@@ -255,7 +252,6 @@ function BulkUploadRecordsDrawer({ open, onClose, onAdded }: Props) {
     }))
   const mappingOptions = [
     ...courseOptions,
-    ...(allowOneOffs ? [{ value: 'one-off', label: 'Record as one-off' }] : []),
     { value: 'skip', label: 'Skip these rows' },
   ]
 
@@ -287,7 +283,6 @@ function BulkUploadRecordsDrawer({ open, onClose, onAdded }: Props) {
         ) : (
           <span className="lret-course">
             <span>{r.courseId ? courses.find((c) => c.id === r.courseId)?.name : r.course}</span>
-            {r.oneOff && <Badge type="informative" icon={false} label="One-off" />}
           </span>
         ),
     },

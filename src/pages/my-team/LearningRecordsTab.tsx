@@ -373,7 +373,7 @@ const courseValue = (id: string, r: LearningRecord): string =>
 /* External Training: read-only for managers (D22), their own team only. */
 const EXTERNAL_META: FilterMeta = {
   learner: { title: 'Learner', description: 'Filter by the person the training belongs to', Icon: Profile },
-  course: { title: 'Course', description: 'Filter by approved course or one-off training', Icon: Book1 },
+  course: { title: 'Course', description: 'Filter by approved course', Icon: Book1 },
   provider: { title: 'Provider', description: 'Filter by training provider', Icon: Buildings2 },
   retraining: { title: 'Expiry', description: 'Overdue, due soon, valid or no expiry', Icon: Calendar },
   result: { title: 'Result', description: 'Passed or not passed', Icon: TickCircle },

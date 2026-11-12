@@ -6,13 +6,6 @@
   width: 100%;
 }
 
-.aetd-oneoff-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
 .aetd-value {
   font-size: var(--font-size-md);
   font-weight: 500;
@@ -97,60 +90,6 @@
   font-size: var(--font-size-sm);
   font-weight: 400;
   color: var(--text-tertiary);
-}
-
-/* Not on the approved list: add it to the list or record a one-off. Each choice says
-   what it means underneath (selection-controls.md: options with a title and description). */
-.aetd-choices {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
-}
-
-.aetd-choice {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-xs);
-  cursor: pointer;
-}
-
-.aetd-choice__text {
-  display: flex;
-  flex-direction: column;
-  padding-top: var(--space-xs);
-}
-
-.aetd-choice__title {
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.aetd-choice__desc {
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-tertiary);
-}
-
-/* The block's fields fill the drawer and sit a field-gap apart, like the form around it.
-   A card (--cards-background, Shadow S, no border) marks it as one unit that
-   replaced the Course field. */
-.aetd-not-listed {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: var(--space-m);
-  padding: var(--space-m);
-  background: var(--cards-background);
-  box-shadow: var(--shadow-s);
-  border-radius: var(--radius-sm);
-  box-sizing: border-box;
-}
-
-.aetd-not-listed > * {
-  width: 100%;
 }
 
 /* The read-only duration and its unit read as one value: a tighter 8px gap. */

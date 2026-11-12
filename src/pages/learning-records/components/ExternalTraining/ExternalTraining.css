@@ -139,40 +139,6 @@
   z-index: 101;
 }
 
-/* Certificates review (CertificatesReview): a cell still being read is a filled bar
-   wearing the shared AI shimmer (.is-writing, AIWorkingCard.css). */
-.lret-reading {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: var(--space-m);
-  overflow: hidden;
-  border-radius: var(--radius-sm);
-  background: var(--input-background);
-}
-
-/* Learner error: the name on the certificate (CellError) above the learner picker. */
-.lret-pick {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  width: 100%;
-  min-width: 0;
-}
-
-.lret-file {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: var(--text-secondary);
-}
-
-/* A cell holding the learner picker grows past the table's 58px cell cap. */
-.tbl-cell.lret-cell-grow {
-  max-height: none;
-  overflow: visible;
-}
-
 /* Add Training menu: 400px at most, so each description wraps under its label. */
 .ram-menu.lret-add-menu {
   max-width: 400px;

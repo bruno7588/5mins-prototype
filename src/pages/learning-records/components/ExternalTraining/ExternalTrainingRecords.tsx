@@ -22,9 +22,7 @@ import {
 } from '@/data/externalTraining'
 import AddExternalTrainingDrawer from './AddExternalTrainingDrawer'
 import CsvIcon from '@/components/icons/CsvIcon'
-import ZipIcon from '@/components/icons/ZipIcon'
 import BulkUploadRecordsDrawer from './BulkUploadRecordsDrawer'
-import CertificatesReview from './CertificatesReview'
 import ExternalRecordsTable from './ExternalRecordsTable'
 import './ExternalTraining.css'
 
@@ -36,7 +34,7 @@ type FilterId = 'learner' | 'retraining' | 'course' | 'provider' | 'result'
 const FILTER_META: Record<FilterId, { title: string; description: string; Icon: typeof Calendar }> = {
   learner: { title: 'Learner', description: 'Filter by the person the training belongs to', Icon: Profile },
   retraining: { title: 'Expiry', description: 'Overdue, due soon, valid or no expiry', Icon: Calendar },
-  course: { title: 'Course', description: 'Filter by approved course or one-off training', Icon: Book1 },
+  course: { title: 'Course', description: 'Filter by approved course', Icon: Book1 },
   provider: { title: 'Provider', description: 'Filter by training provider', Icon: Buildings2 },
   result: { title: 'Result', description: 'Passed or not passed', Icon: TickCircle },
 }
@@ -74,10 +72,6 @@ function ExternalTrainingRecords({ showToast }: Props) {
     setCsvKey((k) => k + 1)
     setCsvOpen(true)
   }
-  /* Upload ZIP file has no template: the menu opens the file picker (a zip, or several
-     certificate files), and picking opens Review certificates. */
-  const [certsOpen, setCertsOpen] = useState(false)
-  const zipInputRef = useRef<HTMLInputElement>(null)
   const [toDelete, setToDelete] = useState<ExternalRecord | null>(null)
 
   /* ── Filter bar state ── */
@@ -162,7 +156,7 @@ function ExternalTrainingRecords({ showToast }: Props) {
     ),
   }))
 
-  /* One Add Training button; the menu offers one record, a bulk CSV or a ZIP upload.
+  /* One Add Training button; the menu offers one record or a bulk CSV.
      It sits at the far right of the row under the Filter bar, beside Download Report. */
   const addMenu = (
         <RowActionsMenu
@@ -191,34 +185,15 @@ function ExternalTrainingRecords({ showToast }: Props) {
               description: 'Add training records from other platforms to keep all your learning in one place',
               icon: <CsvIcon size={20} color="var(--text-primary)" />,
             },
-            {
-              key: 'zip',
-              label: 'Upload ZIP file',
-              description: "Add a zip of certificates. We'll read each one and match the learner",
-              icon: <ZipIcon size={20} color="var(--text-primary)" />,
-            },
           ]}
           onSelect={(key) =>
-            key === 'single' ? openDrawer(null) : key === 'zip' ? zipInputRef.current?.click() : openCsv()
+            key === 'single' ? openDrawer(null) : openCsv()
           }
         />
   )
 
   return (
     <div className="lret">
-      <input
-        ref={zipInputRef}
-        type="file"
-        accept=".zip,.pdf,.jpg,.jpeg,.png"
-        multiple
-        hidden
-        onChange={(e) => {
-          const n = e.target.files?.length ?? 0
-          e.target.value = ''
-          if (n) setCertsOpen(true)
-        }}
-      />
-
       <FilterBar
         filters={filters}
         expanded={expanded}
@@ -304,21 +279,6 @@ function ExternalTrainingRecords({ showToast }: Props) {
           onAdded={(n) => {
             setCsvOpen(false)
             showToast('success', `${n} record${n === 1 ? '' : 's'} added`)
-          }}
-        />
-      )}
-
-      {certsOpen && (
-        <CertificatesReview
-          onClose={() => setCertsOpen(false)}
-          onAdded={(n, remaining) => {
-            // The ready ones are added; anything still waiting keeps the review open.
-            if (!remaining) setCertsOpen(false)
-            showToast(
-              'success',
-              `${n} record${n === 1 ? '' : 's'} added` +
-                (remaining ? `. ${remaining} certificate${remaining === 1 ? '' : 's'} still need${remaining === 1 ? 's' : ''} review.` : ''),
-            )
           }}
         />
       )}

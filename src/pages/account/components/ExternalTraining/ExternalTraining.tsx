@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Add, Danger, ArrowRotateLeft, DocumentUpload, Edit2, Trash } from 'iconsax-react'
+import { Add, Archive, Danger, ArrowRotateLeft, DocumentUpload, Edit2, Trash } from 'iconsax-react'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
@@ -18,7 +18,6 @@ import {
   deleteProvider,
   durationLabel,
   retrainingLabel,
-  setAllowOneOffs,
   setCourseArchived,
   setProviderArchived,
   useExternalTraining,
@@ -31,8 +30,8 @@ import BulkUploadCoursesDrawer from './BulkUploadCoursesDrawer'
 import './ExternalTraining.css'
 
 /* Account & Settings > External Training (DES-336 Phase 1, DEV-4740).
-   The tenant's approved list: the one-off setting, approved courses and approved
-   providers. Only full admins reach this tab (D21). Prefix: aet- */
+   The tenant's approved list: approved courses and approved providers. Every
+   external training record points at one of these courses. Only full admins reach this tab (D21). Prefix: aet- */
 
 type Confirm =
   | { kind: 'archive-course' | 'delete-course'; course: ExternalCourse }
@@ -43,7 +42,7 @@ type View = 'courses' | 'providers'
 const icon = (I: typeof Edit2) => <I size={20} color="var(--text-primary)" variant="Linear" />
 
 function ExternalTraining() {
-  const { courses, providers, records, allowOneOffs } = useExternalTraining()
+  const { courses, providers, records } = useExternalTraining()
   const { toasts, show: showToast } = useToast()
   const [view, setView] = useState<View>('courses')
   const [query, setQuery] = useState('')
@@ -83,13 +82,32 @@ function ExternalTraining() {
     [providers, showArchived, query],
   )
 
-  /* One Delete action (Divjot, 2026-11-11): with no training records it deletes; with records
-     the dialog offers to archive instead, so admins never have to learn "archive" up front. */
+  /* Edit, Archive and Delete as separate actions, each with a line saying what it does
+     (management review 2026-11-12: archive was hidden inside the delete flow). Delete is
+     last; with training records it stays greyed and its line says to archive instead. */
   const recordCount = (n: number) => `${n} training record${n === 1 ? '' : 's'}`
-  const menuFor = (archived: boolean): RowMenuItem[] => {
-    const del = { key: 'delete', label: 'Delete', icon: <Trash size={20} color="currentColor" variant="Linear" />, danger: true }
-    if (archived) return [{ key: 'edit', label: 'Edit', icon: icon(Edit2) }, { key: 'unarchive', label: 'Unarchive', icon: icon(ArrowRotateLeft) }]
-    return [{ key: 'edit', label: 'Edit', icon: icon(Edit2) }, del]
+  const menuFor = (thing: 'course' | 'provider', archived: boolean, records: number): RowMenuItem[] => {
+    const why = `This ${thing} has ${recordCount(records)}, so it can't be deleted. Archive it instead.`
+    return [
+      {
+        key: 'edit',
+        label: 'Edit',
+        description: thing === 'course' ? 'Change its name, providers, duration or expiry' : 'Change its name',
+        icon: icon(Edit2),
+      },
+      archived
+        ? { key: 'unarchive', label: 'Unarchive', description: 'Offer it for new records again', icon: icon(ArrowRotateLeft) }
+        : { key: 'archive', label: 'Archive', description: 'Hide it from new records. Its records stay.', icon: icon(Archive) },
+      {
+        key: 'delete',
+        label: 'Delete',
+        description: 'Remove it for good',
+        icon: <Trash size={20} color="currentColor" variant="Linear" />,
+        danger: true,
+        disabled: records > 0,
+        title: records ? why : undefined,
+      },
+    ]
   }
 
   /* "Training records" names what is counted (research 2026-11-09: name the thing, explain
@@ -111,7 +129,8 @@ function ExternalTraining() {
 
   const onCourseAction = (key: string, course: ExternalCourse) => {
     if (key === 'edit') openCourseDrawer(course)
-    if (key === 'delete') setConfirm({ kind: courseRecords(course.id) ? 'archive-course' : 'delete-course', course })
+    if (key === 'archive') setConfirm({ kind: 'archive-course', course })
+    if (key === 'delete') setConfirm({ kind: 'delete-course', course })
     if (key === 'unarchive') {
       setCourseArchived(course.id, false)
       showToast('success', `${course.name} unarchived`)
@@ -120,7 +139,8 @@ function ExternalTraining() {
 
   const onProviderAction = (key: string, provider: ExternalProvider) => {
     if (key === 'edit') setProviderModal({ provider })
-    if (key === 'delete') setConfirm({ kind: providerRecords(provider.id) ? 'archive-provider' : 'delete-provider', provider })
+    if (key === 'archive') setConfirm({ kind: 'archive-provider', provider })
+    if (key === 'delete') setConfirm({ kind: 'delete-provider', provider })
     if (key === 'unarchive') {
       setProviderArchived(provider.id, false)
       showToast('success', `${provider.name} unarchived`)
@@ -157,7 +177,7 @@ function ExternalTraining() {
       render: (c) => (
         <RowActionsMenu
           ariaLabel={`Actions for ${c.name}`}
-          items={menuFor(c.archived)}
+          items={menuFor('course', c.archived, courseRecords(c.id))}
           onSelect={(key) => onCourseAction(key, c)}
         />
       ),
@@ -187,7 +207,7 @@ function ExternalTraining() {
       render: (p) => (
         <RowActionsMenu
           ariaLabel={`Actions for ${p.name}`}
-          items={menuFor(p.archived)}
+          items={menuFor('provider', p.archived, providerRecords(p.id))}
           onSelect={(key) => onProviderAction(key, p)}
         />
       ),
@@ -198,12 +218,17 @@ function ExternalTraining() {
   const providersEmpty = providers.length === 0
 
   /* ── Confirm dialog copy ── */
+  /* Copy from the Figma dialogs (Approved List, Archive and Delete flows). */
+  const archiveBody = (thing: 'courses' | 'providers', n: number, expiry: boolean) =>
+    `Archived ${thing} can't be picked for new training records.` +
+    (n ? ` Its ${recordCount(n)} ${n === 1 ? 'stays' : 'stay'} on learner profiles${expiry ? ' and still count towards expiry' : ''}.` : '')
+  const deleteBody = "It has no training records. It's removed from the approved list and can't be recovered."
   const dialog = (() => {
     if (!confirm) return null
     if (confirm.kind === 'archive-course') {
       return {
-        title: `Archive ${confirm.course.name} instead?`,
-        body: `It has ${recordCount(courseRecords(confirm.course.id))}, so it can't be deleted. Archiving keeps them, and it won't be offered for new records.`,
+        title: `Archive ${confirm.course.name}?`,
+        body: archiveBody('courses', courseRecords(confirm.course.id), true),
         cta: 'Archive Course',
         danger: false,
         run: () => {
@@ -215,7 +240,7 @@ function ExternalTraining() {
     if (confirm.kind === 'delete-course') {
       return {
         title: `Delete ${confirm.course.name}?`,
-        body: "This removes it from the approved list. It can't be recovered.",
+        body: deleteBody,
         cta: 'Delete Course',
         danger: true,
         run: () => {
@@ -233,12 +258,12 @@ function ExternalTraining() {
         !c.providerIds.some((id) => id !== provider.id && providers.find((p) => p.id === id && !p.archived)),
     )
     const strandedLine = stranded.length
-      ? ` ${stranded.map((c) => c.name).join(', ')} can't be recorded until you add another provider.`
+      ? ` ${stranded.map((c) => c.name).join(', ')} ${stranded.length === 1 ? 'has' : 'have'} no other provider, so ${stranded.length === 1 ? 'it' : 'they'} can't be recorded until you add one.`
       : ''
     if (confirm.kind === 'archive-provider') {
       return {
-        title: `Archive ${provider.name} instead?`,
-        body: `It has ${recordCount(providerRecords(provider.id))}, so it can't be deleted. Archiving keeps them, and it won't be offered for new records.${strandedLine}`,
+        title: `Archive ${provider.name}?`,
+        body: `${archiveBody('providers', providerRecords(provider.id), false)}${strandedLine}`,
         cta: 'Archive Provider',
         danger: false,
         run: () => {
@@ -249,7 +274,7 @@ function ExternalTraining() {
     }
     return {
       title: `Delete ${provider.name}?`,
-      body: `This removes it from the approved list. It can't be recovered.${strandedLine}`,
+      body: `${deleteBody}${strandedLine}`,
       cta: 'Delete Provider',
       danger: true,
       run: () => {
@@ -261,28 +286,6 @@ function ExternalTraining() {
 
   return (
     <div className="aet-body">
-      <section className="aet-card aet-card--row">
-        {/* Small toggle, 2px down so it sits on the title (Figma 9137:6012). */}
-        <span className="aet-card__toggle">
-          <Toggle
-            size="sm"
-            checked={allowOneOffs}
-            onChange={(e) => {
-              setAllowOneOffs(e.target.checked)
-              showToast('success', e.target.checked ? 'One-off trainings turned on' : 'One-off trainings turned off')
-            }}
-            aria-label="Allow one-off trainings"
-          />
-        </span>
-        <div className="aet-head">
-          <h3 className="aet-title">Allow one-off trainings</h3>
-          <p className="aet-text">
-            Admins can record training that isn't on the approved list. Turn this off to only allow approved
-            courses.
-          </p>
-        </div>
-      </section>
-
       <section className="aet-section" aria-label="Approved list">
         <div className="aet-toolbar aet-toolbar--top">
           <ContentSwitcher

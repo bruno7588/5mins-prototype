@@ -6,39 +6,6 @@
   gap: var(--space-l);
 }
 
-/* The one-off setting card, as Figma 9137:6012: 12px 16px padding, 12px between the
-   small toggle and its text. */
-.aet-card {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-sm);
-  width: 100%;
-  padding: var(--space-sm) var(--space-m);
-  border-radius: var(--radius-sm);
-  background: var(--cards-background);
-}
-
-.aet-head {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.aet-card__toggle {
-  display: flex;
-  padding-top: var(--space-xxs);
-}
-
-/* Paragraph M semibold. */
-.aet-title {
-  margin: 0;
-  font-size: var(--font-size-md);
-  font-weight: 600;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
 .aet-text {
   margin: 0;
   font-size: var(--font-size-md);
@@ -149,11 +116,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-s);
-}
-
-/* Cards carry Shadow S in light mode only (cards: no border). */
-:root:not([data-theme='dark']) .aet-card {
-  box-shadow: var(--shadow-s);
 }
 
 .aet-toolbar--top {
