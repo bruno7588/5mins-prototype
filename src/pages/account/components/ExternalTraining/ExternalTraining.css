@@ -50,10 +50,11 @@
   min-width: 0;
 }
 
+/* Fields 20px apart in every external training form (Add training, Add course). */
 .aet-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-l);
+  gap: var(--space-ml);
 }
 
 .aet-field {

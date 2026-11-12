@@ -271,6 +271,9 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
       at(3000, () => {
         setWriting(new Set())
         setReading(false)
+        // An unreadable file isn't kept: the box goes back to empty, ready for another try.
+        setCertificate(null)
+        setCertificateFile(null)
         setRead({ learner: null, courseText: null, unreadable: true })
       })
       return
@@ -407,17 +410,17 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
   const problem: Problem | null = fileError
     ? fileError
     : read?.unreadable
-      ? { title: "We couldn't read this certificate", message: 'Fill in the details below, or upload a clearer copy.' }
+      ? { title: "We couldn't read this certificate", message: 'Fill in the details below, or try again.' }
       : unknownLearner
-        ? { title: 'Learner not found', message: `The certificate names ${certName}, who isn't in 5Mins. Pick the learner or change the file.` }
+        ? { title: 'Learner not found', message: `The certificate names ${certName}, who isn't in 5Mins. Select a learner or change the file.` }
         : severalPeople
-          ? { title: 'More than one learner matches', message: `${read!.matches!.length} people match ${certName}. Pick the right one.` }
+          ? { title: 'More than one learner matches', message: `${read!.matches!.length} people match ${certName}. Select the right one.` }
           : mismatch
             ? { title: "The name doesn't match", message: `The certificate names ${certName}, not ${person?.name}. Confirm it's the same person, or change the file.` }
             : unlistedCourse
               ? {
                   title: 'Course not on your approved list',
-                  message: `${read!.courseText} isn't on the list. Pick an approved course, or ${canAdd ? 'add it in the Approved list first' : 'ask your admin to add it'}.`,
+                  message: `${read!.courseText} isn't on the list. Select an approved course, or ${canAdd ? 'add it in the Approved list first' : 'ask your admin to add it'}.`,
                 }
               : read?.noDate && !completionDate
                 ? { title: "We couldn't find the completion date", message: 'Add the date the training was completed.' }
@@ -461,7 +464,7 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
             description={
               learnerView
                 ? 'Ask your admin to add courses to the approved list before recording training.'
-                : 'Add courses to the approved list in External Training before recording training.'
+                : 'Add courses to the approved list in External Training.'
             }
             primaryAction={
               learnerView
@@ -579,14 +582,14 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
               {reading && (
                 /* The card's height opens and closes too, so the form below slides down
                    and back up instead of jumping. The negative margin cancels the form's
-                   24px gap (--space-l) while the card is closed, so nothing snaps at the
+                   20px gap (--space-ml) while the card is closed, so nothing snaps at the
                    ends either. */
                 <motion.div
                   key="reading"
                   style={{ overflow: 'hidden' }}
-                  initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8, height: 0, marginBottom: -24 }}
+                  initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8, height: 0, marginBottom: -20 }}
                   animate={{ opacity: 1, y: 0, height: 'auto', marginBottom: 0 }}
-                  exit={reduce ? { opacity: 0 } : { opacity: 0, height: 0, marginBottom: -24 }}
+                  exit={reduce ? { opacity: 0 } : { opacity: 0, height: 0, marginBottom: -20 }}
                   transition={arriveTransition(reduce)}
                 >
                   <AIWorkingCard steps={readSteps} activeStep={readStep} lastStepDone={false} />
@@ -624,7 +627,7 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
                     /* The Alert explains; the field gets the error border and a short hint. */
                     error={
                       unknownLearner || severalPeople
-                        ? 'Pick a learner'
+                        ? 'Select a learner'
                         : mismatch
                           ? `Certificate name: ${read!.learner}`
                           : err('learner')
@@ -656,7 +659,7 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
                     }))}
                     value={courseId}
                     onChange={setCourseId}
-                    error={unlistedCourse ? `Certificate course: ${read!.courseText}` : err('course')}
+                    error={unlistedCourse ? `Certificate course: ${read!.courseText} isn’t on the approved list.` : err('course')}
                     emptyText={(q) => `No approved courses match “${q}”`}
                   />
                 </div>
