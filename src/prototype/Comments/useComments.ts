@@ -22,6 +22,12 @@ export interface PrototypeComment {
   unresolved?: string[]
 }
 
+/** Someone a comment can be @mentioned to: their name and handle (work email prefix). */
+export interface MentionPerson {
+  name: string
+  handle: string
+}
+
 export interface NewComment {
   text: string
   author: string
@@ -52,19 +58,21 @@ async function request<T>(init: RequestInit & { query?: string }): Promise<T> {
 
 export function useComments(route: string, enabled: boolean) {
   const [comments, setComments] = useState<PrototypeComment[]>([])
+  const [people, setPeople] = useState<MentionPerson[]>([])
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const { comments } = await request<{ comments: PrototypeComment[] }>({
+      const { comments, people } = await request<{ comments: PrototypeComment[]; people?: MentionPerson[] }>({
         method: 'GET',
         query: '?all=1',
       })
       // Until the API is deployed the URL serves the app's HTML, so there is no list.
       if (!Array.isArray(comments)) throw new Error('Comments are not available yet.')
       setComments(comments)
+      if (Array.isArray(people)) setPeople(people)
       setError(null)
     } catch (e) {
       setError((e as Error).message)
@@ -139,5 +147,5 @@ export function useComments(route: string, enabled: boolean) {
     [comments],
   )
 
-  return { comments, error, loading, add, setResolved, remove, reload: load }
+  return { comments, people, error, loading, add, setResolved, remove, reload: load }
 }

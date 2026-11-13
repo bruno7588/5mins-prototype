@@ -29,6 +29,7 @@ const EMAIL_RE = /^[a-z0-9._%+-]+@5mins\.ai$/
    were asked for carry only a typed first name, and an @mention is looked up here before
    falling back to <name>@5mins.ai. */
 const EMAIL_ALIASES: Record<string, string> = {
+  bruno: 'bruno@5mins.ai',
   divjot: 'divjot@5mins.ai',
   nicolas: 'nicolas@5mins.ai',
   nicholas: 'nicolas@5mins.ai',
@@ -106,6 +107,21 @@ const publicView = ({ authorEmail: _e, slackUserId: _u, slackTs: _t, to, ...rest
   ...rest,
   ...(to?.length && { to: to.map((r) => r.name) }),
 })
+
+/* Who the comment box suggests for an @mention: everyone who has commented with a work
+   email, plus the aliases. Name and handle (the email prefix) only; emails and Slack ids
+   stay on the server. `comments` is oldest first, so a person's latest name wins. */
+const directory = (comments: StoredComment[]): { name: string; handle: string }[] => {
+  const names = new Map<string, string>()
+  for (const email of Object.values(EMAIL_ALIASES)) names.set(email, nameFromEmail(email))
+  for (const c of comments) {
+    const email = emailOf(c)
+    if (email) names.set(email, c.author)
+  }
+  return [...names]
+    .map(([email, name]) => ({ name, handle: email.split('@')[0] }))
+    .sort((a, b) => a.name.localeCompare(b.name))
+}
 
 /* The @mentions in a comment: "@name" at the start of the text or after a space, where
    name is an email prefix (letters, digits, dots, hyphens, underscores). Lower-cased,
@@ -204,7 +220,8 @@ export async function GET(request: Request) {
     ? parseHash((await redis('HGETALL', keyFor(route))) as string[] | null)
     : await allComments()
   comments.sort((a, b) => a.createdAt.localeCompare(b.createdAt))
-  return json({ comments: comments.map(publicView) })
+  // The full list also carries the people a comment can be @mentioned to.
+  return json({ comments: comments.map(publicView), ...(!route && { people: directory(comments) }) })
 }
 
 export async function POST(request: Request) {

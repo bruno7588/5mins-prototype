@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { TickCircle, Trash } from 'iconsax-react'
 import { anchorFor, locate, placeFor, type Anchor } from './commentAnchor'
@@ -6,7 +6,7 @@ import { currentTrail, isReplaying, recordClicks, replayTrail, resetTrail } from
 import { sendToClaude, type SendResult } from './sendToClaude'
 import { capturePage } from './capturePage'
 import SparkleIcon from '@/components/icons/SparkleIcon'
-import type { NewComment, PrototypeComment } from './useComments'
+import type { MentionPerson, NewComment, PrototypeComment } from './useComments'
 import './CommentLayer.css'
 
 /* Prototype comment mode (Demos switcher → Comment). Click anything to pin a comment,
@@ -106,6 +106,8 @@ interface Props {
   showList: boolean
   onCloseList: () => void
   comments: PrototypeComment[]
+  /** People a new comment can be @mentioned to (suggested in the comment box). */
+  people: MentionPerson[]
   error: string | null
   onAdd: (c: NewComment) => Promise<PrototypeComment | undefined>
   onResolve: (id: string, resolved: boolean) => void
@@ -119,7 +121,7 @@ interface Props {
   focusId?: string | null
 }
 
-function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, onResolve, onDelete, onExit, currentRoute, onGoTo, focusId }: Props) {
+function CommentLayer({ active, showList, onCloseList, comments, people, error, onAdd, onResolve, onDelete, onExit, currentRoute, onGoTo, focusId }: Props) {
   const [, setTick] = useState(0)
   const [hover, setHover] = useState<DOMRect | null>(null)
   const [draft, setDraft] = useState<{ anchor: Anchor; where: string; x: number; y: number } | null>(null)
@@ -197,6 +199,8 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
     }
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return
+      // An open @mention menu takes Escape first (the comment box closes it itself).
+      if ((e.target as Element | null)?.getAttribute?.('aria-expanded') === 'true') return
       e.preventDefault()
       if (draft || openId) {
         setDraft(null)
@@ -298,7 +302,8 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
       {draft && (
         <div className="pcm-pop" style={place(draft.x, draft.y)} role="dialog" aria-label="New comment">
           <Composer
-            placeholder="Add a comment. Type @name to send it to them on Slack."
+            placeholder="Add a comment. Type @ to send it to someone on Slack."
+            people={people}
             submitLabel="Post"
             onCancel={() => setDraft(null)}
             onSubmit={async (text, author, website) => {
@@ -497,9 +502,16 @@ interface ComposerProps {
   submitLabel: string
   onSubmit: (text: string, author: string, website: string) => Promise<void>
   onCancel?: () => void
+  /** New comments only: the people an @mention can send the comment to. */
+  people?: MentionPerson[]
 }
 
-function Composer({ placeholder, submitLabel, onSubmit, onCancel }: ComposerProps) {
+/* The same rule the API uses to read @mentions (api/comments.ts, mentionsIn). */
+const MENTION = /(?:^|\s)@([a-z0-9][a-z0-9._-]{0,60})/gi
+/* The "@partial" being typed just before the cursor, if any. */
+const PARTIAL = /(?:^|\s)@([a-z0-9._-]*)$/i
+
+function Composer({ placeholder, submitLabel, onSubmit, onCancel, people = [] }: ComposerProps) {
   const [author, setAuthor] = useState(readAuthor)
   const [text, setText] = useState('')
   const [website, setWebsite] = useState('')
@@ -507,6 +519,70 @@ function Composer({ placeholder, submitLabel, onSubmit, onCancel }: ComposerProp
   const [err, setErr] = useState<string | null>(null)
   const needsName = !readAuthor()
   const textRef = useRef<HTMLTextAreaElement>(null)
+  const menuId = useId()
+  // @mention menu: the partial name at the cursor, the highlighted row, and whether
+  // Escape closed it for this partial.
+  const [partial, setPartial] = useState<string | null>(null)
+  const [active, setActive] = useState(0)
+  const [dismissed, setDismissed] = useState(false)
+
+  const matches =
+    partial === null
+      ? []
+      : people.filter((p) => {
+          const q = partial.toLowerCase()
+          return p.handle.startsWith(q) || p.name.toLowerCase().split(/\s+/).some((w) => w.startsWith(q))
+        })
+  const menuOpen = matches.length > 0 && !dismissed
+  const activeRow = Math.min(active, matches.length - 1)
+
+  // Who the comment will be sent to, read from the text the same way the API reads it.
+  const handles = new Set([...text.matchAll(MENTION)].map((m) => m[1].toLowerCase().replace(/[._-]+$/, '')))
+  const recipients = people.filter((p) => handles.has(p.handle))
+
+  const readPartial = (value: string, caret: number) => {
+    const next = people.length ? (value.slice(0, caret).match(PARTIAL)?.[1] ?? null) : null
+    if (next !== partial) {
+      setPartial(next)
+      setActive(0)
+      setDismissed(false)
+    }
+  }
+
+  const pick = (person: MentionPerson) => {
+    const el = textRef.current
+    if (!el || partial === null) return
+    const caret = el.selectionStart
+    const start = caret - partial.length - 1 // the "@"
+    const inserted = `@${person.handle} `
+    setText(text.slice(0, start) + inserted + text.slice(caret))
+    setPartial(null)
+    // After React has written the new text, put the cursor after the mention.
+    requestAnimationFrame(() => {
+      el.focus()
+      el.setSelectionRange(start + inserted.length, start + inserted.length)
+    })
+  }
+
+  const onMenuKey = (e: ReactKeyboardEvent<HTMLTextAreaElement>): boolean => {
+    if (!menuOpen || e.metaKey || e.ctrlKey) return false
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault()
+      setActive((activeRow + (e.key === 'ArrowDown' ? 1 : matches.length - 1)) % matches.length)
+      return true
+    }
+    if (e.key === 'Enter' || e.key === 'Tab') {
+      e.preventDefault()
+      pick(matches[activeRow])
+      return true
+    }
+    if (e.key === 'Escape') {
+      e.preventDefault()
+      setDismissed(true)
+      return true
+    }
+    return false
+  }
 
   useEffect(() => {
     if (!needsName) textRef.current?.focus()
@@ -560,11 +636,47 @@ function Composer({ placeholder, submitLabel, onSubmit, onCancel }: ComposerProp
         value={text}
         maxLength={2000}
         rows={3}
-        onChange={(e) => setText(e.target.value)}
+        role={people.length ? 'combobox' : undefined}
+        aria-autocomplete={people.length ? 'list' : undefined}
+        aria-expanded={people.length ? menuOpen : undefined}
+        aria-controls={menuOpen ? menuId : undefined}
+        aria-activedescendant={menuOpen ? `${menuId}-${activeRow}` : undefined}
+        onChange={(e) => {
+          setText(e.target.value)
+          readPartial(e.target.value, e.target.selectionStart)
+        }}
+        onSelect={(e) => readPartial(e.currentTarget.value, e.currentTarget.selectionStart)}
+        onBlur={() => setPartial(null)}
         onKeyDown={(e) => {
+          if (onMenuKey(e)) return
           if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) void submit(e)
         }}
       />
+      {menuOpen && (
+        <ul className="pcm-mention" id={menuId} role="listbox" aria-label="People">
+          {matches.map((p, i) => (
+            <li
+              key={p.handle}
+              id={`${menuId}-${i}`}
+              role="option"
+              aria-selected={i === activeRow}
+              className={`pcm-mention__item${i === activeRow ? ' is-active' : ''}`}
+              // Keep the text box focused, so the pick lands at the cursor.
+              onMouseDown={(e) => e.preventDefault()}
+              onMouseEnter={() => setActive(i)}
+              onClick={() => pick(p)}
+            >
+              <span className="pcm-mention__name">{p.name}</span>
+              <span className="pcm-mention__handle">@{p.handle}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {recipients.length > 0 && (
+        <p className="pcm-mention__to" role="status">
+          Sends to {recipients.map((p) => p.name).join(', ')} on Slack
+        </p>
+      )}
       {err && <p className="pcm-composer__error">{err}</p>}
       <div className="pcm-composer__actions">
         {onCancel && (

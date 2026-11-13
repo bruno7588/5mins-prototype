@@ -164,6 +164,48 @@ html.pcm-active *:not([data-inspect-ignore], [data-inspect-ignore] *) {
   min-height: 64px;
 }
 
+/* @mention menu: the people a new comment can be sent to, under the text box. */
+.pcm-mention {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 168px;
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  border: 1px solid var(--neutral-700);
+  border-radius: 6px;
+  background: var(--neutral-800);
+  list-style: none;
+}
+
+.pcm-mention__item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  color: #fafafa;
+  cursor: pointer;
+}
+
+.pcm-mention__item.is-active {
+  background: var(--neutral-700);
+}
+
+.pcm-mention__handle {
+  color: var(--neutral-300);
+  font-size: 12px;
+}
+
+/* "Sends to <names> on Slack": the confirmation before posting. */
+.pcm-mention__to {
+  margin: 0;
+  color: #86efac;
+  font-size: 12px;
+}
+
 .pcm-honeypot {
   position: absolute;
   left: -9999px;

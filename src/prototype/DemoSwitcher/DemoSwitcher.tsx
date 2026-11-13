@@ -42,7 +42,7 @@ function DemoSwitcher() {
   // The comments list is opt-in (the arrow beside Comment), so it doesn't cover the page.
   const [listOpen, setListOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
-  const { comments, error, add, setResolved, remove } = useComments(pathname, true)
+  const { comments, people, error, add, setResolved, remove } = useComments(pathname, true)
   const openCount = comments.filter((c) => !c.parentId && !c.resolved).length
   const exitComments = useCallback(() => setCommenting(false), [])
 
@@ -212,6 +212,7 @@ function DemoSwitcher() {
         showList={listOpen}
         onCloseList={exitComments}
         comments={comments}
+        people={people}
         error={error}
         onAdd={add}
         onResolve={setResolved}
