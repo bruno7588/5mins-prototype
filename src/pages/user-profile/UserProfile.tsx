@@ -728,7 +728,8 @@ function UserProfile() {
             <div className="up-view-ctas">
               {/* Bulk download (Divjot, 2026-11-12): the certificates of the completed
                   courses in view, as one ZIP; a toast stands in for the file. */}
-              {(() => {
+              {/* For managers and admins; the learner already has their own certificates. */}
+              {externalViewer !== 'learner' && (() => {
                 const n = rows.filter((r) => r.status === 'Completed').length
                 return (
                   <Tooltip text="No certificates to download" icon={false} disabled={n > 0}>

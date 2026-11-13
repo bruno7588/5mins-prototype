@@ -98,7 +98,8 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast, addButto
         ) : (
           <div className="uet-toolbar">
             <div className="uet-toolbar__ctas">
-              {downloadAll}
+              {/* Managers and admins download a person's certificates; the learner already has their own. */}
+              {!isLearner && downloadAll}
               {addButton}
             </div>
           </div>
