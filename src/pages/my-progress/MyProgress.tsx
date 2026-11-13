@@ -44,6 +44,17 @@ import { progressMesh, type ProgressSection } from './progressMesh'
 import '@/pages/my-team/MyTeam.css'
 import './MyProgress.css'
 
+/* The cards a tenant can switch off, and the versions of the page the prototype
+   control at the end of the page steps through. */
+type Panel = 'skills' | 'external' | 'leaderboard'
+const VERSIONS: { label: string; hide: Panel[] }[] = [
+  { label: 'All cards', hide: [] },
+  { label: 'Without Leaderboard', hide: ['leaderboard'] },
+  { label: 'Without Skill Development', hide: ['skills'] },
+  { label: 'Without Leaderboard and Skill Development', hide: ['leaderboard', 'skills'] },
+  { label: 'Without External Training', hide: ['external'] },
+]
+
 /* The External Training card lists the learner's latest three records. */
 const EXTERNAL_ROWS = 3
 
@@ -95,11 +106,19 @@ function MyProgress() {
   const location = useLocation()
   const headerTheme = useHeaderTheme()
   const { records } = useExternalTraining()
-  /* Tenants can switch panels off. In the prototype, ?hide=leaderboard,skills,external
-     (any mix) shows what the page looks like without them. */
-  const [searchParams] = useSearchParams()
-  const hidden = new Set((searchParams.get('hide') ?? '').split(',').map((h) => h.trim()))
-  const show = (panel: 'leaderboard' | 'skills' | 'external') => !hidden.has(panel)
+  /* Tenants can switch panels off. In the prototype the control at the end of the page
+     steps through the versions, and keeps the choice in the URL (?hide=leaderboard,skills,external, any mix)
+     so a combination can be shared as a link. */
+  const [searchParams, setSearchParams] = useSearchParams()
+  const hidden = new Set((searchParams.get('hide') ?? '').split(',').map((h) => h.trim()).filter(Boolean))
+  const show = (panel: Panel) => !hidden.has(panel)
+  const sameAsHidden = (hide: Panel[]) => hide.length === hidden.size && hide.every((h) => hidden.has(h))
+  const showVersion = (hide: Panel[]) => {
+    const params = new URLSearchParams(searchParams)
+    if (hide.length) params.set('hide', hide.join(','))
+    else params.delete('hide')
+    setSearchParams(params, { replace: true })
+  }
   const showRail = show('leaderboard')
   const [period, setPeriod] = useState('month')
   const [scope, setScope] = useState<LeaderboardScope>('team')
@@ -356,6 +375,24 @@ function MyProgress() {
                     </SectionCard>
                 </div>
               )}
+            </div>
+
+            {/* Prototype only, not part of the learner's page: step through the versions of
+                the page a tenant can end up with when cards are switched off. */}
+            <div className="mp-proto" role="group" aria-label="Prototype control: page version">
+              {VERSIONS.map((version, i) => (
+                <button
+                  key={version.label}
+                  type="button"
+                  className="mp-proto__version"
+                  aria-pressed={sameAsHidden(version.hide)}
+                  aria-label={`Version ${i + 1}: ${version.label}`}
+                  title={version.label}
+                  onClick={() => showVersion(version.hide)}
+                >
+                  {i + 1}
+                </button>
+              ))}
             </div>
           </div>
         </section>
