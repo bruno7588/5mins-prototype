@@ -6,6 +6,12 @@
   padding: 0;
 }
 
+/* Keep the scrollbar's space reserved, so the page doesn't shift sideways when a tab
+   or switcher swaps in content that is shorter or taller than the viewport. */
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   font-family: 'Poppins', sans-serif;
   background: var(--page-background);
