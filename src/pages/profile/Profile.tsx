@@ -3,17 +3,14 @@ import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { Add, FlashCircle, Mobile } from 'iconsax-react'
 import { useHeaderTheme } from '@/data/brandTheme'
-import { SIGNED_IN_LEARNER_ID } from '@/data/externalTraining'
 import Avatar from '@/components/Avatar/Avatar'
 import Tabs from '@/components/Tabs/Tabs'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import LessonGridCard from '@/components/LessonGridCard/LessonGridCard'
 import WorkspaceCourseCard from '@/components/WorkspaceCourseCard/WorkspaceCourseCard'
 import InstructorCard from '@/components/InstructorCard/InstructorCard'
-import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import ProfileMenu from '@/components/ProfileMenu/ProfileMenu'
 import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
-import ExternalTrainingTab from '@/pages/user-profile/components/ExternalTrainingTab/ExternalTrainingTab'
 import { Logo, learnerSideItems } from '@/pages/my-team/MyTeam'
 import { bookmarkedCourses, bookmarkedLessons, followedInstructors, likedLessons } from './profileItems'
 import avatarAnthonny from '@/assets/avatars/avatar-1.jpg'
@@ -28,24 +25,19 @@ const TABS = [
   { key: 'bookmarks', label: 'Bookmarks' },
   { key: 'likes', label: 'Likes' },
   { key: 'following', label: 'Following' },
-  { key: 'external-training', label: 'External Training' },
 ] as const
 type Tab = (typeof TABS)[number]['key']
 
-/* Learner Profile: what the learner saved (Bookmarks, Likes), who they follow, and
-   their own External Training records, read-only (DES-336 D13). */
+/* Learner Profile: what the learner saved (Bookmarks, Likes), and who they follow. */
 function Profile() {
   const navigate = useNavigate()
   const location = useLocation()
   const headerTheme = useHeaderTheme()
-  const { toasts, show: showToast } = useToast()
-  // ?tab=external-training opens that tab straight away.
+  // ?tab=<key> opens that tab straight away.
   const [searchParams] = useSearchParams()
   const initialTab = TABS.find((t) => t.key === searchParams.get('tab'))?.key ?? 'bookmarks'
   const [tab, setTab] = useState<Tab>(initialTab)
   const [bookmarkView, setBookmarkView] = useState<'lessons' | 'courses'>('lessons')
-  // The tabs row's action slot: External Training puts Add Training here.
-  const [tabActions, setTabActions] = useState<HTMLDivElement | null>(null)
 
   return (
     <div className="mt-app">
@@ -110,15 +102,12 @@ function Profile() {
                 </div>
               </div>
               <div className="up-divider" />
-              <div className="lp-tabs-row">
-                <Tabs
-                  items={TABS.map((t) => ({ key: t.key, label: t.label }))}
-                  activeKey={tab}
-                  onChange={(key) => setTab(key as Tab)}
-                  ariaLabel="Profile sections"
-                />
-                <div ref={setTabActions} className="lp-tabs-row__actions" />
-              </div>
+              <Tabs
+                items={TABS.map((t) => ({ key: t.key, label: t.label }))}
+                activeKey={tab}
+                onChange={(key) => setTab(key as Tab)}
+                ariaLabel="Profile sections"
+              />
             </header>
 
             {tab === 'bookmarks' && (
@@ -156,16 +145,10 @@ function Profile() {
                 {followedInstructors.map((instructor) => <InstructorCard key={instructor.name} {...instructor} />)}
               </div>
             )}
-
-            {tab === 'external-training' && (
-              <ExternalTrainingTab personId={SIGNED_IN_LEARNER_ID} personName={ME.name} viewer="learner" showToast={showToast} addButtonTarget={tabActions} />
-            )}
           </div>
         </section>
       </div>
       <LearnerMobileNav />
-
-      <ToastContainer toasts={toasts} />
     </div>
   )
 }

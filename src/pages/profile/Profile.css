@@ -1,27 +1,6 @@
 /* ===== Learner Profile page (lp-) =====
    Shell: MyTeam.css (mt-*). Header: UserProfile.css (up-header, as on the people profile). */
 
-/* Tabs on the left, the active tab's action (Add Training) on the right. The action
-   sits out of the flow, centred on the tabs, so the button (taller than the tabs)
-   never changes the row's height: the tabs don't jump when switching tabs. */
-.lp-tabs-row {
-  position: relative;
-  min-width: 0;
-  /* The centred button is 16px taller than the tabs, so the row adds 8px above and below:
-     divider to tabs 24px (button clears it by 16), and the button sits 24px above the table. */
-  margin: var(--space-s) 0;
-}
-
-.lp-tabs-row__actions {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  gap: var(--space-m);
-}
-
 .lp-section {
   display: flex;
   flex-direction: column;
