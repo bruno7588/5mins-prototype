@@ -62,6 +62,15 @@ function HomeSections({ onSaved }: { onSaved: () => void }) {
     !draft.hidden[key] && draft.order.some((other) => other !== key && !draft.hidden[other] && shownAs(other) === shownAs(key))
   const hasDuplicate = draft.order.some(isDuplicate)
 
+  /* Numbers count what learners see, top to bottom: a hidden banner or section has no
+     number, and the next visible one takes its place. */
+  const positionOf = (key: SectionKey) =>
+    draft.hidden[key]
+      ? null
+      : (draft.bannerShown ? 1 : 0) + draft.order.slice(0, draft.order.indexOf(key) + 1).filter((k) => !draft.hidden[k]).length
+  const numberBadge = (n: number | null) =>
+    n === null ? <span className="acl-hs-num acl-hs-num--none" aria-hidden="true" /> : <span className="acl-hs-num">{n}</span>
+
   const dirty = !sameHomeSections(draft, saved)
   const isDefault = sameHomeSections(draft, defaultHomeSections())
 
@@ -127,7 +136,7 @@ function HomeSections({ onSaved }: { onSaved: () => void }) {
             </span>
           </Tooltip>
           <div className="acl-hs-card acl-hs-card--banner">
-            <span className="acl-hs-num">1</span>
+            {numberBadge(draft.bannerShown ? 1 : null)}
             <div className="acl-hs-main">
               <p className="acl-hs-name">Home banner</p>
               <p className="acl-hs-helper">
@@ -205,7 +214,7 @@ function HomeSections({ onSaved }: { onSaved: () => void }) {
                   </svg>
                 </button>
                 <div className="acl-hs-card">
-                  <span className="acl-hs-num">{index + 2}</span>
+                  {numberBadge(positionOf(key))}
                   <div className="acl-hs-main">
                     <InputField
                       value={value}

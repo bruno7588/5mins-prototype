@@ -59,10 +59,12 @@
 .acl-hs-move {
   display: flex;
   flex-shrink: 0;
+  flex-direction: column;
   gap: var(--space-xs);
-  /* Up and down side by side, in the row's track at the far right (the grip sits at
-     the far left). The fixed width keeps the banner row's empty slot the same size. */
-  width: calc(24px * 2 + var(--space-xs));
+  /* Up over down, in the row's track at the far right (the grip sits at the far left):
+     stacked, so they take one button's width. The fixed width keeps the banner row's
+     empty slot the same size. */
+  width: 24px;
 }
 
 .acl-hs-move-btn {
@@ -193,6 +195,11 @@
   color: var(--text-secondary);
 }
 
+/* A hidden row has no number; the empty slot keeps its content lined up with the others. */
+.acl-hs-num--none {
+  background: transparent;
+}
+
 .acl-hs-card--banner .acl-hs-num {
   margin-top: 0;
 }
@@ -230,10 +237,8 @@
 .acl-hs-shown {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   flex-shrink: 0;
   gap: var(--space-s);
-  width: 112px;
   /* Centres on the 44px field beside it. */
   margin-top: var(--space-ssm);
 }
@@ -243,9 +248,12 @@
 }
 
 .acl-hs-shown__label {
+  /* Fits "Hidden", the longer of the two, so the label starts the card's gap after the
+     field (as the number does before it) and nothing shifts when the toggle flips. */
+  min-width: 52px;
   font-size: var(--font-size-md);
   line-height: 1.5;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
 }
 
 .acl-hs-footer {
