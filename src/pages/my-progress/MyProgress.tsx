@@ -245,11 +245,14 @@ function MyProgress() {
 
             {/* A main column for the learner's records and skills, and a fixed side rail for
                 the Leaderboard. Tenants can switch panels off without leaving a hole: with
-                Skill Development off, 5Mins Courses takes its row; with the Leaderboard off,
-                the main column takes the full width. */}
+                Skill Development off, External Training sits beside 5Mins Courses; with the
+                Leaderboard off, the main column takes the full width and its cards share a row. */}
             <div className={`mp-layout${showRail ? '' : ' mp-layout--full'}`}>
-              <div className="mp-main">
-                {/* Side by side; with Skill Development off, 5Mins Courses takes the row. */}
+              {/* One row of cards under the stat tiles where it fits. Skill Development off: External
+                  Training takes its place beside 5Mins Courses. Leaderboard off: all three cards
+                  share the row. */}
+              <div className={`mp-main${show('external') && (!show('skills') || !showRail) ? ' mp-main--row' : ''}${show('external') && show('skills') && !showRail ? ' mp-main--three' : ''}`}>
+                {/* 5Mins Courses and Skill Development, side by side. */}
                 <div className="mp-pair">
                   <SectionCard
                       id="courses"

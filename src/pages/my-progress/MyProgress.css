@@ -82,6 +82,23 @@
   min-width: 0;
 }
 
+/* Skill Development hidden: External Training takes its place beside 5Mins Courses, at
+   equal widths and heights, instead of two full-width tables. */
+.mp-main--row {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.mp-main--row > * {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* The pair's wrapper steps aside, so both cards are direct items and get equal widths. */
+.mp-main--row > .mp-pair {
+  display: contents;
+}
+
 /* 5Mins Courses and Skill Development side by side, equal widths and heights. */
 .mp-pair {
   display: flex;
@@ -442,8 +459,21 @@
    (course names were cut to a few letters), so Courses and Skills stack. With the
    Leaderboard hidden the main column is wide enough and they stay side by side. */
 @media (min-width: 1200px) and (max-width: 1439px) {
-  .mp-layout:not(.mp-layout--full) .mp-pair {
+  .mp-layout:not(.mp-layout--full) .mp-pair,
+  .mp-layout:not(.mp-layout--full) .mp-main--row {
     flex-direction: column;
+  }
+}
+
+/* Three cards in one row (Leaderboard hidden) need a wide screen. Under 1440 they go
+   back to Courses and Skills side by side over External Training. */
+@media (max-width: 1439px) {
+  .mp-main--three {
+    flex-direction: column;
+  }
+
+  .mp-main--three > .mp-pair {
+    display: flex;
   }
 }
 
@@ -461,7 +491,8 @@
 }
 
 @media (max-width: 900px) {
-  .mp-pair {
+  .mp-pair,
+  .mp-main--row {
     flex-direction: column;
   }
 }
