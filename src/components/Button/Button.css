@@ -141,7 +141,10 @@
 
 /* Text */
 .ds-btn--text { color: var(--text-button-outlined); }
-.ds-btn--text:hover:not(:disabled)  { color: var(--text-button-hover); }
+/* Text has no fill to tint, and in light mode --text-button-hover equals the rest
+   colour, so its hover steps along the filled ladder instead (light Primary-800, dark
+   Primary-400, the same dark value as before). */
+.ds-btn--text:hover:not(:disabled)  { color: var(--primary-button-background-hover); }
 .ds-btn--text:active:not(:disabled) { color: var(--primary-button-background-pressed); }
 .ds-btn--text:disabled { color: var(--text-disabled); }
 

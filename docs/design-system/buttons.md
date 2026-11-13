@@ -240,7 +240,7 @@ No background, border, or padding, just the label. Same chrome ladder as Outline
   background: transparent; border: none; padding: 0;
   color: var(--text-button-outlined);
 }
-.btn-text:hover    { color: var(--text-button-hover); }
+.btn-text:hover    { color: var(--primary-button-background-hover); } /* light Primary-800, dark Primary-400; --text-button-hover equals the rest colour in light mode, so Text steps along the filled ladder (2026-11-13) */
 .btn-text:active   { color: var(--primary-button-background-pressed); }
 .btn-text:disabled { color: var(--text-disabled); }        /* note: --text-disabled, not --text-button-disabled */
 ```
