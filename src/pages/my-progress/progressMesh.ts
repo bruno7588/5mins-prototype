@@ -7,7 +7,7 @@ import type { MeshConfig, Shape } from '@/lib/meshGradient'
    edges; no fill under them, a fine grain on top. Colours are read from
    the design tokens at runtime, never typed here. */
 
-export type ProgressSection = 'courses' | 'skills' | 'external'
+export type ProgressSection = 'courses' | 'external'
 
 const token = (name: string) =>
   getComputedStyle(document.documentElement).getPropertyValue(name).trim()
@@ -34,12 +34,6 @@ const SHAPES: Record<ProgressSection, ShapeSpec[]> = {
     circle('--primary-500', 0.05, 0.1, 0.9),
     square('--course-assessments', 0.95, 0.9, 0.8, 25, 0.4),
     circle('--primary-300', 0.6, 0.0, 0.5),
-  ],
-  /* Skills: the shields of levels 1, 3 and 4: pink, cyan and magenta. */
-  skills: [
-    circle('--danger-400', 0.0, 0.9, 0.85),
-    square('--primary-500', 0.55, 0.0, 0.7, 30, 0.45),
-    circle('--flash-poll', 1.0, 0.5, 0.85),
   ],
   /* External training: certificate blue and indigo. */
   external: [

@@ -53,18 +53,40 @@
   color: var(--text-secondary);
 }
 
-/* ── Rows of section cards ── */
+/* ── Main column and side rail ── */
 
-.mp-row {
+/* The main column flexes; the Leaderboard rail is a fixed 400px. Hiding a panel never
+   leaves a hole: its neighbour takes the space. */
+.mp-layout {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) 400px;
   gap: var(--space-l);
   align-items: start;
 }
 
-/* External Training beside the narrower Leaderboard (824 / 400 in the design). */
-.mp-row--wide {
-  grid-template-columns: minmax(0, 1fr) 400px;
+/* No rail panels on: the main column takes the full width. */
+.mp-layout--full {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.mp-main,
+.mp-rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  min-width: 0;
+}
+
+/* 5Mins Courses and Skill Development side by side, equal widths and heights. */
+.mp-pair {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-l);
+  min-width: 0;
+}
+
+.mp-pair > .mp-card {
+  flex: 1 1 0;
 }
 
 /* Outlined card, no fill: the mesh gradient sits on the page inside the border. */
@@ -121,14 +143,30 @@
   background: var(--input-background-hover);
 }
 
-/* Course names in both tables are Semibold. */
+/* The shared table keeps its first column at least 240px wide for wide, scrolling
+   tables. These cards can be 400px, so the column shrinks and the name truncates. */
+.mp-card .tbl-cell.is-sticky-last,
+.mp-card .tbl-head-cell.is-sticky-last {
+  min-width: 0;
+}
+
+/* Course names in both tables are Semibold, and wrap to two lines before truncating. */
 .mp-card .mp-course-name,
 .mp-card .tbl-stack .primary.mp-course-name {
+  display: -webkit-box;
   min-width: 0;
   overflow: hidden;
   font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+/* Room for the second line: the cell's own one-line clip is lifted. */
+.mp-card .tbl-cell:has(.mp-course-name) {
+  max-height: none;
+  white-space: normal;
 }
 
 /* ── Skill development ── */
@@ -351,8 +389,7 @@
 /* ── Smaller screens ── */
 
 @media (max-width: 1199px) {
-  .mp-row,
-  .mp-row--wide {
+  .mp-layout {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -361,6 +398,12 @@
   .mp-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-m);
+  }
+}
+
+@media (max-width: 900px) {
+  .mp-pair {
+    flex-direction: column;
   }
 }
 

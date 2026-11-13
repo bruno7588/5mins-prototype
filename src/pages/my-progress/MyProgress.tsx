@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { Add, ArrowCircleDown, ArrowCircleUp, FlashCircle, Mobile } from 'iconsax-react'
 import { useHeaderTheme } from '@/data/brandTheme'
 import { useTheme } from '@/hooks/useTheme'
@@ -52,7 +52,8 @@ const EXTERNAL_ROWS = 3
 const OWN_PROFILE = '/my-progress/profile'
 
 /* A section card (Figma My Progress V2, 13023:65051): outlined, with a title and its
-   actions. `mesh` puts a quiet mesh gradient behind the content; the Leaderboard has none. */
+   actions. `mesh` puts a quiet mesh gradient behind the content (5Mins Courses and
+   External Training only). */
 function SectionCard({
   id,
   mesh: meshSection,
@@ -94,6 +95,12 @@ function MyProgress() {
   const location = useLocation()
   const headerTheme = useHeaderTheme()
   const { records } = useExternalTraining()
+  /* Tenants can switch panels off. In the prototype, ?hide=leaderboard,skills,external
+     (any mix) shows what the page looks like without them. */
+  const [searchParams] = useSearchParams()
+  const hidden = new Set((searchParams.get('hide') ?? '').split(',').map((h) => h.trim()))
+  const show = (panel: 'leaderboard' | 'skills' | 'external') => !hidden.has(panel)
+  const showRail = show('leaderboard')
   const [period, setPeriod] = useState('month')
   const [scope, setScope] = useState<LeaderboardScope>('team')
   const { toasts, show: showToast } = useToast()
@@ -125,7 +132,7 @@ function MyProgress() {
       render: (c) => <span className="mp-course-name" title={c.course}>{c.course}</span>,
     },
     { key: 'score', header: 'Score', width: '0 0 64px', align: 'center', render: (c) => `${c.score}%` },
-    { key: 'result', header: 'Result', width: '0 0 128px', align: 'right', render: (c) => resultBadge(c.result) },
+    { key: 'result', header: 'Result', width: '0 0 112px', align: 'right', render: (c) => resultBadge(c.result) },
   ]
 
   const externalColumns: Column<ExternalRecord>[] = [
@@ -140,7 +147,7 @@ function MyProgress() {
       ),
     },
     { key: 'score', header: 'Score', width: '0 0 64px', align: 'center', render: (r) => (r.score === null ? '–' : `${r.score}%`) },
-    { key: 'result', header: 'Result', width: '0 0 128px', align: 'right', render: (r) => resultBadge(r.result) },
+    { key: 'result', header: 'Result', width: '0 0 112px', align: 'right', render: (r) => resultBadge(r.result) },
   ]
 
   return (
@@ -217,126 +224,138 @@ function MyProgress() {
               ))}
             </div>
 
-            <div className="mp-row">
-              <SectionCard
-                id="courses"
-                mesh="courses"
-                title="5Mins Courses"
-                ctas={<Button variant="text" onClick={() => navigate(OWN_PROFILE)}>View All</Button>}
-              >
-                <Table columns={courseColumns} rows={courseResults} getRowKey={(c) => c.id} />
-              </SectionCard>
-
-              <SectionCard
-                id="skills"
-                mesh="skills"
-                title="Skill Development"
-                /* Not built: there is no skills list page yet. */
-                ctas={<Button variant="text" className="ui-disabled" disabled>View All Skills</Button>}
-              >
-                <ul className="mp-skills">
-                  {skillProgress.map((skill) => (
-                    <li key={skill.name}>
-                      <button type="button" className="mp-skill">
-                        <img
-                          className="mp-skill__level"
-                          src={getLevelIllustration(skill.level, { size: 'small' })}
-                          alt={`Level ${skill.level}`}
-                          width={48}
-                          height={48}
-                        />
-                        <span className="mp-skill__info">
-                          <span className="mp-skill__titles">
-                            <span className="mp-skill__name">{skill.name}</span>
-                            <span className="mp-skill__hint">Earn {skill.target} points to complete this level</span>
-                          </span>
-                          <span className="mp-skill__progress">
-                            <span
-                              className="mp-bar"
-                              role="progressbar"
-                              aria-valuemin={0}
-                              aria-valuemax={skill.target}
-                              aria-valuenow={skill.points}
-                              aria-label={`${skill.name} level progress`}
-                            >
-                              <span className="mp-bar__fill" style={{ width: `${(skill.points / skill.target) * 100}%` }} />
-                            </span>
-                            <span className="mp-skill__points">{skill.points}/{skill.target} pts</span>
-                          </span>
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </SectionCard>
-            </div>
-
-            <div className="mp-row mp-row--wide">
-              <SectionCard
-                id="external"
-                mesh="external"
-                title="External Training"
-                ctas={
-                  <>
-                    <Button
-                      variant="text"
-                      onClick={() => setDrawer({ open: true, key: Date.now() })}
-                      icon={<Add size={20} color="currentColor" variant="Linear" />}
+            {/* A main column for the learner's records and skills, and a fixed side rail for
+                the Leaderboard. Tenants can switch panels off without leaving a hole: with
+                Skill Development off, 5Mins Courses takes its row; with the Leaderboard off,
+                the main column takes the full width. */}
+            <div className={`mp-layout${showRail ? '' : ' mp-layout--full'}`}>
+              <div className="mp-main">
+                {/* Side by side; with Skill Development off, 5Mins Courses takes the row. */}
+                <div className="mp-pair">
+                  <SectionCard
+                      id="courses"
+                      mesh="courses"
+                      title="5Mins Courses"
+                      ctas={<Button variant="text" onClick={() => navigate(OWN_PROFILE)}>View All</Button>}
                     >
-                      Add Training
-                    </Button>
-                    <Button variant="text" onClick={() => navigate(`${OWN_PROFILE}?tab=external-training`)}>
-                      View All
-                    </Button>
-                  </>
-                }
-              >
-                <Table columns={externalColumns} rows={externalRows} getRowKey={(r) => r.id} />
-              </SectionCard>
+                      <Table columns={courseColumns} rows={courseResults} getRowKey={(c) => c.id} />
+                    </SectionCard>
+                  {show('skills') && (
+                    <SectionCard
+                        id="skills"
+                        title="Skill Development"
+                        /* Not built: there is no skills list page yet. */
+                        ctas={<Button variant="text" className="ui-disabled" disabled>View All Skills</Button>}
+                      >
+                        <ul className="mp-skills">
+                          {skillProgress.map((skill) => (
+                            <li key={skill.name}>
+                              <button type="button" className="mp-skill">
+                                <img
+                                  className="mp-skill__level"
+                                  src={getLevelIllustration(skill.level, { size: 'small' })}
+                                  alt={`Level ${skill.level}`}
+                                  width={48}
+                                  height={48}
+                                />
+                                <span className="mp-skill__info">
+                                  <span className="mp-skill__titles">
+                                    <span className="mp-skill__name">{skill.name}</span>
+                                    <span className="mp-skill__hint">Earn {skill.target} points to complete this level</span>
+                                  </span>
+                                  <span className="mp-skill__progress">
+                                    <span
+                                      className="mp-bar"
+                                      role="progressbar"
+                                      aria-valuemin={0}
+                                      aria-valuemax={skill.target}
+                                      aria-valuenow={skill.points}
+                                      aria-label={`${skill.name} level progress`}
+                                    >
+                                      <span className="mp-bar__fill" style={{ width: `${(skill.points / skill.target) * 100}%` }} />
+                                    </span>
+                                    <span className="mp-skill__points">{skill.points}/{skill.target} pts</span>
+                                  </span>
+                                </span>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </SectionCard>
+                  )}
+                </div>
+                {show('external') && (
+                  <SectionCard
+                      id="external"
+                      mesh="external"
+                      title="External Training"
+                      ctas={
+                        <>
+                          <Button
+                            variant="text"
+                            onClick={() => setDrawer({ open: true, key: Date.now() })}
+                            icon={<Add size={20} color="currentColor" variant="Linear" />}
+                          >
+                            Add Training
+                          </Button>
+                          <Button variant="text" onClick={() => navigate(`${OWN_PROFILE}?tab=external-training`)}>
+                            View All
+                          </Button>
+                        </>
+                      }
+                    >
+                      <Table columns={externalColumns} rows={externalRows} getRowKey={(r) => r.id} />
+                    </SectionCard>
+                )}
+              </div>
 
-              <SectionCard
-                id="leaderboard"
-                title="Leaderboard"
-                className="mp-leaderboard"
-                ctas={<Dropdown options={leaderboardPeriods} value={period} onChange={setPeriod} menuAlign="end" />}
-              >
-                <ContentSwitcher
-                  className="mp-leaderboard__scope"
-                  ariaLabel="Leaderboard scope"
-                  items={[
-                    { key: 'team', label: 'Team' },
-                    { key: 'company', label: 'Company' },
-                  ]}
-                  activeKey={scope}
-                  onChange={(key) => setScope(key as LeaderboardScope)}
-                />
+              {showRail && (
+                <div className="mp-rail">
+                  <SectionCard
+                      id="leaderboard"
+                      title="Leaderboard"
+                      className="mp-leaderboard"
+                      ctas={<Dropdown options={leaderboardPeriods} value={period} onChange={setPeriod} menuAlign="end" />}
+                    >
+                      <ContentSwitcher
+                        className="mp-leaderboard__scope"
+                        ariaLabel="Leaderboard scope"
+                        items={[
+                          { key: 'team', label: 'Team' },
+                          { key: 'company', label: 'Company' },
+                        ]}
+                        activeKey={scope}
+                        onChange={(key) => setScope(key as LeaderboardScope)}
+                      />
 
-                <ol className="mp-ranks">
-                  {leaderboards[scope].map((entry) => {
-                    const medal = getRankMedal(entry.rank)
-                    return (
-                      <li className={`mp-rank${medal ? ` mp-rank--${entry.rank}` : ''}`} key={entry.rank}>
-                        <span className={`mp-rank__position${medal ? ' mp-rank__position--medal' : ''}`}>
-                          {medal && <img src={medal} alt="" width={24} height={24} />}
-                          <span className="mp-rank__number">{entry.rank}</span>
-                        </span>
-                        <span className="mp-rank__person">
-                          <Avatar name={entry.name} src={entry.avatarSrc} size={32} />
-                          <span className="mp-rank__name">{entry.name}</span>
-                        </span>
-                        <span className="mp-rank__score">
-                          <span className="mp-rank__points">{entry.points.toLocaleString('en-GB')} pts</span>
-                          {entry.trend === 'up' ? (
-                            <ArrowCircleUp size={24} color="var(--success-500)" variant="Bold" aria-label="Moved up" />
-                          ) : (
-                            <ArrowCircleDown size={24} color="var(--danger-400)" variant="Bold" aria-label="Moved down" />
-                          )}
-                        </span>
-                      </li>
-                    )
-                  })}
-                </ol>
-              </SectionCard>
+                      <ol className="mp-ranks">
+                        {leaderboards[scope].map((entry) => {
+                          const medal = getRankMedal(entry.rank)
+                          return (
+                            <li className={`mp-rank${medal ? ` mp-rank--${entry.rank}` : ''}`} key={entry.rank}>
+                              <span className={`mp-rank__position${medal ? ' mp-rank__position--medal' : ''}`}>
+                                {medal && <img src={medal} alt="" width={24} height={24} />}
+                                <span className="mp-rank__number">{entry.rank}</span>
+                              </span>
+                              <span className="mp-rank__person">
+                                <Avatar name={entry.name} src={entry.avatarSrc} size={32} />
+                                <span className="mp-rank__name">{entry.name}</span>
+                              </span>
+                              <span className="mp-rank__score">
+                                <span className="mp-rank__points">{entry.points.toLocaleString('en-GB')} pts</span>
+                                {entry.trend === 'up' ? (
+                                  <ArrowCircleUp size={24} color="var(--success-500)" variant="Bold" aria-label="Moved up" />
+                                ) : (
+                                  <ArrowCircleDown size={24} color="var(--danger-400)" variant="Bold" aria-label="Moved down" />
+                                )}
+                              </span>
+                            </li>
+                          )
+                        })}
+                      </ol>
+                    </SectionCard>
+                </div>
+              )}
             </div>
           </div>
         </section>
