@@ -156,3 +156,29 @@
     animation: none;
   }
 }
+
+/* Meet in-house experts (Figma Your Workspace 10500:60852): 72px square avatars,
+   the name beneath, 24px apart. */
+.ws-experts-track {
+  gap: var(--space-l);
+}
+
+.ws-expert {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-s);
+  width: 72px;
+}
+
+.ws-expert__name {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  color: var(--text-secondary);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

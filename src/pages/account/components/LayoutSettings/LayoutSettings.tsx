@@ -9,6 +9,7 @@ import { setCompanyDefault, setCompanyUpload, useCompanyImage, validateCompanyIm
 import { DEFAULT_THEME, effectiveTheme, setBrandTheme, useBrandTheme, type BrandTheme } from '@/data/brandTheme'
 import { useTheme } from '@/hooks/useTheme'
 import EditThemeModal from './EditThemeModal'
+import HomeSections from './HomeSections'
 import ThumbnailPreviewModal from './ThumbnailPreviewModal'
 import './LayoutSettings.css'
 
@@ -95,6 +96,8 @@ function LayoutSettings() {
           />
         </div>
       </section>
+
+      <HomeSections onSaved={() => showToast('success', 'Home page sections saved. Learners see the changes now.')} />
 
       <section className="acl-card">
         <div className="acl-head">

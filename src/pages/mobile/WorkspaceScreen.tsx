@@ -4,6 +4,7 @@ import MobileCourseCard from '@/components/mobile/CourseCard/CourseCard'
 import MobileCategoryCard from '@/components/mobile/CategoryCard/CategoryCard'
 import { workspaceCourses, workspaceCategories, type WorkspaceCourse } from '@/pages/workspace/mockItems'
 import { useSignOff } from '@/data/trainerSignOff'
+import { headingFor, useHomeSections, type SectionKey } from '@/data/homeSections'
 import { getAllPrograms } from '@/pages/programs/programStore'
 import './WorkspaceScreen.css'
 
@@ -75,18 +76,14 @@ function WorkspaceScreen({
   const inProgress = workspaceCourses.filter((c) => c.progress > 0 && c.progress < 100).length
   const completed = workspaceCourses.filter((c) => c.progress >= 100).length
 
-  return (
-    <div className="m-ws">
-      <MobileWorkspaceBanner
-        /* Sign-off courses stay out of the banner, as on web: "min left" means nothing when only the sign-off remains. */
-        courses={workspaceCourses.filter((c) => !c.requiresSignOff)}
-        programs={getAllPrograms()}
-        onOpenProgram={(program) => onOpenProgram?.(program.id)}
-      />
-
-      <section className="m-ws-section" id="m-ws-enrolled">
+  // Headings, order and visibility are the admin's (Account > Layout > Home page sections,
+  // DEV-5214). The app has no Events or experts rows, so those keys render nothing here.
+  const home = useHomeSections()
+  const sections: Partial<Record<SectionKey, ReactNode>> = {
+    enrolled: (
+      <section className="m-ws-section" id="m-ws-enrolled" key="enrolled">
         <SectionHeader
-          title="Courses you're enrolled in"
+          title={headingFor(home, 'enrolled')}
           subtitle={`${workspaceCourses.length} courses · ${inProgress} in progress · ${completed} completed`}
         />
         <CardRow label="Enrolled courses">
@@ -99,10 +96,11 @@ function WorkspaceScreen({
           ))}
         </CardRow>
       </section>
-
-      <section className="m-ws-section">
+    ),
+    explore: (
+      <section className="m-ws-section" key="explore">
         <SectionHeader
-          title="Explore content from 5Mins"
+          title={headingFor(home, 'explore')}
           subtitle={`${workspaceCategories.length} categories`}
         />
         <CardRow label="Explore categories">
@@ -118,6 +116,20 @@ function WorkspaceScreen({
           ))}
         </CardRow>
       </section>
+    ),
+  }
+
+  return (
+    <div className="m-ws">
+      {home.bannerShown && (
+        <MobileWorkspaceBanner
+          /* Sign-off courses stay out of the banner, as on web: "min left" means nothing when only the sign-off remains. */
+          courses={workspaceCourses.filter((c) => !c.requiresSignOff)}
+          programs={getAllPrograms()}
+          onOpenProgram={(program) => onOpenProgram?.(program.id)}
+        />
+      )}
+      {home.order.filter((key) => !home.hidden[key]).map((key) => sections[key])}
     </div>
   )
 }

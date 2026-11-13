@@ -1,0 +1,280 @@
+/* Account & Settings > Layout > Home page sections (DEV-5185). Prefix: acl-hs- */
+
+/* Heading on the left, the collapse chevron on the right. */
+.acl-hs-top {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+/* Icon-only, so a circular hover. */
+.acl-hs-chevron-btn {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.acl-hs-chevron-btn:hover {
+  background: var(--cards-background-hover);
+}
+
+.acl-hs-chevron-btn:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.acl-hs-chevron {
+  display: flex;
+  transition: transform 200ms ease;
+}
+
+.acl-hs-chevron--open {
+  transform: rotate(180deg);
+}
+
+/* The foldable part: the rows and the buttons. */
+.acl-hs-collapse {
+  width: 100%;
+}
+
+.acl-hs-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+/* Move up / down, as on a sequencing step (InteractiveDrawer.css, iq-drawer__move-btn). */
+.acl-hs-move {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--space-xs);
+  /* Centres on the 44px field beside it. */
+  margin-top: var(--space-ssm);
+}
+
+.acl-hs-move-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.acl-hs-move-btn:hover:not(:disabled) {
+  background: var(--input-background-hover);
+  color: var(--text-primary);
+}
+
+.acl-hs-move-btn:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.acl-hs-move-btn:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acl-hs-chevron,
+  .acl-hs-chevron-btn,
+  .acl-hs-move-btn {
+    transition: none;
+  }
+}
+
+.acl-hs-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  width: 100%;
+}
+
+/* Row chrome as the course builder's sortable rows (ContentList.css): a grey track
+   holding the grip and the row's card. */
+.acl-hs-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-s);
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+}
+
+.acl-hs-row--dragging {
+  box-shadow: 0 0 0 1px var(--selected);
+  background: var(--selected-tint);
+}
+
+.acl-hs-grip,
+.acl-hs-lock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-xs);
+}
+
+.acl-hs-grip {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-disabled);
+  cursor: grab;
+  transition: color 150ms ease;
+}
+
+.acl-hs-grip:hover,
+.acl-hs-grip:focus-visible {
+  color: var(--text-secondary);
+}
+
+.acl-hs-grip:active {
+  cursor: grabbing;
+}
+
+.acl-hs-grip:focus-visible,
+.acl-hs-lock:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.acl-hs-card {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  min-width: 0;
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+}
+
+.acl-hs-card--banner {
+  align-items: center;
+}
+
+.acl-hs-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  /* Centres on the 44px field beside it. */
+  margin-top: var(--space-ssm);
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.acl-hs-card--banner .acl-hs-num {
+  margin-top: 0;
+}
+
+.acl-hs-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.acl-hs-name {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.acl-hs-helper-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-s);
+  min-height: 24px;
+}
+
+.acl-hs-helper {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* A hidden row: its heading reads as off, through the disabled text token. */
+.acl-hs-row--hidden .acl-hs-name,
+.acl-hs-row--hidden .input-field__input {
+  color: var(--text-disabled);
+}
+
+.acl-hs-shown {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  gap: var(--space-s);
+  width: 112px;
+  /* Centres on the 44px field beside it. */
+  margin-top: var(--space-ssm);
+}
+
+.acl-hs-card--banner .acl-hs-shown {
+  margin-top: 0;
+}
+
+.acl-hs-shown__label {
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.acl-hs-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+/* Announces keyboard moves to screen readers only. */
+.acl-hs-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acl-hs-grip {
+    transition: none;
+  }
+}

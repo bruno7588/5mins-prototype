@@ -1,4 +1,9 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
+import Avatar from '@/components/Avatar/Avatar'
+import CompanyAvatar from '@/components/CompanyAvatar/CompanyAvatar'
+import { headingFor, useHomeSections, type SectionKey } from '@/data/homeSections'
+import { ORG_USERS } from '@/data/orgUsers'
+import { COMPANY } from '@/data/people'
 import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
 import { useHeaderTheme } from '@/data/brandTheme'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -43,6 +48,117 @@ function Workspace() {
   const upcomingEvents = upcomingItems
     .filter((item) => item.type === 'event')
     .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
+
+  // Headings, order and visibility are the admin's (Account > Layout > Home page sections).
+  const home = useHomeSections()
+  const sections: Record<SectionKey, ReactNode> = {
+    enrolled: (
+      <section className="ws-section" id="ws-enrolled" key="enrolled">
+        <header className="ws-section__header">
+          <div className="ws-section__headline">
+            <h2 className="ws-section__title">{headingFor(home, 'enrolled')}</h2>
+            <p className="ws-section__subtitle">
+              {workspaceCourses.length} courses · {workspaceCourses.filter((c) => c.progress > 0 && c.progress < 100).length} in progress · {workspaceCourses.filter((c) => c.progress >= 100).length} completed
+            </p>
+          </div>
+          <button type="button" className="ws-section__cta ui-disabled" disabled>View My Courses</button>
+        </header>
+        <Carousel trackClassName="ws-cards-track" ariaLabel="Enrolled courses">
+          {workspaceCourses.map((course) => (
+            <EnrolledCourseCard
+              key={course.id}
+              course={course}
+              onOpen={() => navigate(`/courses/${course.id}`)}
+            />
+          ))}
+        </Carousel>
+      </section>
+    ),
+    events: (
+      <section className="ws-section" key="events">
+        <header className="ws-section__header">
+          <div className="ws-section__headline">
+            <h2 className="ws-section__title">{headingFor(home, 'events')}</h2>
+          </div>
+          <button type="button" className="ws-section__cta" onClick={() => navigate('/events')}>
+            View All
+          </button>
+        </header>
+        {upcomingEvents.length > 0 ? (
+          <Carousel trackClassName="ws-events-track" ariaLabel="Upcoming events">
+            {upcomingEvents.map((event) => (
+              <EventCard
+                key={event.id}
+                item={event}
+                tab="upcoming"
+                showCountdown
+                onClick={setSelectedEvent}
+              />
+            ))}
+          </Carousel>
+        ) : (
+          <div className="ws-events-empty">
+            <p className="ws-events-empty__text">No upcoming events.</p>
+            <button
+              type="button"
+              className="ws-events-empty__link"
+              onClick={() => navigate('/events')}
+            >
+              Browse Past Events
+            </button>
+          </div>
+        )}
+      </section>
+    ),
+    explore: (
+      <section className="ws-section" key="explore">
+        <header className="ws-section__header">
+          <div className="ws-section__headline">
+            <h2 className="ws-section__title">{headingFor(home, 'explore')}</h2>
+            <p className="ws-section__subtitle">
+              {workspaceCategories.length} categories
+            </p>
+          </div>
+          <button type="button" className="ws-section__cta ui-disabled" disabled>View All</button>
+        </header>
+        <Carousel trackClassName="ws-cards-track" ariaLabel="Explore categories">
+          {workspaceCategories.map((category) => (
+            <CategoryCard
+              key={category.id}
+              name={category.name}
+              courseCount={category.courseCount}
+              lessonCount={category.lessonCount}
+              image={category.image}
+              thumbnailGradient={category.thumbnailGradient}
+            />
+          ))}
+        </Carousel>
+      </section>
+    ),
+    /* Figma Your Workspace 10500:60850: the company, then subject experts and managers. */
+    experts: (
+      <section className="ws-section" key="experts">
+        <header className="ws-section__header">
+          <div className="ws-section__headline">
+            <h2 className="ws-section__title">{headingFor(home, 'experts')}</h2>
+            <p className="ws-section__subtitle">Explore content from Subject Experts and Managers</p>
+          </div>
+        </header>
+        <Carousel trackClassName="ws-experts-track" ariaLabel="In-house experts">
+          <div className="ws-expert">
+            <CompanyAvatar size={72} />
+            <span className="ws-expert__name">{COMPANY}</span>
+          </div>
+          {ORG_USERS.map((person) => (
+            <div className="ws-expert" key={person.email}>
+              <Avatar src={person.avatar} name={person.name} size={72} shape="square" />
+              <span className="ws-expert__name">{person.name.split(' ')[0]}</span>
+            </div>
+          ))}
+        </Carousel>
+      </section>
+    ),
+  }
 
   return (
     <div className={`mt-app${fromOnboarding ? ' mt-app--fade-in' : ''}`}>
@@ -97,96 +213,19 @@ function Workspace() {
 
         <section className="mt-body ws-body">
           <div className="ws-sections">
-              <WorkspaceBanner
-                /* Sign-off courses stay out: "min left" means nothing when only the sign-off remains. */
-                courses={workspaceCourses.filter((c) => !c.requiresSignOff)}
-                programs={getAllPrograms()}
-                onOpenCourse={(course) => navigate(`/courses/${course.id}`)}
-                onViewCourses={() =>
-                  document.getElementById('ws-enrolled')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                }
-                onOpenProgram={(program) => navigate(`/programs/${program.id}`)}
-              />
-
-              <section className="ws-section" id="ws-enrolled">
-                <header className="ws-section__header">
-                  <div className="ws-section__headline">
-                    <h2 className="ws-section__title">Courses you're enrolled in</h2>
-                    <p className="ws-section__subtitle">
-                      {workspaceCourses.length} courses · {workspaceCourses.filter((c) => c.progress > 0 && c.progress < 100).length} in progress · {workspaceCourses.filter((c) => c.progress >= 100).length} completed
-                    </p>
-                  </div>
-                  <button type="button" className="ws-section__cta ui-disabled" disabled>View My Courses</button>
-                </header>
-                <Carousel trackClassName="ws-cards-track" ariaLabel="Enrolled courses">
-                  {workspaceCourses.map((course) => (
-                    <EnrolledCourseCard
-                      key={course.id}
-                      course={course}
-                      onOpen={() => navigate(`/courses/${course.id}`)}
-                    />
-                  ))}
-                </Carousel>
-              </section>
-
-              <section className="ws-section">
-                <header className="ws-section__header">
-                  <div className="ws-section__headline">
-                    <h2 className="ws-section__title">Events</h2>
-                  </div>
-                  <button type="button" className="ws-section__cta" onClick={() => navigate('/events')}>
-                    View All
-                  </button>
-                </header>
-                {upcomingEvents.length > 0 ? (
-                  <Carousel trackClassName="ws-events-track" ariaLabel="Upcoming events">
-                    {upcomingEvents.map((event) => (
-                      <EventCard
-                        key={event.id}
-                        item={event}
-                        tab="upcoming"
-                        showCountdown
-                        onClick={setSelectedEvent}
-                      />
-                    ))}
-                  </Carousel>
-                ) : (
-                  <div className="ws-events-empty">
-                    <p className="ws-events-empty__text">No upcoming events.</p>
-                    <button
-                      type="button"
-                      className="ws-events-empty__link"
-                      onClick={() => navigate('/events')}
-                    >
-                      Browse Past Events
-                    </button>
-                  </div>
-                )}
-              </section>
-
-              <section className="ws-section">
-                <header className="ws-section__header">
-                  <div className="ws-section__headline">
-                    <h2 className="ws-section__title">Explore content from 5Mins</h2>
-                    <p className="ws-section__subtitle">
-                      {workspaceCategories.length} categories
-                    </p>
-                  </div>
-                  <button type="button" className="ws-section__cta ui-disabled" disabled>View All</button>
-                </header>
-                <Carousel trackClassName="ws-cards-track" ariaLabel="Explore categories">
-                  {workspaceCategories.map((category) => (
-                    <CategoryCard
-                      key={category.id}
-                      name={category.name}
-                      courseCount={category.courseCount}
-                      lessonCount={category.lessonCount}
-                      image={category.image}
-                      thumbnailGradient={category.thumbnailGradient}
-                    />
-                  ))}
-                </Carousel>
-              </section>
+              {home.bannerShown && (
+                <WorkspaceBanner
+                  /* Sign-off courses stay out: "min left" means nothing when only the sign-off remains. */
+                  courses={workspaceCourses.filter((c) => !c.requiresSignOff)}
+                  programs={getAllPrograms()}
+                  onOpenCourse={(course) => navigate(`/courses/${course.id}`)}
+                  onViewCourses={() =>
+                    document.getElementById('ws-enrolled')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  }
+                  onOpenProgram={(program) => navigate(`/programs/${program.id}`)}
+                />
+              )}
+              {home.order.filter((key) => !home.hidden[key]).map((key) => sections[key])}
           </div>
         </section>
       </div>

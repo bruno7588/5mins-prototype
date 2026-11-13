@@ -36,6 +36,10 @@
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
+  /* One line: a long custom heading is cut (DEV-5214). */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .m-ws-section__subtitle {
