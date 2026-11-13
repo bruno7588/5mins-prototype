@@ -118,8 +118,13 @@
   margin: 0 auto;
 }
 
-/* Side nav */
+/* Side nav. It stays put under the top nav while the page scrolls: the panel fits the
+   window, so only the main content needs to scroll. 70px is the top nav's height. */
 .mt-side {
+  position: sticky;
+  top: calc(70px + var(--imp-bar-h, 0px));
+  align-self: flex-start;
+  height: calc(100vh - 70px - var(--imp-bar-h, 0px));
   width: 240px;
   display: flex;
   flex-direction: column;
