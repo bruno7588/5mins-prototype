@@ -16,6 +16,10 @@ export interface PrototypeComment {
   steps?: string[]
   /** Where the anchor was when posted, e.g. "Assign courses, Select people to enrol". */
   place?: string
+  /** Names of the people a comment was sent to with an @mention; each got it as a Slack DM. */
+  to?: string[]
+  /** Only on the comment `add` returns: @names Slack could not place, so nobody was told. */
+  unresolved?: string[]
 }
 
 export interface NewComment {
@@ -90,7 +94,7 @@ export function useComments(route: string, enabled: boolean) {
 
   const add = useCallback(
     async (c: NewComment) => {
-      const { comment } = await request<{ comment: PrototypeComment }>({
+      const { comment, unresolved } = await request<{ comment: PrototypeComment; unresolved?: string[] }>({
         method: 'POST',
         body: JSON.stringify({
           ...c,
@@ -103,7 +107,7 @@ export function useComments(route: string, enabled: boolean) {
         setComments((prev) => [...prev, comment])
         setError(null)
       }
-      return comment
+      return comment && unresolved?.length ? { ...comment, unresolved } : comment
     },
     [route],
   )

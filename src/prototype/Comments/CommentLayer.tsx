@@ -126,6 +126,8 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
   const [openId, setOpenId] = useState<string | null>(null)
   const [showResolved, setShowResolved] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  // @names a just-posted comment mentioned that Slack could not place, by comment id.
+  const [missed, setMissed] = useState<Record<string, string[]>>({})
   useEffect(() => setConfirmDelete(false), [openId])
   // Send to Claude Code (dev only): what happened to the open thread's last send.
   const [sent, setSent] = useState<{ id: string; state: 'sending' | SendResult } | null>(null)
@@ -296,7 +298,7 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
       {draft && (
         <div className="pcm-pop" style={place(draft.x, draft.y)} role="dialog" aria-label="New comment">
           <Composer
-            placeholder="Add a comment"
+            placeholder="Add a comment. Type @name to send it to them on Slack."
             submitLabel="Post"
             onCancel={() => setDraft(null)}
             onSubmit={async (text, author, website) => {
@@ -304,7 +306,11 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
               const image = await capturePage(draft.x, draft.y)
               const created = await onAdd({ text, author, email: author, website, anchor: draft.anchor, place: draft.where, steps: currentTrail(), image })
               setDraft(null)
-              if (created) setOpenId(created.id)
+              if (created) {
+                setOpenId(created.id)
+                const unresolved = created.unresolved
+                if (unresolved?.length) setMissed((m) => ({ ...m, [created.id]: unresolved }))
+              }
             }}
           />
         </div>
@@ -390,6 +396,13 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
                   <span className="pcm-msg__time">{timeAgo(c.createdAt)}</span>
                 </div>
                 <p className="pcm-msg__text">{c.text}</p>
+                {/* Who an @mention sent the comment to, as a Slack DM. */}
+                {!!c.to?.length && <p className="pcm-msg__time pcm-msg__to">To {c.to.join(', ')}</p>}
+                {!!missed[c.id]?.length && (
+                  <p className="pcm-composer__error" role="status">
+                    Couldn't find {missed[c.id].map((n) => `@${n}`).join(', ')} on Slack, so they weren't notified.
+                  </p>
+                )}
               </div>
             ))}
           </div>

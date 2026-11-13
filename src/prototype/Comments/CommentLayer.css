@@ -117,6 +117,11 @@ html.pcm-active *:not([data-inspect-ignore], [data-inspect-ignore] *) {
   font-size: 12px;
 }
 
+/* "To <names>": who an @mention sent the comment to. */
+.pcm-msg__to {
+  margin: 4px 0 0;
+}
+
 .pcm-msg__text {
   margin: 2px 0 0;
   /* Selectable copy: show the text cursor so it reads as such. */

@@ -1,7 +1,11 @@
 /* Prototype comments API (Vercel function). Anyone with the prototype link can read and
    post, so the link is the password: inputs are capped, a honeypot field catches bots and
    posts are rate limited per IP. Storage is Upstash Redis over its REST API (no npm deps);
-   each page's comments live in one hash, `pcm:<route>`, keyed by comment id. */
+   each page's comments live in one hash, `pcm:<route>`, keyed by comment id.
+
+   A new comment can be addressed to people with an @mention ("@divjot can you check
+   this?"): each name is matched to a 5Mins Slack member, who gets the comment as a DM
+   and then every reply in that thread. */
 
 declare const process: { env: Record<string, string | undefined> }
 
@@ -16,12 +20,15 @@ const MAX_SELECTOR = 1000
 const MAX_STEPS = 60
 const MAX_PLACE = 140
 const POSTS_PER_MINUTE = 10
+const MAX_MENTIONS = 5
 const MAX_IMAGE = 4_000_000 // base64 characters, about 3MB; Vercel caps the request body at 4.5MB
 const IMAGE_PREFIX = 'data:image/jpeg;base64,'
 // Everyone who comments is at 5Mins, so the work email doubles as their Slack identity.
 const EMAIL_RE = /^[a-z0-9._%+-]+@5mins\.ai$/
-// Comments from before emails were asked for carry only a typed first name.
-const LEGACY_EMAILS: Record<string, string> = {
+/* Names that don't match an email prefix. Used two ways: comments from before emails
+   were asked for carry only a typed first name, and an @mention is looked up here before
+   falling back to <name>@5mins.ai. */
+const EMAIL_ALIASES: Record<string, string> = {
   divjot: 'divjot@5mins.ai',
   nicolas: 'nicolas@5mins.ai',
   nicholas: 'nicolas@5mins.ai',
@@ -47,6 +54,14 @@ export interface StoredComment {
   /** The commenter's work email and Slack member id, for sending them replies. Server only. */
   authorEmail?: string
   slackUserId?: string
+  /** People a top-level comment was addressed to with an @mention. Viewers get the names only. */
+  to?: Recipient[]
+}
+
+interface Recipient {
+  name: string
+  email: string
+  slackUserId: string
 }
 
 // Same-origin in production; the dev build calls the deployed API cross-origin.
@@ -87,9 +102,38 @@ async function redisPipeline(commands: (string | number)[][]): Promise<unknown[]
 const keyFor = (route: string) => `pcm:${route}`
 
 // What viewers get: the server-only fields (email, Slack ids) never leave the API.
-const publicView = ({ authorEmail: _e, slackUserId: _u, slackTs: _t, ...rest }: StoredComment) => rest
+const publicView = ({ authorEmail: _e, slackUserId: _u, slackTs: _t, to, ...rest }: StoredComment) => ({
+  ...rest,
+  ...(to?.length && { to: to.map((r) => r.name) }),
+})
 
-const emailOf = (c: StoredComment) => c.authorEmail ?? LEGACY_EMAILS[c.author.trim().toLowerCase().split(/\s+/)[0]]
+/* The @mentions in a comment: "@name" at the start of the text or after a space, where
+   name is an email prefix (letters, digits, dots, hyphens, underscores). Lower-cased,
+   de-duplicated, capped. A trailing full stop belongs to the sentence, not the name. */
+const mentionsIn = (text: string): string[] => {
+  const names = new Set<string>()
+  for (const m of text.matchAll(/(?:^|\s)@([a-z0-9][a-z0-9._-]{0,60})/gi)) {
+    const name = m[1].toLowerCase().replace(/[._-]+$/, '')
+    if (name) names.add(name)
+    if (names.size >= MAX_MENTIONS) break
+  }
+  return [...names]
+}
+
+/** Match each mentioned name to a Slack member; names Slack can't place come back as unresolved. */
+async function resolveMentions(names: string[]): Promise<{ to: Recipient[]; unresolved: string[] }> {
+  const to: Recipient[] = []
+  const unresolved: string[] = []
+  for (const name of names) {
+    const email = EMAIL_ALIASES[name] ?? `${name}@5mins.ai`
+    const who = EMAIL_RE.test(email) ? await slackUser(email) : null
+    if (!who) unresolved.push(name)
+    else if (!to.some((r) => r.email === email)) to.push({ name: who.name, email, slackUserId: who.id })
+  }
+  return { to, unresolved }
+}
+
+const emailOf = (c: StoredComment) => c.authorEmail ?? EMAIL_ALIASES[c.author.trim().toLowerCase().split(/\s+/)[0]]
 
 const nameFromEmail = (email: string) =>
   email
@@ -181,6 +225,10 @@ export async function POST(request: Request) {
   const author = email ? (who?.name ?? nameFromEmail(email)).slice(0, MAX_AUTHOR) : str(body.author, MAX_AUTHOR)
   if (!route || !text || !author) return json({ error: 'route, text and email are required' }, 400)
 
+  const parentId = str(body.parentId, 64) || null
+  // Only a new comment can be addressed to people; a reply already reaches its thread.
+  const mentions = parentId ? { to: [], unresolved: [] } : await resolveMentions(mentionsIn(text))
+
   const rawAnchor = body.anchor as Record<string, unknown> | null | undefined
   const rawViewport = (body.viewport ?? {}) as Record<string, unknown>
   const comment: StoredComment = {
@@ -198,20 +246,22 @@ export async function POST(request: Request) {
     author,
     createdAt: new Date().toISOString(),
     resolved: false,
-    parentId: str(body.parentId, 64) || null,
+    parentId,
     steps: Array.isArray(body.steps)
       ? body.steps.slice(-MAX_STEPS).map((s) => str(s, MAX_SELECTOR)).filter(Boolean)
       : [],
     place: str(body.place, MAX_PLACE),
     ...(email && { authorEmail: email }),
     ...(who && { slackUserId: who.id }),
+    ...(mentions.to.length && { to: mentions.to }),
   }
   await redis('HSET', keyFor(route), comment.id, JSON.stringify(comment))
   // `slack` reports how the Slack post went ("ok", "off" or Slack's error code), for setup checks.
   const rawImage = typeof body.image === 'string' ? body.image : ''
   const image = rawImage.startsWith(IMAGE_PREFIX) && rawImage.length <= MAX_IMAGE ? rawImage.slice(IMAGE_PREFIX.length) : null
   const slack = await notifySlack(comment, request, image)
-  return json({ comment: publicView(comment), slack }, 201)
+  // `unresolved` lists the @names Slack could not place, so the page can say nobody was told.
+  return json({ comment: publicView(comment), slack, unresolved: mentions.unresolved }, 201)
 }
 
 /* New comments go to a Slack channel, and replies land in the same Slack thread, so the
@@ -237,8 +287,11 @@ async function notifySlack(c: StoredComment, request: Request, image: string | n
       await fetch(webhook!, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) })
       return 'ok (webhook)'
     }
-    // A reply also goes to everyone else in its thread, as a direct message.
-    const dmNote = c.parentId ? await notifyThread(c, token, channel, text, image) : ''
+    // A reply also goes to everyone else in its thread, as a direct message; a new comment
+    // goes to the people it mentions.
+    const dmNote = c.parentId
+      ? await notifyThread(c, token, channel, text, image)
+      : await notifyMentioned(c, token, channel, `*${esc(c.author)}* mentioned you on \`${esc(c.route)}\`\n${quote}\n<${link}|Open in prototype>`, image)
     // The owner wrote this reply themselves: nothing to tell them.
     if (c.parentId && c.slackUserId === channel) return `ok${dmNote}`
     // A reply threads under its parent's Slack message, when that message exists.
@@ -281,8 +334,9 @@ async function notifyThread(c: StoredComment, token: string, owner: string, text
   const people = new Map<string, string | undefined>()
   for (const x of thread) {
     const email = emailOf(x)
-    if (!email || email === mine) continue
-    people.set(email, people.get(email) ?? x.slackUserId)
+    if (email && email !== mine) people.set(email, people.get(email) ?? x.slackUserId)
+    // Whoever the original comment was addressed to follows the thread too.
+    for (const r of x.to ?? []) if (r.email !== mine) people.set(r.email, people.get(r.email) ?? r.slackUserId)
   }
   let sent = 0
   let failed = ''
@@ -293,22 +347,50 @@ async function notifyThread(c: StoredComment, token: string, owner: string, text
       continue
     }
     if (id === owner) continue
-    const res = await fetch('https://slack.com/api/chat.postMessage', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json; charset=utf-8' },
-      body: JSON.stringify({ channel: id, text, unfurl_links: false }),
-    })
-    const data = (await res.json()) as { ok: boolean; channel?: string; error?: string }
-    if (data.ok) {
+    const error = await sendDm(token, id, text, image, c)
+    if (error === null) sent++
+    else if (error.startsWith('image: ')) {
       sent++
-      // The page picture follows the DM, as on the channel message.
-      if (image && data.channel) {
-        const imageError = await uploadToSlack(token, data.channel, image, c)
-        if (imageError) failed = `image: ${imageError}`
-      }
-    } else failed = data.error ?? 'failed'
+      failed = error
+    } else failed = error
   }
   return ` (dm: ${sent} sent${failed ? `, ${failed}` : ''})`
+}
+
+/* A new comment is sent as a Slack DM to each person it mentions, but not to its own
+   author and not to the owner (who gets every comment through SLACK_CHANNEL_ID already). */
+async function notifyMentioned(c: StoredComment, token: string, owner: string, text: string, image: string | null): Promise<string> {
+  const mine = emailOf(c)
+  const people = (c.to ?? []).filter((r) => r.email !== mine && r.slackUserId !== owner)
+  if (!people.length) return ''
+  let sent = 0
+  let failed = ''
+  for (const r of people) {
+    const error = await sendDm(token, r.slackUserId, text, image, c)
+    if (error === null) sent++
+    else if (error.startsWith('image: ')) {
+      sent++
+      failed = error
+    } else failed = error
+  }
+  return ` (mention: ${sent} sent${failed ? `, ${failed}` : ''})`
+}
+
+/** One Slack DM, with the page picture after it. Returns null, or what went wrong. */
+async function sendDm(token: string, userId: string, text: string, image: string | null, c: StoredComment): Promise<string | null> {
+  const res = await fetch('https://slack.com/api/chat.postMessage', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json; charset=utf-8' },
+    body: JSON.stringify({ channel: userId, text, unfurl_links: false }),
+  })
+  const data = (await res.json()) as { ok: boolean; channel?: string; error?: string }
+  if (!data.ok) return data.error ?? 'failed'
+  // The page picture follows the DM, as on the channel message.
+  if (image && data.channel) {
+    const imageError = await uploadToSlack(token, data.channel, image, c)
+    if (imageError) return `image: ${imageError}`
+  }
+  return null
 }
 
 /* Slack's three-step upload: ask for an upload URL, send the bytes, share the file in the
