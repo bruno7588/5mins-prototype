@@ -39,6 +39,7 @@ import Events from './pages/events/Events'
 import LearningRecords from './pages/learning-records/LearningRecords'
 import Account from './pages/account/Account'
 import Profile from './pages/profile/Profile'
+import MyProgress from './pages/my-progress/MyProgress'
 
 function App() {
   return (
@@ -77,6 +78,10 @@ function App() {
       <Route path="/workspace" element={<Workspace />} />
       <Route path="/for-you" element={<ForYou />} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/my-progress" element={<MyProgress />} />
+      {/* The signed-in learner's own profile, opened from My Progress (not under My Team:
+          only managers can open My Team). */}
+      <Route path="/my-progress/profile" element={<UserProfile />} />
       {/* Program Builder — standalone full-page, no TopNav (ranks above /programs/:id) */}
       <Route
         path="/programs/builder"

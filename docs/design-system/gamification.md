@@ -46,7 +46,8 @@ Asset libraries for learner progression UI. All are exact Figma exports: never r
 | Illustrations/Certificate | Size | XL / L / M / S | `getCertificateIllustration(size)` | `'xl'` / `'l'` / `'m'` / `'s'` | 240 / 80 / 56 / 20px |
 | Illustrations/Gamification | Type | Progress / Certificate / Quiz / Learning Path | `getGamificationIllustration(type)` | `'progress'` / `'certificate'` / `'quiz'` / `'learning-path'` | 96px |
 
-- **Figma only:** Learning path (`5514:8463`), Certificate instances (`5514:2390`), Ranking, leaderboard (`2613:26421`), Quiz/Options (`5504:24966`), Progress bar (`7046:25097`), Thumbnail type (`9537:7400`) have no code component; the 11th Assessments Type value has no code key. Their component properties: Learning path `Description` and `Progress` (text); Quiz/Options `Label` and `Explanation` (text) plus `State=Focus` (desktop, before submitting; `:focus-visible` when built).
+- **Ranking, leaderboard** (`2613:26421`): no code component, but the gold, silver and bronze medals are assets: `getRankMedal(rank)` from `@/assets/ranking-illustrations` (24px disc for ranks 1 to 3, the number drawn over it in code; rank 4 and below is a plain number). Used on the learner My Progress leaderboard.
+- **Figma only:** Learning path (`5514:8463`), Certificate instances (`5514:2390`), Quiz/Options (`5504:24966`), Progress bar (`7046:25097`), Thumbnail type (`9537:7400`) have no code component; the 11th Assessments Type value has no code key. Their component properties: Learning path `Description` and `Progress` (text); Quiz/Options `Label` and `Explanation` (text) plus `State=Focus` (desktop, before submitting; `:focus-visible` when built).
 - **Code only:** `assessmentTypeFromLabel(label)` bridges an outline card's display label to an `AssessmentType` key.
 
 **Production:**

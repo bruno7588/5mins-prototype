@@ -33,7 +33,7 @@ interface TabDef {
 const TABS: TabDef[] = [
   { label: 'Home', icon: (c) => <Home size={24} color={c} variant="Bold" />, path: '/for-you', isActive: (p) => p === '/for-you' },
   { label: 'Search', icon: (c) => <SearchNormal1 size={24} color={c} variant="Bold" /> },
-  { label: 'Progress', icon: (c) => <Award size={24} color={c} variant="Bold" />, path: '/my-team', isActive: (p) => p.startsWith('/my-team') },
+  { label: 'Progress', icon: (c) => <Award size={24} color={c} variant="Bold" />, path: '/my-team', isActive: (p) => p.startsWith('/my-team') || p.startsWith('/my-progress') },
   { label: 'Feed', icon: (c) => <FeedIcon size={24} color={c} /> },
 ]
 

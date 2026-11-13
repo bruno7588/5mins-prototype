@@ -325,7 +325,7 @@ Shared elements:
 
 ### Menu items
 
-**Web app.** Base: `padding: 16px` · radius 8 · icon **24px Iconsax Bold** · label **Regular 16**, 8px gap. Items: For You, Your Workspace, Knowledge Hub, Search, My Team, My Progress, Feed, Profile, Admin.
+**Web app.** Base: `padding: 16px` · radius 8 · icon **24px Iconsax Bold** · label **Regular 16**, 8px gap. Items: For You (`/for-you`), Your Workspace (`/workspace`), Knowledge Hub, Search, My Team (`/my-team`), My Progress (`/my-progress`), Feed, Profile (`/profile`), Admin. Items without a route are not built yet.
 
 **Admin.** Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label **Regular 14**, 8px gap. Items: Home, People & Teams ▾, Content ▾, Automations, Reports, Skills, Learning Records ▾ (5Mins Courses `/learning-records`, External Training `/learning-records/external`, whose page has Records and Approved list tabs; Approved list for full admins only), Events, Account & Settings.
 

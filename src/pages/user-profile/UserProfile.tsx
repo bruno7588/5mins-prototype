@@ -290,7 +290,12 @@ function UserProfile() {
      where its breadcrumb goes back to — a manager who never left the learner
      app should not land in the admin side by clicking a name. Either route
      resolves either roster, so a pasted link still finds its person. */
-  const isLearnerView = useLocation().pathname.startsWith('/my-team')
+  const { pathname } = useLocation()
+  /* A third door: /my-progress/profile is the signed-in learner's own profile, opened
+     from My Progress. Not every learner manages a team, so it must not sit under
+     My Team; it wears the learner chrome with My Progress lit. */
+  const fromMyProgress = pathname.startsWith('/my-progress')
+  const isLearnerView = fromMyProgress || pathname.startsWith('/my-team')
   const person = PEOPLE[id] ?? teamProfiles[id] ?? PEOPLE['1']
   /* External Training viewer (D13): the admin side edits; under /my-team the signed-in
      learner sees their own records and a manager their team's, read-only. Anyone else
@@ -920,8 +925,9 @@ function UserProfile() {
             <nav className="mt-side__menu">
               {learnerSideItems.map(({ label, icon: Icon, path }) => {
                 /* My Team stays lit while the manager is on one of its profiles —
-                   the profile is a level below the tab, not a sibling of it. */
-                const isActive = path === '/my-team'
+                   the profile is a level below the tab, not a sibling of it. The
+                   learner's own profile sits under My Progress the same way. */
+                const isActive = path === (fromMyProgress ? '/my-progress' : '/my-team')
                 return (
                   <button
                     key={label}

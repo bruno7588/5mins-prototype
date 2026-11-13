@@ -249,7 +249,7 @@ export const learnerSideItems: { label: string; icon: typeof Home2; path?: strin
   { label: 'Knowledge Hub', icon: MonitorMobbile },
   { label: 'Search', icon: SearchNormal1 },
   { label: 'My Team', icon: Award, path: '/my-team' },
-  { label: 'My Progress', icon: Medal },
+  { label: 'My Progress', icon: Medal, path: '/my-progress' },
   { label: 'Feed', icon: Messages2 },
   // The signed-in learner's Profile: Bookmarks, Likes, Following and External Training (read-only).
   { label: 'Profile', icon: UserSquare, path: '/profile' },
@@ -642,10 +642,10 @@ function MyTeam() {
         </aside>
 
         <section className="mt-body">
-          {/* Mobile web only: the Progress tab holds My Team and My Progress (not built yet). */}
+          {/* Mobile web only: the Progress tab holds My Team and My Progress. */}
           <div className="mt-mobile-chips">
             <Chip label="My Team" selected />
-            <Chip label="My Progress" disabled />
+            <Chip label="My Progress" onClick={() => navigate('/my-progress')} />
           </div>
           <header className="mt-pageheader">
             <div className="mt-pageheader__row">

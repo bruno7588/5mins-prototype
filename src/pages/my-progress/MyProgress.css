@@ -1,0 +1,379 @@
+/* ===== Learner My Progress page (mp-) =====
+   Shell: MyTeam.css (mt-*). Figma My Progress V2, 13023:65051. */
+
+.mp-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  min-width: 0;
+  /* The shell pads the body 20px top; the design sits 24px under the top nav. */
+  padding-top: var(--space-xs);
+}
+
+/* The side nav already names the page; the heading is for assistive tech. */
+.mp-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ── Summary stats ── */
+
+.mp-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-l);
+}
+
+/* Here the Summary stat is a filled card (no border) and is clickable: pointer and a
+   hover fill, as the design's hand cursor shows. */
+.ds-stat.mp-stat {
+  padding: var(--space-m) var(--space-l);
+  border: none;
+  border-radius: var(--radius-m);
+  background: var(--cards-background);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.ds-stat.mp-stat:hover {
+  background: var(--cards-background-hover);
+}
+
+:root:not([data-theme='dark']) .mp-stat {
+  box-shadow: var(--shadow-s);
+}
+
+.mp-stat .ds-stat__label {
+  color: var(--text-secondary);
+}
+
+/* ── Rows of section cards ── */
+
+.mp-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-l);
+  align-items: start;
+}
+
+/* External Training beside the narrower Leaderboard (824 / 400 in the design). */
+.mp-row--wide {
+  grid-template-columns: minmax(0, 1fr) 400px;
+}
+
+/* Outlined card, no fill: the mesh gradient sits on the page inside the border. */
+.mp-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  min-width: 0;
+  padding: var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.mp-card__mesh {
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.mp-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-m);
+}
+
+.mp-card__title {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.mp-card__ctas {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+/* Table rows on a card (5Mins Courses, External Training): a soft fill instead of the
+   row border. */
+.mp-card .tbl-row {
+  min-height: 56px; /* table.md row minimum, for the one-line 5Mins Courses rows */
+  border-color: transparent;
+  background: var(--input-background);
+}
+
+.mp-card .tbl-row:hover {
+  background: var(--input-background-hover);
+}
+
+/* Course names in both tables are Semibold. */
+.mp-card .mp-course-name,
+.mp-card .tbl-stack .primary.mp-course-name {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Skill development ── */
+
+.mp-skills {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mp-skill {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  width: 100%;
+  padding: var(--space-sm);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+  font-family: 'Poppins', sans-serif;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.mp-skill:hover {
+  background: var(--cards-background-hover);
+}
+
+.mp-skill:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.mp-skill__level {
+  flex-shrink: 0;
+}
+
+.mp-skill__info {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.mp-skill__titles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.mp-skill__name {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.mp-skill__hint {
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
+.mp-skill__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.mp-skill__points {
+  flex-shrink: 0;
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Progress bar (Library "Progress bar", 7046:25097): 8px track with a rounded fill. */
+.mp-bar {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  height: var(--space-s);
+  border-radius: var(--radius-full);
+  background: var(--border-elevated);
+  overflow: hidden;
+}
+
+.mp-bar__fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--primary-600);
+}
+
+/* ── Leaderboard ── */
+
+.mp-leaderboard .mp-card__header {
+  align-items: center;
+}
+
+/* Team / Company spans the card, two equal segments. */
+.mp-leaderboard__scope {
+  display: flex;
+  margin-top: calc(var(--space-xs) * -1); /* 12px under the title row, not the card's 16px */
+}
+
+.mp-leaderboard__scope .switcher__item {
+  flex: 1 1 0;
+}
+
+.mp-ranks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Read-only rows: a hover fill, no pointer. */
+.mp-rank {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: 0 var(--space-s);
+  border-radius: var(--radius-sm);
+  transition: background-color 0.15s ease;
+}
+
+/* Rank 4 and below; the top three take their medal's colour, below. */
+.mp-rank:hover {
+  background: var(--input-background);
+}
+
+/* Top three: the hover fill takes the medal's colour (Figma Reports 8599:30093,
+   8599:30550, 8599:30680): gold and bronze at 12%, silver at 16%. */
+/* stylelint-disable -- medal colours are mode-invariant palette steps */
+.mp-rank--1:hover {
+  background: color-mix(in srgb, var(--secondary-400) 12%, transparent);
+}
+
+.mp-rank--2:hover {
+  background: color-mix(in srgb, var(--neutral-100) 16%, transparent);
+}
+
+.mp-rank--3:hover {
+  background: color-mix(in srgb, var(--warning-500) 12%, transparent);
+}
+/* stylelint-enable */
+
+.mp-rank__position {
+  position: relative;
+  display: flex;
+  flex: 0 0 32px;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+}
+
+.mp-rank__number {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ranks 1 to 3: the number sits over the medal, always light on the coloured disc. */
+.mp-rank__position--medal .mp-rank__number {
+  position: absolute;
+  color: var(--neutral-25);
+}
+
+.mp-rank__person {
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  gap: var(--space-m);
+  min-width: 0;
+  padding: var(--space-s) var(--space-sm);
+}
+
+.mp-rank__name {
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mp-rank__score {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-s);
+  padding: var(--space-s) 0;
+}
+
+.mp-rank__points {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Smaller screens ── */
+
+@media (max-width: 1199px) {
+  .mp-row,
+  .mp-row--wide {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .mp-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-m);
+  }
+}
+
+@media (max-width: 599px) {
+  .mp-card__header {
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-stat.mp-stat,
+  .mp-skill,
+  .mp-rank {
+    transition: none;
+  }
+}
