@@ -34,9 +34,9 @@ const HIDDEN_NOTE: Record<SectionKey, string> = {
 function ShownToggle({ shown, onToggle, what, label }: { shown: boolean; onToggle: () => void; what: string; label: string }) {
   return (
     <div className="acl-hs-shown">
-      <span className="acl-hs-shown__label">{shown ? 'Shown' : 'Hidden'}</span>
+      <span className="acl-hs-shown__label">{shown ? 'Visible' : 'Hidden'}</span>
       <Tooltip text={shown ? `Hide ${what}` : `Show ${what}`} position="Top" alignment="End" icon={false}>
-        <Toggle checked={shown} onChange={onToggle} aria-label={`${label} shown`} />
+        <Toggle size="sm" checked={shown} onChange={onToggle} aria-label={`${label} visible`} />
       </Tooltip>
     </div>
   )
@@ -54,6 +54,13 @@ function HomeSections({ onSaved }: { onSaved: () => void }) {
   // The card is long, so it can be folded down to its heading.
   const [expanded, setExpanded] = useState(true)
   const bodyId = useId()
+
+  /* What learners would read for a section: its heading, or the default when empty. */
+  const shownAs = (k: SectionKey) => ((draft.headings[k] ?? DEFAULT_HEADINGS[k]).trim() || DEFAULT_HEADINGS[k]).toLowerCase()
+  /* Two visible sections with the same heading: an error on both, and nothing can be saved. */
+  const isDuplicate = (key: SectionKey) =>
+    !draft.hidden[key] && draft.order.some((other) => other !== key && !draft.hidden[other] && shownAs(other) === shownAs(key))
+  const hasDuplicate = draft.order.some(isDuplicate)
 
   const dirty = !sameHomeSections(draft, saved)
   const isDefault = sameHomeSections(draft, defaultHomeSections())
@@ -136,6 +143,8 @@ function HomeSections({ onSaved }: { onSaved: () => void }) {
               label="Home banner"
             />
           </div>
+          {/* Keeps this card the same width as the rows that carry move buttons. */}
+          <span className="acl-hs-move" aria-hidden="true" />
         </div>
 
         {draft.order.map((key, index) => {
@@ -144,13 +153,16 @@ function HomeSections({ onSaved }: { onSaved: () => void }) {
           const hidden = !!draft.hidden[key]
           const custom = value.trim().length > 0 && value.trim() !== fallback
           const setHeading = (heading: string) => setDraft({ ...draft, headings: { ...draft.headings, [key]: heading } })
+          const duplicate = isDuplicate(key)
+          /* Help text only where something needs saying: a hidden section, a heading
+             another section already uses, or an empty field falling back to its default. */
           const helper = hidden
             ? HIDDEN_NOTE[key]
-            : !value.trim()
-              ? `Learners see the default: ${fallback}`
-              : custom
-                ? `Default: ${fallback}`
-                : 'Default heading'
+            : duplicate
+              ? 'Another section already uses this heading.'
+              : !value.trim()
+                ? `Learners see the default: ${fallback}`
+                : undefined
 
           return (
             <motion.div
@@ -200,44 +212,9 @@ function HomeSections({ onSaved }: { onSaved: () => void }) {
                       placeholder="Leave empty to use the default"
                       onChange={(e) => setHeading(e.target.value)}
                       ariaLabel={`Heading for ${fallback}`}
+                      helperText={helper}
+                      validation={duplicate ? 'error' : 'none'}
                     />
-                    <div className="acl-hs-helper-row">
-                      <span className="acl-hs-helper">{helper}</span>
-                      {custom && !hidden && (
-                        <Button variant="text" size="sm" onClick={() => setHeading(fallback)}>
-                          Use Default
-                        </Button>
-                      )}
-                    </div>
-                    {key === 'explore' && custom && !hidden && (
-                      <span className="acl-hs-helper">The Categories page uses this heading too.</span>
-                    )}
-                  </div>
-                  {/* The same up and down buttons as a sequencing step, for moving a row
-                      without dragging. No tooltip at the ends, where the button is disabled. */}
-                  <div className="acl-hs-move">
-                    <Tooltip text="Move up" position="Top" icon={false} disabled={index === 0}>
-                      <button
-                        type="button"
-                        className="acl-hs-move-btn"
-                        disabled={index === 0}
-                        aria-label={`Move ${custom ? value.trim() : fallback} up`}
-                        onClick={() => move(index, index - 1)}
-                      >
-                        <ArrowUp size={16} color="currentColor" variant="Linear" />
-                      </button>
-                    </Tooltip>
-                    <Tooltip text="Move down" position="Top" icon={false} disabled={index === draft.order.length - 1}>
-                      <button
-                        type="button"
-                        className="acl-hs-move-btn"
-                        disabled={index === draft.order.length - 1}
-                        aria-label={`Move ${custom ? value.trim() : fallback} down`}
-                        onClick={() => move(index, index + 1)}
-                      >
-                        <ArrowDown size={16} color="currentColor" variant="Linear" />
-                      </button>
-                    </Tooltip>
                   </div>
                   <ShownToggle
                     shown={!hidden}
@@ -245,6 +222,32 @@ function HomeSections({ onSaved }: { onSaved: () => void }) {
                     what="section"
                     label={custom ? value.trim() : fallback}
                   />
+                </div>
+                {/* The same up and down buttons as a sequencing step, for moving a row
+                    without dragging, at the far right of the row as the grip is at the left. No tooltip at the ends, where the button is disabled. */}
+                <div className="acl-hs-move">
+                  <Tooltip text="Move up" position="Top" icon={false} disabled={index === 0}>
+                    <button
+                      type="button"
+                      className="acl-hs-move-btn"
+                      disabled={index === 0}
+                      aria-label={`Move ${custom ? value.trim() : fallback} up`}
+                      onClick={() => move(index, index - 1)}
+                    >
+                      <ArrowUp size={16} color="currentColor" variant="Linear" />
+                    </button>
+                  </Tooltip>
+                  <Tooltip text="Move down" position="Top" icon={false} disabled={index === draft.order.length - 1}>
+                    <button
+                      type="button"
+                      className="acl-hs-move-btn"
+                      disabled={index === draft.order.length - 1}
+                      aria-label={`Move ${custom ? value.trim() : fallback} down`}
+                      onClick={() => move(index, index + 1)}
+                    >
+                      <ArrowDown size={16} color="currentColor" variant="Linear" />
+                    </button>
+                  </Tooltip>
                 </div>
               </div>
             </motion.div>
@@ -254,7 +257,7 @@ function HomeSections({ onSaved }: { onSaved: () => void }) {
 
       {/* All on the left, primary first, as the other Layout cards order their buttons. */}
       <div className="acl-hs-footer">
-        <Button disabled={!dirty} onClick={save}>
+        <Button disabled={!dirty || hasDuplicate} onClick={save}>
           Save Changes
         </Button>
         <Button variant="outlined-2" disabled={isDefault} onClick={() => setDraft(defaultHomeSections())}>

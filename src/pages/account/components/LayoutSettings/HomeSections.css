@@ -60,8 +60,9 @@
   display: flex;
   flex-shrink: 0;
   gap: var(--space-xs);
-  /* Centres on the 44px field beside it. */
-  margin-top: var(--space-ssm);
+  /* Up and down side by side, in the row's track at the far right (the grip sits at
+     the far left). The fixed width keeps the banner row's empty slot the same size. */
+  width: calc(24px * 2 + var(--space-xs));
 }
 
 .acl-hs-move-btn {
@@ -140,14 +141,14 @@
   padding: 0;
   border: none;
   background: transparent;
-  color: var(--text-disabled);
+  color: var(--text-secondary);
   cursor: grab;
   transition: color 150ms ease;
 }
 
 .acl-hs-grip:hover,
 .acl-hs-grip:focus-visible {
-  color: var(--text-secondary);
+  color: var(--text-primary);
 }
 
 .acl-hs-grip:active {
@@ -210,14 +211,6 @@
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
-}
-
-.acl-hs-helper-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-s);
-  min-height: 24px;
 }
 
 .acl-hs-helper {
