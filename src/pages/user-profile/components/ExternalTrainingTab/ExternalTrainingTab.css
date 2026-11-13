@@ -12,6 +12,9 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-m);
+  /* As tall as the Course Progress view row (its content switcher: one 14px line
+     plus item and track padding), so the buttons keep the same y when the tabs swap. */
+  min-height: calc(var(--font-size-md) * 1.5 + 2 * (var(--space-s) + var(--space-xs)));
 }
 
 /* The Add Training button sits at the right even when there's no sentence. */

@@ -68,7 +68,8 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast, addButto
   const downloadAll = (
     <Tooltip text="No certificates to download" icon={false} disabled={withCertificate > 0}>
       <Button
-        variant="outlined"
+        /* Outlined-2 beside the Outlined Add Training; Outlined when it stands alone. */
+        variant={canAddTraining && !addButtonTarget ? 'outlined-2' : 'outlined'}
         icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
         disabled={!withCertificate}
         onClick={() => showToast('success', `Downloading ${withCertificate} certificate${withCertificate === 1 ? '' : 's'}`)}
