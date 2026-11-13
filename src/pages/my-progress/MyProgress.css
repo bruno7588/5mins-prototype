@@ -53,6 +53,11 @@
   color: var(--text-secondary);
 }
 
+/* The value is H3 here, one step under the Stacked tile's H2. */
+.ds-stat.mp-stat .ds-stat__value {
+  font-size: var(--font-size-h3);
+}
+
 /* ── Main column and side rail ── */
 
 /* The main column flexes; the Leaderboard rail is a fixed 400px. Hiding a panel never
@@ -432,6 +437,15 @@
 }
 
 /* ── Smaller screens ── */
+
+/* Small desktop: beside the 400px rail the main column is too narrow for two cards
+   (course names were cut to a few letters), so Courses and Skills stack. With the
+   Leaderboard hidden the main column is wide enough and they stay side by side. */
+@media (min-width: 1200px) and (max-width: 1439px) {
+  .mp-layout:not(.mp-layout--full) .mp-pair {
+    flex-direction: column;
+  }
+}
 
 @media (max-width: 1199px) {
   .mp-layout {
