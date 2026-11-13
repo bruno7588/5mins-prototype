@@ -10,6 +10,11 @@ import enrolledThumb1 from '../../assets/workspace/course-1.png'
 import enrolledThumb2 from '../../assets/workspace/course-2.png'
 import enrolledThumb3 from '../../assets/workspace/course-3.png'
 import enrolledThumb4 from '../../assets/workspace/course-4.png'
+// Category cards carry their own pictures, so they don't repeat the enrolled courses' thumbnails.
+import categoryThumb1 from '../../assets/programs/course-thumbs/course-thumb-1.jpg'
+import categoryThumb2 from '../../assets/programs/course-thumbs/course-thumb-3.jpg'
+import categoryThumb3 from '../../assets/programs/course-thumbs/course-thumb-5.jpg'
+import categoryThumb4 from '../../assets/programs/course-thumbs/course-thumb-7.jpg'
 import licensingThumb from '../../assets/sign-off/licensing-course.jpg'
 
 export interface WorkspaceCourse {
@@ -515,7 +520,7 @@ export const workspaceCategories: WorkspaceCategory[] = [
     id: 'cat1',
     name: 'Leadership Training',
     thumbnailGradient: 'linear-gradient(135deg, #a855f7, #6366f1)',
-    image: enrolledThumb1,
+    image: categoryThumb1,
     courseCount: 12,
     lessonCount: 84,
   },
@@ -523,7 +528,7 @@ export const workspaceCategories: WorkspaceCategory[] = [
     id: 'cat2',
     name: 'New Joiner Collection',
     thumbnailGradient: 'linear-gradient(135deg, #f97316, #fbbf24)',
-    image: enrolledThumb2,
+    image: categoryThumb2,
     courseCount: 8,
     lessonCount: 41,
   },
@@ -531,7 +536,7 @@ export const workspaceCategories: WorkspaceCategory[] = [
     id: 'cat3',
     name: 'Compliance & Security',
     thumbnailGradient: 'linear-gradient(135deg, #14b8a6, #0ea5e9)',
-    image: enrolledThumb3,
+    image: categoryThumb3,
     courseCount: 15,
     lessonCount: 67,
   },
@@ -539,7 +544,7 @@ export const workspaceCategories: WorkspaceCategory[] = [
     id: 'cat4',
     name: 'Product Updates',
     thumbnailGradient: 'linear-gradient(135deg, #0f172a, #334155)',
-    image: enrolledThumb4,
+    image: categoryThumb4,
     courseCount: 6,
     lessonCount: 22,
   },
