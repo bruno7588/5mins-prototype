@@ -133,7 +133,7 @@ function ExternalTraining() {
     if (key === 'delete') setConfirm({ kind: 'delete-course', course })
     if (key === 'unarchive') {
       setCourseArchived(course.id, false)
-      showToast('success', `${course.name} unarchived`)
+      showToast('success', 'Course unarchived')
     }
   }
 
@@ -233,7 +233,7 @@ function ExternalTraining() {
         danger: false,
         run: () => {
           setCourseArchived(confirm.course.id, true)
-          showToast('success', `${confirm.course.name} archived`)
+          showToast('success', 'Course archived')
         },
       }
     }
@@ -245,7 +245,7 @@ function ExternalTraining() {
         danger: true,
         run: () => {
           deleteCourse(confirm.course.id)
-          showToast('success', `${confirm.course.name} deleted`)
+          showToast('success', 'Course deleted')
         },
       }
     }
@@ -388,7 +388,7 @@ function ExternalTraining() {
           onClose={closeCourseDrawer}
           onSaved={(name, isNew) => {
             closeCourseDrawer()
-            showToast('success', isNew ? `${name} added` : `${name} updated`)
+            showToast('success', isNew ? `${name} added` : 'Course updated')
           }}
         />
       )}

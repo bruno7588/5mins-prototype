@@ -266,7 +266,7 @@ function ExternalTrainingRecords({ showToast }: Props) {
             saveRecord(r)
             closeDrawer()
             const who = personById(r.personId)?.name ?? ''
-            showToast('success', isNew ? `${recordTrainingName(r)} added for ${who}` : `${recordTrainingName(r)} updated`)
+            showToast('success', isNew ? `${recordTrainingName(r)} added for ${who}` : 'Course updated')
           }}
         />
       )}
@@ -304,7 +304,7 @@ function ExternalTrainingRecords({ showToast }: Props) {
                 semantic="danger"
                 onClick={() => {
                   deleteRecord(toDelete.id)
-                  showToast('success', `${recordTrainingName(toDelete)} deleted`)
+                  showToast('success', 'Course deleted')
                   setToDelete(null)
                 }}
               >
