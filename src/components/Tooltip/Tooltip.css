@@ -35,7 +35,7 @@
   font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
-  padding: var(--space-s) var(--space-sm);
+  padding: var(--space-sm);
   border-radius: var(--radius-sm);
   max-width: 288px;
   text-align: left;
@@ -87,40 +87,40 @@
 
 /* ===== Position: Top ===== */
 .tooltip__body--top-center {
-  bottom: calc(100% + 2px);
+  bottom: calc(100% + var(--space-xs));
   left: 50%;
   transform: translateX(-50%);
   align-items: center;
 }
 
 .tooltip__body--top-start {
-  bottom: calc(100% + 2px);
+  bottom: calc(100% + var(--space-xs));
   left: 0;
   align-items: flex-start;
 }
 
 .tooltip__body--top-end {
-  bottom: calc(100% + 2px);
+  bottom: calc(100% + var(--space-xs));
   right: 0;
   align-items: flex-end;
 }
 
 /* ===== Position: Bottom ===== */
 .tooltip__body--bottom-center {
-  top: calc(100% + 2px);
+  top: calc(100% + var(--space-xs));
   left: 50%;
   transform: translateX(-50%);
   align-items: center;
 }
 
 .tooltip__body--bottom-start {
-  top: calc(100% + 2px);
+  top: calc(100% + var(--space-xs));
   left: 0;
   align-items: flex-start;
 }
 
 .tooltip__body--bottom-end {
-  top: calc(100% + 2px);
+  top: calc(100% + var(--space-xs));
   right: 0;
   align-items: flex-end;
 }
@@ -128,7 +128,7 @@
 /* ===== Position: Left ===== */
 /* Bubble sits left of the trigger, so the caret follows the label on the right. */
 .tooltip__body--left-center {
-  right: calc(100% + 2px);
+  right: calc(100% + var(--space-xs));
   top: 50%;
   transform: translateY(-50%);
   flex-direction: row;
@@ -137,7 +137,7 @@
 
 /* ===== Position: Right ===== */
 .tooltip__body--right-center {
-  left: calc(100% + 2px);
+  left: calc(100% + var(--space-xs));
   top: 50%;
   transform: translateY(-50%);
   flex-direction: row;

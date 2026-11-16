@@ -331,7 +331,7 @@ A small dark floating label that appears on hover or focus of a trigger. The inf
 
 **Code:** `import Tooltip from '@/components/Tooltip/Tooltip'`
 **Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `2683:29027`
-**Last verified:** 2026-09-29
+**Last verified:** 2026-11-16
 
 ### Usage
 
@@ -360,7 +360,7 @@ A small dark floating label that appears on hover or focus of a trigger. The inf
 - Don't put bold text, links or buttons inside (interactive content belongs in a popover/listbox)
 - Don't hardcode the background; use `var(--tooltip-background)`
 
-**Canonical spec:** background `var(--tooltip-background)` (#20222A light / #0F1014 dark); text 14px Regular `var(--neutral-25)`; padding `var(--space-s) var(--space-sm)` (8px 12px); radius `var(--radius-sm)` (12px); max width 288px; caret 12×6px; anchor icon 20px (16px in dense rows).
+**Canonical spec:** background `var(--tooltip-background)` (#20222A light / #0F1014 dark); text 14px Regular `var(--neutral-25)`; padding `var(--space-sm)` (12px all round); radius `var(--radius-sm)` (12px); max width 288px; caret 12×6px; 4px (`var(--space-xs)`) between the trigger and the bubble; anchor icon 20px (16px in dense rows).
 
 ### Figma to code
 
@@ -368,7 +368,7 @@ A small dark floating label that appears on hover or focus of a trigger. The inf
 |---|---|---|---|---|
 | Position | Top / Bottom / Left / Right | `position` | `'Top'` (default) / `'Bottom'` / `'Left'` / `'Right'` | which side of the trigger the tooltip appears on (caret points back at the trigger) |
 | Alignment | Center / Start / End | `alignment` | `'Center'` (default) / `'Start'` / `'End'` | caret placement along the edge; Start/End apply to Top/Bottom only; Left/Right are always Center |
-| Icon | True / False | `icon` | `true` (default) / `false` | renders the platform `InfoIcon` (20px, `iconSize` 16 for dense rows) as the anchor (info-icon-with-tooltip pattern), 2px gap to the body. Pass `icon={false}` to wrap your own trigger as `children`. Stays a variant in Figma: the bubble's sizing, radius and alignment differ between True and False |
+| Icon | True / False | `icon` | `true` (default) / `false` | renders the platform `InfoIcon` (20px, `iconSize` 16 for dense rows) as the anchor (info-icon-with-tooltip pattern), 4px gap to the body. Pass `icon={false}` to wrap your own trigger as `children`. Stays a variant in Figma: the bubble's sizing, radius and alignment differ between True and False |
 | Text | text | `text` | string or node | |
 
 - **Figma only:** none.
@@ -384,7 +384,8 @@ A small dark floating label that appears on hover or focus of a trigger. The inf
 
 ```
 Background:  var(--tooltip-background)   /* #20222A (Neutral-800) light, #0F1014 (Neutral-900) dark */
-Padding:     8px 12px   (--space-s --space-sm)
+Padding:     12px       (--space-sm)
+Gap:         4px        (--space-xs) between the trigger and the bubble
 Radius:      12px       (--radius-sm)
 Text:        Poppins Regular 14 / 1.5, var(--neutral-25)
 Max width:   288px - wrap, don't overflow
