@@ -23,7 +23,7 @@ import './ExternalTrainingTab.css'
 
 /* Person profile > External Training (DES-336 Phase 3, PRD 3.1-3.5).
    One tab for every viewer (D13): admins add, edit and delete; the learner on their
-   own Profile adds training with the same drawer; managers (own team only) read only.
+   own Profile and managers (own team only) read only.
    Prefix: uet- */
 
 export type ExternalTrainingViewer = 'admin' | 'manager' | 'learner'
@@ -47,7 +47,8 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast, addButto
   const [toDelete, setToDelete] = useState<ExternalRecord | null>(null)
   const isAdmin = viewer === 'admin'
   const isLearner = viewer === 'learner'
-  const canAddTraining = isAdmin || isLearner
+  /* Only admins add training; the learner reads their own records (2026-11-16). */
+  const canAddTraining = isAdmin
   const firstName = personName.split(' ')[0]
 
   // Overdue first, then due soon, then newest (PRD 3.1).
@@ -121,9 +122,7 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast, addButto
           description={
             isAdmin
               ? `Record training ${firstName} has done outside 5Mins to track when it expires.`
-              : isLearner
-                ? "Record training you've done outside 5Mins to track when it expires."
-                : "Your admin records training done outside 5Mins from the certificate."
+              : "Your admin records training done outside 5Mins from the certificate."
           }
           primaryAction={canAddTraining ? { label: 'Add Training', onClick: () => openDrawer(null) } : undefined}
         />
