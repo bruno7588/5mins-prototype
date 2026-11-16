@@ -97,7 +97,10 @@ function LayoutSettings() {
         </div>
       </section>
 
-      <HomeSections onSaved={() => showToast('success', 'Home page sections saved')} />
+      <HomeSections
+        onSaved={() => showToast('success', 'Home page sections saved')}
+        onReset={() => showToast('success', 'Home page sections reset to default')}
+      />
 
       <section className="acl-card">
         <div className="acl-head">

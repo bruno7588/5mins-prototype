@@ -42,7 +42,7 @@ function ShownToggle({ shown, onToggle, what, label }: { shown: boolean; onToggl
   )
 }
 
-function HomeSections({ onSaved }: { onSaved: () => void }) {
+function HomeSections({ onSaved, onReset }: { onSaved: () => void; onReset: () => void }) {
   const saved = useHomeSections()
   const [draft, setDraft] = useState<HomeSectionsConfig>(saved)
   const [dragKey, setDragKey] = useState<SectionKey | null>(null)
@@ -269,7 +269,14 @@ function HomeSections({ onSaved }: { onSaved: () => void }) {
         <Button disabled={!dirty || hasDuplicate} onClick={save}>
           Save Changes
         </Button>
-        <Button variant="outlined-2" disabled={isDefault} onClick={() => setDraft(defaultHomeSections())}>
+        <Button
+          variant="outlined-2"
+          disabled={isDefault}
+          onClick={() => {
+            setDraft(defaultHomeSections())
+            onReset()
+          }}
+        >
           Reset to Default
         </Button>
       </div>
