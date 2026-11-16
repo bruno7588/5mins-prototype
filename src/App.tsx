@@ -25,6 +25,7 @@ import Onboarding from './pages/onboarding/Onboarding'
 import MobileApp from './pages/mobile/MobileApp'
 import QuizLab from './pages/quiz-lab/QuizLab'
 import ChartLab from './pages/chart-lab/ChartLab'
+import CardsLab from './pages/cards-lab/CardsLab'
 import GradientLab from './pages/gradient-lab/GradientLab'
 
 import MyTeam from './pages/my-team/MyTeam'
@@ -70,6 +71,7 @@ function App() {
       {/* Playground labs: on the shared link too. */}
       <Route path="/quiz-lab" element={<QuizLab />} />
       <Route path="/chart-lab" element={<ChartLab />} />
+      <Route path="/cards-lab" element={<CardsLab />} />
       <Route path="/gradient-lab" element={<GradientLab />} />
       <Route path="/my-team" element={<MyTeam />} />
       {/* A learner profile opened from My Team — top-level so it keeps the

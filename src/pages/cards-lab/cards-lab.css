@@ -1,0 +1,199 @@
+/* Cards lab: research on tables turned into cards. Every class is prefixed cdl-
+   (CSS is globally bundled). Lab chrome follows the Chart lab. */
+
+.cdl-lab {
+  min-height: 100vh;
+  background: var(--page-background);
+  color: var(--text-primary);
+}
+
+.cdl-lab__bar {
+  padding: var(--space-l) var(--space-xxl);
+  border-bottom: 1px solid var(--border);
+}
+
+.cdl-lab__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.cdl-lab__title {
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.cdl-lab__sub {
+  font-size: var(--font-size-md);
+  color: var(--text-secondary);
+}
+
+.cdl-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxl);
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--space-xxl) var(--space-l);
+}
+
+.cdl-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+.cdl-section__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.cdl-section__title {
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.cdl-section__sub {
+  font-size: var(--font-size-md);
+  color: var(--text-secondary);
+}
+
+.cdl-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+/* Findings: plain text in columns, no card chrome. */
+.cdl-findings {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-l);
+}
+
+.cdl-finding {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.cdl-finding__title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.cdl-finding__body {
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* The column split: field, where it goes, why. */
+.cdl-split {
+  display: flex;
+  flex-direction: column;
+  max-width: 720px;
+}
+
+.cdl-split__row {
+  display: grid;
+  grid-template-columns: 160px 72px 1fr;
+  gap: var(--space-m);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--border);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+}
+
+.cdl-split__field {
+  font-weight: 500;
+}
+
+.cdl-split__where,
+.cdl-split__why {
+  color: var(--text-secondary);
+}
+
+/* The screens. */
+.cdl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-xl) var(--space-l);
+}
+
+.cdl-example {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.cdl-example__shot {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+}
+
+.cdl-example__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.cdl-example__pattern {
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+.cdl-example__title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.cdl-example__note {
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.cdl-example__link {
+  align-self: flex-start;
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-button-outlined);
+  border-radius: var(--radius-xs);
+}
+
+.cdl-example__link:hover {
+  color: var(--text-button-hover);
+}
+
+.cdl-example__link:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .cdl-lab__bar {
+    padding: var(--space-m);
+  }
+
+  .cdl-page {
+    padding: var(--space-l) var(--space-m);
+  }
+
+  .cdl-split__row {
+    grid-template-columns: 1fr 72px;
+  }
+
+  .cdl-split__why {
+    grid-column: 1 / -1;
+  }
+}

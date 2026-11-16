@@ -23,6 +23,7 @@ const DESKTOP_DEMOS = [
 const LABS = [
   { id: 'quiz', label: 'Quiz Lab', path: '/quiz-lab' },
   { id: 'chart', label: 'Chart Lab', path: '/chart-lab' },
+  { id: 'cards', label: 'Cards Lab', path: '/cards-lab' },
   { id: 'gradient', label: 'Gradient Studio', path: '/gradient-lab' },
 ] as const
 
