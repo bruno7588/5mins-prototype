@@ -17,6 +17,8 @@ interface StatTileProps {
   subTone?: 'neutral' | 'success'
   /** Shows the info icon after the label; the text opens in a DS Tooltip. */
   tooltip?: ReactNode
+  /** Sits at the far end of the tile, e.g. the arrow on a clickable tile. */
+  trailing?: ReactNode
   className?: string
 }
 
@@ -32,6 +34,7 @@ function StatTile({
   sub,
   subTone = 'neutral',
   tooltip,
+  trailing,
   className,
 }: StatTileProps) {
   const labelEl = (
@@ -68,6 +71,7 @@ function StatTile({
           </span>
         </div>
       )}
+      {trailing}
     </div>
   )
 }

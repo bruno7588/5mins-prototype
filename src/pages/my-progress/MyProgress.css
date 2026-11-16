@@ -49,6 +49,39 @@
   box-shadow: var(--shadow-s);
 }
 
+/* The arrow that marks a clickable tile, as on the Create Flashcards option cards
+   (.cfm-option-arrow): 20px ArrowRight on a round elevated fill, at the tile's far end. */
+.ds-stat.mp-stat {
+  container-type: inline-size;
+}
+
+.mp-stat .ds-stat__body {
+  flex: 1 1 0;
+}
+
+.mp-stat__arrow {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-s);
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  transition: background-color 0.15s ease;
+}
+
+/* Its hover step shows while the tile is hovered. */
+.mp-stat:hover .mp-stat__arrow {
+  background: var(--input-background-hover);
+}
+
+/* A narrow tile has no room for it beside the label. */
+@container (max-width: 210px) {
+  .mp-stat__arrow {
+    display: none;
+  }
+}
+
 .mp-stat .ds-stat__label {
   color: var(--text-secondary);
 }
@@ -58,57 +91,19 @@
   font-size: var(--font-size-h3);
 }
 
-/* ── Main column and side rail ── */
+/* ── Card grid ── */
 
-/* The main column flexes; the Leaderboard rail is a fixed 400px. Hiding a panel never
-   leaves a hole: its neighbour takes the space. */
-.mp-layout {
+/* Two equal columns; cards in a row share its height. Hiding a card never leaves a
+   hole: the rest close up in order. */
+.mp-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 400px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-l);
-  align-items: start;
 }
 
-/* No rail panels on: the main column takes the full width. */
-.mp-layout--full {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.mp-main,
-.mp-rail {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-l);
-  min-width: 0;
-}
-
-/* Skill Development hidden: External Training takes its place beside 5Mins Courses, at
-   equal widths and heights, instead of two full-width tables. */
-.mp-main--row {
-  flex-direction: row;
-  align-items: stretch;
-}
-
-.mp-main--row > * {
-  flex: 1 1 0;
-  min-width: 0;
-}
-
-/* The pair's wrapper steps aside, so both cards are direct items and get equal widths. */
-.mp-main--row > .mp-pair {
-  display: contents;
-}
-
-/* 5Mins Courses and Skill Development side by side, equal widths and heights. */
-.mp-pair {
-  display: flex;
-  align-items: stretch;
-  gap: var(--space-l);
-  min-width: 0;
-}
-
-.mp-pair > .mp-card {
-  flex: 1 1 0;
+/* An odd card out (one or three cards on) takes the full row. */
+.mp-grid > .mp-card:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
 }
 
 /* Outlined card, no fill: the mesh gradient sits on the page inside the border. */
@@ -293,27 +288,42 @@
 
 /* ── Leaderboard ── */
 
+/* Team / Company and the period sit on the title's row, each as wide as its content.
+   On a narrow card they wrap under the title. */
 .mp-leaderboard .mp-card__header {
+  flex-wrap: wrap;
   align-items: center;
 }
 
-/* Team / Company spans the card, two equal segments. */
-.mp-leaderboard__scope {
-  display: flex;
-  margin-top: calc(var(--space-xs) * -1); /* 12px under the title row, not the card's 16px */
+.mp-leaderboard .mp-card__title {
+  flex: 1 0 auto;
 }
 
-.mp-leaderboard__scope .switcher__item {
-  flex: 1 1 0;
-}
-
+/* The list scrolls inside the card, so the Leaderboard is never taller than the card
+   beside it: three rows (48px each) show on its own, and it fills the row's height when
+   External Training is next to it. */
 .mp-ranks {
   display: flex;
+  flex: 1 1 calc(3 * (32px + 2 * var(--space-s)) + 2 * var(--space-sm));
   flex-direction: column;
   gap: var(--space-sm);
-  margin: 0;
-  padding: 0;
+  min-height: calc(3 * (32px + 2 * var(--space-s)) + 2 * var(--space-sm));
+  /* The list runs to the card's bottom edge, so the next row shows cut off there: a
+     hint that the list scrolls. The padding gives the last row its space at the end. */
+  margin: 0 0 calc(var(--space-m) * -1);
+  padding: 0 0 var(--space-m);
+  overflow-y: auto;
   list-style: none;
+}
+
+.mp-ranks:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+/* Rows keep their height while the list scrolls. */
+.mp-rank {
+  flex-shrink: 0;
 }
 
 /* Read-only rows: a hover fill, no pointer. */
@@ -326,25 +336,53 @@
   transition: background-color 0.15s ease;
 }
 
-/* Rank 4 and below; the top three take their medal's colour, below. */
-.mp-rank:hover {
+/* Every row carries a fill at rest. Rank 4 and below: the soft row fill, and its hover
+   step; the top three take their medal's colour, below. */
+.mp-rank {
   background: var(--input-background);
 }
 
-/* Top three: the hover fill takes the medal's colour (Figma Reports 8599:30093,
-   8599:30550, 8599:30680): gold and bronze at 12%, silver at 16%. */
+.mp-rank:hover {
+  background: var(--input-background-hover);
+}
+
+/* Top three: the fill takes the medal's colour (after Figma Reports 8599:30093,
+   8599:30550, 8599:30680): gold 20%, silver 12%, bronze 12% in both modes; hover adds 8 points. */
 /* stylelint-disable -- medal colours are mode-invariant palette steps */
+.mp-rank--1 {
+  background: color-mix(in srgb, var(--secondary-400) 20%, transparent);
+}
+
 .mp-rank--1:hover {
-  background: color-mix(in srgb, var(--secondary-400) 12%, transparent);
+  background: color-mix(in srgb, var(--secondary-400) 28%, transparent);
+}
+
+.mp-rank--2 {
+  background: color-mix(in srgb, var(--neutral-100) 12%, transparent);
 }
 
 .mp-rank--2:hover {
-  background: color-mix(in srgb, var(--neutral-100) 16%, transparent);
+  background: color-mix(in srgb, var(--neutral-100) 20%, transparent);
+}
+
+/* Light mode: silver takes the medal's darker grey (its rim, #BFC2CC = Neutral-200), as
+   the medal's lighter grey is too faint on the light page; 24% and 32% on hover. */
+:root:not([data-theme='dark']) .mp-rank--2 {
+  background: color-mix(in srgb, var(--neutral-200) 24%, transparent);
+}
+
+:root:not([data-theme='dark']) .mp-rank--2:hover {
+  background: color-mix(in srgb, var(--neutral-200) 32%, transparent);
+}
+
+.mp-rank--3 {
+  background: color-mix(in srgb, var(--warning-500) 12%, transparent);
 }
 
 .mp-rank--3:hover {
-  background: color-mix(in srgb, var(--warning-500) 12%, transparent);
+  background: color-mix(in srgb, var(--warning-500) 20%, transparent);
 }
+
 /* stylelint-enable */
 
 .mp-rank__position {
@@ -455,45 +493,15 @@
 
 /* ── Smaller screens ── */
 
-/* Small desktop: beside the 400px rail the main column is too narrow for two cards
-   (course names were cut to a few letters), so Courses and Skills stack. With the
-   Leaderboard hidden the main column is wide enough and they stay side by side. */
-@media (min-width: 1200px) and (max-width: 1439px) {
-  .mp-layout:not(.mp-layout--full) .mp-pair,
-  .mp-layout:not(.mp-layout--full) .mp-main--row {
-    flex-direction: column;
-  }
-}
-
-/* Three cards in one row (Leaderboard hidden) need a wide screen. Under 1440 they go
-   back to Courses and Skills side by side over External Training. */
-@media (max-width: 1439px) {
-  .mp-main--three {
-    flex-direction: column;
-  }
-
-  .mp-main--three > .mp-pair {
-    display: flex;
-  }
-}
-
-@media (max-width: 1199px) {
-  .mp-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
+/* Two stat tiles per row; the cards go to one column. */
 @media (max-width: 900px) {
   .mp-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-m);
   }
-}
 
-@media (max-width: 900px) {
-  .mp-pair,
-  .mp-main--row {
-    flex-direction: column;
+  .mp-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -506,6 +514,7 @@
 @media (prefers-reduced-motion: reduce) {
   .ds-stat.mp-stat,
   .mp-skill,
+  .mp-stat__arrow,
   .mp-rank {
     transition: none;
   }

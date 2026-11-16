@@ -2,8 +2,8 @@ import type { MeshConfig, Shape } from '@/lib/meshGradient'
 
 /* The My Progress section cards' mesh gradients: the onboarding renderer
    (src/lib/meshGradient.ts), set quieter than the View Answers card
-   (src/pages/your-courses/answerMesh.ts): a few large shapes at 12% opacity (the
-   yellows at 6%) under a heavy blur, so they melt into each other with no visible
+   (src/pages/your-courses/answerMesh.ts): a few large shapes at 12% opacity in dark mode and
+   8% in light, where they read stronger (the yellows at 6% in both) under a heavy blur, so they melt into each other with no visible
    edges; no fill under them, a fine grain on top. Colours are read from
    the design tokens at runtime, never typed here. */
 
@@ -14,7 +14,7 @@ const token = (name: string) =>
 
 type ShapeSpec = Omit<Shape, 'id' | 'color' | 'phase' | 'opacity'> & { token: string }
 
-const SHAPE_OPACITY = 0.12
+const SHAPE_OPACITY = { light: 0.08, dark: 0.12 }
 /** The yellows read stronger than the other hues, so they sit at 6%. */
 const YELLOW_OPACITY = 0.06
 const YELLOWS = new Set(['--secondary-400', '--secondary-500', '--secondary-600'])
@@ -45,6 +45,7 @@ const SHAPES: Record<ProgressSection, ShapeSpec[]> = {
 
 /** Call again on a theme change: the shape colours are read from the tokens each time. */
 export function progressMesh(section: ProgressSection): MeshConfig {
+  const shapeOpacity = SHAPE_OPACITY[document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light']
   return {
     settings: {
       aspect: 'wide',
@@ -57,7 +58,7 @@ export function progressMesh(section: ProgressSection): MeshConfig {
     },
     shapes: SHAPES[section].map((s, i) => {
       const { token: name, ...rest } = s
-      return { ...rest, id: `${section}-${i}`, color: token(name), opacity: YELLOWS.has(name) ? YELLOW_OPACITY : SHAPE_OPACITY, phase: i * 1.7 }
+      return { ...rest, id: `${section}-${i}`, color: token(name), opacity: YELLOWS.has(name) ? YELLOW_OPACITY : shapeOpacity, phase: i * 1.7 }
     }),
   }
 }
