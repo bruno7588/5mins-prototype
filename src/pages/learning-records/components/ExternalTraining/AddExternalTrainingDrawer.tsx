@@ -12,7 +12,6 @@ import DatePickerField from '@/components/DatePickerField/DatePickerField'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import EmptyState from '@/components/EmptyState/EmptyState'
 import InputInteger from '@/components/InputInteger/InputInteger'
-import Radio from '@/components/Radio/Radio'
 import SideDrawer from '@/components/SideDrawer/SideDrawer'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import emptyBox from '@/assets/empty-state-illustrations/empty-box.svg'
@@ -78,6 +77,9 @@ const UNIT_OPTIONS = [
   { value: 'hours', label: 'Hours' },
   { value: 'days', label: 'Days' },
 ]
+
+/* The unit of the read-only expiry rule, shown as Duration shows its unit. */
+const MONTHS_OPTION = [{ value: 'months', label: 'Months' }]
 
 interface Props {
   /** Set false to close; the drawer plays its exit, so keep it mounted. */
@@ -183,10 +185,10 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
   const [completionDate, setCompletionDate] = useState(initialRecord?.completionDate ?? '')
   const [result, setResult] = useState<ExternalResult>(initialRecord?.result ?? 'Passed')
   const [score, setScore] = useState(initialRecord?.score ?? 0)
-  /* Expiry: a rule per record, the same control as Add course (No expiry, or Expires
-     after N months), pre-set from the course and open to change (2026-11-12). A saved
-     record starts from its stored date (D9) until the admin changes the rule, course,
-     date or result. */
+  /* Expiry: the approved course's rule (No expiry, or Expires after N months). It is set
+     in the Approved list, so it shows read-only here (2026-11-16; it was editable per
+     record from 2026-11-12). A saved record keeps its stored date (D9) until the admin
+     changes the course, date or result. */
   const storedMonths = (() => {
     const r = initialRecord
     if (!r?.retrainingDueDate) return null
@@ -198,12 +200,6 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
     initialRecord ? storedMonths != null || (initialRecord.result === 'Not Passed' && recordCourse?.retrainingMonths != null) : false,
   )
   const [months, setMonths] = useState(storedMonths ?? recordCourse?.retrainingMonths ?? 12)
-  const [expiryTouched, setExpiryTouched] = useState(false)
-  const touchExpiry = (on: boolean, n = months) => {
-    setRetrains(on)
-    setMonths(n)
-    setExpiryTouched(true)
-  }
   const [submitted, setSubmitted] = useState(false)
   /* The confirm box under Learner: the admin confirms the certificate is this learner's
      (married name, nickname, a misread). Tied to the pair, so changing either asks again. */
@@ -397,7 +393,6 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
 
   const keepStored =
     !!initialRecord &&
-    !expiryTouched &&
     courseId === initialRecord.courseId &&
     completionDate === initialRecord.completionDate &&
     result === initialRecord.result
@@ -765,7 +760,7 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
                   </div>
                 </div>
 
-                {/* Expiry: pre-set from the course rule, the admin can change it for this record. */}
+                {/* Expiry: the approved course's rule, read-only (it is changed in the Approved list). */}
                 {course &&
                   (result === 'Not Passed' ? (
                     <div className="aet-field">
@@ -773,21 +768,25 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
                       <span className="aetd-value">No expiry date for a training that wasn't passed.</span>
                     </div>
                   ) : (
-                    <div className="aet-field" role="radiogroup" aria-labelledby="aetd-expiry-label">
-                      <span id="aetd-expiry-label" className="aet-label">Expiry</span>
-                      <Radio name="aetd-expiry" label="No expiry" checked={!retrains} onChange={() => touchExpiry(false)} />
-                      <div className="aet-row aet-row--center">
-                        <Radio name="aetd-expiry" label="Expires after" checked={retrains} onChange={() => touchExpiry(true)} />
-                        <InputInteger
-                          ariaLabel="Expires after, in months"
-                          value={months}
-                          onChange={(v) => touchExpiry(true, v)}
-                          min={1}
-                          max={240}
-                          suffix="months"
-                          disabled={!retrains}
-                        />
-                        {/* The date the rule gives, on the stepper's row. */}
+                    <div className="aet-field">
+                      <span className="aet-label">Expiry</span>
+                      {/* The rule as plain text; its months as the read-only Duration shows
+                          "3 Days": a number field and a unit field. */}
+                      <div className="aet-row aet-row--center aetd-readonly-row">
+                        <span className="aetd-value">{retrains ? 'Expires after' : 'No expiry'}</span>
+                        {retrains && (
+                          <>
+                            <InputInteger
+                              ariaLabel="Expires after, in months"
+                              value={months}
+                              onChange={() => {}}
+                              disabled
+                              className="aetd-readonly"
+                            />
+                            <Dropdown options={MONTHS_OPTION} value="months" readOnly className="aet-unit aetd-readonly" />
+                          </>
+                        )}
+                        {/* The date the rule gives, beside it. */}
                         {dueDate && (
                           <div className="aetd-due" role="status">
                             <span className="aetd-value">{formatDay(dueDate)}</span>
