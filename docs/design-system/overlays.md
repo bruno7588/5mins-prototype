@@ -124,7 +124,7 @@ The overlay components, **Dialog**, **Modal** and **Side Drawer** on desktop and
 - Don't use a raw overlay colour; it is `var(--scrim)`.
 - Don't animate it linearly or with a short ease; it rises on a long decelerating curve (see States).
 
-**Canonical spec:** fills its positioned parent (the phone screen). Overlay `var(--scrim)` (Neutral-900 at 72% in the dark mobile app). Sheet `var(--page-background)`, top corners `var(--radius-sm)` (12px), padding `0 var(--space-m) var(--space-l)` (0 16px 24px), gap `var(--space-s)` (8px), max height 90%, content scrolls. Header: `var(--space-m)` (16px) padding around a 64 × 4px handle, `var(--neutral-500)`, radius `var(--radius-s)`.
+**Canonical spec:** fills its positioned parent (the phone screen). Overlay `var(--scrim)` (Neutral-900 at 72% in the dark mobile app). Sheet `var(--page-background)`, top corners `var(--radius-sm)` (12px), padding `0 var(--space-m) var(--space-xl)` (0 16px 32px), gap `var(--space-s)` (8px), max height 90%, content scrolls. Header: `var(--space-m)` (16px) padding around a 64 × 4px handle, `var(--neutral-500)`, radius `var(--radius-s)`.
 
 ## Figma to code
 

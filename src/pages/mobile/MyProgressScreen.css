@@ -5,12 +5,12 @@
   padding: var(--space-m);
 }
 
-/* The info bottom sheet: a title, then the explanation as a list or one sentence. */
+/* The info bottom sheet (Figma My Progress 13099:23927): a title, then the explanation
+   as a list or one sentence, 12px apart. The sheet itself supplies the padding. */
 .m-mp-info {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  padding: 0 var(--space-m) var(--space-l);
 }
 
 .m-mp-info__title {
@@ -31,9 +31,6 @@
 }
 
 .m-mp-info__list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
   padding-left: var(--space-ml);
   list-style: disc;
 }
