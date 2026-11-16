@@ -43,9 +43,10 @@ const SHAPES: Record<ProgressSection, ShapeSpec[]> = {
   ],
 }
 
-/** Call again on a theme change: the shape colours are read from the tokens each time. */
-export function progressMesh(section: ProgressSection): MeshConfig {
-  const shapeOpacity = SHAPE_OPACITY[document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light']
+/** Call again on a theme change: the shape colours are read from the tokens each time.
+    `mode` is the surface's own mode, which is always dark inside the native app's phone frame. */
+export function progressMesh(section: ProgressSection, mode: 'light' | 'dark'): MeshConfig {
+  const shapeOpacity = SHAPE_OPACITY[mode]
   return {
     settings: {
       aspect: 'wide',

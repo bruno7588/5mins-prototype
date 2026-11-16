@@ -2,7 +2,7 @@ import { useMemo, useState, type ReactNode } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { Add, ArrowCircleDown, ArrowCircleUp, ArrowRight, FlashCircle, Mobile } from 'iconsax-react'
 import { useHeaderTheme } from '@/data/brandTheme'
-import { useTheme } from '@/hooks/useTheme'
+import { useSurfaceMode } from '@/hooks/useTheme'
 import {
   SIGNED_IN_LEARNER_ID,
   dueRank,
@@ -78,8 +78,8 @@ function SectionCard({
   children: ReactNode
 }) {
   // The shape colours come from the design tokens, so the gradient is rebuilt per theme.
-  const { theme } = useTheme()
-  const mesh = useMemo(() => (meshSection ? progressMesh(meshSection) : null), [meshSection, theme])
+  const mode = useSurfaceMode()
+  const mesh = useMemo(() => (meshSection ? progressMesh(meshSection, mode) : null), [meshSection, mode])
   const titleId = `mp-${id}-title`
   return (
     <section className={['mp-card', className].filter(Boolean).join(' ')} aria-labelledby={titleId}>
@@ -98,10 +98,12 @@ function SectionCard({
    one page. Stat tiles and skill rows are the clickable items (their destinations are
    not designed yet); table and Leaderboard rows are read-only and only show a hover
    fill. */
-function MyProgress() {
+/* The page's content, shared by the web page and the native app screen
+   (src/pages/mobile/MyProgressScreen.tsx). `native`: one column, no hover states, no
+   prototype control, and View All inert because the learner profile is not built in
+   the app. */
+export function MyProgressContent({ native = false }: { native?: boolean }) {
   const navigate = useNavigate()
-  const location = useLocation()
-  const headerTheme = useHeaderTheme()
   const { records } = useExternalTraining()
   /* Tenants can switch panels off. In the prototype the control at the end of the page
      steps through the versions, and keeps the choice in the URL (?hide=leaderboard,skills,external, any mix)
@@ -161,6 +163,177 @@ function MyProgress() {
     { key: 'result', header: 'Result', width: '0 0 112px', align: 'right', render: (r) => resultBadge(r.result) },
   ]
 
+  const viewAll = native ? { className: 'ui-disabled', disabled: true } : {}
+
+  return (
+    <div className={`mp-page${native ? ' mp-page--native' : ''}`}>
+      <h1 className="mp-sr-only">My Progress</h1>
+
+      <div className="mp-stats">
+        {progressStats.map((s) => (
+          <StatTile
+            key={s.key}
+            className="mp-stat"
+            icon={<img src={getProgressIllustration(s.key)} alt="" width={32} height={32} />}
+            label={s.label}
+            /* No hover in the app, so no info tooltip there. */
+            tooltip={native ? undefined : s.tooltip}
+            value={s.value}
+            /* Clickable tile: the same arrow as the Create Flashcards option cards. */
+            trailing={
+              <span className="mp-stat__arrow" aria-hidden="true">
+                <ArrowRight size={20} color="var(--text-secondary)" variant="Linear" />
+              </span>
+            }
+          />
+        ))}
+      </div>
+
+      {/* Two cards per row: 5Mins Courses and Skill Development, then External Training
+          and the Leaderboard. Tenants can switch cards off without leaving a hole: the
+          rest close up in the same order, and an odd one out takes the full row. */}
+      <div className="mp-grid">
+            <SectionCard
+                id="courses"
+                mesh="courses"
+                title="5Mins Courses"
+                ctas={<Button variant="text" {...viewAll} onClick={() => navigate(OWN_PROFILE)}>View All</Button>}
+              >
+                <Table columns={courseColumns} rows={courseResults} getRowKey={(c) => c.id} />
+              </SectionCard>
+            {show('skills') && (
+              <SectionCard
+                  id="skills"
+                  title="Skill Development"
+                  /* Not built: there is no skills list page yet. */
+                  ctas={<Button variant="text" className="ui-disabled" disabled>View All Skills</Button>}
+                >
+                  <ul className="mp-skills">
+                    {skillProgress.map((skill) => (
+                      <li key={skill.name}>
+                        <button type="button" className="mp-skill">
+                          <img
+                            className="mp-skill__level"
+                            src={getLevelIllustration(skill.level, { size: 'small' })}
+                            alt={`Level ${skill.level}`}
+                            width={48}
+                            height={48}
+                          />
+                          <span className="mp-skill__info">
+                            <span className="mp-skill__titles">
+                              <span className="mp-skill__name">{skill.name}</span>
+                              <span className="mp-skill__hint">Earn {skill.target} points to complete this level</span>
+                            </span>
+                            <span className="mp-skill__progress">
+                              <span
+                                className="mp-bar"
+                                role="progressbar"
+                                aria-valuemin={0}
+                                aria-valuemax={skill.target}
+                                aria-valuenow={skill.points}
+                                aria-label={`${skill.name} level progress`}
+                              >
+                                <span className="mp-bar__fill" style={{ width: `${(skill.points / skill.target) * 100}%` }} />
+                              </span>
+                              <span className="mp-skill__points">{skill.points}/{skill.target} pts</span>
+                            </span>
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </SectionCard>
+            )}
+          {show('external') && (
+            <SectionCard
+                id="external"
+                mesh="external"
+                title="External Training"
+                ctas={
+                  <Button variant="text" {...viewAll} onClick={() => navigate(`${OWN_PROFILE}?tab=external-training`)}>
+                    View All
+                  </Button>
+                }
+              >
+                <Table columns={externalColumns} rows={externalRows} getRowKey={(r) => r.id} />
+              </SectionCard>
+          )}
+          {show('leaderboard') && (
+            <SectionCard
+                id="leaderboard"
+                title="Leaderboard"
+                className="mp-leaderboard"
+                ctas={
+                  <>
+                    <ContentSwitcher
+                      ariaLabel="Leaderboard scope"
+                      items={[
+                        { key: 'team', label: 'Team' },
+                        { key: 'company', label: 'Company' },
+                      ]}
+                      activeKey={scope}
+                      onChange={(key) => setScope(key as LeaderboardScope)}
+                    />
+                    <Dropdown options={leaderboardPeriods} value={period} onChange={setPeriod} menuAlign="end" />
+                  </>
+                }
+              >
+                <ol className="mp-ranks" tabIndex={0} aria-label="Leaderboard ranking">
+                  {leaderboards[scope].map((entry) => {
+                    const medal = getRankMedal(entry.rank)
+                    return (
+                      <li className={`mp-rank${medal ? ` mp-rank--${entry.rank}` : ''}`} key={entry.rank}>
+                        <span className={`mp-rank__position${medal ? ' mp-rank__position--medal' : ''}`}>
+                          {medal && <img src={medal} alt="" width={24} height={24} />}
+                          <span className="mp-rank__number">{entry.rank}</span>
+                        </span>
+                        <span className="mp-rank__person">
+                          <Avatar name={entry.name} src={entry.avatarSrc} size={32} />
+                          <span className="mp-rank__name">{entry.name}</span>
+                        </span>
+                        <span className="mp-rank__score">
+                          <span className="mp-rank__points">{entry.points.toLocaleString('en-GB')} pts</span>
+                          {entry.trend === 'up' ? (
+                            <ArrowCircleUp size={24} color="var(--success-500)" variant="Bold" aria-label="Moved up" />
+                          ) : (
+                            <ArrowCircleDown size={24} color="var(--danger-400)" variant="Bold" aria-label="Moved down" />
+                          )}
+                        </span>
+                      </li>
+                    )
+                  })}
+                </ol>
+              </SectionCard>
+          )}
+      </div>
+
+      {/* Not in the app. Prototype only, not part of the learner's page: step through the versions of
+          the page a tenant can end up with when cards are switched off. */}
+      {!native && (
+      <div className="mp-proto" role="group" aria-label="Prototype control: page version">
+        {VERSIONS.map((version, i) => (
+          <button
+            key={version.label}
+            type="button"
+            className="mp-proto__version"
+            aria-pressed={sameAsHidden(version.hide)}
+            aria-label={`Version ${i + 1}: ${version.label}`}
+            title={version.label}
+            onClick={() => showVersion(version.hide)}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </div>
+      )}
+    </div>
+  )
+}
+
+function MyProgress() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const headerTheme = useHeaderTheme()
   return (
     <div className="mt-app">
       <header className="mt-topnav" data-theme={headerTheme}>
@@ -219,164 +392,7 @@ function MyProgress() {
             <Chip label="My Progress" selected />
           </div>
 
-          <div className="mp-page">
-            <h1 className="mp-sr-only">My Progress</h1>
-
-            <div className="mp-stats">
-              {progressStats.map((s) => (
-                <StatTile
-                  key={s.key}
-                  className="mp-stat"
-                  icon={<img src={getProgressIllustration(s.key)} alt="" width={32} height={32} />}
-                  label={s.label}
-                  tooltip={s.tooltip}
-                  value={s.value}
-                  /* Clickable tile: the same arrow as the Create Flashcards option cards. */
-                  trailing={
-                    <span className="mp-stat__arrow" aria-hidden="true">
-                      <ArrowRight size={20} color="var(--text-secondary)" variant="Linear" />
-                    </span>
-                  }
-                />
-              ))}
-            </div>
-
-            {/* Two cards per row: 5Mins Courses and Skill Development, then External Training
-                and the Leaderboard. Tenants can switch cards off without leaving a hole: the
-                rest close up in the same order, and an odd one out takes the full row. */}
-            <div className="mp-grid">
-                  <SectionCard
-                      id="courses"
-                      mesh="courses"
-                      title="5Mins Courses"
-                      ctas={<Button variant="text" onClick={() => navigate(OWN_PROFILE)}>View All</Button>}
-                    >
-                      <Table columns={courseColumns} rows={courseResults} getRowKey={(c) => c.id} />
-                    </SectionCard>
-                  {show('skills') && (
-                    <SectionCard
-                        id="skills"
-                        title="Skill Development"
-                        /* Not built: there is no skills list page yet. */
-                        ctas={<Button variant="text" className="ui-disabled" disabled>View All Skills</Button>}
-                      >
-                        <ul className="mp-skills">
-                          {skillProgress.map((skill) => (
-                            <li key={skill.name}>
-                              <button type="button" className="mp-skill">
-                                <img
-                                  className="mp-skill__level"
-                                  src={getLevelIllustration(skill.level, { size: 'small' })}
-                                  alt={`Level ${skill.level}`}
-                                  width={48}
-                                  height={48}
-                                />
-                                <span className="mp-skill__info">
-                                  <span className="mp-skill__titles">
-                                    <span className="mp-skill__name">{skill.name}</span>
-                                    <span className="mp-skill__hint">Earn {skill.target} points to complete this level</span>
-                                  </span>
-                                  <span className="mp-skill__progress">
-                                    <span
-                                      className="mp-bar"
-                                      role="progressbar"
-                                      aria-valuemin={0}
-                                      aria-valuemax={skill.target}
-                                      aria-valuenow={skill.points}
-                                      aria-label={`${skill.name} level progress`}
-                                    >
-                                      <span className="mp-bar__fill" style={{ width: `${(skill.points / skill.target) * 100}%` }} />
-                                    </span>
-                                    <span className="mp-skill__points">{skill.points}/{skill.target} pts</span>
-                                  </span>
-                                </span>
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      </SectionCard>
-                  )}
-                {show('external') && (
-                  <SectionCard
-                      id="external"
-                      mesh="external"
-                      title="External Training"
-                      ctas={
-                        <Button variant="text" onClick={() => navigate(`${OWN_PROFILE}?tab=external-training`)}>
-                          View All
-                        </Button>
-                      }
-                    >
-                      <Table columns={externalColumns} rows={externalRows} getRowKey={(r) => r.id} />
-                    </SectionCard>
-                )}
-                {show('leaderboard') && (
-                  <SectionCard
-                      id="leaderboard"
-                      title="Leaderboard"
-                      className="mp-leaderboard"
-                      ctas={
-                        <>
-                          <ContentSwitcher
-                            ariaLabel="Leaderboard scope"
-                            items={[
-                              { key: 'team', label: 'Team' },
-                              { key: 'company', label: 'Company' },
-                            ]}
-                            activeKey={scope}
-                            onChange={(key) => setScope(key as LeaderboardScope)}
-                          />
-                          <Dropdown options={leaderboardPeriods} value={period} onChange={setPeriod} menuAlign="end" />
-                        </>
-                      }
-                    >
-                      <ol className="mp-ranks" tabIndex={0} aria-label="Leaderboard ranking">
-                        {leaderboards[scope].map((entry) => {
-                          const medal = getRankMedal(entry.rank)
-                          return (
-                            <li className={`mp-rank${medal ? ` mp-rank--${entry.rank}` : ''}`} key={entry.rank}>
-                              <span className={`mp-rank__position${medal ? ' mp-rank__position--medal' : ''}`}>
-                                {medal && <img src={medal} alt="" width={24} height={24} />}
-                                <span className="mp-rank__number">{entry.rank}</span>
-                              </span>
-                              <span className="mp-rank__person">
-                                <Avatar name={entry.name} src={entry.avatarSrc} size={32} />
-                                <span className="mp-rank__name">{entry.name}</span>
-                              </span>
-                              <span className="mp-rank__score">
-                                <span className="mp-rank__points">{entry.points.toLocaleString('en-GB')} pts</span>
-                                {entry.trend === 'up' ? (
-                                  <ArrowCircleUp size={24} color="var(--success-500)" variant="Bold" aria-label="Moved up" />
-                                ) : (
-                                  <ArrowCircleDown size={24} color="var(--danger-400)" variant="Bold" aria-label="Moved down" />
-                                )}
-                              </span>
-                            </li>
-                          )
-                        })}
-                      </ol>
-                    </SectionCard>
-                )}
-            </div>
-
-            {/* Prototype only, not part of the learner's page: step through the versions of
-                the page a tenant can end up with when cards are switched off. */}
-            <div className="mp-proto" role="group" aria-label="Prototype control: page version">
-              {VERSIONS.map((version, i) => (
-                <button
-                  key={version.label}
-                  type="button"
-                  className="mp-proto__version"
-                  aria-pressed={sameAsHidden(version.hide)}
-                  aria-label={`Version ${i + 1}: ${version.label}`}
-                  title={version.label}
-                  onClick={() => showVersion(version.hide)}
-                >
-                  {i + 1}
-                </button>
-              ))}
-            </div>
-          </div>
+          <MyProgressContent />
         </section>
       </div>
       <LearnerMobileNav />

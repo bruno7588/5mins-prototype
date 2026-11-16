@@ -519,3 +519,153 @@
     transition: none;
   }
 }
+
+/* ── Native app ──
+   The same content inside the phone frame (src/pages/mobile/MyProgressScreen.tsx). The
+   frame sits in a desktop window, so the small-screen rules above are applied by class
+   here: two stat tiles per row, cards in one column, header actions wrap. */
+.mp-page--native {
+  padding-top: 0;
+}
+
+.mp-page--native .mp-stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-m);
+}
+
+/* A 164px tile: 12px padding all round and a 12px radius. */
+.mp-page--native .ds-stat.mp-stat {
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+}
+
+.mp-page--native .mp-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.mp-page--native .mp-card__header {
+  flex-wrap: wrap;
+}
+
+/* No hover states in the app: every hover keeps its rest fill. */
+.mp-page--native .ds-stat.mp-stat:hover,
+.mp-page--native .mp-skill:hover {
+  background: var(--cards-background);
+}
+
+.mp-page--native .mp-stat:hover .mp-stat__arrow,
+.mp-page--native .mp-card .tbl-row:hover,
+.mp-page--native .mp-rank:hover {
+  background: var(--input-background);
+}
+
+/* stylelint-disable -- medal colours are mode-invariant palette steps */
+.mp-page--native .mp-rank--1:hover {
+  background: color-mix(in srgb, var(--secondary-400) 20%, transparent);
+}
+
+.mp-page--native .mp-rank--2:hover,
+:root:not([data-theme='dark']) .mp-page--native .mp-rank--2:hover {
+  background: color-mix(in srgb, var(--neutral-100) 12%, transparent);
+}
+
+.mp-page--native .mp-rank--3:hover {
+  background: color-mix(in srgb, var(--warning-500) 12%, transparent);
+}
+/* stylelint-enable */
+
+/* The phone is always dark, even when the desktop around it is in light mode: undo the
+   light-mode-only rules above. */
+:root:not([data-theme='dark']) .mp-page--native .mp-stat {
+  box-shadow: none;
+}
+
+/* stylelint-disable-next-line -- medal colour, mode-invariant palette step */
+:root:not([data-theme='dark']) .mp-page--native .mp-rank--2 {
+  background: color-mix(in srgb, var(--neutral-100) 12%, transparent);
+}
+
+/* Leaderboard header in the app: the switcher and the period do not fit side by side on
+   a 343px card, so the period sits on the title's row and the switcher spans the card
+   below it, in two equal segments. */
+.mp-page--native .mp-leaderboard .mp-card__ctas {
+  display: contents;
+}
+
+.mp-page--native .mp-leaderboard .switcher {
+  display: flex;
+  flex: 1 0 100%;
+  order: 1;
+}
+
+.mp-page--native .mp-leaderboard .switcher__item {
+  flex: 1 1 0;
+}
+
+.mp-page--native .mp-leaderboard .mp-card__title {
+  flex: 1 1 0;
+}
+
+.mp-page--native .mp-leaderboard .mp-card__ctas > :not(.switcher) {
+  flex: 0 0 auto;
+  width: auto;
+}
+
+/* Stat tile label in the app: Paragraph S regular (12px). */
+.mp-page--native .mp-stat .ds-stat__label {
+  font-size: var(--font-size-sm);
+}
+
+/* Table header text in the app: Paragraph S regular (12px). */
+.mp-page--native .mp-card .tbl-head-cell {
+  font-size: var(--font-size-sm);
+}
+
+/* Provider name under the course in the app: Paragraph S (12px), one line, truncated. */
+.mp-page--native .mp-card .tbl-stack .supporting {
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+/* Leaderboard rows in the app: a 16px medal in a 16px rank column, no extra padding
+   before the avatar, and 8px between medal, avatar and name. */
+.mp-page--native .mp-rank__position {
+  flex-basis: 16px;
+}
+
+.mp-page--native .mp-rank__person {
+  gap: var(--space-s);
+}
+
+.mp-page--native .mp-rank__number {
+  font-size: var(--font-size-sm);
+}
+
+.mp-page--native .mp-rank__position--medal img {
+  width: 16px;
+  height: 16px;
+}
+
+.mp-page--native .mp-rank__position--medal .mp-rank__number {
+  font-size: var(--font-size-sm);
+}
+
+.mp-page--native .mp-rank__person {
+  padding-left: 0;
+}
+
+/* Leaderboard points in the app: 12px. */
+.mp-page--native .mp-rank__points {
+  font-size: var(--font-size-sm);
+}
+
+/* Section cards in the app: 12px padding. The Leaderboard list still runs to the card's
+   bottom edge, so its bleed follows the padding. */
+.mp-page--native .mp-card {
+  padding: var(--space-sm);
+}
+
+.mp-page--native .mp-ranks {
+  margin-bottom: calc(var(--space-sm) * -1);
+  padding-bottom: var(--space-sm);
+}

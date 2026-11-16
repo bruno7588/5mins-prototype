@@ -9,6 +9,7 @@ import MobileTabNav, { type MobileTab } from '@/components/mobile/TabNav/TabNav'
 import { getAllPrograms } from '@/pages/programs/programStore'
 import ForYouScreen from './ForYouScreen'
 import WorkspaceScreen from './WorkspaceScreen'
+import MyProgressScreen from './MyProgressScreen'
 import ProgramScreen from './ProgramScreen'
 import LessonFeedScreen from './LessonFeedScreen'
 import LessonSheet from './LessonSheet'
@@ -34,7 +35,8 @@ function MobileApp() {
   const [searchParams] = useSearchParams()
   const [tab, setTab] = useState<MobileTab>('home')
   const [homeChip, setHomeChip] = useState('For You')
-  const [progressChip, setProgressChip] = useState('My Team')
+  /* My Team is not built in the app yet, so the Progress tab opens on My Progress. */
+  const [progressChip, setProgressChip] = useState('My Progress')
   /** Detail screens push over the tabs rather than leaving the phone frame. */
   const [openProgramId, setOpenProgramId] = useState<string | null>(searchParams.get('program'))
   /** A course opened from the program screen or a Home course card (DES-335); back returns there. */
@@ -213,6 +215,9 @@ function MobileApp() {
       ) : null}
       {feedIndex === null && !openProgram && !openCourseId && tab === 'home' && homeChip === 'Your Workspace' ? (
         <WorkspaceScreen onOpenProgram={setOpenProgramId} onOpenCourse={setOpenCourseId} />
+      ) : null}
+      {feedIndex === null && !openProgram && !openCourseId && tab === 'progress' && progressChip === 'My Progress' ? (
+        <MyProgressScreen />
       ) : null}
       {/* The remaining tab screens land here as they are built. */}
     </PhoneFrame>

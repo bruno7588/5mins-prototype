@@ -1,0 +1,6 @@
+/* Native app "My Progress" screen: the app's 16px screen padding around the shared
+   My Progress content (.mp-page--native in src/pages/my-progress/MyProgress.css). */
+.m-mp {
+  width: 100%;
+  padding: var(--space-m);
+}
