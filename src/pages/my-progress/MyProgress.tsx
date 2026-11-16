@@ -27,6 +27,7 @@ import { Table, type Column } from '@/components/Table/Table'
 import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
 import ProfileMenu from '@/components/ProfileMenu/ProfileMenu'
 import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
+import InfoIcon from '@/components/icons/InfoIcon'
 import { Logo, learnerSideItems } from '@/pages/my-team/MyTeam'
 import {
   courseResults,
@@ -36,6 +37,7 @@ import {
   skillProgress,
   type CourseResult,
   type LeaderboardScope,
+  type ProgressStat,
 } from './myProgressData'
 import { progressMesh, type ProgressSection } from './progressMesh'
 import '@/pages/my-team/MyTeam.css'
@@ -102,7 +104,14 @@ function SectionCard({
    (src/pages/mobile/MyProgressScreen.tsx). `native`: one column, no hover states, no
    prototype control, and View All inert because the learner profile is not built in
    the app. */
-export function MyProgressContent({ native = false }: { native?: boolean }) {
+export function MyProgressContent({
+  native = false,
+  onInfo,
+}: {
+  native?: boolean
+  /** App only: a stat tile's info icon was tapped. */
+  onInfo?: (stat: ProgressStat) => void
+}) {
   const navigate = useNavigate()
   const { records } = useExternalTraining()
   /* Tenants can switch panels off. In the prototype the control at the end of the page
@@ -175,9 +184,39 @@ export function MyProgressContent({ native = false }: { native?: boolean }) {
             key={s.key}
             className="mp-stat"
             icon={<img src={getProgressIllustration(s.key)} alt="" width={32} height={32} />}
-            label={s.label}
-            /* No hover in the app, so no info tooltip there. */
-            tooltip={native ? undefined : s.tooltip}
+            /* Web: the info icon opens a tooltip on hover. App: no hover, so the same icon is
+               a button that opens the explanation in a bottom sheet. */
+            label={
+              native ? (
+                <>
+                  {s.label}
+                  <button
+                    type="button"
+                    className="mp-stat__info"
+                    aria-label={s.info.title ?? `About ${s.label}`}
+                    onClick={() => onInfo?.(s)}
+                  >
+                    <InfoIcon size={16} color="var(--text-secondary)" />
+                  </button>
+                </>
+              ) : (
+                s.label
+              )
+            }
+            /* Below the icon: the tiles sit at the top of the page, and the tooltip is tall. */
+            tooltipPosition="Bottom"
+            tooltip={
+              native ? undefined : (
+                <span className="mp-tip">
+                  {s.info.title && <strong className="mp-tip__title">{s.info.title}</strong>}
+                  {s.info.lines.map((line) => (
+                    <span className="mp-tip__line" key={line}>
+                      {s.info.title ? `• ${line}` : line}
+                    </span>
+                  ))}
+                </span>
+              )
+            }
             value={s.value}
             /* Clickable tile: the same arrow as the Create Flashcards option cards. */
             trailing={

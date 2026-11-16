@@ -306,14 +306,14 @@
 }
 
 /* The list scrolls inside the card, so the Leaderboard is never taller than the card
-   beside it: three rows (48px each) show on its own, and it fills the row's height when
-   External Training is next to it. */
+   beside it: on its own it shows three rows (48px each) and the top of the fourth, and
+   it fills the row's height when External Training is next to it. */
 .mp-ranks {
   display: flex;
-  flex: 1 1 calc(3 * (32px + 2 * var(--space-s)) + 2 * var(--space-sm));
+  flex: 1 1 calc(3 * (32px + 2 * var(--space-s)) + 3 * var(--space-sm) + var(--space-ml));
   flex-direction: column;
   gap: var(--space-sm);
-  min-height: calc(3 * (32px + 2 * var(--space-s)) + 2 * var(--space-sm));
+  min-height: calc(3 * (32px + 2 * var(--space-s)) + 3 * var(--space-sm) + var(--space-ml));
   /* The list runs to the card's bottom edge, so the next row shows cut off there: a
      hint that the list scrolls. The padding gives the last row its space at the end. */
   margin: 0 0 calc(var(--space-m) * -1);
@@ -674,4 +674,40 @@
 .mp-page--native .mp-ranks {
   margin-bottom: calc(var(--space-sm) * -1);
   padding-bottom: var(--space-sm);
+}
+
+/* ── Stat tile info ──
+   Web: the tooltip's text, left aligned, a bold title over bulleted lines. */
+.mp-tip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  text-align: left;
+}
+
+.mp-tip__title {
+  font-weight: 700;
+}
+
+/* App: the info icon is a button (it opens a bottom sheet). */
+.mp-stat__info {
+  display: flex;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: none;
+  cursor: pointer;
+}
+
+.mp-stat__info:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+/* The lines under a tooltip title are quieter than the title. The tooltip is dark in
+   both modes, so this is a palette step, not a mode-aware token. */
+/* stylelint-disable-next-line -- mode-invariant text on the always-dark tooltip */
+.mp-tip__title ~ .mp-tip__line {
+  color: var(--neutral-200);
 }

@@ -9,7 +9,8 @@ import MobileTabNav, { type MobileTab } from '@/components/mobile/TabNav/TabNav'
 import { getAllPrograms } from '@/pages/programs/programStore'
 import ForYouScreen from './ForYouScreen'
 import WorkspaceScreen from './WorkspaceScreen'
-import MyProgressScreen from './MyProgressScreen'
+import MyProgressScreen, { ProgressInfoSheet } from './MyProgressScreen'
+import type { ProgressStat } from '@/pages/my-progress/myProgressData'
 import ProgramScreen from './ProgramScreen'
 import LessonFeedScreen from './LessonFeedScreen'
 import LessonSheet from './LessonSheet'
@@ -37,6 +38,8 @@ function MobileApp() {
   const [homeChip, setHomeChip] = useState('For You')
   /* My Team is not built in the app yet, so the Progress tab opens on My Progress. */
   const [progressChip, setProgressChip] = useState('My Progress')
+  /** A My Progress stat tile's info, open in a bottom sheet. */
+  const [progressInfo, setProgressInfo] = useState<ProgressStat | null>(null)
   /** Detail screens push over the tabs rather than leaving the phone frame. */
   const [openProgramId, setOpenProgramId] = useState<string | null>(searchParams.get('program'))
   /** A course opened from the program screen or a Home course card (DES-335); back returns there. */
@@ -129,6 +132,7 @@ function MobileApp() {
               onDownload={() => showToast('success', 'Downloading...', ImportCurve)}
             />
           ) : null}
+          {progressInfo ? <ProgressInfoSheet stat={progressInfo} onClose={() => setProgressInfo(null)} /> : null}
           <AnimatePresence>
             {openCourseId && signOffOpen ? (
               <SignOffScreen
@@ -174,6 +178,7 @@ function MobileApp() {
             setCertReadyOpen(false)
             setCertificateOpen(false)
             setFeedIndex(null)
+            setProgressInfo(null)
             setSheetIndex(null)
             setWebView(null)
             setTab(next)
@@ -217,7 +222,7 @@ function MobileApp() {
         <WorkspaceScreen onOpenProgram={setOpenProgramId} onOpenCourse={setOpenCourseId} />
       ) : null}
       {feedIndex === null && !openProgram && !openCourseId && tab === 'progress' && progressChip === 'My Progress' ? (
-        <MyProgressScreen />
+        <MyProgressScreen onInfo={setProgressInfo} />
       ) : null}
       {/* The remaining tab screens land here as they are built. */}
     </PhoneFrame>

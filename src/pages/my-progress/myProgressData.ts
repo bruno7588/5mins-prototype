@@ -7,18 +7,45 @@ import avatar2 from '@/assets/avatars/avatar-2.jpg'
 import avatar3 from '@/assets/avatars/avatar-3.jpg'
 import avatar4 from '@/assets/avatars/avatar-4.jpg'
 
+/** What the info icon explains: a tooltip on web, a bottom sheet in the app. With a
+    title the lines are a bulleted list; without one, a single sentence. */
+export interface ProgressInfo {
+  title?: string
+  lines: string[]
+}
+
 export interface ProgressStat {
   key: ProgressIllustrationType
   label: string
   value: string
-  tooltip: string
+  info: ProgressInfo
 }
 
 export const progressStats: ProgressStat[] = [
-  { key: 'points', label: 'Points', value: '62%', tooltip: 'Points you earn by completing lessons and quizzes.' },
-  { key: 'jewels', label: 'Jewels', value: '400', tooltip: 'Jewels you collect by passing quizzes and keeping your streak.' },
-  { key: 'streak', label: 'Streak', value: '3 days', tooltip: "Days in a row you've completed a lesson." },
-  { key: 'certificates', label: 'Certificates', value: '6', tooltip: "Certificates you've earned from completed courses." },
+  {
+    key: 'points',
+    label: 'Points',
+    value: '62%',
+    info: {
+      title: 'How to earn Skill Points?',
+      lines: ['Watch a short to earn 1 Skill Point.', 'Answer a quiz correctly to earn 4 Skill Points.'],
+    },
+  },
+  {
+    key: 'jewels',
+    label: 'Jewels',
+    value: '400',
+    info: {
+      title: 'How to earn Jewels?',
+      lines: [
+        'Earn 5 Jewels by watching 5 minutes of shorts in 1 day.',
+        'Earn 10 Jewels by watching 5 minutes of shorts for 5 consecutive days.',
+        'Earn 25 Jewels by watching 5 minutes of shorts for 10 consecutive days.',
+      ],
+    },
+  },
+  { key: 'streak', label: 'Streak', value: '3 days', info: { lines: ["Days in a row you've completed a lesson."] } },
+  { key: 'certificates', label: 'Certificates', value: '6', info: { lines: ["Certificates you've earned from completed courses."] } },
 ]
 
 export interface SkillProgress {
