@@ -75,6 +75,12 @@
   background: var(--input-background-hover);
 }
 
+/* Dark mode: the hovered tile is already the hover step's colour, so the arrow takes
+   the elevated fill to stay visible. */
+:root[data-theme='dark'] .mp-stat:hover .mp-stat__arrow {
+  background: var(--input-background-elevated);
+}
+
 /* A narrow tile has no room for it beside the label. */
 @container (max-width: 210px) {
   .mp-stat__arrow {
