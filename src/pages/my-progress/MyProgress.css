@@ -352,44 +352,31 @@
   background: var(--input-background-hover);
 }
 
-/* Top three: the fill takes the medal's colour (after Figma Reports 8599:30093,
-   8599:30550, 8599:30680): gold 20%, silver 12%, bronze 12% in both modes; hover adds 8 points. */
-/* stylelint-disable -- medal colours are mode-invariant palette steps */
+/* Top three: the fill takes the medal's colour, from the Library's Leaderboard-row
+   tokens (mode-aware, transparency built in). Hover is 8 points stronger. */
 .mp-rank--1 {
-  background: color-mix(in srgb, var(--secondary-400) 20%, transparent);
+  background: var(--leaderboard-row-1st);
 }
 
 .mp-rank--1:hover {
-  background: color-mix(in srgb, var(--secondary-400) 28%, transparent);
+  background: var(--leaderboard-row-1st-hover);
 }
 
 .mp-rank--2 {
-  background: color-mix(in srgb, var(--neutral-100) 12%, transparent);
+  background: var(--leaderboard-row-2nd);
 }
 
 .mp-rank--2:hover {
-  background: color-mix(in srgb, var(--neutral-100) 20%, transparent);
-}
-
-/* Light mode: silver takes the medal's darker grey (its rim, #BFC2CC = Neutral-200), as
-   the medal's lighter grey is too faint on the light page; 24% and 32% on hover. */
-:root:not([data-theme='dark']) .mp-rank--2 {
-  background: color-mix(in srgb, var(--neutral-200) 24%, transparent);
-}
-
-:root:not([data-theme='dark']) .mp-rank--2:hover {
-  background: color-mix(in srgb, var(--neutral-200) 32%, transparent);
+  background: var(--leaderboard-row-2nd-hover);
 }
 
 .mp-rank--3 {
-  background: color-mix(in srgb, var(--warning-500) 12%, transparent);
+  background: var(--leaderboard-row-3rd);
 }
 
 .mp-rank--3:hover {
-  background: color-mix(in srgb, var(--warning-500) 20%, transparent);
+  background: var(--leaderboard-row-3rd-hover);
 }
-
-/* stylelint-enable */
 
 .mp-rank__position {
   position: relative;
@@ -565,30 +552,22 @@
   background: var(--input-background);
 }
 
-/* stylelint-disable -- medal colours are mode-invariant palette steps */
 .mp-page--native .mp-rank--1:hover {
-  background: color-mix(in srgb, var(--secondary-400) 20%, transparent);
+  background: var(--leaderboard-row-1st);
 }
 
-.mp-page--native .mp-rank--2:hover,
-:root:not([data-theme='dark']) .mp-page--native .mp-rank--2:hover {
-  background: color-mix(in srgb, var(--neutral-100) 12%, transparent);
+.mp-page--native .mp-rank--2:hover {
+  background: var(--leaderboard-row-2nd);
 }
 
 .mp-page--native .mp-rank--3:hover {
-  background: color-mix(in srgb, var(--warning-500) 12%, transparent);
+  background: var(--leaderboard-row-3rd);
 }
-/* stylelint-enable */
 
 /* The phone is always dark, even when the desktop around it is in light mode: undo the
-   light-mode-only rules above. */
+   light-mode-only shadow above. (The row tokens follow the phone's own dark mode.) */
 :root:not([data-theme='dark']) .mp-page--native .mp-stat {
   box-shadow: none;
-}
-
-/* stylelint-disable-next-line -- medal colour, mode-invariant palette step */
-:root:not([data-theme='dark']) .mp-page--native .mp-rank--2 {
-  background: color-mix(in srgb, var(--neutral-100) 12%, transparent);
 }
 
 /* Leaderboard header in the app: the switcher and the period do not fit side by side on

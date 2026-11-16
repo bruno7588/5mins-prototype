@@ -192,6 +192,14 @@
      16% / 24% in both modes, so no dark override. */
   --selected-row: rgba(255, 187, 56, 0.16);
   --selected-row-hover: rgba(255, 187, 56, 0.24);
+  /* Leaderboard top-three row fills (Library Surface colours, Leaderboard-row-*): the
+     medal's colour with the transparency built in; hover is 8 points stronger. */
+  --leaderboard-row-1st: rgba(255, 207, 116, 0.2);        /* Secondary-400 @ 20% */
+  --leaderboard-row-1st-hover: rgba(255, 207, 116, 0.28);
+  --leaderboard-row-2nd: rgba(191, 194, 204, 0.24);       /* Neutral-200 @ 24% */
+  --leaderboard-row-2nd-hover: rgba(191, 194, 204, 0.32);
+  --leaderboard-row-3rd: rgba(255, 165, 56, 0.12);        /* Warning-500 @ 12% */
+  --leaderboard-row-3rd-hover: rgba(255, 165, 56, 0.2);
   --selected-fill: var(--secondary-100); /* opaque fill for sticky cells over scrolling content */
   --selected-fill-hover: #FDECC5; /* hover state of --selected-fill / selected rows (opaque) */
   --control-selected: var(--secondary-600); /* radio/checkbox selected amber, per selection-controls.md */
@@ -258,6 +266,13 @@
    and shadows are mode-independent and stay in :root. Applied via
    <html data-theme="dark"> (see src/hooks/useTheme.ts). */
 [data-theme='dark'] {
+  /* Leaderboard top-three row fills, dark mode (Library Leaderboard-row-*). */
+  --leaderboard-row-1st: rgba(255, 207, 116, 0.12);       /* Secondary-400 @ 12% */
+  --leaderboard-row-1st-hover: rgba(255, 207, 116, 0.2);
+  --leaderboard-row-2nd: rgba(223, 225, 230, 0.08);       /* Neutral-100 @ 8% */
+  --leaderboard-row-2nd-hover: rgba(223, 225, 230, 0.16);
+  --leaderboard-row-3rd: rgba(255, 165, 56, 0.08);        /* Warning-500 @ 8% */
+  --leaderboard-row-3rd-hover: rgba(255, 165, 56, 0.16);
   --ai-callout-text: var(--secondary-400);
   /* Surfaces */
   --page-background: var(--neutral-800);

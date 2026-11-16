@@ -44,7 +44,7 @@ export const progressStats: ProgressStat[] = [
       ],
     },
   },
-  { key: 'streak', label: 'Streak', value: '3 days', info: { lines: ["Days in a row you've completed a lesson."] } },
+  { key: 'streak', label: 'Streak', value: '3', info: { lines: ["Days in a row you've completed a lesson."] } },
   { key: 'certificates', label: 'Certificates', value: '6', info: { lines: ["Certificates you've earned from completed courses."] } },
 ]
 

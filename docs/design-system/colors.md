@@ -213,6 +213,12 @@ Backgrounds, borders, and button fills.
 | Selected | `--selected` | Secondary-500 `#FFBB38` | Secondary-600 `#EDA30D` | Active/selected state - inputs, tabs, chips, radios, checkboxes |
 | Selected-row | `--selected-row` | `#FFBB38` @ 16% | `#FFBB38` @ 16% | Selected table row fill and border |
 | Selected-row-hover | `--selected-row-hover` | `#FFBB38` @ 24% | `#FFBB38` @ 24% | Selected table row on hover |
+| Leaderboard-row-1st | `--leaderboard-row-1st` | `#FFCF74` @ 12% | `#FFCF74` @ 20% | Leaderboard first place row fill (Secondary-400) |
+| Leaderboard-row-1st-hover | `--leaderboard-row-1st-hover` | `#FFCF74` @ 20% | `#FFCF74` @ 28% | First place row on hover |
+| Leaderboard-row-2nd | `--leaderboard-row-2nd` | `#DFE1E6` @ 8% | `#BFC2CC` @ 24% | Leaderboard second place row fill (Neutral-100 dark, Neutral-200 light) |
+| Leaderboard-row-2nd-hover | `--leaderboard-row-2nd-hover` | `#DFE1E6` @ 16% | `#BFC2CC` @ 32% | Second place row on hover |
+| Leaderboard-row-3rd | `--leaderboard-row-3rd` | `#FFA538` @ 8% | `#FFA538` @ 12% | Leaderboard third place row fill (Warning-500) |
+| Leaderboard-row-3rd-hover | `--leaderboard-row-3rd-hover` | `#FFA538` @ 16% | `#FFA538` @ 20% | Third place row on hover |
 | Border | `--border` | Neutral-700 `#2D313D` | Neutral-100 `#DFE1E6` | The quiet border: table rows, dividers, dashed drop zones, skeletons and disabled controls on the page, and borders inside drawers and modals. In dark mode it is the same colour as `--cards-background`, so on a card or menu use `--border-elevated` |
 | Border-elevated | `--border-elevated` | Neutral-600 `#383D4C` | Neutral-100 `#DFE1E6` | The border on an **elevated surface**: a card or menu, and the controls inside one. One step lighter than `--border` in dark mode, as in Figma |
 | Border-hover | `--border-hover` | Neutral-300 `#9EA4B3` | Neutral-300 `#9EA4B3` | Any border on hover |
