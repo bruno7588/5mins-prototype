@@ -113,9 +113,7 @@
   flex: 1;
   display: flex;
   align-items: stretch;
-  max-width: 1536px;
   width: 100%;
-  margin: 0 auto;
 }
 
 /* Side nav. It stays put under the top nav while the page scrolls: the panel fits the
