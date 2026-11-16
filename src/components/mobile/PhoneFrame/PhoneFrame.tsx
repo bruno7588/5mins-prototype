@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { ArrowLeft } from 'iconsax-react'
 import { PinnedMode } from '@/hooks/useTheme'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import './PhoneFrame.css'
 
 export interface PhoneFrameProps {
@@ -33,10 +34,13 @@ function PhoneFrame({ header, footer, children, overlayHeader = false, overlay, 
   return (
     <div className="m-phone-stage">
       {onExit ? (
-        <button type="button" className="m-phone-stage__exit" onClick={onExit}>
-          <ArrowLeft size={20} color="currentColor" variant="Linear" />
-          <span>Back to Desktop</span>
-        </button>
+        <div className="m-phone-stage__exit-wrap">
+          <Tooltip text="Back to Desktop" position="Bottom" alignment="Start" icon={false}>
+            <button type="button" className="m-phone-stage__exit" aria-label="Back to Desktop" onClick={onExit}>
+              <ArrowLeft size={20} color="var(--text-primary)" variant="Linear" />
+            </button>
+          </Tooltip>
+        </div>
       ) : null}
       <PinnedMode.Provider value="dark">
       <div className="m-phone" data-theme="dark">

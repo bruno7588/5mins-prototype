@@ -16,28 +16,28 @@
 }
 
 /* Prototype scaffolding — sits on the stage, outside the phone bezel */
-.m-phone-stage__exit {
+.m-phone-stage__exit-wrap {
   position: fixed;
   top: 24px;
   left: 24px;
   z-index: 10;
-  display: inline-flex;
+}
+
+/* Icon-only back button: a 36px circle. */
+.m-phone-stage__exit {
+  display: flex;
   align-items: center;
-  gap: var(--space-s);
-  padding: var(--space-ssm) var(--space-m) var(--space-ssm) var(--space-sm);
-  border: 1px solid var(--border);
+  justify-content: center;
+  padding: var(--space-s);
+  border: none;
   border-radius: var(--radius-full);
-  background: var(--cards-background);
-  box-shadow: var(--shadow-s);
-  font: 700 14px/1.5 Poppins, sans-serif;
-  color: var(--text-primary);
+  background: var(--input-background);
   cursor: pointer;
-  transition: background 150ms ease, border-color 150ms ease;
+  transition: background 150ms ease;
 }
 
 .m-phone-stage__exit:hover {
-  background: var(--cards-background-hover);
-  border-color: var(--border-hover);
+  background: var(--input-background-hover);
 }
 
 .m-phone-stage__exit:focus-visible {
