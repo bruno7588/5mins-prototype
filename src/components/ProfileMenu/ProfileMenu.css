@@ -61,6 +61,11 @@
   transition: background 120ms ease;
 }
 
+/* Log out: icon and label in the error colour (listbox.md danger item). */
+.profile-menu__item--danger {
+  color: var(--text-error);
+}
+
 .profile-menu__item:hover {
   background: var(--cards-background-hover);
 }

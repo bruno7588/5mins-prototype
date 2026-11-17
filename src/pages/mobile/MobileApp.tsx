@@ -199,7 +199,6 @@ function MobileApp() {
                 setSavedOpen(false)
                 setAccountOpen(true)
               }}
-              onLogOut={() => navigate('/onboarding')}
             />
           ) : null}
           <AnimatePresence>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Moon, User, Save2, Setting2, Logout } from 'iconsax-react'
+import { Moon, User, Save2, Setting2, LogoutCurve } from 'iconsax-react'
 import Toggle from '../Toggle/Toggle'
 import Tooltip from '../Tooltip/Tooltip'
 import { useTheme } from '../../hooks/useTheme'
@@ -64,16 +64,13 @@ export default function ProfileMenu({
             <Save2 size={20} color="var(--text-primary)" variant="Linear" />
             <span>Saved</span>
           </button>
-          {/* There is no edit screen yet: this opens the learner's own profile, where
-              the Edit Profile button sits. */}
+          {/* Left enabled but not wired to a page on purpose: its destination is designed
+              later (Bruno, 2026-11-17). It only closes the menu. */}
           <button
             type="button"
             role="menuitem"
             className="profile-menu__item"
-            onClick={() => {
-              setOpen(false)
-              navigate('/my-progress/profile')
-            }}
+            onClick={() => setOpen(false)}
           >
             <User size={20} color="var(--text-primary)" variant="Linear" />
             <span>Edit Profile</span>
@@ -95,13 +92,13 @@ export default function ProfileMenu({
           <button
             type="button"
             role="menuitem"
-            className="profile-menu__item"
+            className="profile-menu__item profile-menu__item--danger"
             onClick={() => {
               setOpen(false)
               navigate('/onboarding')
             }}
           >
-            <Logout size={20} color="var(--text-primary)" variant="Linear" />
+            <LogoutCurve size={20} color="var(--text-error)" variant="Linear" />
             <span>Log out</span>
           </button>
         </div>

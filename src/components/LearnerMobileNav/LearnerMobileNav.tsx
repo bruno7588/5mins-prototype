@@ -10,7 +10,7 @@ import {
   Save2,
   MonitorMobbile,
   Moon,
-  Logout,
+  LogoutCurve,
   CloseCircle,
 } from 'iconsax-react'
 import FeedIcon from '@/components/icons/FeedIcon'
@@ -162,7 +162,7 @@ function LearnerMobileNav() {
                 </span>
               </button>
               <button type="button" role="menuitem" className="profile-menu__item" onClick={() => go('/onboarding')}>
-                {menuIcon(Logout)}
+                {menuIcon(LogoutCurve)}
                 <span>Log Out</span>
               </button>
             </div>

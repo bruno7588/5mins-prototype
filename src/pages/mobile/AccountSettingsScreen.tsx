@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowRight2, Camera, Logout } from 'iconsax-react'
+import { ArrowRight2, Camera, LogoutCurve } from 'iconsax-react'
 import Avatar from '@/components/Avatar/Avatar'
 import Button from '@/components/Button/Button'
 import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
@@ -92,7 +92,7 @@ function AccountSettingsScreen({ onLogOut }: { onLogOut: () => void }) {
         variant="outlined"
         size="md"
         className="m-acct__logout"
-        trailingIcon={<Logout size={20} color="currentColor" variant="Linear" />}
+        icon={<LogoutCurve size={20} color="currentColor" variant="Linear" />}
         onClick={onLogOut}
       >
         Log Out
