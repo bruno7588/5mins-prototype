@@ -7,10 +7,16 @@ import './MyProgressScreen.css'
    the web page (src/pages/my-progress), in one column: stat tiles, 5Mins Courses, Skill
    Development, External Training and the Leaderboard.
    Prefix: m-mp- */
-function MyProgressScreen({ onInfo }: { onInfo: (stat: ProgressStat) => void }) {
+function MyProgressScreen({
+  onInfo,
+  onViewAllExternal,
+}: {
+  onInfo: (stat: ProgressStat) => void
+  onViewAllExternal: () => void
+}) {
   return (
     <div className="m-mp">
-      <MyProgressContent native onInfo={onInfo} />
+      <MyProgressContent native onInfo={onInfo} onViewAllExternal={onViewAllExternal} />
     </div>
   )
 }

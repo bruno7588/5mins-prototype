@@ -11,6 +11,7 @@ import ForYouScreen from './ForYouScreen'
 import WorkspaceScreen from './WorkspaceScreen'
 import MyProgressScreen, { ProgressInfoSheet } from './MyProgressScreen'
 import type { ProgressStat } from '@/pages/my-progress/myProgressData'
+import ExternalTrainingScreen, { ExternalRecordSheet } from './ExternalTrainingScreen'
 import ProgramScreen from './ProgramScreen'
 import LessonFeedScreen from './LessonFeedScreen'
 import LessonSheet from './LessonSheet'
@@ -40,6 +41,9 @@ function MobileApp() {
   const [progressChip, setProgressChip] = useState('My Progress')
   /** A My Progress stat tile's info, open in a bottom sheet. */
   const [progressInfo, setProgressInfo] = useState<ProgressStat | null>(null)
+  /** External Training, opened by View All on My Progress; `externalRecordId` is its open sheet. */
+  const [externalOpen, setExternalOpen] = useState(false)
+  const [externalRecordId, setExternalRecordId] = useState<string | null>(null)
   /** Detail screens push over the tabs rather than leaving the phone frame. */
   const [openProgramId, setOpenProgramId] = useState<string | null>(searchParams.get('program'))
   /** A course opened from the program screen or a Home course card (DES-335); back returns there. */
@@ -77,6 +81,9 @@ function MobileApp() {
     if (openCourseId) return undefined
     if (openProgram) {
       return <MobileTopNav variant="detail" title="Program" onBack={() => setOpenProgramId(null)} />
+    }
+    if (externalOpen) {
+      return <MobileTopNav variant="detail" title="External Training" onBack={() => setExternalOpen(false)} />
     }
     switch (tab) {
       case 'home':
@@ -133,6 +140,13 @@ function MobileApp() {
             />
           ) : null}
           {progressInfo ? <ProgressInfoSheet stat={progressInfo} onClose={() => setProgressInfo(null)} /> : null}
+          {externalRecordId ? (
+            <ExternalRecordSheet
+              recordId={externalRecordId}
+              onClose={() => setExternalRecordId(null)}
+              onDownload={() => showToast('success', 'Downloading certificate', ImportCurve)}
+            />
+          ) : null}
           <AnimatePresence>
             {openCourseId && signOffOpen ? (
               <SignOffScreen
@@ -179,6 +193,8 @@ function MobileApp() {
             setCertificateOpen(false)
             setFeedIndex(null)
             setProgressInfo(null)
+            setExternalOpen(false)
+            setExternalRecordId(null)
             setSheetIndex(null)
             setWebView(null)
             setTab(next)
@@ -221,8 +237,11 @@ function MobileApp() {
       {feedIndex === null && !openProgram && !openCourseId && tab === 'home' && homeChip === 'Your Workspace' ? (
         <WorkspaceScreen onOpenProgram={setOpenProgramId} onOpenCourse={setOpenCourseId} />
       ) : null}
-      {feedIndex === null && !openProgram && !openCourseId && tab === 'progress' && progressChip === 'My Progress' ? (
-        <MyProgressScreen onInfo={setProgressInfo} />
+      {feedIndex === null && !openProgram && !openCourseId && tab === 'progress' && progressChip === 'My Progress' && !externalOpen ? (
+        <MyProgressScreen onInfo={setProgressInfo} onViewAllExternal={() => setExternalOpen(true)} />
+      ) : null}
+      {feedIndex === null && !openProgram && !openCourseId && tab === 'progress' && externalOpen ? (
+        <ExternalTrainingScreen onOpenRecord={setExternalRecordId} />
       ) : null}
       {/* The remaining tab screens land here as they are built. */}
     </PhoneFrame>

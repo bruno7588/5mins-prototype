@@ -118,6 +118,38 @@
   color: var(--text-secondary);
 }
 
+/* Flows: the idea on the left, its three screens in a row on the right. */
+.cdl-flows {
+  display: flex;
+  flex-direction: column;
+}
+
+.cdl-flow {
+  display: grid;
+  grid-template-columns: minmax(200px, 280px) 1fr;
+  gap: var(--space-xl);
+  padding: var(--space-xl) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.cdl-flow__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.cdl-flow__steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 240px));
+  gap: var(--space-l);
+}
+
+@media (max-width: 800px) {
+  .cdl-flow {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* The screens. */
 .cdl-grid {
   display: grid;

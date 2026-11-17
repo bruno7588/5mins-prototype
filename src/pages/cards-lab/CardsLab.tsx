@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Chip from '@/components/Chip/Chip'
-import { EXAMPLES, FIELD_SPLIT, FINDINGS, PATTERNS, type Pattern } from './cardsLabData'
+import { EXAMPLES, FIELD_SPLIT, FINDINGS, FLOWS, PATTERNS, type Example, type Pattern } from './cardsLabData'
+import ExternalTrainingCards from './ExternalTrainingCards'
 import './cards-lab.css'
 
 /**
@@ -9,9 +10,12 @@ import './cards-lab.css'
  * common; card proposals come next. Prefix: cdl-
  */
 
-const SHOTS = import.meta.glob<string>('./mobbin/*.jpg', { eager: true, import: 'default' })
-const shot = (file: string) => SHOTS[`./mobbin/${file}.jpg`]
-const mobbinUrl = (id: string) => `https://mobbin.com/screens/${id}`
+const SHOTS = import.meta.glob<string>(['./mobbin/*.jpg', './appstore/*.jpg'], { eager: true, import: 'default' })
+const shot = (e: Example) => SHOTS[`./${e.mobbinId ? 'mobbin' : 'appstore'}/${e.file}.jpg`]
+const source = (e: Example) =>
+  e.mobbinId
+    ? { label: 'Open on Mobbin', url: `https://mobbin.com/screens/${e.mobbinId}` }
+    : { label: 'Open on the App Store', url: `https://apps.apple.com/gb/app/id${e.appStoreId}` }
 
 function CardsLab() {
   const [filter, setFilter] = useState<Pattern | 'all'>('all')
@@ -55,10 +59,56 @@ function CardsLab() {
           </ul>
         </section>
 
+        <section className="cdl-section" aria-labelledby="cdl-build">
+          <div className="cdl-section__head">
+            <h2 id="cdl-build" className="cdl-section__title">The card, built</h2>
+            <p className="cdl-section__sub">
+              Flow 1 with the signed-in learner's records. Tap a card for the rest of the row.
+            </p>
+          </div>
+          <ExternalTrainingCards />
+        </section>
+
+        <section className="cdl-section" aria-labelledby="cdl-flows">
+          <div className="cdl-section__head">
+            <h2 id="cdl-flows" className="cdl-section__title">Five flows from the cards we liked</h2>
+            <p className="cdl-section__sub">
+              Each flow pairs a card with the detail view it would open. All screens are from Mobbin.
+            </p>
+          </div>
+          <ol className="cdl-flows">
+            {FLOWS.map((f) => (
+              <li key={f.title} className="cdl-flow">
+                <div className="cdl-flow__text">
+                  <h3 className="cdl-example__title">{f.title}</h3>
+                  <p className="cdl-example__note">{f.idea}</p>
+                  <p className="cdl-example__pattern">Detail: {f.detail.toLowerCase()}</p>
+                </div>
+                <ol className="cdl-flow__steps">
+                  {f.steps.map((s) => {
+                    const e = EXAMPLES.find((x) => x.file === s.file)!
+                    return (
+                      <li key={s.file} className="cdl-example">
+                        <img className="cdl-example__shot" src={shot(e)} alt={`${e.app}: ${e.screen}`} loading="lazy" />
+                        <div className="cdl-example__text">
+                          <p className="cdl-example__pattern">{s.role}</p>
+                          <a className="cdl-example__link" href={source(e).url} target="_blank" rel="noreferrer">
+                            {e.app} · {e.screen}
+                          </a>
+                        </div>
+                      </li>
+                    )
+                  })}
+                </ol>
+              </li>
+            ))}
+          </ol>
+        </section>
+
         <section className="cdl-section" aria-labelledby="cdl-examples">
           <div className="cdl-section__head">
             <h2 id="cdl-examples" className="cdl-section__title">
-              {shown.length} examples from Mobbin
+              {shown.length} examples from Mobbin and the App Store
             </h2>
             <div className="cdl-filters" role="group" aria-label="Pattern">
               <Chip label="All" selected={filter === 'all'} onClick={() => setFilter('all')} />
@@ -72,15 +122,15 @@ function CardsLab() {
           <ul className="cdl-grid">
             {shown.map((e) => (
               <li key={e.file} className="cdl-example">
-                <img className="cdl-example__shot" src={shot(e.file)} alt={`${e.app}: ${e.screen}`} loading="lazy" />
+                <img className="cdl-example__shot" src={shot(e)} alt={`${e.app}: ${e.screen}`} loading="lazy" />
                 <div className="cdl-example__text">
                   <p className="cdl-example__pattern">{PATTERNS.find((p) => p.key === e.pattern)?.label}</p>
                   <h3 className="cdl-example__title">
                     {e.app} · {e.screen}
                   </h3>
                   <p className="cdl-example__note">{e.note}</p>
-                  <a className="cdl-example__link" href={mobbinUrl(e.mobbinId)} target="_blank" rel="noreferrer">
-                    Open on Mobbin
+                  <a className="cdl-example__link" href={source(e).url} target="_blank" rel="noreferrer">
+                    {source(e).label}
                   </a>
                 </div>
               </li>

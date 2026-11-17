@@ -107,10 +107,13 @@ function SectionCard({
 export function MyProgressContent({
   native = false,
   onInfo,
+  onViewAllExternal,
 }: {
   native?: boolean
   /** App only: a stat tile's info icon was tapped. */
   onInfo?: (stat: ProgressStat) => void
+  /** App only: View All on the External Training card opens the app's own screen. */
+  onViewAllExternal?: () => void
 }) {
   const navigate = useNavigate()
   const { records } = useExternalTraining()
@@ -289,9 +292,13 @@ export function MyProgressContent({
                 mesh="external"
                 title="External Training"
                 ctas={
-                  <Button variant="text" {...viewAll} onClick={() => navigate(`${OWN_PROFILE}?tab=external-training`)}>
-                    View All
-                  </Button>
+                  onViewAllExternal ? (
+                    <Button variant="text" onClick={onViewAllExternal}>View All</Button>
+                  ) : (
+                    <Button variant="text" {...viewAll} onClick={() => navigate(`${OWN_PROFILE}?tab=external-training`)}>
+                      View All
+                    </Button>
+                  )
                 }
               >
                 <Table columns={externalColumns} rows={externalRows} getRowKey={(r) => r.id} />
