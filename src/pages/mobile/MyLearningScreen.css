@@ -34,6 +34,23 @@
   padding: var(--space-m);
 }
 
+/* Course Progress: the four status tiles, two per row, above the course cards. */
+.m-ml__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-m);
+  padding: var(--space-m) var(--space-m) 0;
+}
+
+/* As the Engagement tiles in the app: the label is Paragraph S (12px), the value H3. */
+.m-ml__stats .ds-stat__label {
+  font-size: var(--font-size-sm);
+}
+
+.m-ml__stats .ds-stat__value {
+  font-size: var(--font-size-h3);
+}
+
 /* Skills: one row per skill, the name on top and the level bar under it. Outlined with
    no fill, as the web table's rows: read only, so it is not pressable and has no hover. */
 .m-ml-skill {

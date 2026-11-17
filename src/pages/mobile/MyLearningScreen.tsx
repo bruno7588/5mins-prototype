@@ -10,7 +10,9 @@ import { getSkillIllustrationByName } from '@/assets/skill-icons'
 import { formatDay } from '@/data/externalTraining'
 import { LeaderboardCard, ProgressStatTiles } from '@/pages/my-progress/MyProgress'
 import type { ProgressStat } from '@/pages/my-progress/myProgressData'
-import { COURSES, STATUS_BADGE, type CourseProgress } from '@/pages/user-profile/UserProfile'
+import { COURSES, STATUS_BADGE, STAT_GROUPS, shareOf, type CourseProgress } from '@/pages/user-profile/UserProfile'
+import { COURSE_STATUS_CARDS } from '@/data/courseStatusCards'
+import StatTile from '@/components/StatTile/StatTile'
 import { MAX_LEVEL, SKILLS, type Skill } from '@/pages/user-profile/components/SkillsTab/SkillsTab'
 import InfoIcon from '@/components/icons/InfoIcon'
 import ExternalTrainingScreen from './ExternalTrainingScreen'
@@ -23,7 +25,8 @@ import './MyLearningScreen.css'
      is web only.
    - Skills: one row per skill, the level bar and "n/5" under its name. Read only; the
      info icon opens the skill's description in a bottom sheet (a tooltip on web).
-   - Course Progress: one card per course; the rest of the row in a bottom sheet.
+   - Course Progress: the four status tiles (Completed, In progress, At risk, Overdue), as
+     on web, then one card per course; the rest of the row in a bottom sheet.
    - External Training: the card list that screen already had.
    The course cards and their sheet reuse the External Training card styles (m-xt-).
    Prefix: m-ml- */
@@ -90,7 +93,7 @@ function MyLearningScreen({
                   aria-label={`About ${skill.name}`}
                   onClick={() => onSkillInfo(skill)}
                 >
-                  <InfoIcon size={16} color="var(--text-secondary)" />
+                  <InfoIcon size={20} color="var(--text-secondary)" />
                 </button>
               </span>
               <span className="m-ml-skill__level">
@@ -112,7 +115,21 @@ function MyLearningScreen({
       )}
 
       {tab === 'course-progress' && (
-        <motion.ul key="courses" className="m-xt-list" {...ARRIVE(reduce)} transition={arriveTransition(reduce)}>
+        <motion.div key="courses" {...ARRIVE(reduce)} transition={arriveTransition(reduce)}>
+          {/* Standing at a glance, before the cards: the web tab's tiles, two per row and
+              stacked (label over value), because the web's one-line tile is wider than half
+              the screen. No tooltips, as the app has no hover. */}
+          <div className="m-ml__stats">
+            {COURSE_STATUS_CARDS.map((card) => (
+              <StatTile
+                key={card.key}
+                icon={card.icon}
+                label={card.label}
+                value={`${shareOf(COURSES, STAT_GROUPS[card.key])}%`}
+              />
+            ))}
+          </div>
+          <ul className="m-xt-list">
           {COURSES.map((c) => (
             <li key={c.id}>
               <button type="button" className="m-xt-card" onClick={() => onOpenCourse(c.id)}>
@@ -138,7 +155,8 @@ function MyLearningScreen({
               </button>
             </li>
           ))}
-        </motion.ul>
+          </ul>
+        </motion.div>
       )}
 
       {tab === 'external-training' && <ExternalTrainingScreen onOpenRecord={onOpenRecord} />}

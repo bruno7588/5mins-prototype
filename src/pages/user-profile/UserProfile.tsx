@@ -126,14 +126,14 @@ export const COURSES: CourseProgress[] = [
    of the denominator too — those enrolments haven't opened, so they can't yet
    speak to how the learner is doing, and excluding them keeps the four cards
    summing to the active population instead of falling short of 100%. */
-const STAT_GROUPS: Record<CourseStatusCard['key'], Status[]> = {
+export const STAT_GROUPS: Record<CourseStatusCard['key'], Status[]> = {
   completed: ['Completed'],
   'in-progress': ['In Progress'],
   'at-risk': ['Not Started', 'Failed'],
   overdue: ['Overdue'],
 }
 
-const shareOf = (list: CourseProgress[], statuses: Status[]) => {
+export const shareOf = (list: CourseProgress[], statuses: Status[]) => {
   const active = list.filter((c) => c.status !== 'Scheduled')
   const count = active.filter((c) => statuses.includes(c.status)).length
   return active.length ? Math.round((count / active.length) * 100) : 0
