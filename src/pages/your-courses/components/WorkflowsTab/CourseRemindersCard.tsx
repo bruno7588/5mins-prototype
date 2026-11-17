@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
-import { Add, Danger, Edit, Trash } from 'iconsax-react'
+import { Add, Danger, Edit2, Trash } from 'iconsax-react'
 import Toggle from '../../../../components/Toggle/Toggle'
 import Tooltip from '../../../../components/Tooltip/Tooltip'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
@@ -163,8 +163,8 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
                     </span>
                     <span className="course-reminders-row__actions">
                       <Button
-                        variant="text"
-                        icon={<Edit size={20} color="currentColor" variant="Linear" />}
+                        variant="text-2"
+                        icon={<Edit2 size={20} color="currentColor" variant="Linear" />}
                         onClick={() => setModal({ mode: 'edit', id: r.id })}
                         disabled={!enabled}
                         aria-label="Edit reminder"
@@ -199,8 +199,8 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
                   <span className="course-reminders-row__text">before due date</span>
                   <span className="course-reminders-row__actions">
                     <Button
-                      variant="text"
-                      icon={<Edit size={20} color="currentColor" variant="Linear" />}
+                      variant="text-2"
+                      icon={<Edit2 size={20} color="currentColor" variant="Linear" />}
                       onClick={() => setModal({ mode: 'edit', id: r.id })}
                       disabled={!enabled}
                       aria-label="Edit reminder"

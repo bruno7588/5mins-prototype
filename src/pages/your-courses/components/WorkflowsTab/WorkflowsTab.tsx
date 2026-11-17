@@ -8,8 +8,10 @@ import WelcomeEmailsCard, { JOIN_DEFAULTS, type JoinEmails } from './WelcomeEmai
 import { reminderDefault } from './email/emailContent'
 import './WorkflowsTab.css'
 
-// Built-in reminders start with today's 5Mins text (DES-348 1.3).
+// Built-in reminders start with today's 5Mins text (DES-348 1.3). The 14-day reminder
+// is DES-359: on by default, alongside the 7-day and 1-day ones.
 const SEED_REMINDERS: Reminder[] = [
+  { id: 'r_seed_14', days: 14, ...reminderDefault(14), system: true },
   { id: 'r_seed_7', days: 7, ...reminderDefault(7), system: true },
   { id: 'r_seed_1', days: 1, ...reminderDefault(1), system: true },
 ]

@@ -10,6 +10,8 @@ import {
   FIELDS,
   INTEGRATIONS,
   fillFields,
+  reminderChannelDefault,
+  reminderDefault,
   senderFor,
   splitBody,
   subjectText,
@@ -62,12 +64,17 @@ interface ChannelProps {
 function ChannelPreview({ channel, subject, days }: ChannelProps) {
   /* Always the subject as typed, saved or not, so every channel matches the editor. */
   const subjectLine = subjectText(subject, days) || '(no subject yet)'
-  const phoneTitle = subjectLine
+  /* A built-in reminder still on its 5Mins subject uses the 5Mins channel text for its
+     day, where there is one. Once the subject is edited, every channel follows it. */
+  const untouched = subjectLine === subjectText(reminderDefault(days).subject, days)
+  const channelDefault = untouched ? reminderChannelDefault(days) : null
+  const phoneTitle = channelDefault?.phoneTitle ?? subjectLine
 
   /* Slack and Teams add the call to action after the subject (once, even if the subject
      already carries it); email and phone show the subject alone. */
   const CHAT_CTA = 'Complete your Assigned Course. Start here'
-  const chatLine = subjectLine.includes(CHAT_CTA) ? subjectLine : `${subjectLine}: ${CHAT_CTA}`
+  const chatLine =
+    channelDefault?.chatLine ?? (subjectLine.includes(CHAT_CTA) ? subjectLine : `${subjectLine}: ${CHAT_CTA}`)
   const chatText = <p className="epv-chat__text">{chatLine}</p>
 
   if (channel === 'phone') {

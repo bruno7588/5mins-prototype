@@ -92,16 +92,38 @@ export const LOCKED_LABEL = { button: 'Download Now', activate: 'Activate Your A
 
 const SIGN_OFF = "<p>That's it! See you in 5Mins! 🚀</p><p><strong>Team 5Mins</strong></p>"
 
-/** Today's 5Mins text for the built-in 7-day and 1-day reminders. */
-export const reminderDefault = (days: number): EmailText => ({
-  subject: `<p>${plural(days)} left to complete your course</p>`,
-  body:
-    `<p>Hi ${f('first_name')} 👋</p>` +
-    `<p>Your course is waiting for you - just ${plural(days)} remaining to complete it.</p>` +
-    '<p>Take a moment today to start your learning journey.</p>' +
-    LOCKED_COURSE +
-    SIGN_OFF,
-})
+/** Today's 5Mins text for the built-in reminders. The 14-day reminder has its own
+    wording (DES-359); the 7-day and 1-day ones share theirs. */
+export const reminderDefault = (days: number): EmailText =>
+  days === 14
+    ? {
+        subject: '<p>On your radar: Complete your course</p>',
+        body:
+          `<p>Hi ${f('first_name')} 👋</p>` +
+          '<p>Your course is waiting for you - 14 days left to complete it.</p>' +
+          '<p>It only takes a few minutes a day to finish on time.</p>' +
+          LOCKED_COURSE +
+          SIGN_OFF,
+      }
+    : {
+        subject: `<p>${plural(days)} left to complete your course</p>`,
+        body:
+          `<p>Hi ${f('first_name')} 👋</p>` +
+          `<p>Your course is waiting for you - just ${plural(days)} remaining to complete it.</p>` +
+          '<p>Take a moment today to start your learning journey.</p>' +
+          LOCKED_COURSE +
+          SIGN_OFF,
+      }
+
+/** The 5Mins text a built-in reminder uses on Slack, Microsoft Teams and the phone when
+    that text is not simply its email subject. Only the 14-day reminder has one (DES-359). */
+export const reminderChannelDefault = (days: number): { phoneTitle: string; chatLine: string } | null =>
+  days === 14
+    ? {
+        phoneTitle: 'On your radar 📡 14 days left',
+        chatLine: '📡 On your radar: Complete your assigned course. Start here',
+      }
+    : null
 
 /** Starter text for reminders admins add, so they don't begin from a blank page. */
 export const REMINDER_STARTER: EmailText = {

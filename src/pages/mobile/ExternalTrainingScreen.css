@@ -123,12 +123,18 @@
   color: var(--text-secondary);
 }
 
+/* Rows sit 20px apart with no padding of their own, as the Figma Detail row. */
+.m-xt-sheet__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+}
+
 .m-xt-sheet__field {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-m);
-  padding: var(--space-sm) 0;
 }
 
 .m-xt-sheet__label {
