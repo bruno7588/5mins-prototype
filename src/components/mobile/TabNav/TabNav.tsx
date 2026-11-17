@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react'
-import { Home, SearchNormal1, Award, UserSquare } from 'iconsax-react'
+import { Home, SearchNormal1, Award, Setting2 } from 'iconsax-react'
 import FeedIcon from '@/components/icons/FeedIcon'
 import './TabNav.css'
 
-export type MobileTab = 'home' | 'search' | 'progress' | 'feed' | 'profile'
+/* `settings` opens the settings menu over the current screen (DES-368); it is never the active tab. */
+export type MobileTab = 'home' | 'search' | 'progress' | 'feed' | 'settings'
 
 export interface MobileTabNavProps {
   active?: MobileTab
@@ -15,7 +16,7 @@ const TABS: { id: MobileTab; label: string; icon: (color: string) => ReactNode }
   { id: 'search', label: 'Search', icon: (color) => <SearchNormal1 size={24} color={color} variant="Bold" /> },
   { id: 'progress', label: 'Progress', icon: (color) => <Award size={24} color={color} variant="Bold" /> },
   { id: 'feed', label: 'Feed', icon: (color) => <FeedIcon size={24} color={color} /> },
-  { id: 'profile', label: 'Profile', icon: (color) => <UserSquare size={24} color={color} variant="Bold" /> },
+  { id: 'settings', label: 'Settings', icon: (color) => <Setting2 size={24} color={color} variant="Bold" /> },
 ]
 
 function MobileTabNav({ active, onNavigate }: MobileTabNavProps) {

@@ -6,6 +6,11 @@
   gap: var(--space-m);
 }
 
+/* Mobile app: 24px between tabs (16px only when the tabs would not fit the screen). */
+.m-phone .ds-tabs {
+  gap: var(--space-l);
+}
+
 .ds-tab {
   position: relative;
   display: flex;

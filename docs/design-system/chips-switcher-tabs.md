@@ -463,7 +463,7 @@ An underlined bar that moves between sibling sections of one page or object.
 - Don't change the indicator colour or thickness, and never hide it on the selected tab
 - Don't put tabs and chips in the same row
 
-**Canonical spec:** label 14px, Medium (500) unselected / Bold (700) selected; indicator 2px `var(--selected)` (#EDA30D light / #FFBB38 dark); label to indicator gap `var(--space-xs)` (4px); gap between tabs `var(--space-m)` (16px); counter pill `var(--input-background)`, radius `var(--radius-full)`, text `var(--text-tertiary)`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8497:24855` + item `1939:18281`.
+**Canonical spec:** label 14px, Medium (500) unselected / Bold (700) selected; indicator 2px `var(--selected)` (#EDA30D light / #FFBB38 dark); label to indicator gap `var(--space-xs)` (4px); gap between tabs `var(--space-m)` (16px) on web, `var(--space-l)` (24px) in the mobile app whenever the tabs fit the screen width (fall back to 16px only when they would not); counter pill `var(--input-background)`, radius `var(--radius-full)`, text `var(--text-tertiary)`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8497:24855` + item `1939:18281`.
 
 ## Figma to code
 
@@ -517,6 +517,7 @@ Tab Name 0   Tab Name 0   Tab Name 0
 - Label row is horizontal: `[label] [counter?]` with `gap: 4px`
 - Indicator (when selected) is a 2px tall bar matching the full width of the label row (text + optional counter)
 - In the tab bar, items are laid out horizontally with `gap: 16px`, aligned to the top
+- **Mobile app:** the gap is `24px` (`var(--space-l)`) whenever the tabs fit the screen width; drop to `16px` only when they would not. In code this is automatic inside `PhoneFrame` (`.m-phone .ds-tabs`)
 - **Counter padding:** `0 6px` horizontal; **counter border-radius:** `100px` (fully rounded pill)
 - **Tab bar bottom border:** none in the component itself; if you need a divider beneath the whole bar, add a 1px `--border` line in the parent container
 

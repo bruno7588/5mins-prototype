@@ -1,0 +1,94 @@
+/* Native app "Settings" screen (DES-368), after the production app's Settings
+   screen. The app is dark-only, so these tokens resolve to their dark values.
+   Prefix: m-acct- */
+.m-acct {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  width: 100%;
+  padding: var(--space-l) var(--space-m);
+}
+
+.m-acct__photo {
+  position: relative;
+  align-self: center;
+  display: flex;
+}
+
+/* The camera badge sits on the photo's top-right edge. */
+.m-acct__camera {
+  position: absolute;
+  top: calc(-1 * var(--space-xs));
+  right: calc(-1 * var(--space-s));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-xl);
+  height: var(--space-xl);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--page-background);
+}
+
+.m-acct__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.m-acct__heading {
+  margin: 0;
+  padding: 0 var(--space-xs);
+  font-size: var(--font-size-h5);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.m-acct__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.m-acct__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-s) var(--space-sm);
+  border-radius: var(--radius-s);
+  background: var(--cards-background);
+}
+
+.m-acct__label {
+  flex: 1 0 0;
+  min-width: 0;
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.m-acct__value {
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.m-acct__logout {
+  width: 100%;
+}
+
+.m-acct__version {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+  text-align: center;
+}

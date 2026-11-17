@@ -150,7 +150,7 @@ The overlay components, **Dialog**, **Modal** and **Side Drawer** on desktop and
 - **Dialog:** `src/components/ConfirmModal/ConfirmModal.tsx`. `open`, `onClose` (called by your Cancel; Escape and backdrop only when `closable`), `ariaLabel`, `className` for sizing; content is composed from `.confirm-modal-*` classes.
 - **Modal:** no dedicated component; centred modals use `src/components/ConfirmModal/ConfirmModal.tsx` with a `className`, full-screen ones use their own shell with `src/hooks/useOverlayA11y.ts` and `src/components/CloseButton/CloseButton.tsx` (`variant="fullscreen"`).
 - **Side Drawer:** `src/components/SideDrawer/SideDrawer.tsx` (default export). Every drawer in the prototype uses it (migrated 2026-11-10). It owns the backdrop, 720px panel, header with `CloseButton` and divider, scrolling body, pinned footer, focus trap (`useOverlayA11y`, no Escape) and the 300ms slide in and out.
-- **Bottom Sheet:** `src/components/BottomSheet/BottomSheet.tsx` (default export). `onClose` (called after the slide-out), `ariaLabel`, `children`, `className`. Used by the mobile lesson sheet (`src/pages/mobile/LessonSheet.tsx`).
+- **Bottom Sheet:** `src/components/BottomSheet/BottomSheet.tsx` (default export). `onClose` (called after the slide-out), `ariaLabel`, `children`, `className`. Used by the mobile lesson sheet (`src/pages/mobile/LessonSheet.tsx`) and the mobile settings menu (`src/pages/mobile/SettingsSheet.tsx`), whose rows are Listbox list items ([listbox.md](listbox.md)) on the sheet surface, hovering to `--page-background-hover`.
 
 **Production:**
 

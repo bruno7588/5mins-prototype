@@ -139,7 +139,7 @@ Only the cards below have a shared component. Lesson list rows, Assessment rows,
 
 **Use when**
 - Inside the mobile app prototype (`PhoneFrame`), which renders in dark mode only.
-- MobileCourseCard: enrolled courses in a horizontal scroller (mobile Workspace).
+- MobileCourseCard: enrolled courses in a horizontal scroller (mobile Workspace). In a one-column list (mobile Saved, bookmarked courses) the card widens from 272px to fit the screen (Bruno, 2026-11-17).
 - MobileCategoryCard: categories in a horizontal scroller (mobile Workspace).
 - MobileProgramCourseCard: each course in a mobile program outline (mobile Program screen).
 

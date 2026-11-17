@@ -20,6 +20,9 @@ import WebViewScreen from './WebViewScreen'
 import CourseScreen from './CourseScreen'
 import SignOffScreen from './SignOffScreen'
 import CertificateScreen from './CertificateScreen'
+import SettingsSheet from './SettingsSheet'
+import SavedScreen, { type SavedTab, type SavedView } from './SavedScreen'
+import AccountSettingsScreen from './AccountSettingsScreen'
 import CertificateReady from '@/pages/courses/components/CertificateReady/CertificateReady'
 import { getCourseDetail } from '@/pages/courses/mockCourse'
 import deepDivePage from '@/assets/for-you/webview-deep-dive.png'
@@ -59,7 +62,33 @@ function MobileApp() {
   const [sheetIndex, setSheetIndex] = useState<number | null>(null)
   /** A link from the sheet, open in the in-app web view; back returns to the sheet. */
   const [webView, setWebView] = useState<{ url: string; kind: 'deep-dive' | 'resource' } | null>(null)
+  /** The settings menu (DES-368), opened by the Settings tab over whatever is on screen. */
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  /** Saved, opened from the settings menu. Its tab and view live here so Back from a
+      lesson or course returns to the same list. */
+  const [savedOpen, setSavedOpen] = useState(false)
+  const [savedTab, setSavedTab] = useState<SavedTab>('bookmarks')
+  const [savedView, setSavedView] = useState<SavedView>('lessons')
+  /** The account Settings screen, opened from the settings menu. */
+  const [accountOpen, setAccountOpen] = useState(false)
+  /** A screen from the settings menu is covering the current tab. */
+  const menuScreenOpen = savedOpen || accountOpen
   const { toasts, show: showToast } = useToast()
+
+  /** Closes every pushed screen and sheet, back to the root of the current tab. */
+  const closeDetails = () => {
+    setOpenProgramId(null)
+    setOpenCourseId(null)
+    setSignOffOpen(false)
+    setCertReadyOpen(false)
+    setCertificateOpen(false)
+    setFeedIndex(null)
+    setProgressInfo(null)
+    setExternalOpen(false)
+    setExternalRecordId(null)
+    setSheetIndex(null)
+    setWebView(null)
+  }
 
   const openProgram = openProgramId
     ? getAllPrograms().find((p) => p.id === openProgramId)
@@ -85,6 +114,12 @@ function MobileApp() {
     }
     if (externalOpen) {
       return <MobileTopNav variant="detail" title="External Training" onBack={() => setExternalOpen(false)} />
+    }
+    if (savedOpen) {
+      return <MobileTopNav variant="detail" title="Saved" onBack={() => setSavedOpen(false)} />
+    }
+    if (accountOpen) {
+      return <MobileTopNav variant="detail" title="Settings" onBack={() => setAccountOpen(false)} />
     }
     switch (tab) {
       case 'home':
@@ -120,8 +155,6 @@ function MobileApp() {
         )
       case 'feed':
         return <MobileTopNav variant="title" title="Feed" />
-      case 'profile':
-        return <MobileTopNav variant="profile" name="Anthony Wallace" role="Customer Support Specialist" />
     }
   })()
 
@@ -147,6 +180,26 @@ function MobileApp() {
               onClose={() => setExternalRecordId(null)}
               onDownload={downloadCertificate}
               onDownloadFailed={() => showToast('error', 'Couldn’t download the certificate. Try again.')}
+            />
+          ) : null}
+          {settingsOpen ? (
+            <SettingsSheet
+              onClose={() => setSettingsOpen(false)}
+              onOpenSaved={() => {
+                setSettingsOpen(false)
+                closeDetails()
+                setSavedTab('bookmarks')
+                setSavedView('lessons')
+                setAccountOpen(false)
+                setSavedOpen(true)
+              }}
+              onOpenAccount={() => {
+                setSettingsOpen(false)
+                closeDetails()
+                setSavedOpen(false)
+                setAccountOpen(true)
+              }}
+              onLogOut={() => navigate('/onboarding')}
             />
           ) : null}
           <AnimatePresence>
@@ -188,17 +241,14 @@ function MobileApp() {
         <MobileTabNav
           active={tab}
           onNavigate={(next) => {
-            setOpenProgramId(null)
-            setOpenCourseId(null)
-            setSignOffOpen(false)
-            setCertReadyOpen(false)
-            setCertificateOpen(false)
-            setFeedIndex(null)
-            setProgressInfo(null)
-            setExternalOpen(false)
-            setExternalRecordId(null)
-            setSheetIndex(null)
-            setWebView(null)
+            /* Settings opens its menu over the current screen; the tab underneath stays. */
+            if (next === 'settings') {
+              setSettingsOpen(true)
+              return
+            }
+            closeDetails()
+            setSavedOpen(false)
+            setAccountOpen(false)
             setTab(next)
           }}
         />
@@ -233,16 +283,29 @@ function MobileApp() {
       {feedIndex === null && openProgram && !openCourseId ? (
         <ProgramScreen program={openProgram} onOpenCourse={setOpenCourseId} />
       ) : null}
-      {feedIndex === null && !openProgram && !openCourseId && tab === 'home' && homeChip === 'For You' ? (
+      {feedIndex === null && !openProgram && !openCourseId && savedOpen ? (
+        <SavedScreen
+          tab={savedTab}
+          view={savedView}
+          onTabChange={setSavedTab}
+          onViewChange={setSavedView}
+          onOpenLesson={(i) => setFeedIndex(i % feedLessons.length)}
+          onOpenCourse={setOpenCourseId}
+        />
+      ) : null}
+      {feedIndex === null && !openProgram && !openCourseId && accountOpen ? (
+        <AccountSettingsScreen onLogOut={() => navigate('/onboarding')} />
+      ) : null}
+      {feedIndex === null && !openProgram && !openCourseId && !menuScreenOpen && tab === 'home' && homeChip === 'For You' ? (
         <ForYouScreen onOpenLesson={(i) => setFeedIndex(i % feedLessons.length)} />
       ) : null}
-      {feedIndex === null && !openProgram && !openCourseId && tab === 'home' && homeChip === 'Your Workspace' ? (
+      {feedIndex === null && !openProgram && !openCourseId && !menuScreenOpen && tab === 'home' && homeChip === 'Your Workspace' ? (
         <WorkspaceScreen onOpenProgram={setOpenProgramId} onOpenCourse={setOpenCourseId} />
       ) : null}
-      {feedIndex === null && !openProgram && !openCourseId && tab === 'progress' && progressChip === 'My Progress' && !externalOpen ? (
+      {feedIndex === null && !openProgram && !openCourseId && !menuScreenOpen && tab === 'progress' && progressChip === 'My Progress' && !externalOpen ? (
         <MyProgressScreen onInfo={setProgressInfo} onViewAllExternal={() => setExternalOpen(true)} />
       ) : null}
-      {feedIndex === null && !openProgram && !openCourseId && tab === 'progress' && externalOpen ? (
+      {feedIndex === null && !openProgram && !openCourseId && !menuScreenOpen && tab === 'progress' && externalOpen ? (
         <ExternalTrainingScreen onOpenRecord={setExternalRecordId} />
       ) : null}
       {/* The remaining tab screens land here as they are built. */}

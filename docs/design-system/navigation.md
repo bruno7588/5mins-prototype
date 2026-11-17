@@ -120,7 +120,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 **Canonical spec:** tab bar 375×66, `var(--page-background)`, `1px solid var(--border)` top; 24px Bold icons; label Regular 10px/1.4; header rows 65px with `1px solid var(--border)` bottom (none on Home and Lesson feed); back button 40px `var(--radius-full)` on `--input-background`. Figma: `Top nav/ App` `1910:18375`, `Tab nav` `1324:35285` (dark nodes).
 
 **Prototype:**
-- `src/components/mobile/TabNav/TabNav.tsx`: `active` (`home` | `search` | `progress` | `feed` | `profile`), `onNavigate(tab)`.
+- `src/components/mobile/TabNav/TabNav.tsx`: `active` (`home` | `search` | `progress` | `feed`), `onNavigate(tab)`. The fifth tab is **Settings** (gear, `Setting2`): `onNavigate('settings')` opens the settings menu in a Bottom Sheet over the current screen and is never the active tab (DES-368, replaces Profile; `src/pages/mobile/SettingsSheet.tsx`).
 - `src/components/mobile/TopNav/TopNav.tsx`: `variant` (`home` | `search` | `chips` | `title` | `detail` | `skill` | `lesson-feed` | `profile`) plus per-variant props (`chips`, `title`, `onBack`, `pointsLabel`, `name`, `hideStatusBar`, and so on).
 
 ## Figma to code
@@ -180,7 +180,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
-| Tab nav · Page | Enabled / Home / Search / Progress / Feed / Profile | `active` | `undefined` / `home` / `search` / `progress` / `feed` / `profile` | Enabled = no tab selected |
+| Tab nav · Page | Enabled / Home / Search / Progress / Feed / Profile | `active` | `undefined` / `home` / `search` / `progress` / `feed` | Enabled = no tab selected. Code swaps Profile for Settings (DES-368), which opens a sheet and has no selected state; the Library set still shows Profile until it is updated |
 | Top nav/ App · Page | Home / Search / Progress / Feed / Profile / Detail page / Skill / Lesson feed / Mobile web | `variant` | `home` / `search` / `chips` / `title` / `profile` / `detail` / `skill` / `lesson-feed` / n/a | Progress uses the `chips` variant, Feed the `title` variant |
 
 - **Figma only:** `Page=Mobile web` (browser-chrome mock, reference only, not built).

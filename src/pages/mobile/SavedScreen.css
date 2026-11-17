@@ -1,0 +1,57 @@
+/* Native app "Saved" screen (DES-368): Bookmarks, Likes and Following in one
+   column. The app is dark-only, so these tokens resolve to their dark values.
+   Prefix: m-saved- */
+.m-saved {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.m-saved__tabs {
+  padding: var(--space-m) var(--space-m) 0;
+}
+
+.m-saved__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-m);
+  padding: var(--space-m);
+}
+
+/* Bookmark type switcher fills the screen width; segments share it equally. */
+.m-saved__switcher {
+  display: flex;
+  width: 100%;
+}
+
+.m-saved__switcher .switcher__item {
+  flex: 1;
+}
+
+.m-saved__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+/* Lesson grid cards, two to a row. The Library card is 170px wide; two of them
+   leave only 3px between in the 343px column, so each takes half the row with a
+   12px gap (about 165px) and keeps its 230px height. */
+.m-saved__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.m-saved__grid .lesson-grid-card {
+  width: 100%;
+}
+
+/* Bookmarked courses stack in one column, so the Library course card widens from
+   its 272px scroller width to fit the screen (cards.md, Bruno 2026-11-17). */
+.m-saved__list--courses .m-course-card {
+  width: 100%;
+}
