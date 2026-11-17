@@ -236,6 +236,20 @@
   border-top: none;
 }
 
+/* An image option: the image the learner picked, its label beside it. */
+.lrn-answer__img {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: var(--radius-s);
+}
+
+/* The tick and the label sit on the image's centre line. */
+.lrn-answer:has(.lrn-answer__img) {
+  align-items: center;
+}
+
 .lrn-answer__body {
   flex: 1 1 auto;
   display: flex;
@@ -282,6 +296,36 @@
   line-height: 1.5;
   color: var(--text-primary);
   word-break: break-word;
+}
+
+/* A right answer the learner did not tick: the label keeps its own width, so the
+   Missed badge sits next to it and not at the row's far edge. */
+.lrn-answer--missed {
+  align-items: center;
+}
+
+.lrn-answer--missed .lrn-answer__body {
+  flex: 0 1 auto;
+}
+
+.lrn-answer--missed .badge {
+  flex-shrink: 0;
+}
+
+/* Where the tick would be: an empty dashed circle, the size of the tick's disc
+   inside its 20px box. */
+.lrn-answer__unticked {
+  width: 16px;
+  height: 16px;
+  margin: var(--space-xxs);
+  border: 1px dashed var(--text-tertiary);
+  border-radius: var(--radius-full);
+}
+
+/* Select all that apply: the row is only the option the learner picked, with no question
+   label above it to stand out from, so it reads as body text. */
+.lrn-answers--options .lrn-answer__a {
+  font-weight: 400;
 }
 
 /* The score for this one assessment, in the Score column and so directly under the

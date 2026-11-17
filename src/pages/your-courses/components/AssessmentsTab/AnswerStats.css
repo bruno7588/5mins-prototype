@@ -8,6 +8,11 @@
   gap: var(--space-m);
 }
 
+/* On the answers page the bars sit 12px apart; the Chart Lab and the grid cards keep 8px. */
+.ast :is(.cl-rows, .cl-tiles) {
+  gap: var(--space-sm);
+}
+
 .ast-band__figure {
   color: var(--text-primary);
   font-weight: 500;

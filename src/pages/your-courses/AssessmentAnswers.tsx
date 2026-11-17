@@ -404,9 +404,10 @@ function AssessmentAnswers() {
       )
     }
 
-    /* Select all that apply: several ticked options to a learner, so each row opens onto
-       them, as the scenario and lesson quiz rows open onto their questions. */
-    if (a.kind === 'graded' && a.correctIndices && !a.optionImages) {
+    /* Select all that apply, with text or image options: several ticked options to a
+       learner, so each row opens onto them, as the scenario and lesson quiz rows open
+       onto their questions. */
+    if (a.kind === 'graded' && (a.correctIndices || a.optionImages)) {
       return <SelectAllAnswers assessment={a} responses={pageRows as ChoiceResponse[]} pagination={pagination} />
     }
 
@@ -423,30 +424,6 @@ function AssessmentAnswers() {
              its "option" is how much of the arrangement was right — so the count leads
              and the phrase steps back, the way the chart above states it. */
           render: (r) => {
-            /* Image options (DES-345): the images they picked, never "Option N". */
-            if (a.optionImages && r.picks) {
-              return (
-                <span className="asp-thumbs">
-                  {r.picks.map((p) => (
-                    <img
-                      key={p}
-                      className={`asp-thumb ${a.correctIndices?.includes(p) ? 'is-correct' : 'is-incorrect'}`}
-                      src={a.optionImages![p]} alt={a.options[p] || `Image ${p + 1}`} />
-                  ))}
-                  {/* One dashed square per right image they did not pick. */}
-                  {a.correctIndices
-                    ?.filter((c) => !r.picks!.includes(c))
-                    .map((c) => (
-                      <span
-                        key={`missed-${c}`}
-                        className="asp-thumb-missed"
-                        role="img"
-                        aria-label={`Missed: ${a.options[c] || `Image ${c + 1}`}`}
-                      />
-                    ))}
-                </span>
-              )
-            }
             const answer = a.options[r.optionIndex]
             return (
               <span className="asp-choice">

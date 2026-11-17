@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useLayoutEffect, useMemo, useRef } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ImportCurve } from 'iconsax-react'
 import Badge from '@/components/Badge/Badge'
@@ -54,9 +54,15 @@ function useLearnerRecords() {
 function ExternalTrainingScreen({ onOpenRecord }: { onOpenRecord: (id: string) => void }) {
   const reduce = useReducedMotion()
   const { rows, records } = useLearnerRecords()
+  /* The phone's content area keeps My Progress's scroll position, so a new screen
+     would open part-way down its list. Start it at the top. */
+  const listRef = useRef<HTMLUListElement>(null)
+  useLayoutEffect(() => {
+    listRef.current?.closest('.m-phone__content')?.scrollTo(0, 0)
+  }, [])
 
   return (
-    <motion.ul className="m-xt-list" {...ARRIVE(reduce)} transition={arriveTransition(reduce)}>
+    <motion.ul ref={listRef} className="m-xt-list" {...ARRIVE(reduce)} transition={arriveTransition(reduce)}>
       {rows.map((r) => (
         <li key={r.id}>
           <button type="button" className="m-xt-card" onClick={() => onOpenRecord(r.id)}>

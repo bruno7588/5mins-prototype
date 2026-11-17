@@ -12,6 +12,8 @@ import './MultiQuestionAnswers.css'
 /**
  * Select all that apply, read down the learners: the row states whether they got the
  * exact set, and opens onto every option they ticked, each marked right or wrong.
+ * Image options (DES-345) show the image with its label beside it, when it has one.
+ * Right answers the learner did not tick are listed too, each marked Missed.
  */
 interface Props {
   assessment: GradedAssessment
@@ -36,6 +38,18 @@ function SelectAllAnswers({ assessment: a, responses, pagination }: Props) {
       return next
     })
 
+  const correct = a.correctIndices ?? [a.correctIndex]
+  /* The label names the image, so the image itself is decorative. One with no label
+     is "Image N", as the overview above names it. */
+  const option = (p: number) => (
+    <>
+      {a.optionImages ? <img className="lrn-answer__img" src={a.optionImages[p]} alt="" /> : null}
+      <span className="lrn-answer__body">
+        <span className="lrn-answer__a">{a.options[p] || `Image ${p + 1}`}</span>
+      </span>
+    </>
+  )
+
   return (
     <div className="lrn">
       <div className="lrn-head">
@@ -47,6 +61,10 @@ function SelectAllAnswers({ assessment: a, responses, pagination }: Props) {
       <ul className="lrn-list">
         {responses.map((r) => {
           const isOpen = open.has(r.learner.id)
+          const picks = r.picks ?? [r.optionIndex]
+          /* What they picked and the right answers they missed, in the options' own
+             order, so the rows read in the same order as the chart above. */
+          const shown = a.options.map((_, i) => i).filter((i) => picks.includes(i) || correct.includes(i))
           return (
             <li key={r.learner.id} className={`lrn-card${isOpen ? ' is-open' : ''}`}>
               <button
@@ -74,21 +92,33 @@ function SelectAllAnswers({ assessment: a, responses, pagination }: Props) {
 
               <Collapse open={isOpen}>
                 <div className="lrn-detail">
-                  <ul className="lrn-answers mqa-answers">
-                    {(r.picks ?? [r.optionIndex]).map((p) => (
-                      <li key={p} className="lrn-answer">
-                        <span className="lrn-answer__v">
-                          {a.correctIndices?.includes(p) ? (
-                            <TickCircle size={20} color="var(--success-500)" variant="Bold" aria-label="Correct" />
-                          ) : (
-                            <CloseCircle size={20} color="var(--danger-500)" variant="Bold" aria-label="Incorrect" />
-                          )}
-                        </span>
-                        <span className="lrn-answer__body">
-                          <span className="lrn-answer__a">{a.options[p]}</span>
-                        </span>
-                      </li>
-                    ))}
+                  <ul className="lrn-answers lrn-answers--options mqa-answers">
+                    {/* Only the exact set scores, so a right answer left unticked is why a
+                        learner with nothing but ticks is still Incorrect. Each one is named. */}
+                    {shown.map((p) =>
+                      picks.includes(p) ? (
+                        <li key={p} className="lrn-answer">
+                          <span className="lrn-answer__v">
+                            {correct.includes(p) ? (
+                              <TickCircle size={20} color="var(--success-500)" variant="Bold" aria-label="Correct" />
+                            ) : (
+                              <CloseCircle size={20} color="var(--danger-500)" variant="Bold" aria-label="Incorrect" />
+                            )}
+                          </span>
+                          {option(p)}
+                        </li>
+                      ) : (
+                        <li key={p} className="lrn-answer lrn-answer--missed">
+                          {/* The badge beside the label says it; the empty dashed circle only
+                              holds the tick's place. */}
+                          <span className="lrn-answer__v" aria-hidden="true">
+                            <span className="lrn-answer__unticked" />
+                          </span>
+                          {option(p)}
+                          <Badge type="informative" label="Missed" />
+                        </li>
+                      ),
+                    )}
                   </ul>
                 </div>
               </Collapse>

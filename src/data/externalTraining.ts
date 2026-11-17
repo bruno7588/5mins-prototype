@@ -69,7 +69,7 @@ export const SIGNED_IN_LEARNER_ID = '1'
 
 /* ── Dates ── */
 
-export const DUE_SOON_DAYS = 90
+export const DUE_SOON_DAYS = 30
 
 /** Local today as an ISO day. */
 export const todayIso = () => toIso(new Date())
@@ -215,16 +215,17 @@ const rec = (
 }
 
 /* Today is 5 Nov 2026 in the demo. The mix covers every due state: overdue, due
-   soon (within 90 days), upcoming, superseded (renewed) and Not Passed. */
+   soon (within 30 days), upcoming, superseded (renewed) and Not Passed. */
 const seedRecords: ExternalRecord[] = [
   // Anthonny (profile 1, also the signed-in learner)
   rec('r1', '1', 'c1', 'p1', '2023-10-20', 'Passed', null, 'first-aid-at-work-wallace.pdf'), // superseded by r2
   rec('r2', '1', 'c1', 'p2', '2026-10-14', 'Passed', 92, 'first-aid-renewal-wallace.pdf'),
   rec('r3', '1', 'c3', 'p5', '2025-12-01', 'Passed', 100), // due soon (1 Dec 2026)
   rec('r4', '1', 'c4', 'p3', '2024-06-30', 'Passed', 78, null), // no retraining, no certificate
+  rec('r15', '1', 'c2', 'p4', '2023-09-12', 'Passed', 85, 'food-hygiene-wallace.pdf'), // overdue (12 Sep 2026)
   // Brenda (profile 2)
   rec('r5', '2', 'c2', 'p4', '2023-09-12'), // overdue
-  rec('r6', '2', 'c7', 'p7', '2026-01-20', 'Passed', null, null), // due soon, no certificate
+  rec('r6', '2', 'c7', 'p7', '2026-01-20', 'Passed', null, null), // upcoming (20 Jan 2027), no certificate
   rec('r7', '2', 'c8', 'p2', '2024-02-02'), // archived course, still flags (D20)
   // Carlos (profile 3)
   rec('r8', '3', 'c5', 'p6', '2024-03-18', 'Not Passed', 45), // no due date

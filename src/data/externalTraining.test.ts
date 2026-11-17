@@ -25,10 +25,10 @@ describe('retrainingDueDate', () => {
 
 describe('dueState', () => {
   const today = '2026-11-05'
-  it('flags overdue, due soon within 90 days, and upcoming', () => {
+  it('flags overdue, due soon within 30 days, and upcoming', () => {
     expect(dueState(r('a', '2023-01-01', '2026-11-04'), [], today)).toBe('overdue')
-    expect(dueState(r('a', '2025-01-01', '2027-02-03'), [], today)).toBe('due-soon')
-    expect(dueState(r('a', '2025-01-01', '2027-02-04'), [], today)).toBe('upcoming')
+    expect(dueState(r('a', '2025-01-01', '2026-12-05'), [], today)).toBe('due-soon')
+    expect(dueState(r('a', '2025-01-01', '2026-12-06'), [], today)).toBe('upcoming')
   })
 
   it('supersedes by completion date, not entry order', () => {
