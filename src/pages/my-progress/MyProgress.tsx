@@ -56,6 +56,8 @@ const VERSIONS: { label: string; hide: Panel[] }[] = [
 
 /* The External Training card lists the learner's latest three records. */
 const EXTERNAL_ROWS = 3
+/* In the app the Leaderboard is the last card, so it shows the top 10 without scrolling. */
+const NATIVE_LEADERBOARD_ROWS = 10
 
 /* The learner's own profile: the full lists behind the two View All links. Not under
    My Team, which only managers can open. */
@@ -324,8 +326,9 @@ export function MyProgressContent({
                   </>
                 }
               >
-                <ol className="mp-ranks" tabIndex={0} aria-label="Leaderboard ranking">
-                  {leaderboards[scope].map((entry) => {
+                {/* Web: the list scrolls inside the card, so it takes focus. App: the top 10, in full. */}
+                <ol className="mp-ranks" tabIndex={native ? undefined : 0} aria-label="Leaderboard ranking">
+                  {(native ? leaderboards[scope].slice(0, NATIVE_LEADERBOARD_ROWS) : leaderboards[scope]).map((entry) => {
                     const medal = getRankMedal(entry.rank)
                     return (
                       <li className={`mp-rank${medal ? ` mp-rank--${entry.rank}` : ''}`} key={entry.rank}>

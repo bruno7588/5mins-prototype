@@ -644,15 +644,19 @@
   font-size: var(--font-size-sm);
 }
 
-/* Section cards in the app: 12px padding. The Leaderboard list still runs to the card's
-   bottom edge, so its bleed follows the padding. */
+/* Section cards in the app: 12px padding. */
 .mp-page--native .mp-card {
   padding: var(--space-sm);
 }
 
+/* The Leaderboard is the last card in the app's single column, so it shows its top 10
+   in full: the list takes its own height and does not scroll inside the card. */
 .mp-page--native .mp-ranks {
-  margin-bottom: calc(var(--space-sm) * -1);
-  padding-bottom: var(--space-sm);
+  flex: none;
+  min-height: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  overflow-y: visible;
 }
 
 /* ── Stat tile info ──
