@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Moon, Setting2, Logout } from 'iconsax-react'
+import { Moon, User, Setting2, Logout } from 'iconsax-react'
 import Toggle from '../Toggle/Toggle'
 import { useTheme } from '../../hooks/useTheme'
 import { useImpersonation } from '@/impersonation/ImpersonationContext'
@@ -13,7 +13,7 @@ interface ProfileMenuProps {
 
 /**
  * Learner-sidebar profile card. Hovers to `--input-background-hover` and opens
- * a small menu (currently just "Log out", which restarts the onboarding flow).
+ * a small menu: Edit Profile, Dark Mode and Log out (which restarts the onboarding flow).
  * While impersonating, it names the impersonated person with the same name and
  * role the People table and the banner show.
  */
@@ -41,6 +41,20 @@ export default function ProfileMenu({
     <div className="mt-side__profile-wrap" ref={ref}>
       {open && (
         <div className="profile-menu" role="menu">
+          {/* There is no edit screen yet: this opens the learner's own profile, where
+              the Edit Profile button sits. */}
+          <button
+            type="button"
+            role="menuitem"
+            className="profile-menu__item"
+            onClick={() => {
+              setOpen(false)
+              navigate('/my-progress/profile')
+            }}
+          >
+            <User size={20} color="var(--text-primary)" variant="Linear" />
+            <span>Edit Profile</span>
+          </button>
           {/* Toggling the theme keeps the menu open (checkbox-row behaviour). */}
           <button
             type="button"
