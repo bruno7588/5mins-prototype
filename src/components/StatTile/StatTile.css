@@ -17,7 +17,7 @@
   flex-shrink: 0;
 }
 
-/* The tile owns the glyph size (32px stacked, 24px inline), whatever size the caller passed. */
+/* The tile owns the glyph size (32px stacked, 24px inline and mobile), whatever size the caller passed. */
 .ds-stat__icon svg { width: 32px; height: 32px; }
 .ds-stat--inline .ds-stat__icon svg { width: 24px; height: 24px; }
 
@@ -63,7 +63,11 @@
 .ds-stat--stacked .ds-stat__value { font-size: var(--font-size-h2); }
 .ds-stat--inline .ds-stat__value { font-size: var(--font-size-h3); line-height: 1; }
 
-/* Mobile (Library Device=Mobile): stacked, the label Paragraph S and the value H3. */
+/* Mobile (Library Device=Mobile): stacked, a 24px icon, the label Paragraph S and the value H3. */
+/* An illustration passed as an image (the app's Points, Jewels, Streak and Certificates
+   tiles) takes the same 24px. */
+.ds-stat--mobile .ds-stat__icon svg,
+.ds-stat--mobile .ds-stat__icon img { width: 24px; height: 24px; }
 .ds-stat--mobile .ds-stat__label { font-size: var(--font-size-sm); line-height: 1.2; }
 .ds-stat--mobile .ds-stat__value { font-size: var(--font-size-h3); }
 

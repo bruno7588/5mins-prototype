@@ -15,7 +15,7 @@ A bordered tile that shows one headline number, for KPI rows at the top of a pag
 
 - **Use when:** a page or tab opens with 3 or 4 headline numbers (completion rate, people enrolled, overdue).
 - **Stacked** (default): the main KPI row. **Inline**: a compact row where vertical space is tight, such as above a table or inside a tab.
-- **Mobile** (`device="mobile"`): the mobile app. Always Stacked, with a smaller label and value so two tiles sit side by side; lay them out two per row with a 16px gap. There is no Inline tile on mobile: it is wider than half the screen.
+- **Mobile** (`device="mobile"`): the mobile app. Always Stacked, with a smaller icon, label and value so two tiles sit side by side; lay them out two per row with a 16px gap. There is no Inline tile on mobile: it is wider than half the screen.
 - **Don't use** for a number inside a table or card; write it as text there.
 - **Do** pick an icon that carries meaning and colour it by it (success, warning, danger, primary).
 - **Don't** put more than one value in a tile; use `sub` for a small qualifier ("of 40", "+12 this month").
@@ -41,7 +41,7 @@ A bordered tile that shows one headline number, for KPI rows at the top of a pag
 |---|---|---|---|
 | Order | icon, then a column of label row over value | icon, value, label row on one line | as Stacked |
 | Gap | 12px (`--space-sm`) | 8px (`--space-s`) | 12px (`--space-sm`) |
-| Icon | 32px | 24px | 32px |
+| Icon | 32px | 24px | 24px (an illustration image too) |
 | Label | Regular 14/1.5 | Regular 14/1.5 | Paragraph S, Regular 12/1.2 |
 | Value | H2, Bold 24/1.5 | H3, Bold 20/1 | H3, Bold 20/1.5 |
 | Width in Figma | 280 | 280 | 164 (half a 375px screen) |

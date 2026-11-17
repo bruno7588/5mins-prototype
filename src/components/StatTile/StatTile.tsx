@@ -6,7 +6,7 @@ interface StatTileProps {
   /** `stacked`: label above a large value. `inline`: value then label on one line. */
   layout?: 'stacked' | 'inline'
   /** `mobile` (Library Device=Mobile): for the mobile app. Always stacked, with a
-      Paragraph S label and an H3 value, so two tiles fit side by side on a phone. */
+      24px icon, a Paragraph S label and an H3 value, so two tiles fit side by side on a phone. */
   device?: 'desktop' | 'mobile'
   /** An Iconsax Linear glyph coloured by meaning; the tile sizes it (32px stacked, 24px inline). */
   icon?: ReactNode
