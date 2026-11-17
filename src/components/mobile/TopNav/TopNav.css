@@ -244,29 +244,11 @@
   min-width: 0;
 }
 
-.m-topnav__avatarwrap {
-  position: relative;
-  display: flex;
+/* The gear at the end of the profile header: a 24px icon in a 40px tap target. */
+.m-topnav__settings {
   flex-shrink: 0;
-}
-
-.m-topnav__editbadge {
-  position: absolute;
-  top: -5px;
-  right: -4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-xs);
-  border: 0;
-  border-radius: 50%;
-  background: var(--input-background);
-  cursor: pointer;
-}
-
-.m-topnav__editbadge:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 1px;
+  width: 40px;
+  height: 40px;
 }
 
 .m-topnav__identity {

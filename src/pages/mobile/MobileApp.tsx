@@ -10,7 +10,8 @@ import MobileTabNav, { type MobileTab } from '@/components/mobile/TabNav/TabNav'
 import { getAllPrograms } from '@/pages/programs/programStore'
 import ForYouScreen from './ForYouScreen'
 import WorkspaceScreen from './WorkspaceScreen'
-import MyLearningScreen, { CourseProgressSheet, ProgressInfoSheet } from './MyLearningScreen'
+import MyLearningScreen, { CourseProgressSheet, ProgressInfoSheet, SkillInfoSheet } from './MyLearningScreen'
+import type { Skill } from '@/pages/user-profile/components/SkillsTab/SkillsTab'
 import type { ProgressStat } from '@/pages/my-progress/myProgressData'
 import { ExternalRecordSheet } from './ExternalTrainingScreen'
 import { downloadCertificate } from '@/pages/learning-records/components/ExternalTraining/ExternalRecordsTable'
@@ -44,6 +45,8 @@ function MobileApp() {
   const [homeChip, setHomeChip] = useState('For You')
   /** A My Learning stat tile's info, open in a bottom sheet. */
   const [progressInfo, setProgressInfo] = useState<ProgressStat | null>(null)
+  /** A My Learning skill's description, open in a bottom sheet. */
+  const [skillInfo, setSkillInfo] = useState<Skill | null>(null)
   /** My Learning: the course or the external training record open in a bottom sheet. */
   const [courseSheetId, setCourseSheetId] = useState<string | null>(null)
   const [externalRecordId, setExternalRecordId] = useState<string | null>(null)
@@ -83,6 +86,7 @@ function MobileApp() {
     setCertificateOpen(false)
     setFeedIndex(null)
     setProgressInfo(null)
+    setSkillInfo(null)
     setCourseSheetId(null)
     setExternalRecordId(null)
     setSheetIndex(null)
@@ -170,6 +174,7 @@ function MobileApp() {
             />
           ) : null}
           {progressInfo ? <ProgressInfoSheet stat={progressInfo} onClose={() => setProgressInfo(null)} /> : null}
+          {skillInfo ? <SkillInfoSheet skill={skillInfo} onClose={() => setSkillInfo(null)} /> : null}
           {courseSheetId ? (
             <CourseProgressSheet
               courseId={courseSheetId}
@@ -300,7 +305,7 @@ function MobileApp() {
         <WorkspaceScreen onOpenProgram={setOpenProgramId} onOpenCourse={setOpenCourseId} />
       ) : null}
       {feedIndex === null && !openProgram && !openCourseId && !menuScreenOpen && tab === 'learning' ? (
-        <MyLearningScreen onInfo={setProgressInfo} onOpenCourse={setCourseSheetId} onOpenRecord={setExternalRecordId} />
+        <MyLearningScreen onInfo={setProgressInfo} onSkillInfo={setSkillInfo} onOpenCourse={setCourseSheetId} onOpenRecord={setExternalRecordId} />
       ) : null}
       {/* The remaining tab screens land here as they are built. */}
     </PhoneFrame>

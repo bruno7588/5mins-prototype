@@ -724,10 +724,10 @@ function UserProfile() {
                 <h2 className="up-name">{person.name}</h2>
                 <p className="up-meta">{person.role} · {person.email}</p>
               </div>
-              {/* Not built: the person's own page shows it as inert; nobody edits someone else's. */}
+              {/* The person's own page only; nobody edits someone else's. What it opens is not designed yet. */}
               {isOwn && (
                 <div className="up-ctas">
-                  <Button variant="filled" className="ui-disabled" disabled>
+                  <Button variant="filled">
                     Edit Profile
                   </Button>
                 </div>

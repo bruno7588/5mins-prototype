@@ -191,20 +191,23 @@ function MobileTopNav({
       header = (
         <>
           <div className="m-topnav__profile">
-            <span className="m-topnav__avatarwrap">
-              <Avatar name={name} size={40} src={avatar} />
-              <button type="button" className="m-topnav__editbadge" aria-label="Profile settings" onClick={onEditProfile}>
-                <Setting2 size={16} color="var(--text-primary)" variant="Linear" />
-              </button>
-            </span>
+            <Avatar name={name} size={40} src={avatar} />
             <span className="m-topnav__identity">
               <span className="m-topnav__name">{name}</span>
               <span className="m-topnav__role">{role}</span>
             </span>
           </div>
-          <button type="button" className="m-topnav__fab" aria-label="Add" onClick={onAdd}>
-            <Add size={24} color="var(--neutral-0)" variant="Linear" />
+          {/* Settings: a 24px gear at the end of the header (Bruno, 2026-11-17). The Library
+              (7632:8270) draws it as a 9px badge on the avatar, which covered the photo when enlarged. */}
+          <button type="button" className="m-topnav__iconbtn m-topnav__settings" aria-label="Settings" onClick={onEditProfile}>
+            <Setting2 size={24} color="var(--text-primary)" variant="Linear" />
           </button>
+          {/* The add button shows only when there is something for it to do. */}
+          {onAdd && (
+            <button type="button" className="m-topnav__fab" aria-label="Add" onClick={onAdd}>
+              <Add size={24} color="var(--neutral-0)" variant="Linear" />
+            </button>
+          )}
         </>
       )
       break

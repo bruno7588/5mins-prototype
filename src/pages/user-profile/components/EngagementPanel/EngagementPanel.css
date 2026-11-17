@@ -37,3 +37,18 @@
   flex: 1 0 100%;
   justify-content: space-between;
 }
+
+/* The period dropdown is as wide as its text, not the space left over. */
+.upe-row .mp-leaderboard .dropdown-field {
+  width: auto;
+}
+
+/* Leaderboard rows: 8px between the medal (or rank number) and the avatar. The rank slot
+   is the medal's 24px, and the row's own 8px gap does the spacing. */
+.upe-row .mp-rank__position {
+  flex-basis: 24px;
+}
+
+.upe-row .mp-rank__person {
+  padding-left: 0;
+}

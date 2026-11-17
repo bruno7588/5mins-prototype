@@ -54,9 +54,9 @@ export function SectionCard({
 }
 
 /* The four stat tiles: Points, Jewels, Streak, Certificates. Filled cards with the arrow
-   of a clickable tile (their destinations are not designed yet). `native`: no hover, and
-   the info icon is a button that opens the explanation in a bottom sheet (`onInfo`)
-   instead of a tooltip. `empty`: a person with no activity yet, every value at zero. */
+   of a clickable tile (their destinations are not designed yet). `native`: no hover or arrow;
+   the info icon sits at the tile's far end and is a button that opens the explanation in
+   a bottom sheet (`onInfo`) instead of a tooltip. `empty`: a person with no activity yet, every value at zero. */
 export function ProgressStatTiles({
   native = false,
   onInfo,
@@ -74,23 +74,7 @@ export function ProgressStatTiles({
           key={s.key}
           className="mp-stat"
           icon={<img src={getProgressIllustration(s.key)} alt="" width={32} height={32} />}
-          label={
-            native ? (
-              <>
-                {s.label}
-                <button
-                  type="button"
-                  className="mp-stat__info"
-                  aria-label={s.info.title ?? `About ${s.label}`}
-                  onClick={() => onInfo?.(s)}
-                >
-                  <InfoIcon size={16} color="var(--text-secondary)" />
-                </button>
-              </>
-            ) : (
-              s.label
-            )
-          }
+          label={s.label}
           /* Below the icon: the tiles sit near the top of the page, and the tooltip is tall. */
           tooltipPosition="Bottom"
           tooltip={
@@ -106,11 +90,24 @@ export function ProgressStatTiles({
             )
           }
           value={empty ? '0' : s.value}
-          /* Clickable tile: the same arrow as the Create Flashcards option cards. */
+          /* Web: a clickable tile, with the same arrow as the Create Flashcards option cards.
+             App: the info icon sits at the tile's far end instead (there is no hover, so it
+             is a button that opens the explanation in a bottom sheet). */
           trailing={
-            <span className="mp-stat__arrow" aria-hidden="true">
-              <ArrowRight size={20} color="var(--text-secondary)" variant="Linear" />
-            </span>
+            native ? (
+              <button
+                type="button"
+                className="mp-stat__info"
+                aria-label={s.info.title ?? `About ${s.label}`}
+                onClick={() => onInfo?.(s)}
+              >
+                <InfoIcon size={24} color="var(--text-secondary)" />
+              </button>
+            ) : (
+              <span className="mp-stat__arrow" aria-hidden="true">
+                <ArrowRight size={20} color="var(--text-secondary)" variant="Linear" />
+              </span>
+            )
           }
         />
       ))}
