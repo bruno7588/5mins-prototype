@@ -63,6 +63,10 @@
 .ds-stat--stacked .ds-stat__value { font-size: var(--font-size-h2); }
 .ds-stat--inline .ds-stat__value { font-size: var(--font-size-h3); line-height: 1; }
 
+/* Mobile (Library Device=Mobile): stacked, the label Paragraph S and the value H3. */
+.ds-stat--mobile .ds-stat__label { font-size: var(--font-size-sm); line-height: 1.2; }
+.ds-stat--mobile .ds-stat__value { font-size: var(--font-size-h3); }
+
 .ds-stat__sub {
   font-size: var(--font-size-sm);
   line-height: 1.2;

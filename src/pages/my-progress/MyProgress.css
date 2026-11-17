@@ -596,11 +596,6 @@
   width: auto;
 }
 
-/* Stat tile label in the app: Paragraph S regular (12px). */
-.mp-page--native .mp-stat .ds-stat__label {
-  font-size: var(--font-size-sm);
-}
-
 /* Table header text in the app: Paragraph S regular (12px). */
 .mp-page--native .mp-card .tbl-head-cell {
   font-size: var(--font-size-sm);

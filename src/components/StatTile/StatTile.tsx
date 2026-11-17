@@ -5,6 +5,9 @@ import './StatTile.css'
 interface StatTileProps {
   /** `stacked`: label above a large value. `inline`: value then label on one line. */
   layout?: 'stacked' | 'inline'
+  /** `mobile` (Library Device=Mobile): for the mobile app. Always stacked, with a
+      Paragraph S label and an H3 value, so two tiles fit side by side on a phone. */
+  device?: 'desktop' | 'mobile'
   /** An Iconsax Linear glyph coloured by meaning; the tile sizes it (32px stacked, 24px inline). */
   icon?: ReactNode
   label: ReactNode
@@ -24,11 +27,13 @@ interface StatTileProps {
   className?: string
 }
 
-/* Summary stat tile - Figma Library "Summary stat" (Layout=Stacked / Inline). A
+/* Summary stat tile - Figma Library "Summary stat" (Layout=Stacked / Inline, Device=
+   Desktop / Mobile). A
    bordered tile on the page ground with one headline number. Pages lay tiles out in
    their own row or grid. */
 function StatTile({
-  layout = 'stacked',
+  layout: layoutProp = 'stacked',
+  device = 'desktop',
   icon,
   label,
   labelMeta,
@@ -40,6 +45,8 @@ function StatTile({
   trailing,
   className,
 }: StatTileProps) {
+  // The mobile tile exists in the stacked layout only.
+  const layout = device === 'mobile' ? 'stacked' : layoutProp
   const labelEl = (
     <span className="ds-stat__label">
       {label}
@@ -57,7 +64,7 @@ function StatTile({
   const subEl = sub && <span className={`ds-stat__sub${subTone === 'success' ? ' ds-stat__sub--success' : ''}`}>{sub}</span>
 
   return (
-    <div className={['ds-stat', `ds-stat--${layout}`, className].filter(Boolean).join(' ')}>
+    <div className={['ds-stat', `ds-stat--${layout}`, device === 'mobile' && 'ds-stat--mobile', className].filter(Boolean).join(' ')}>
       {icon && <span className="ds-stat__icon">{icon}</span>}
       {layout === 'inline' ? (
         <>

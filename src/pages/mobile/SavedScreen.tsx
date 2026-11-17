@@ -12,7 +12,7 @@ import './SavedScreen.css'
 export type SavedTab = 'bookmarks' | 'likes' | 'following'
 export type SavedView = 'lessons' | 'courses'
 
-/* Native app "Saved" screen (DES-368): what Saved in the settings menu opens. The
+/* Native app "Saved" screen (DES-368): what the Saved icon on the My Learning header opens. The
    same three tabs as the web page: Bookmarks (Lessons / Courses), Likes, Following.
    The tab and view live in MobileApp, so Back from a lesson or course returns to
    the same list. Prefix: m-saved- */

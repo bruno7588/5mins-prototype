@@ -73,6 +73,7 @@ export function ProgressStatTiles({
         <StatTile
           key={s.key}
           className="mp-stat"
+          device={native ? 'mobile' : 'desktop'}
           icon={<img src={getProgressIllustration(s.key)} alt="" width={32} height={32} />}
           label={s.label}
           /* Below the icon: the tiles sit near the top of the page, and the tooltip is tall. */

@@ -120,7 +120,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 **Canonical spec:** tab bar 375×66, `var(--page-background)`, `1px solid var(--border)` top; 24px Bold icons; label Regular 10px/1.4; header rows 65px with `1px solid var(--border)` bottom (none on Home and Lesson feed); back button 40px `var(--radius-full)` on `--input-background`. Figma: `Top nav/ App` `1910:18375`, `Tab nav` `1324:35285` (dark nodes).
 
 **Prototype:**
-- `src/components/mobile/TabNav/TabNav.tsx`: `active` (`home` | `search` | `team` | `learning` | `feed`), `onNavigate(tab)`. My Team (`Award`) and My Learning (`Medal`) are tabs of their own (DES-369) and replace Progress. Settings is not a tab: the gear on the My Learning profile header opens the settings menu in a Bottom Sheet (`src/pages/mobile/SettingsSheet.tsx`).
+- `src/components/mobile/TabNav/TabNav.tsx`: `active` (`home` | `search` | `team` | `learning` | `feed`), `onNavigate(tab)`. My Team (`Award`) and My Learning (`Medal`) are tabs of their own (DES-369) and replace Progress. Settings is not a tab: the My Learning profile header carries a Saved icon and a gear, which open the Saved and Account settings screens directly (no menu sheet).
 - `src/components/mobile/TopNav/TopNav.tsx`: `variant` (`home` | `search` | `chips` | `title` | `detail` | `skill` | `lesson-feed` | `profile`) plus per-variant props (`chips`, `title`, `onBack`, `pointsLabel`, `name`, `hideStatusBar`, and so on).
 
 ## Figma to code
@@ -184,7 +184,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 | Top nav/ App · Page | Home / Search / Progress / Feed / Profile / Detail page / Skill / Lesson feed / Mobile web | `variant` | `home` / `search` / `chips` / `title` / `profile` / `detail` / `skill` / `lesson-feed` / n/a | Progress uses the `chips` variant, Feed the `title` variant |
 
 - **Figma only:** `Page=Mobile web` (browser-chrome mock, reference only, not built).
-- **Code only:** `onNavigate`; TopNav per-variant props (`chips`, `notificationDot`, `onStreakClick`, `onNotificationsClick`, `searchPlaceholder`, `onSearchClick`, `title`, `skillIcon`, `onBack`, `onMore`, `pointsLabel`, `name`, `role`, `avatar`, `onEditProfile`, `onAdd`, `hideStatusBar`).
+- **Code only:** `onNavigate`; TopNav per-variant props (`chips`, `notificationDot`, `onNotificationsClick`, `searchPlaceholder`, `onSearchClick`, `title`, `skillIcon`, `onBack`, `onMore`, `pointsLabel`, `name`, `role`, `avatar`, `onEditProfile`, `onAdd`, `hideStatusBar`).
 - **Drift:** TopNav's status bar is a lightweight stand-in (system font clock + simple glyphs, not the Figma SF Pro assets).
 
 **Production:**
@@ -325,7 +325,7 @@ Shared elements:
 
 ### Menu items
 
-**Web app.** Base: `padding: 16px` · radius 8 · icon **24px Iconsax Bold** · label **Regular 16**, 8px gap. Items: For You (`/for-you`), Your Workspace (`/workspace`), Knowledge Hub, Search, My Team (`/my-team`), My Learning (`/my-learning`), Feed, Admin. Items without a route are not built yet. My Learning replaced My Progress (DES-369): it is the signed-in person's own profile page, `/my-progress` forwards to it, and it stays lit only on `/my-learning`; a team member's profile under `/my-team/people/:id` keeps My Team lit. On mobile web the Progress tab's chips are "My Team" / "My Learning". There is no Profile item: Bookmarks, Likes and Following live in the settings menu (DES-368).
+**Web app.** Base: `padding: 16px` · radius 8 · icon **24px Iconsax Bold** · label **Regular 16**, 8px gap. Items: For You (`/for-you`), Your Workspace (`/workspace`), Knowledge Hub, Search, My Team (`/my-team`), My Learning (`/my-learning`), Feed, Admin. Items without a route are not built yet. My Learning replaced My Progress (DES-369): it is the signed-in person's own profile page, `/my-progress` forwards to it, and it stays lit only on `/my-learning`; a team member's profile under `/my-team/people/:id` keeps My Team lit. On mobile web the Progress tab's chips are "My Team" / "My Learning". There is no Profile item: Bookmarks, Likes and Following live on the Saved page, opened from the profile menu (DES-368).
 
 **Admin.** Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label **Regular 14**, 8px gap. Items: Home, People & Teams ▾, Content ▾, Automations, Reports, Skills, Learning Records ▾ (5Mins Courses `/learning-records`, External Training `/learning-records/external`, whose page has Records and Approved list tabs; Approved list for full admins only), Events, Account & Settings.
 
@@ -343,9 +343,9 @@ Shared elements:
 |---|---|---|---|
 | Home | `1092:34690` | 65px, 16px/12px pad | Chips left ("For You" selected / "Your Workspace"); right cluster 16px gap: 28px flash-circle + 28px bell with red Nudge dot |
 | Search | `7632:8029` | 65px | Full-width search field: `--input-background` fill, 1px `--border`, radius 12px, 12px/8px padding, 18px magnifier, placeholder Poppins Regular 14 `--text-disabled` |
-| Progress | `7632:8164` | 65px | Now two tabs, My Team and My Learning, with no chips. My Learning wears the Profile top nav (avatar, name, role, and a gear at the right end); the gear opens the settings menu. My Learning is built (`src/pages/mobile/MyLearningScreen.tsx`, DES-369) and shows the web page's four tabs (Engagement, Skills, Course Progress, External Training) in a tab bar that scrolls sideways at 16px gaps, with card lists instead of tables and the rest of a course or record in a Bottom Sheet; the Performance chart is web only. My Team has no screen yet |
+| Progress | `7632:8164` | 65px | Now two tabs, My Team and My Learning, with no chips. My Learning wears the Profile top nav (avatar, name, role, then a Saved icon and a gear at the right end); they open the Saved and Account settings screens. My Learning is built (`src/pages/mobile/MyLearningScreen.tsx`, DES-369) and shows the web page's four tabs (Engagement, Skills, Course Progress, External Training) in a tab bar that scrolls sideways at 16px gaps, with card lists instead of tables and the rest of a course or record in a Bottom Sheet; the Performance chart is web only. My Team has no screen yet |
 | Feed | `7632:8202` | 65px | Centred title Poppins Bold 16/1.5 `--text-primary` |
-| Profile | `7632:8270` | auto, 16px/12px pad | 40px avatar, name Bold 14 + role Regular 12 `--text-secondary` (2px gap); **in code (2026-11-17, drift from the Library):** settings is a 24px `Setting2` icon button in a 40px tap target at the right end of the header, not the Library's 9px mini-badge on the avatar (top-right, `--input-background`); right 40px `--primary-500` circular add button (in code it renders only when `onAdd` is passed; My Learning passes none, so it is hidden there) |
+| Profile | `7632:8270` | auto, 16px/12px pad | 40px avatar, name Bold 14 + role Regular 12 `--text-secondary` (2px gap); **in code (2026-11-17, drift from the Library):** Saved (`Save2`, shown when `onSaved` is passed) and settings (`Setting2`) are 24px Bold icons in 40px `--input-background` circles at the right end of the header (the Home bell has the same circle), not the Library's 9px mini-badge on the avatar (top-right, `--input-background`); right 40px `--primary-500` circular add button (in code it renders only when `onAdd` is passed; My Learning passes none, so it is hidden there) |
 | Detail page | `6162:9788` | auto, 16px/8px pad | Back button left, centred title Bold 16, empty 32px right spacer to keep the title centred |
 | Skill | `8377:1056` | auto, 16px/8px pad | Back button, 24px skill illustration + title Bold **14**, right 24px vertical kebab |
 | Lesson feed | `7645:4829` | auto, 16px/8px pad | Transparent; back button on a fixed `rgba(15,16,20,0.5)` legibility fill; right "45 Pt" Bold 12 + small trophy |

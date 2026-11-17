@@ -51,8 +51,7 @@ const SECTIONS: { title: string; rows: Row[] }[] = [
   },
 ]
 
-/* Native app "Settings" screen (DES-368): what Account Settings in the settings menu
-   opens. Mirrors the production app's Settings screen: photo, then grouped rows, then
+/* Native app "Settings" screen (DES-368): what the gear on the My Learning header opens. Mirrors the production app's Settings screen: photo, then grouped rows, then
    Log Out. The rows' own screens are not built, so the rows are display only.
    Prefix: m-acct- */
 function AccountSettingsScreen({ onLogOut }: { onLogOut: () => void }) {

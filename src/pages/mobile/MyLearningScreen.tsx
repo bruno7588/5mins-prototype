@@ -116,12 +116,12 @@ function MyLearningScreen({
 
       {tab === 'course-progress' && (
         <motion.div key="courses" {...ARRIVE(reduce)} transition={arriveTransition(reduce)}>
-          {/* Standing at a glance, before the cards: the web tab's tiles, two per row and
-              stacked (label over value), because the web's one-line tile is wider than half
-              the screen. No tooltips, as the app has no hover. */}
+          {/* Standing at a glance, before the cards: the web tab's tiles, two per row, in
+              the component's mobile variant (stacked, smaller type). No tooltips, as the app has no hover. */}
           <div className="m-ml__stats">
             {COURSE_STATUS_CARDS.map((card) => (
               <StatTile
+                device="mobile"
                 key={card.key}
                 icon={card.icon}
                 label={card.label}

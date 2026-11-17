@@ -22,7 +22,6 @@ import WebViewScreen from './WebViewScreen'
 import CourseScreen from './CourseScreen'
 import SignOffScreen from './SignOffScreen'
 import CertificateScreen from './CertificateScreen'
-import SettingsSheet from './SettingsSheet'
 import SavedScreen, { type SavedTab, type SavedView } from './SavedScreen'
 import AccountSettingsScreen from './AccountSettingsScreen'
 import CertificateReady from '@/pages/courses/components/CertificateReady/CertificateReady'
@@ -64,16 +63,14 @@ function MobileApp() {
   const [sheetIndex, setSheetIndex] = useState<number | null>(null)
   /** A link from the sheet, open in the in-app web view; back returns to the sheet. */
   const [webView, setWebView] = useState<{ url: string; kind: 'deep-dive' | 'resource' } | null>(null)
-  /** The settings menu (DES-368), opened by the Settings tab over whatever is on screen. */
-  const [settingsOpen, setSettingsOpen] = useState(false)
-  /** Saved, opened from the settings menu. Its tab and view live here so Back from a
+  /** Saved, opened from the icon on the My Learning header. Its tab and view live here so Back from a
       lesson or course returns to the same list. */
   const [savedOpen, setSavedOpen] = useState(false)
   const [savedTab, setSavedTab] = useState<SavedTab>('bookmarks')
   const [savedView, setSavedView] = useState<SavedView>('lessons')
-  /** The account Settings screen, opened from the settings menu. */
+  /** The account Settings screen, opened from the gear on the My Learning header. */
   const [accountOpen, setAccountOpen] = useState(false)
-  /** A screen from the settings menu is covering the current tab. */
+  /** Saved or Account settings is covering the current tab. */
   const menuScreenOpen = savedOpen || accountOpen
   const { toasts, show: showToast } = useToast()
 
@@ -142,7 +139,7 @@ function MobileApp() {
       /* My Team has no screen in the app yet: its tab shows the title only, as Feed does. */
       case 'team':
         return <MobileTopNav variant="title" title="My Team" />
-      /* My Learning wears the profile header; its gear opens the settings menu. */
+      /* My Learning wears the profile header; its Saved icon and gear open those screens. */
       case 'learning':
         return (
           <MobileTopNav
@@ -150,7 +147,18 @@ function MobileApp() {
             name="Anthonny Wallace"
             role="Customer Support Specialist"
             avatar={avatarAnthonny}
-            onEditProfile={() => setSettingsOpen(true)}
+            onSaved={() => {
+              closeDetails()
+              setSavedTab('bookmarks')
+              setSavedView('lessons')
+              setAccountOpen(false)
+              setSavedOpen(true)
+            }}
+            onEditProfile={() => {
+              closeDetails()
+              setSavedOpen(false)
+              setAccountOpen(true)
+            }}
           />
         )
       case 'feed':
@@ -188,25 +196,6 @@ function MobileApp() {
               onClose={() => setExternalRecordId(null)}
               onDownload={downloadCertificate}
               onDownloadFailed={() => showToast('error', 'Couldn’t download the certificate. Try again.')}
-            />
-          ) : null}
-          {settingsOpen ? (
-            <SettingsSheet
-              onClose={() => setSettingsOpen(false)}
-              onOpenSaved={() => {
-                setSettingsOpen(false)
-                closeDetails()
-                setSavedTab('bookmarks')
-                setSavedView('lessons')
-                setAccountOpen(false)
-                setSavedOpen(true)
-              }}
-              onOpenAccount={() => {
-                setSettingsOpen(false)
-                closeDetails()
-                setSavedOpen(false)
-                setAccountOpen(true)
-              }}
             />
           ) : null}
           <AnimatePresence>

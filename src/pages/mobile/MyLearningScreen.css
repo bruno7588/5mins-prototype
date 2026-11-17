@@ -6,9 +6,11 @@
   width: 100%;
 }
 
-/* Four tabs are wider than the screen: the bar scrolls sideways, without a scrollbar. */
+/* Four tabs are wider than the screen: the bar scrolls sideways, without a scrollbar.
+   Its 8px bottom padding plus each tab's own 16px top padding puts the content 24px
+   under the tabs. */
 .m-ml__bar {
-  padding: var(--space-m) var(--space-m) 0;
+  padding: var(--space-m) var(--space-m) var(--space-s);
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -40,15 +42,6 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-m);
   padding: var(--space-m) var(--space-m) 0;
-}
-
-/* As the Engagement tiles in the app: the label is Paragraph S (12px), the value H3. */
-.m-ml__stats .ds-stat__label {
-  font-size: var(--font-size-sm);
-}
-
-.m-ml__stats .ds-stat__value {
-  font-size: var(--font-size-h3);
 }
 
 /* Skills: one row per skill, the name on top and the level bar under it. Outlined with

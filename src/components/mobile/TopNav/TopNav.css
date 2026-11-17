@@ -244,11 +244,24 @@
   min-width: 0;
 }
 
-/* The gear at the end of the profile header: a 24px icon in a 40px tap target. */
-.m-topnav__settings {
+/* Saved and the gear on the profile header sit 8px apart. */
+.m-topnav__header--profile .m-topnav__actions {
+  gap: var(--space-s);
+}
+
+/* Header icons in a filled circle: a 24px icon in a 40px tap target on the input fill.
+   Saved and the gear on the profile header, and the bell on Home. */
+.m-topnav__iconbtn--filled {
   flex-shrink: 0;
   width: 40px;
   height: 40px;
+  background: var(--input-background);
+}
+
+/* The bell's dot stays on the icon's corner, not the circle's. */
+.m-topnav__iconbtn--filled .m-topnav__dot {
+  top: var(--space-s);
+  right: var(--space-s);
 }
 
 .m-topnav__identity {

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { ArrowLeft, Add, FlashCircle, Notification, More, Setting2, SearchNormal1 } from 'iconsax-react'
+import { ArrowLeft, Add, Notification, More, Save2, Setting2, SearchNormal1 } from 'iconsax-react'
 import { getProgressIllustration } from '@/assets/progress-illustrations'
 import Avatar from '@/components/Avatar/Avatar'
 import './TopNav.css'
@@ -17,7 +17,6 @@ export interface MobileTopNavProps {
   chips?: MobileTopNavChip[]
   /** home: red dot on the bell */
   notificationDot?: boolean
-  onStreakClick?: () => void
   onNotificationsClick?: () => void
   /** search variant */
   searchPlaceholder?: string
@@ -35,6 +34,8 @@ export interface MobileTopNavProps {
   role?: string
   avatar?: string
   onEditProfile?: () => void
+  /** profile: shows the Saved icon before the gear */
+  onSaved?: () => void
   onAdd?: () => void
   /** hide the fake iOS status bar (default shown; lesson-feed renders it transparent) */
   hideStatusBar?: boolean
@@ -99,7 +100,6 @@ function MobileTopNav({
   variant,
   chips = [],
   notificationDot = false,
-  onStreakClick,
   onNotificationsClick,
   searchPlaceholder = 'Search',
   onSearchClick,
@@ -112,6 +112,7 @@ function MobileTopNav({
   role,
   avatar,
   onEditProfile,
+  onSaved,
   onAdd,
   hideStatusBar = false,
 }: MobileTopNavProps) {
@@ -124,10 +125,7 @@ function MobileTopNav({
         <>
           <Chips chips={chips} />
           <div className="m-topnav__actions">
-            <button type="button" className="m-topnav__iconbtn" aria-label="Streak" onClick={onStreakClick}>
-              <FlashCircle size={24} color="var(--text-primary)" variant="Bold" />
-            </button>
-            <button type="button" className="m-topnav__iconbtn" aria-label="Notifications" onClick={onNotificationsClick}>
+            <button type="button" className="m-topnav__iconbtn m-topnav__iconbtn--filled" aria-label="Notifications" onClick={onNotificationsClick}>
               <Notification size={24} color="var(--text-primary)" variant="Bold" />
               {notificationDot ? <span className="m-topnav__dot" /> : null}
             </button>
@@ -197,11 +195,20 @@ function MobileTopNav({
               <span className="m-topnav__role">{role}</span>
             </span>
           </div>
-          {/* Settings: a 24px gear at the end of the header (Bruno, 2026-11-17). The Library
-              (7632:8270) draws it as a 9px badge on the avatar, which covered the photo when enlarged. */}
-          <button type="button" className="m-topnav__iconbtn m-topnav__settings" aria-label="Settings" onClick={onEditProfile}>
-            <Setting2 size={24} color="var(--text-primary)" variant="Linear" />
-          </button>
+          {/* Saved and Settings: 24px icons in 40px filled circles at the end of the header, the
+              same size as the bell on Home (Bruno, 2026-11-17), each
+              opening its screen directly. The Library (7632:8270) draws settings as a 9px
+              badge on the avatar, which covered the photo when enlarged. */}
+          <div className="m-topnav__actions">
+            {onSaved && (
+              <button type="button" className="m-topnav__iconbtn m-topnav__iconbtn--filled" aria-label="Saved" onClick={onSaved}>
+                <Save2 size={24} color="var(--text-primary)" variant="Bold" />
+              </button>
+            )}
+            <button type="button" className="m-topnav__iconbtn m-topnav__iconbtn--filled" aria-label="Settings" onClick={onEditProfile}>
+              <Setting2 size={24} color="var(--text-primary)" variant="Bold" />
+            </button>
+          </div>
           {/* The add button shows only when there is something for it to do. */}
           {onAdd && (
             <button type="button" className="m-topnav__fab" aria-label="Add" onClick={onAdd}>

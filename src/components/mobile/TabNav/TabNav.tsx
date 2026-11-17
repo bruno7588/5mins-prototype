@@ -4,7 +4,7 @@ import FeedIcon from '@/components/icons/FeedIcon'
 import './TabNav.css'
 
 /* My Team and My Learning are tabs of their own (DES-369), with the web side panel's icons.
-   Settings is not a tab: the gear on the My Learning header opens the settings menu. */
+   Settings is not a tab: the My Learning header carries a Saved icon and a gear. */
 export type MobileTab = 'home' | 'search' | 'team' | 'learning' | 'feed'
 
 export interface MobileTabNavProps {
