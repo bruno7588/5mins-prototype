@@ -102,7 +102,7 @@ function SelectAllAnswers({ assessment: a, responses, pagination }: Props) {
                             {correct.includes(p) ? (
                               <TickCircle size={20} color="var(--success-500)" variant="Bold" aria-label="Correct" />
                             ) : (
-                              <CloseCircle size={20} color="var(--danger-500)" variant="Bold" aria-label="Incorrect" />
+                              <CloseCircle size={20} color="var(--text-error)" variant="Bold" aria-label="Incorrect" />
                             )}
                           </span>
                           {option(p)}
