@@ -10,7 +10,6 @@ import {
   SearchNormal1,
   Award,
   Medal,
-  UserSquare,
   FlashCircle,
   Messages2,
   Add,
@@ -251,8 +250,6 @@ export const learnerSideItems: { label: string; icon: typeof Home2; path?: strin
   { label: 'My Team', icon: Award, path: '/my-team' },
   { label: 'My Progress', icon: Medal, path: '/my-progress' },
   { label: 'Feed', icon: Messages2 },
-  // The signed-in learner's Profile: Bookmarks, Likes, Following and External Training (read-only).
-  { label: 'Profile', icon: UserSquare, path: '/profile' },
 ]
 
 function MyTeam() {

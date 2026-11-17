@@ -98,7 +98,9 @@
 }
 
 /* Opens upward from the More tab, anchored to the bar's right edge. */
-.lmn-more__menu {
+/* Doubled class: .profile-menu sets left: 0 at the same weight and loads later,
+   which pushed this menu off the right edge of the screen. */
+.profile-menu.lmn-more__menu {
   left: auto;
   right: 0;
   width: 240px;

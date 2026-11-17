@@ -221,7 +221,11 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
             <button
               type="button"
               className="lf-menu__item"
-              onClick={() => setBookmarked((b) => !b)}
+              onClick={() => {
+                /* Saying where it went is how learners find Saved (DES-368). */
+                if (!bookmarked) showToast('success', 'Bookmarked. Find it in Saved.')
+                setBookmarked((b) => !b)
+              }}
               aria-pressed={bookmarked}
             >
               <span>Bookmark</span>

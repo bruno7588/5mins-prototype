@@ -18,7 +18,7 @@ import avatar2 from '@/assets/avatars/avatar-2.jpg'
 import avatar3 from '@/assets/avatars/avatar-3.jpg'
 import avatar4 from '@/assets/avatars/avatar-4.jpg'
 
-/* The signed-in learner's saved content (learner Profile page). Lessons without a
+/* The signed-in learner's saved content (learner Saved page, web and app). Lessons without a
    thumbnail are the company's own and fall back to the company image. */
 
 export const bookmarkedLessons: LessonGridCardProps[] = [

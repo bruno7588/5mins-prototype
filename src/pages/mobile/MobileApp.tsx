@@ -119,7 +119,7 @@ function MobileApp() {
       return <MobileTopNav variant="detail" title="Saved" onBack={() => setSavedOpen(false)} />
     }
     if (accountOpen) {
-      return <MobileTopNav variant="detail" title="Settings" onBack={() => setAccountOpen(false)} />
+      return <MobileTopNav variant="detail" title="Account settings" onBack={() => setAccountOpen(false)} />
     }
     switch (tab) {
       case 'home':

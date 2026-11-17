@@ -21,6 +21,13 @@
   background: var(--input-background-hover);
 }
 
+/* The rail tooltip wraps the card: keep the card full width inside it. */
+.profile-menu__tip,
+.profile-menu__tip > * {
+  display: flex;
+  width: 100%;
+}
+
 /* Dropdown — opens upward (the card sits at the bottom of the sidebar) */
 .profile-menu {
   position: absolute;

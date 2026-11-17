@@ -850,6 +850,11 @@
     clip-path: none;
   }
 
+  /* The rail's menu and flyouts reach over the page, so the rail sits above its content. */
+  .mt-side {
+    z-index: 10;
+  }
+
   /* Profile card shrinks to its settings icon; its menu keeps a readable width. */
   .mt-side__profile-wrap .mt-side__profile {
     justify-content: center;

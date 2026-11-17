@@ -7,7 +7,7 @@ import {
   More,
   ShieldSecurity,
   Profile2User,
-  UserSquare,
+  Save2,
   MonitorMobbile,
   Moon,
   Logout,
@@ -140,9 +140,9 @@ function LearnerMobileNav() {
                 {menuIcon(Profile2User)}
                 <span>Your Workspace</span>
               </button>
-              <button type="button" role="menuitem" className="profile-menu__item" onClick={() => go('/profile')}>
-                {menuIcon(UserSquare)}
-                <span>Profile</span>
+              <button type="button" role="menuitem" className="profile-menu__item" onClick={() => go('/saved')}>
+                {menuIcon(Save2)}
+                <span>Saved</span>
               </button>
               <button type="button" role="menuitem" className="profile-menu__item ui-disabled" disabled>
                 {menuIcon(MonitorMobbile)}

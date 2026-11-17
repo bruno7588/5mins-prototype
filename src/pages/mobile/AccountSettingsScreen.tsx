@@ -81,7 +81,7 @@ function AccountSettingsScreen({ onLogOut }: { onLogOut: () => void }) {
               <li key={row.label} className="m-acct__row">
                 <span className="m-acct__label">{row.label}</span>
                 {row.value ? <span className="m-acct__value">{row.value}</span> : null}
-                {row.chevron ? <ArrowRight2 size={20} color="var(--text-primary)" variant="Linear" /> : null}
+                {row.chevron ? <ArrowRight2 size={20} color="var(--text-secondary)" variant="Linear" /> : null}
               </li>
             ))}
           </ul>
@@ -90,7 +90,7 @@ function AccountSettingsScreen({ onLogOut }: { onLogOut: () => void }) {
 
       <Button
         variant="outlined"
-        size="lg"
+        size="md"
         className="m-acct__logout"
         trailingIcon={<Logout size={20} color="currentColor" variant="Linear" />}
         onClick={onLogOut}

@@ -1,0 +1,42 @@
+/* ===== Learner Saved page (saved-), DES-368 =====
+   Shell and page header: MyTeam.css (mt-*). */
+
+.saved-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  min-width: 0;
+}
+
+.saved-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  min-width: 0;
+}
+
+.saved-switcher {
+  align-self: flex-start;
+}
+
+/* Lesson grid tiles are a fixed 170 x 230 (cards.md); the row wraps. */
+.saved-lesson-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-l);
+}
+
+/* Course cards are a fixed 300 wide (cards.md). */
+.saved-course-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-l);
+}
+
+/* Instructor cards: 404 wide at minimum, stretching to fill the row; on a phone-width
+   screen the column narrows to the screen so the card does not run off the edge. */
+.saved-instructor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(404px, 100%), 1fr));
+  gap: var(--space-l);
+}

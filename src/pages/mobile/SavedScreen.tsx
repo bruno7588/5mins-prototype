@@ -6,7 +6,7 @@ import MobileCourseCard from '@/components/mobile/CourseCard/CourseCard'
 import MobileInstructorCard from '@/components/mobile/InstructorCard/InstructorCard'
 import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
 import LessonGridCard, { type LessonGridCardProps } from '@/components/LessonGridCard/LessonGridCard'
-import { bookmarkedCourses, bookmarkedLessons, followedInstructors, likedLessons } from '@/pages/profile/profileItems'
+import { bookmarkedCourses, bookmarkedLessons, followedInstructors, likedLessons } from '@/pages/saved/savedItems'
 import './SavedScreen.css'
 
 export type SavedTab = 'bookmarks' | 'likes' | 'following'

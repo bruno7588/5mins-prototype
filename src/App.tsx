@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import TopNav from './components/TopNav/TopNav'
 
 import YourContent from './pages/your-courses/YourContent'
@@ -39,8 +39,14 @@ import ProgramCourseDetails from './pages/courses/ProgramCourseDetails'
 import Events from './pages/events/Events'
 import LearningRecords from './pages/learning-records/LearningRecords'
 import Account from './pages/account/Account'
-import Profile from './pages/profile/Profile'
+import Saved from './pages/saved/Saved'
 import MyProgress from './pages/my-progress/MyProgress'
+
+/** Old /profile links land on Saved, on the same tab (DES-368). */
+function ProfileRedirect() {
+  const { search } = useLocation()
+  return <Navigate to={`/saved${search}`} replace />
+}
 
 function App() {
   return (
@@ -79,7 +85,9 @@ function App() {
       <Route path="/my-team/people/:id" element={<UserProfile />} />
       <Route path="/workspace" element={<Workspace />} />
       <Route path="/for-you" element={<ForYou />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route path="/saved" element={<Saved />} />
+      {/* DES-368: Profile became Saved; old links keep their ?tab=. */}
+      <Route path="/profile" element={<ProfileRedirect />} />
       <Route path="/my-progress" element={<MyProgress />} />
       {/* The signed-in learner's own profile, opened from My Progress (not under My Team:
           only managers can open My Team). */}
