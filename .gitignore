@@ -29,3 +29,6 @@ src/assets/gradient-lab/flowers/manifest.json
 
 # /test-feature reports and screenshots
 .test-feature/
+
+# Impeccable critique reports
+.impeccable/critique/
