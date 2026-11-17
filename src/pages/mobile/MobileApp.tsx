@@ -12,6 +12,7 @@ import WorkspaceScreen from './WorkspaceScreen'
 import MyProgressScreen, { ProgressInfoSheet } from './MyProgressScreen'
 import type { ProgressStat } from '@/pages/my-progress/myProgressData'
 import ExternalTrainingScreen, { ExternalRecordSheet } from './ExternalTrainingScreen'
+import { downloadCertificate } from '@/pages/learning-records/components/ExternalTraining/ExternalRecordsTable'
 import ProgramScreen from './ProgramScreen'
 import LessonFeedScreen from './LessonFeedScreen'
 import LessonSheet from './LessonSheet'
@@ -144,7 +145,8 @@ function MobileApp() {
             <ExternalRecordSheet
               recordId={externalRecordId}
               onClose={() => setExternalRecordId(null)}
-              onDownload={() => showToast('success', 'Downloading certificate', ImportCurve)}
+              onDownload={downloadCertificate}
+              onDownloadFailed={() => showToast('error', 'Couldn’t download the certificate. Try again.')}
             />
           ) : null}
           <AnimatePresence>

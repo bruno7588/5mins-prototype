@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ImportCurve } from 'iconsax-react'
 import Badge from '@/components/Badge/Badge'
@@ -93,19 +93,44 @@ function ExternalTrainingScreen({ onOpenRecord }: { onOpenRecord: (id: string) =
   )
 }
 
+/* Prototype scaffolding: how long the download takes, and the one record whose download
+   fails so the error can be seen (the older First Aid at Work, from St John Ambulance). */
+const DOWNLOAD_MS = 1200
+const FAILING_RECORD_ID = 'r1'
+
 /* The rest of the row: label left, value right, and the certificate as the one action.
-   Rendered in the phone's overlay layer by MobileApp. */
+   Rendered in the phone's overlay layer by MobileApp.
+
+   Download Certificate goes to its loading state while the file is fetched. Then the
+   phone opens the certificate itself, which is the confirmation, so there is no success
+   message. If the download fails, the button returns to rest and `onDownloadFailed` runs. */
 export function ExternalRecordSheet({
   recordId,
   onClose,
   onDownload,
+  onDownloadFailed,
 }: {
   recordId: string
   onClose: () => void
+  /** The file is ready: hand it to the phone to open. */
   onDownload: (record: ExternalRecord) => void
+  onDownloadFailed: () => void
 }) {
   const { records } = useExternalTraining()
   const record = records.find((r) => r.id === recordId)
+  const [downloading, setDownloading] = useState(false)
+
+  useEffect(() => {
+    if (!downloading || !record) return
+    const id = window.setTimeout(() => {
+      setDownloading(false)
+      if (record.id === FAILING_RECORD_ID) onDownloadFailed()
+      else onDownload(record)
+    }, DOWNLOAD_MS)
+    return () => window.clearTimeout(id)
+    // One timer per press: only the press starts it.
+  }, [downloading])
+
   if (!record) return null
 
   const name = recordTrainingName(record)
@@ -138,7 +163,8 @@ export function ExternalRecordSheet({
             size="md"
             className="m-xt-sheet__cta"
             icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
-            onClick={() => onDownload(record)}
+            loading={downloading}
+            onClick={() => setDownloading(true)}
           >
             Download Certificate
           </Button>
