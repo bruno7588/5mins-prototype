@@ -101,10 +101,13 @@
   gap: var(--space-m);
 }
 
+/* A divider under the header separates the course from its record. */
 .m-xt-sheet__head {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
+  padding-bottom: var(--space-m);
+  border-bottom: 1px solid var(--border);
 }
 
 .m-xt-sheet__title {
