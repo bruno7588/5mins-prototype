@@ -184,7 +184,20 @@ function SkillsCompetency() {
 
 /* ── Engagement chart card ── */
 
-function EngagementChart() {
+/* Shared with the person profile (My Learning, DES-369), which passes its own title and
+   labels. `personal` drops the subtitle and the inert period button. */
+export function EngagementChart({
+  title = 'Engagement',
+  lessonsLabel = 'Lessons completed',
+  momentsTooltip,
+  personal = false,
+}: {
+  title?: string
+  lessonsLabel?: string
+  /** Explains "Total learning moments" in an info tooltip after the label. */
+  momentsTooltip?: string
+  personal?: boolean
+} = {}) {
   const maxBar = 96
   /* Toggles only — the chart data is not yet cumulative. */
   const [cumulative, setCumulative] = useState(false)
@@ -193,13 +206,15 @@ function EngagementChart() {
     <div className="eng-card">
       <div className="eng-chart__subheader">
         <div className="eng-chart__headline">
-          <h3>Engagement</h3>
-          <p>Team learning activity over time</p>
+          <h3>{title}</h3>
+          {!personal && <p>Team learning activity over time</p>}
         </div>
-        <button type="button" className="eng-dropdown">
-          <span>Last 6 months</span>
-          <ArrowDown2 size={20} color="var(--text-secondary)" variant="Linear" />
-        </button>
+        {!personal && (
+          <button type="button" className="eng-dropdown">
+            <span>Last 6 months</span>
+            <ArrowDown2 size={20} color="var(--text-secondary)" variant="Linear" />
+          </button>
+        )}
       </div>
 
       <div className="eng-chart__body">
@@ -208,17 +223,18 @@ function EngagementChart() {
             <div className="eng-chart__legend-item">
               <Diagram size={16} color="var(--secondary-500)" variant="Linear" />
               <span>Total learning moments</span>
+              {momentsTooltip && <Tooltip position="Top" text={momentsTooltip} />}
             </div>
             <div className="eng-chart__legend-item">
               <span className="eng-chart__legend-swatch eng-chart__legend-swatch--lessons" />
-              <span>Lessons completed</span>
+              <span>{lessonsLabel}</span>
             </div>
             <div className="eng-chart__legend-item">
               <span className="eng-chart__legend-swatch eng-chart__legend-swatch--quizzes" />
               <span>Quizzes &amp; Polls</span>
             </div>
           </div>
-          <label className="eng-chart__legend-item">
+          <label className="eng-chart__legend-item eng-chart__legend-item--check">
             <Checkbox checked={cumulative} onChange={() => setCumulative((c) => !c)} />
             <span>Cumulative</span>
           </label>

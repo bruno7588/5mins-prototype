@@ -1,0 +1,39 @@
+/* Engagement tab of the person profile / My Learning (DES-369). Prefix: upe- */
+.upe-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  min-width: 0;
+}
+
+/* The Performance chart and the Leaderboard share a row, two thirds to one third; one on
+   its own takes it all. */
+.upe-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--space-l);
+}
+
+/* Here the chart card is outlined with no fill, like the Leaderboard card beside it. */
+.upe-row .eng-card {
+  border: 1px solid var(--border);
+  background: none;
+  box-shadow: none;
+}
+
+.upe-row > :only-child {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1023px) {
+  .upe-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Leaderboard controls: Team / Company at one end of the card and the period at the
+   other (auto gap), on their own row under the title. */
+.upe-row .mp-leaderboard .mp-card__ctas {
+  flex: 1 0 100%;
+  justify-content: space-between;
+}

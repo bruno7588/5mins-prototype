@@ -227,14 +227,18 @@
 
 .eng-chart__legend {
   display: flex;
+  /* Each label stays on one line; on a narrow card the items wrap to a new row instead. */
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-s) var(--space-m);
   width: 100%;
 }
 
 .eng-chart__legend-left {
   display: flex;
-  gap: var(--space-m);
+  flex-wrap: wrap;
+  gap: var(--space-s) var(--space-m);
   align-items: center;
 }
 
@@ -245,6 +249,12 @@
   font-size: var(--font-size-sm);
   color: var(--text-tertiary);
   line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* The Cumulative checkbox sits 4px from its label. */
+.eng-chart__legend-item--check {
+  gap: var(--space-xs);
 }
 
 .eng-chart__legend-swatch {
@@ -370,6 +380,8 @@
 
 .eng-chart__bar-group {
   display: flex;
+  /* The bars' heights are percentages, so the group needs a height of its own. */
+  height: 100%;
   gap: var(--space-xs);
   align-items: flex-end;
   padding: 0 var(--space-xs);

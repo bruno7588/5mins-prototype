@@ -325,7 +325,7 @@ Shared elements:
 
 ### Menu items
 
-**Web app.** Base: `padding: 16px` · radius 8 · icon **24px Iconsax Bold** · label **Regular 16**, 8px gap. Items: For You (`/for-you`), Your Workspace (`/workspace`), Knowledge Hub, Search, My Team (`/my-team`), My Progress (`/my-progress`), Feed, Profile (`/profile`), Admin. Items without a route are not built yet.
+**Web app.** Base: `padding: 16px` · radius 8 · icon **24px Iconsax Bold** · label **Regular 16**, 8px gap. Items: For You (`/for-you`), Your Workspace (`/workspace`), Knowledge Hub, Search, My Team (`/my-team`), My Learning (`/my-learning`), Feed, Admin. Items without a route are not built yet. My Learning replaced My Progress (DES-369): it is the signed-in person's own profile page, `/my-progress` forwards to it, and it stays lit only on `/my-learning`; a team member's profile under `/my-team/people/:id` keeps My Team lit. On mobile web the Progress tab's chips are "My Team" / "My Learning". There is no Profile item: Bookmarks, Likes and Following live in the settings menu (DES-368).
 
 **Admin.** Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label **Regular 14**, 8px gap. Items: Home, People & Teams ▾, Content ▾, Automations, Reports, Skills, Learning Records ▾ (5Mins Courses `/learning-records`, External Training `/learning-records/external`, whose page has Records and Approved list tabs; Approved list for full admins only), Events, Account & Settings.
 

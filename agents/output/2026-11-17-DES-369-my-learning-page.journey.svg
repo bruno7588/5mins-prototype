@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 868" width="1160" height="868" role="img" aria-label="User journey for My Learning: something prompts a learner to check how they are doing, they click My Learning in the sidebar, land on the Engagement tab, pick the tab with their answer, read it, and can return to the same tab later. Side paths: a manager or admin opening a person, a manager opening someone outside their team, an old My Progress link, a learner with nothing to show yet, and arriving from a course or External Training row." font-family="Poppins, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="jarrow" orient="auto" markerWidth="8" markerHeight="8" refX="7" refY="4">
+      <path d="M0 0 L8 4 L0 8 Z" fill="#454C5E"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1160" height="868" fill="#F9F9FA"/>
+
+  <text x="40" y="48" font-size="20" font-weight="700" fill="#20222A">My Learning - how a learner checks where they stand</text>
+  <text x="40" y="76" font-size="12" fill="#454C5E">When a learner or manager wants to know how they (or one of their team) are doing, they want to open one page showing engagement, skills,</text>
+  <text x="40" y="94" font-size="12" fill="#454C5E">course progress and external training, so they can see where things stand without working out which of two overlapping pages holds what.</text>
+
+  <!-- connectors, main path -->
+  <g stroke="#454C5E" stroke-width="2" fill="none">
+    <line x1="360" y1="314" x2="418" y2="314" marker-end="url(#jarrow)"/>
+    <line x1="740" y1="314" x2="798" y2="314" marker-end="url(#jarrow)"/>
+    <polyline points="1120,314 1140,314 1140,539 200,539 200,572" marker-end="url(#jarrow)"/>
+    <line x1="360" y1="634" x2="418" y2="634" marker-end="url(#jarrow)"/>
+    <line x1="740" y1="634" x2="798" y2="634" marker-end="url(#jarrow)"/>
+  </g>
+  <!-- connectors, side paths -->
+  <g stroke="#454C5E" stroke-width="2" fill="none" stroke-dasharray="6 6">
+    <line x1="960" y1="204" x2="960" y2="252" marker-end="url(#jarrow)"/>
+    <line x1="800" y1="162" x2="742" y2="162" marker-end="url(#jarrow)"/>
+    <line x1="580" y1="424" x2="580" y2="376" marker-end="url(#jarrow)"/>
+    <line x1="960" y1="374" x2="960" y2="422" marker-end="url(#jarrow)"/>
+    <line x1="580" y1="744" x2="580" y2="696" marker-end="url(#jarrow)"/>
+  </g>
+
+  <!-- side paths above row 1 -->
+  <g>
+    <rect x="420" y="120" width="320" height="84" rx="12" fill="#F9F9FA" stroke="#454C5E" stroke-dasharray="6 6"/>
+    <text x="436" y="142" font-size="10" font-weight="700" letter-spacing="1" fill="#454C5E">SIDE PATH</text>
+    <text x="436" y="162" font-size="12" font-weight="700" fill="#20222A">Not in your team</text>
+    <text x="436" y="180" font-size="11" fill="#454C5E">The manager sees only: “You can only see</text>
+    <text x="436" y="195" font-size="11" fill="#454C5E">people in your team.”</text>
+  </g>
+  <g>
+    <rect x="800" y="120" width="320" height="84" rx="12" fill="#F9F9FA" stroke="#454C5E" stroke-dasharray="6 6"/>
+    <text x="816" y="142" font-size="10" font-weight="700" letter-spacing="1" fill="#454C5E">SIDE PATH</text>
+    <text x="816" y="162" font-size="12" font-weight="700" fill="#20222A">Manager or admin opens a person</text>
+    <text x="816" y="180" font-size="11" fill="#454C5E">By name from My Team or People. Same page, lands</text>
+    <text x="816" y="195" font-size="11" fill="#454C5E">on Engagement; their actions stay available.</text>
+  </g>
+
+  <!-- row 1 -->
+  <g>
+    <rect x="40" y="254" width="320" height="120" rx="12" fill="#FFFFFF" stroke="#DFE1E6"/>
+    <text x="56" y="278" font-size="10" font-weight="700" letter-spacing="1" fill="#454C5E">1 · TRIGGER</text>
+    <text x="56" y="300" font-size="14" font-weight="700" fill="#20222A">Something prompts a check</text>
+    <text x="56" y="321" font-size="12" fill="#454C5E">A reminder email, a completed lesson</text>
+    <text x="56" y="337" font-size="12" fill="#454C5E">or a review coming up.</text>
+    <text x="56" y="360" font-size="12" font-style="italic" fill="#20222A">“How am I doing?”</text>
+  </g>
+  <g>
+    <rect x="420" y="254" width="320" height="120" rx="12" fill="#FFFFFF" stroke="#DFE1E6"/>
+    <text x="436" y="278" font-size="10" font-weight="700" letter-spacing="1" fill="#454C5E">2 · ORIENT</text>
+    <text x="436" y="300" font-size="14" font-weight="700" fill="#20222A">Clicks My Learning in the sidebar</text>
+    <text x="436" y="321" font-size="12" fill="#454C5E">Same icon and position as My Progress,</text>
+    <text x="436" y="337" font-size="12" fill="#454C5E">which it replaces.</text>
+    <text x="436" y="360" font-size="12" font-style="italic" fill="#20222A">“Is this where my progress went?”</text>
+  </g>
+  <g>
+    <rect x="800" y="254" width="320" height="120" rx="12" fill="#FFFFFF" stroke="#DFE1E6"/>
+    <text x="816" y="278" font-size="10" font-weight="700" letter-spacing="1" fill="#454C5E">3 · ORIENT</text>
+    <text x="816" y="300" font-size="14" font-weight="700" fill="#20222A">Lands on the Engagement tab</text>
+    <text x="816" y="321" font-size="12" fill="#454C5E">Stat tiles, Performance chart and Leaderboard,</text>
+    <text x="816" y="337" font-size="12" fill="#454C5E">under their name and the four tabs.</text>
+    <text x="816" y="360" font-size="12" font-style="italic" fill="#20222A">“Am I keeping up, and where do I stand?”</text>
+  </g>
+
+  <!-- side paths under row 1 -->
+  <g>
+    <rect x="420" y="424" width="320" height="84" rx="12" fill="#F9F9FA" stroke="#454C5E" stroke-dasharray="6 6"/>
+    <text x="436" y="446" font-size="10" font-weight="700" letter-spacing="1" fill="#454C5E">SIDE PATH</text>
+    <text x="436" y="466" font-size="12" font-weight="700" fill="#20222A">Old My Progress link</text>
+    <text x="436" y="484" font-size="11" fill="#454C5E">A bookmark or old email link forwards to</text>
+    <text x="436" y="499" font-size="11" fill="#454C5E">My Learning and keeps the tab.</text>
+  </g>
+  <g>
+    <rect x="800" y="424" width="320" height="84" rx="12" fill="#F9F9FA" stroke="#454C5E" stroke-dasharray="6 6"/>
+    <text x="816" y="446" font-size="10" font-weight="700" letter-spacing="1" fill="#454C5E">SIDE PATH</text>
+    <text x="816" y="466" font-size="12" font-weight="700" fill="#20222A">Nothing to show yet</text>
+    <text x="816" y="484" font-size="11" fill="#454C5E">A new learner sees the tiles at zero and “No</text>
+    <text x="816" y="499" font-size="11" fill="#454C5E">learning activity yet” in place of the chart.</text>
+  </g>
+
+  <!-- row 2 -->
+  <g>
+    <rect x="40" y="574" width="320" height="120" rx="12" fill="#FFFFFF" stroke="#DFE1E6"/>
+    <text x="56" y="598" font-size="10" font-weight="700" letter-spacing="1" fill="#454C5E">4 · DECIDE</text>
+    <text x="56" y="620" font-size="14" font-weight="700" fill="#20222A">Picks the tab with their answer</text>
+    <text x="56" y="641" font-size="12" fill="#454C5E">Skills, Course Progress or</text>
+    <text x="56" y="657" font-size="12" fill="#454C5E">External Training.</text>
+    <text x="56" y="680" font-size="12" font-style="italic" fill="#20222A">“Which tab has what I need?”</text>
+  </g>
+  <g>
+    <rect x="420" y="574" width="320" height="120" rx="12" fill="#FFFFFF" stroke="#DFE1E6"/>
+    <text x="436" y="598" font-size="10" font-weight="700" letter-spacing="1" fill="#454C5E">5 · ACT</text>
+    <text x="436" y="620" font-size="14" font-weight="700" fill="#20222A">Reads the tab</text>
+    <text x="436" y="641" font-size="12" fill="#454C5E">Filters, spots what is overdue, opens a course</text>
+    <text x="436" y="657" font-size="12" fill="#454C5E">by its name. Nothing changes an enrolment.</text>
+    <text x="436" y="680" font-size="12" font-style="italic" fill="#20222A">“What is due, and what have I passed?”</text>
+  </g>
+  <g>
+    <rect x="800" y="574" width="320" height="120" rx="12" fill="#FFFFFF" stroke="#18A957" stroke-width="2"/>
+    <text x="816" y="598" font-size="10" font-weight="700" letter-spacing="1" fill="#454C5E">6 · CONFIRM</text>
+    <text x="816" y="620" font-size="14" font-weight="700" fill="#20222A">Has the answer and can stop</text>
+    <text x="816" y="641" font-size="12" fill="#454C5E">Back returns to where they came from;</text>
+    <text x="816" y="657" font-size="12" fill="#454C5E">refresh or a shared link keeps the tab.</text>
+    <text x="816" y="680" font-size="12" font-style="italic" fill="#20222A">“I know where I stand.”</text>
+  </g>
+
+  <!-- side path under row 2 -->
+  <g>
+    <rect x="420" y="744" width="320" height="84" rx="12" fill="#F9F9FA" stroke="#454C5E" stroke-dasharray="6 6"/>
+    <text x="436" y="766" font-size="10" font-weight="700" letter-spacing="1" fill="#454C5E">SIDE PATH</text>
+    <text x="436" y="786" font-size="12" font-weight="700" fill="#20222A">Arriving from a course or External Training row</text>
+    <text x="436" y="804" font-size="11" fill="#454C5E">Opens straight on that tab: Course Progress</text>
+    <text x="436" y="819" font-size="11" fill="#454C5E">or External Training.</text>
+  </g>
+</svg>

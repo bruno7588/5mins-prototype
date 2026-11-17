@@ -126,6 +126,7 @@ Add new entries here, not in the docs.
 
 ## [chips-switcher-tabs.md](chips-switcher-tabs.md)
 
+- 2026-11-17: Tabs in the mobile app sit `var(--space-l)` (24px) apart whenever they fit the screen width, 16px only when they would not; web stays at 16px.
 - 2026-11-10: Shared `Tabs` component (`src/components/Tabs`) built from the spec and every page tab bar migrated to it (about 25 bars). Indicator is `--selected` everywhere (several bars used raw secondary-500/600); label-to-indicator gap 4px; counters `--text-tertiary`; arrow-key navigation; not-built tabs use `.ui-disabled`. Not migrated: bulk upload review filter tabs (status-coloured counts).
 - 2026-11-05: `ContentSwitcher` items gain `trailingIcon` (16px, after the label), matching Library Content=Trailing icon; the trailing icon is no longer Figma only.
 - 2026-11-05: Figma Content switcher item gains a `Content` variant axis (Label / Leading icon / Trailing icon / Icon only) across all 6 states, 24 variants in a states x content grid; the `Show leading icon`, `Show trailing icon` and `Show label` booleans are removed. Trailing icon default restored to info-circle (`9986:43611`). Examples rebuilt as `12589:308` and `12589:398`.
@@ -214,6 +215,7 @@ Add new entries here, not in the docs.
 
 ## [gamification.md](gamification.md)
 
+- 2026-11-17: Leaderboard entry names the shared `LeaderboardCard` and where it shows (Engagement tab of My Learning, native My Progress), and records the missing "this person's row" state as a gap (DES-369).
 - 2026-10-14: Illustrations/ Assessments light copy merged into the dark set (44px Lesson quiz mobile artwork kept).
 - 2026-10-14: Figma Learning path gained Description and Progress text properties, Quiz/Options gained Label and Explanation text properties and desktop State=Focus; every Gamification set description rewritten.
 - 2026-08-17: Assessment illustrations: Source: Figma `Illustrations/ Assessments`, frame `9120:8850` (classic six downloaded 2026-07-13, interactive four 2026-08-17).
@@ -281,6 +283,7 @@ Add new entries here, not in the docs.
 
 ## [navigation.md](navigation.md)
 
+- 2026-11-17: Web app side panel: **My Learning** (`/my-learning`) replaces My Progress (DES-369), and Profile is no longer listed (DES-368). Mobile web chips are "My Team" / "My Learning".
 - 2026-10-14: Figma navigation reworked: Label text properties on admin and learner menu items and Breadcrumb item, Icon swap on learner items, State=Focus variants on menu items and breadcrumb links, Show link 3/4/5 booleans on Breadcrumb (current page moved last); descriptions rewritten. Figma to code tables updated.
 - 2026-10-05: `src/pages/your-courses/components/AddContentMenu/` - the Create Course Add Content picker. It replaced the right-edge rail on 2026-10-05 (user feedback: the rail icons confused admins) and is a DS listbox (listbox.md) with hover flyouts, not this menu-item language. Figma: Create Course `10210:26756`.
 - 2026-09-29: > **Updated 2026-09-29 (re-verified against Figma `5385:20161`):** Exit Admin is Small; the icons are 20px `--text-primary` (Logout Bold) in 36px hover circles, 16px apart and 32px from the edge.

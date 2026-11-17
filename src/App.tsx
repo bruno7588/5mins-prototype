@@ -40,12 +40,17 @@ import Events from './pages/events/Events'
 import LearningRecords from './pages/learning-records/LearningRecords'
 import Account from './pages/account/Account'
 import Saved from './pages/saved/Saved'
-import MyProgress from './pages/my-progress/MyProgress'
 
 /** Old /profile links land on Saved, on the same tab (DES-368). */
 function ProfileRedirect() {
   const { search } = useLocation()
   return <Navigate to={`/saved${search}`} replace />
+}
+
+/** My Progress became My Learning (DES-369); old links keep their ?tab=. */
+function MyLearningRedirect() {
+  const { search } = useLocation()
+  return <Navigate to={`/my-learning${search}`} replace />
 }
 
 function App() {
@@ -88,10 +93,11 @@ function App() {
       <Route path="/saved" element={<Saved />} />
       {/* DES-368: Profile became Saved; old links keep their ?tab=. */}
       <Route path="/profile" element={<ProfileRedirect />} />
-      <Route path="/my-progress" element={<MyProgress />} />
-      {/* The signed-in learner's own profile, opened from My Progress (not under My Team:
-          only managers can open My Team). */}
-      <Route path="/my-progress/profile" element={<UserProfile />} />
+      {/* DES-369: the signed-in person's own page. Not under My Team: only managers can
+          open My Team. My Progress and its profile page forward here. */}
+      <Route path="/my-learning" element={<UserProfile />} />
+      <Route path="/my-progress" element={<MyLearningRedirect />} />
+      <Route path="/my-progress/profile" element={<MyLearningRedirect />} />
       {/* Program Builder — standalone full-page, no TopNav (ranks above /programs/:id) */}
       <Route
         path="/programs/builder"

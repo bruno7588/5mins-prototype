@@ -1,7 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { Add, ArrowCircleDown, ArrowCircleUp, ArrowRight, FlashCircle, Mobile } from 'iconsax-react'
-import { useHeaderTheme } from '@/data/brandTheme'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { ArrowCircleDown, ArrowCircleUp, ArrowRight } from 'iconsax-react'
 import { useSurfaceMode } from '@/hooks/useTheme'
 import {
   SIGNED_IN_LEARNER_ID,
@@ -18,17 +17,12 @@ import { getRankMedal } from '@/assets/ranking-illustrations'
 import Avatar from '@/components/Avatar/Avatar'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
-import Chip from '@/components/Chip/Chip'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import MeshGradient from '@/components/MeshGradient/MeshGradient'
 import StatTile from '@/components/StatTile/StatTile'
 import { Table, type Column } from '@/components/Table/Table'
-import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
-import ProfileMenu from '@/components/ProfileMenu/ProfileMenu'
-import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 import InfoIcon from '@/components/icons/InfoIcon'
-import { Logo, learnerSideItems } from '@/pages/my-team/MyTeam'
 import {
   courseResults,
   leaderboardPeriods,
@@ -45,8 +39,8 @@ import './MyProgress.css'
 
 /* The cards a tenant can switch off, and the versions of the page the prototype
    control at the end of the page steps through. */
-type Panel = 'skills' | 'external' | 'leaderboard'
-const VERSIONS: { label: string; hide: Panel[] }[] = [
+export type Panel = 'skills' | 'external' | 'leaderboard'
+export const VERSIONS: { label: string; hide: Panel[] }[] = [
   { label: 'All cards', hide: [] },
   { label: 'Without Leaderboard', hide: ['leaderboard'] },
   { label: 'Without Skill Development', hide: ['skills'] },
@@ -61,12 +55,12 @@ const NATIVE_LEADERBOARD_ROWS = 10
 
 /* The learner's own profile: the full lists behind the two View All links. Not under
    My Team, which only managers can open. */
-const OWN_PROFILE = '/my-progress/profile'
+const OWN_PROFILE = '/my-learning'
 
 /* A section card (Figma My Progress V2, 13023:65051): outlined, with a title and its
    actions. `mesh` puts a quiet mesh gradient behind the content (5Mins Courses and
    External Training only). */
-function SectionCard({
+export function SectionCard({
   id,
   mesh: meshSection,
   title,
@@ -94,6 +88,61 @@ function SectionCard({
       </header>
       {children}
     </section>
+  )
+}
+
+/* The Leaderboard card: Team / Company and the period. Shared with the Engagement tab
+   of My Learning (src/pages/user-profile/components/EngagementPanel). */
+export function LeaderboardCard({ native = false }: { native?: boolean }) {
+  const [period, setPeriod] = useState('month')
+  const [scope, setScope] = useState<LeaderboardScope>('team')
+  return (
+    <SectionCard
+        id="leaderboard"
+        title="Leaderboard"
+        className="mp-leaderboard"
+        ctas={
+          <>
+            <ContentSwitcher
+              ariaLabel="Leaderboard scope"
+              items={[
+                { key: 'team', label: 'Team' },
+                { key: 'company', label: 'Company' },
+              ]}
+              activeKey={scope}
+              onChange={(key) => setScope(key as LeaderboardScope)}
+            />
+            <Dropdown options={leaderboardPeriods} value={period} onChange={setPeriod} menuAlign="end" />
+          </>
+        }
+      >
+        {/* Web: the list scrolls inside the card, so it takes focus. App: the top 10, in full. */}
+        <ol className="mp-ranks" tabIndex={native ? undefined : 0} aria-label="Leaderboard ranking">
+          {(native ? leaderboards[scope].slice(0, NATIVE_LEADERBOARD_ROWS) : leaderboards[scope]).map((entry) => {
+            const medal = getRankMedal(entry.rank)
+            return (
+              <li className={`mp-rank${medal ? ` mp-rank--${entry.rank}` : ''}`} key={entry.rank}>
+                <span className={`mp-rank__position${medal ? ' mp-rank__position--medal' : ''}`}>
+                  {medal && <img src={medal} alt="" width={24} height={24} />}
+                  <span className="mp-rank__number">{entry.rank}</span>
+                </span>
+                <span className="mp-rank__person">
+                  <Avatar name={entry.name} src={entry.avatarSrc} size={32} />
+                  <span className="mp-rank__name">{entry.name}</span>
+                </span>
+                <span className="mp-rank__score">
+                  <span className="mp-rank__points">{entry.points.toLocaleString('en-GB')} pts</span>
+                  {entry.trend === 'up' ? (
+                    <ArrowCircleUp size={24} color="var(--success-500)" variant="Bold" aria-label="Moved up" />
+                  ) : (
+                    <ArrowCircleDown size={24} color="var(--danger-400)" variant="Bold" aria-label="Moved down" />
+                  )}
+                </span>
+              </li>
+            )
+          })}
+        </ol>
+      </SectionCard>
   )
 }
 
@@ -132,8 +181,6 @@ export function MyProgressContent({
     else params.delete('hide')
     setSearchParams(params, { replace: true })
   }
-  const [period, setPeriod] = useState('month')
-  const [scope, setScope] = useState<LeaderboardScope>('team')
 
   // Same order as the profile's External Training tab: overdue, due soon, then newest.
   const externalRows = useMemo(
@@ -307,52 +354,7 @@ export function MyProgressContent({
               </SectionCard>
           )}
           {show('leaderboard') && (
-            <SectionCard
-                id="leaderboard"
-                title="Leaderboard"
-                className="mp-leaderboard"
-                ctas={
-                  <>
-                    <ContentSwitcher
-                      ariaLabel="Leaderboard scope"
-                      items={[
-                        { key: 'team', label: 'Team' },
-                        { key: 'company', label: 'Company' },
-                      ]}
-                      activeKey={scope}
-                      onChange={(key) => setScope(key as LeaderboardScope)}
-                    />
-                    <Dropdown options={leaderboardPeriods} value={period} onChange={setPeriod} menuAlign="end" />
-                  </>
-                }
-              >
-                {/* Web: the list scrolls inside the card, so it takes focus. App: the top 10, in full. */}
-                <ol className="mp-ranks" tabIndex={native ? undefined : 0} aria-label="Leaderboard ranking">
-                  {(native ? leaderboards[scope].slice(0, NATIVE_LEADERBOARD_ROWS) : leaderboards[scope]).map((entry) => {
-                    const medal = getRankMedal(entry.rank)
-                    return (
-                      <li className={`mp-rank${medal ? ` mp-rank--${entry.rank}` : ''}`} key={entry.rank}>
-                        <span className={`mp-rank__position${medal ? ' mp-rank__position--medal' : ''}`}>
-                          {medal && <img src={medal} alt="" width={24} height={24} />}
-                          <span className="mp-rank__number">{entry.rank}</span>
-                        </span>
-                        <span className="mp-rank__person">
-                          <Avatar name={entry.name} src={entry.avatarSrc} size={32} />
-                          <span className="mp-rank__name">{entry.name}</span>
-                        </span>
-                        <span className="mp-rank__score">
-                          <span className="mp-rank__points">{entry.points.toLocaleString('en-GB')} pts</span>
-                          {entry.trend === 'up' ? (
-                            <ArrowCircleUp size={24} color="var(--success-500)" variant="Bold" aria-label="Moved up" />
-                          ) : (
-                            <ArrowCircleDown size={24} color="var(--danger-400)" variant="Bold" aria-label="Moved down" />
-                          )}
-                        </span>
-                      </li>
-                    )
-                  })}
-                </ol>
-              </SectionCard>
+            <LeaderboardCard native={native} />
           )}
       </div>
 
@@ -378,76 +380,3 @@ export function MyProgressContent({
     </div>
   )
 }
-
-function MyProgress() {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const headerTheme = useHeaderTheme()
-  return (
-    <div className="mt-app">
-      <header className="mt-topnav" data-theme={headerTheme}>
-        <button type="button" className="mt-topnav__logo" aria-label="Home" onClick={() => navigate('/workspace')}>
-          <Logo size={22} />
-        </button>
-        <div className="mt-topnav__right">
-          <button type="button" className="mt-topnav__textbtn ui-disabled" disabled>
-            <Mobile size={20} color="var(--text-secondary)" variant="Linear" />
-            <span>Get App</span>
-          </button>
-          <button type="button" className="mt-topnav__outlinebtn ui-disabled" disabled>
-            <Add size={20} color="var(--text-primary)" variant="Linear" />
-            <span>Create</span>
-          </button>
-          <div className="mt-topnav__icons">
-            <button type="button" className="mt-topnav__iconbtn ui-disabled" aria-label="Notifications (coming soon)" disabled>
-              <FlashCircle size={24} color="var(--text-primary)" variant="Linear" />
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className="mt-main">
-        <aside className="mt-side">
-          <nav className="mt-side__menu">
-            {learnerSideItems.map(({ label, icon: Icon, path }) => {
-              const isActive = !!path && location.pathname === path
-              return (
-                <button
-                  key={label}
-                  type="button"
-                  className={`mt-side__item${isActive ? ' mt-side__item--active' : ''}`}
-                  onClick={path ? () => navigate(path) : undefined}
-                >
-                  <Icon size={24} color={isActive ? 'var(--brand-selected, var(--selected))' : 'var(--brand-nav, var(--text-secondary))'} variant="Bold" />
-                  <span>{label}</span>
-                </button>
-              )
-            })}
-            <AdminMenuItem />
-          </nav>
-
-          <ProfileMenu />
-
-          <div className="mt-side__powered">
-            <span>Powered by</span>
-            <Logo size={12} />
-          </div>
-        </aside>
-
-        <section className="mt-body">
-          {/* Mobile web only: the Progress tab holds My Team and My Progress. */}
-          <div className="mt-mobile-chips">
-            <Chip label="My Team" onClick={() => navigate('/my-team')} />
-            <Chip label="My Progress" selected />
-          </div>
-
-          <MyProgressContent />
-        </section>
-      </div>
-      <LearnerMobileNav />
-
-    </div>
-  )
-}
-
-export default MyProgress

@@ -613,8 +613,8 @@ function People() {
             className="people-name-info"
             role="link"
             tabIndex={0}
-            onClick={() => navigate(`/people/${person.id}`)}
-            onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/people/${person.id}`) }}
+            onClick={() => navigate(`/people/${person.id}?tab=course-progress`)}
+            onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/people/${person.id}?tab=course-progress`) }}
           >
             <span className="people-name">{person.name}</span>
             <span className="people-email">{person.email}</span>

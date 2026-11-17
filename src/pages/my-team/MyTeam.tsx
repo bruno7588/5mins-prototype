@@ -112,7 +112,7 @@ const PAGE_SIZE = 10
 
 type MtTab = 'course-tracker' | 'engagement' | 'learning-records'
 const MT_TABS: { key: MtTab; label: string }[] = [
-  { key: 'course-tracker', label: 'Course Tracker' },
+  { key: 'course-tracker', label: 'Course Progress' },
   { key: 'engagement', label: 'Engagement' },
   { key: 'learning-records', label: 'Learning Records' },
 ]
@@ -248,7 +248,7 @@ export const learnerSideItems: { label: string; icon: typeof Home2; path?: strin
   { label: 'Knowledge Hub', icon: MonitorMobbile },
   { label: 'Search', icon: SearchNormal1 },
   { label: 'My Team', icon: Award, path: '/my-team' },
-  { label: 'My Progress', icon: Medal, path: '/my-progress' },
+  { label: 'My Learning', icon: Medal, path: '/my-learning' },
   { label: 'Feed', icon: Messages2 },
 ]
 
@@ -429,8 +429,8 @@ function MyTeam() {
             className="mt-cp__member-info"
             role="link"
             tabIndex={0}
-            onClick={() => navigate(`/my-team/people/${r.id}`)}
-            onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/my-team/people/${r.id}`) }}
+            onClick={() => navigate(`/my-team/people/${r.id}?tab=course-progress`)}
+            onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/my-team/people/${r.id}?tab=course-progress`) }}
           >
             <span className="mt-cp__member-name">{r.name}</span>
             <span className="mt-cp__member-role">{r.role}</span>
@@ -639,10 +639,10 @@ function MyTeam() {
         </aside>
 
         <section className="mt-body">
-          {/* Mobile web only: the Progress tab holds My Team and My Progress. */}
+          {/* Mobile web only: the Progress tab holds My Team and My Learning. */}
           <div className="mt-mobile-chips">
             <Chip label="My Team" selected />
-            <Chip label="My Progress" onClick={() => navigate('/my-progress')} />
+            <Chip label="My Learning" onClick={() => navigate('/my-learning')} />
           </div>
           <header className="mt-pageheader">
             <div className="mt-pageheader__row">

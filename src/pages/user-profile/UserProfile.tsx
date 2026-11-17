@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
 import { useHeaderTheme } from '@/data/brandTheme'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
@@ -43,6 +43,10 @@ import './UserProfile.css'
 import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import ExternalTrainingTab, { type ExternalTrainingViewer } from './components/ExternalTrainingTab/ExternalTrainingTab'
+import EngagementPanel from './components/EngagementPanel/EngagementPanel'
+import SkillsTab from './components/SkillsTab/SkillsTab'
+import Chip from '@/components/Chip/Chip'
+import type { Panel } from '@/pages/my-progress/MyProgress'
 import { SIGNED_IN_LEARNER_ID } from '@/data/externalTraining'
 
 /* ─── Header lookup ─── Mirrors the active People rows (src/pages/people/People.tsx)
@@ -64,8 +68,16 @@ const PEOPLE: Record<string, ProfilePerson> = {
   '5': { name: 'Erik Johansson', role: 'Data Analyst', email: 'erik.j@email.com', avatar: 'EJ' },
 }
 
-const TABS = ['Engagement', 'Skills', 'Course Progress', 'External Training'] as const
-type Tab = (typeof TABS)[number]
+/* The four tabs (DES-369). A tenant can switch panels off (?hide=leaderboard,skills,external in the prototype).
+   Each has a key in the address bar (?tab=), so a refresh or a
+   shared link returns to the same tab; Engagement is the default and carries no key.
+   `panel`: a tenant can switch that panel off, which hides the tab. */
+const TABS: { key: string; label: string; panel?: Panel }[] = [
+  { key: 'engagement', label: 'Engagement' },
+  { key: 'skills', label: 'Skills', panel: 'skills' },
+  { key: 'course-progress', label: 'Course Progress' },
+  { key: 'external-training', label: 'External Training', panel: 'external' },
+]
 
 /* Enrolment lifecycle. Scheduled = start date still ahead, so the learner
    can't open it yet; Failed = attempt finished below the pass mark. */
@@ -291,11 +303,11 @@ function UserProfile() {
      app should not land in the admin side by clicking a name. Either route
      resolves either roster, so a pasted link still finds its person. */
   const { pathname } = useLocation()
-  /* A third door: /my-progress/profile is the signed-in learner's own profile, opened
-     from My Progress. Not every learner manages a team, so it must not sit under
-     My Team; it wears the learner chrome with My Progress lit. */
-  const fromMyProgress = pathname.startsWith('/my-progress')
-  const isLearnerView = fromMyProgress || pathname.startsWith('/my-team')
+  /* A third door: /my-learning is the signed-in person's own page (DES-369), opened from
+     the My Learning item. Not every learner manages a team, so it must not sit under
+     My Team; it wears the learner chrome with My Learning lit. */
+  const onMyLearning = pathname.startsWith('/my-learning')
+  const isLearnerView = onMyLearning || pathname.startsWith('/my-team')
   const person = PEOPLE[id] ?? teamProfiles[id] ?? PEOPLE['1']
   /* External Training viewer (D13): the admin side edits; under /my-team the signed-in
      learner sees their own records and a manager their team's, read-only. Anyone else
@@ -308,11 +320,31 @@ function UserProfile() {
         ? 'manager'
         : null
 
-  // ?tab=external-training (from a learner link in a records list) opens that tab.
-  const [searchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<Tab>(
-    searchParams.get('tab') === 'external-training' ? 'External Training' : 'Course Progress',
-  )
+  /* View only is decided by who is looking, not by the route (D9): the signed-in person
+     on their own page, whether they came through My Learning or My Team. */
+  const isOwn = externalViewer === 'learner'
+
+  /* The tab lives in the address bar. Changing it replaces the history entry, so Back
+     leaves the page instead of walking through the tabs. A row about courses or external
+     training links straight to its tab (D5, D13); an unknown key, or the key of a
+     switched-off panel, falls back to Engagement. */
+  const [searchParams, setSearchParams] = useSearchParams()
+  const hidden = new Set((searchParams.get('hide') ?? '').split(',').map((h) => h.trim()).filter(Boolean))
+  const tabs = TABS.filter((t) => !t.panel || !hidden.has(t.panel))
+  const activeTab = tabs.find((t) => t.key === searchParams.get('tab'))?.key ?? 'engagement'
+  const setActiveTab = (key: string) => {
+    const params = new URLSearchParams(searchParams)
+    if (key === 'engagement') params.delete('tab')
+    else params.set('tab', key)
+    setSearchParams(params, { replace: true })
+  }
+  // Prototype only: ?empty=1 shows Engagement for a person with no activity yet.
+  const noActivity = searchParams.get('empty') === '1'
+  /* Narrow web: the tab row scrolls sideways, so bring the active tab into view. */
+  const headerRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    headerRef.current?.querySelector('.ds-tab--selected')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+  }, [activeTab])
   const [assignOpen, setAssignOpen] = useState(false)
   // Due dates are editable via the bulk actions, so the list is state, not the const.
   const [courses, setCourses] = useState<CourseProgress[]>(COURSES)
@@ -564,7 +596,15 @@ function UserProfile() {
         <span className="up-course">
           <img className="tbl-thumb" src={row.thumb} alt="" />
           <span className="tbl-stack">
-            <span className="primary">{row.course}</span>
+            {/* On their own page the course name opens the course (D14), so an Overdue
+                badge is never a dead end. It changes no enrolment. */}
+            {isOwn ? (
+              <button type="button" className="primary up-course-link" onClick={() => navigate(`/courses/${row.id}`)}>
+                {row.course}
+              </button>
+            ) : (
+              <span className="primary">{row.course}</span>
+            )}
           </span>
         </span>
       ),
@@ -636,7 +676,8 @@ function UserProfile() {
           <span className="up-muted">–</span>
         ),
     },
-    {
+    // Enrolment actions are for managers and admins; the person's own page is view only.
+    ...(isOwn ? [] : [{
       key: 'actions',
       header: '',
       width: '0 0 52px',
@@ -650,7 +691,7 @@ function UserProfile() {
           ariaLabel={`Actions for ${row.course}`}
         />
       ),
-    },
+    } satisfies Column<CourseProgress>]),
   ]
 
   /* The same profile, rendered in whichever shell the route belongs to — admin
@@ -671,42 +712,49 @@ function UserProfile() {
             />
           )}
 
+          {/* A manager who opens someone outside their team sees this and nothing else. */}
+          {!externalViewer ? (
+            <p className="uet-text uet-guard">You can only see people in your team.</p>
+          ) : (<>
           {/* Profile header — divider sits between the headline and the tabs (per headers.md) */}
-          <header className="up-header">
+          <header className="up-header" ref={headerRef}>
             <div className="up-headline">
               <Avatar name={person.name} size={56} src={person.avatarImg} />
               <div className="up-title-group">
                 <h2 className="up-name">{person.name}</h2>
                 <p className="up-meta">{person.role} · {person.email}</p>
               </div>
-              <div className="up-ctas">
-                <Button variant="filled">
-                  Edit Profile
-                </Button>
-              </div>
+              {/* Not built: the person's own page shows it as inert; nobody edits someone else's. */}
+              {isOwn && (
+                <div className="up-ctas">
+                  <Button variant="filled" className="ui-disabled" disabled>
+                    Edit Profile
+                  </Button>
+                </div>
+              )}
             </div>
 
             <div className="up-divider" />
 
-            {/* Only Course Progress and External Training are built; the rest are disabled. */}
             <Tabs
-              items={TABS.map((tab) => ({
-                key: tab,
-                label: tab,
-                disabled: tab !== 'Course Progress' && tab !== 'External Training',
-              }))}
+              items={tabs.map((tab) => ({ key: tab.key, label: tab.label }))}
               activeKey={activeTab}
-              onChange={(key) => setActiveTab(key as Tab)}
+              onChange={setActiveTab}
               ariaLabel="Profile sections"
             />
           </header>
 
-          {activeTab === 'External Training' ? (
-            externalViewer ? (
-              <ExternalTrainingTab personId={id} personName={person.name} viewer={externalViewer} showToast={showToast} />
-            ) : (
-              <p className="uet-text uet-guard">You can only see people in your team.</p>
-            )
+          {activeTab === 'engagement' ? (
+            <EngagementPanel
+              own={isOwn}
+              firstName={person.name.split(' ')[0]}
+              showLeaderboard={isOwn && !hidden.has('leaderboard')}
+              empty={noActivity}
+            />
+          ) : activeTab === 'skills' ? (
+            <SkillsTab />
+          ) : activeTab === 'external-training' ? (
+            <ExternalTrainingTab personId={id} personName={person.name} viewer={externalViewer} showToast={showToast} />
           ) : (<>
           <div className="up-view-row">
             <ContentSwitcher
@@ -799,7 +847,7 @@ function UserProfile() {
               columns={columns}
               rows={rows}
               getRowKey={(row) => row.id}
-              selectable
+              selectable={!isOwn}
               isSelected={(row) => selected.has(row.id)}
               allSelected={allSelected}
               onToggleRow={toggleRow}
@@ -808,6 +856,8 @@ function UserProfile() {
               pagination={{ from: rows.length ? 1 : 0, to: rows.length, total: rows.length }}
             />
           )}
+          </>)}
+
           </>)}
         </div>
   )
@@ -927,8 +977,8 @@ function UserProfile() {
               {learnerSideItems.map(({ label, icon: Icon, path }) => {
                 /* My Team stays lit while the manager is on one of its profiles —
                    the profile is a level below the tab, not a sibling of it. The
-                   learner's own profile sits under My Progress the same way. */
-                const isActive = path === (fromMyProgress ? '/my-progress' : '/my-team')
+                   person's own page is the My Learning item itself. */
+                const isActive = path === (onMyLearning ? '/my-learning' : '/my-team')
                 return (
                   <button
                     key={label}
@@ -952,7 +1002,16 @@ function UserProfile() {
             </div>
           </aside>
 
-          <section className="mt-body">{page}</section>
+          <section className="mt-body">
+            {/* Mobile web only: the Progress tab holds My Team and My Learning. */}
+            {onMyLearning && (
+              <div className="mt-mobile-chips">
+                <Chip label="My Team" onClick={() => navigate('/my-team')} />
+                <Chip label="My Learning" selected />
+              </div>
+            )}
+            {page}
+          </section>
         </div>
         <LearnerMobileNav />
 
@@ -976,7 +1035,7 @@ function UserProfile() {
           // View Enrolments: back to Course Progress, showing every course so the new ones are in view.
           onDone={() => {
             setAssignOpen(false)
-            setActiveTab('Course Progress')
+            setActiveTab('course-progress')
             setView('all')
             if (assignedCount > 0) {
               showToast('success', `${assignedCount} ${assignedCount === 1 ? 'course' : 'courses'} assigned to ${person.name}`)

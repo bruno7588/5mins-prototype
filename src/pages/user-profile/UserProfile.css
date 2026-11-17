@@ -96,6 +96,27 @@
   min-width: 0;
 }
 
+/* The person's own page: the course name opens the course (same hover and focus as the
+   name links in My Team's Course Tracker). */
+.up-course-link {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.up-course-link:hover {
+  color: var(--text-button-hover);
+}
+
+.up-course-link:focus-visible {
+  outline: 2px solid var(--text-selected);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
 /* Course names wrap to a second line before truncating — once the pinned column
    is at its 240px floor the 90px thumbnail leaves ~114px of text, and a single
    line cuts most titles off before they're recognisable. Two lines (42px) still

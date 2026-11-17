@@ -1,0 +1,28 @@
+/* Skills tab of the person profile / My Learning (DES-369). Prefix: ups- */
+.ups-skill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.ups-skill img {
+  flex-shrink: 0;
+}
+
+.ups-skill__name {
+  color: var(--text-primary);
+}
+
+/* Level: the shared progress bar (.mp-bar) and "n/5", right-aligned in the cell. */
+.ups-level {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.ups-level__value {
+  flex-shrink: 0;
+  color: var(--text-primary);
+}
