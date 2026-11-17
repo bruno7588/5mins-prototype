@@ -514,7 +514,7 @@
 }
 
 /* ── Native app ──
-   The same content inside the phone frame (src/pages/mobile/MyProgressScreen.tsx). The
+   The same content inside the phone frame (src/pages/mobile/MyLearningScreen.tsx). The
    frame sits in a desktop window, so the small-screen rules above are applied by class
    here: two stat tiles per row, cards in one column, header actions wrap. */
 .mp-page--native {

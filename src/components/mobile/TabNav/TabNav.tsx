@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
-import { Home, SearchNormal1, Award, Setting2 } from 'iconsax-react'
+import { Home, SearchNormal1, Award, Medal } from 'iconsax-react'
 import FeedIcon from '@/components/icons/FeedIcon'
 import './TabNav.css'
 
-/* `settings` opens the settings menu over the current screen (DES-368); it is never the active tab. */
-export type MobileTab = 'home' | 'search' | 'progress' | 'feed' | 'settings'
+/* My Team and My Learning are tabs of their own (DES-369), with the web side panel's icons.
+   Settings is not a tab: the gear on the My Learning header opens the settings menu. */
+export type MobileTab = 'home' | 'search' | 'team' | 'learning' | 'feed'
 
 export interface MobileTabNavProps {
   active?: MobileTab
@@ -14,9 +15,9 @@ export interface MobileTabNavProps {
 const TABS: { id: MobileTab; label: string; icon: (color: string) => ReactNode }[] = [
   { id: 'home', label: 'Home', icon: (color) => <Home size={24} color={color} variant="Bold" /> },
   { id: 'search', label: 'Search', icon: (color) => <SearchNormal1 size={24} color={color} variant="Bold" /> },
-  { id: 'progress', label: 'Progress', icon: (color) => <Award size={24} color={color} variant="Bold" /> },
+  { id: 'team', label: 'My Team', icon: (color) => <Award size={24} color={color} variant="Bold" /> },
+  { id: 'learning', label: 'My Learning', icon: (color) => <Medal size={24} color={color} variant="Bold" /> },
   { id: 'feed', label: 'Feed', icon: (color) => <FeedIcon size={24} color={color} /> },
-  { id: 'settings', label: 'Settings', icon: (color) => <Setting2 size={24} color={color} variant="Bold" /> },
 ]
 
 function MobileTabNav({ active, onNavigate }: MobileTabNavProps) {

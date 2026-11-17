@@ -2,7 +2,7 @@ import { Save2, User } from 'iconsax-react'
 import BottomSheet from '@/components/BottomSheet/BottomSheet'
 import './SettingsSheet.css'
 
-/* Native app settings menu (DES-368): what the Settings tab opens. A bottom sheet
+/* Native app settings menu (DES-368): what the gear on the My Learning header opens. A bottom sheet
    (overlays.md) holding Listbox list items (listbox.md): 20px leading icon in
    --text-primary, label, hover fill. Account Settings opens the Settings screen,
    where the profile is edited and Log Out lives. No Dark Mode row: the app is dark-only.

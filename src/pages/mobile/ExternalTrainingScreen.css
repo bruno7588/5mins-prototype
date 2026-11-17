@@ -1,4 +1,4 @@
-/* Native app "External Training" screen (View All from My Progress): one card per
+/* Native app External Training list (a tab of My Learning): one card per
    record, and the rest of the row in a bottom sheet. The app is dark-only, so these
    tokens resolve to their dark values. Prefix: m-xt- */
 .m-xt-list {

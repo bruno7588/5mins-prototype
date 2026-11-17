@@ -120,7 +120,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 **Canonical spec:** tab bar 375×66, `var(--page-background)`, `1px solid var(--border)` top; 24px Bold icons; label Regular 10px/1.4; header rows 65px with `1px solid var(--border)` bottom (none on Home and Lesson feed); back button 40px `var(--radius-full)` on `--input-background`. Figma: `Top nav/ App` `1910:18375`, `Tab nav` `1324:35285` (dark nodes).
 
 **Prototype:**
-- `src/components/mobile/TabNav/TabNav.tsx`: `active` (`home` | `search` | `progress` | `feed`), `onNavigate(tab)`. The fifth tab is **Settings** (gear, `Setting2`): `onNavigate('settings')` opens the settings menu in a Bottom Sheet over the current screen and is never the active tab (DES-368, replaces Profile; `src/pages/mobile/SettingsSheet.tsx`).
+- `src/components/mobile/TabNav/TabNav.tsx`: `active` (`home` | `search` | `team` | `learning` | `feed`), `onNavigate(tab)`. My Team (`Award`) and My Learning (`Medal`) are tabs of their own (DES-369) and replace Progress. Settings is not a tab: the gear on the My Learning profile header opens the settings menu in a Bottom Sheet (`src/pages/mobile/SettingsSheet.tsx`).
 - `src/components/mobile/TopNav/TopNav.tsx`: `variant` (`home` | `search` | `chips` | `title` | `detail` | `skill` | `lesson-feed` | `profile`) plus per-variant props (`chips`, `title`, `onBack`, `pointsLabel`, `name`, `hideStatusBar`, and so on).
 
 ## Figma to code
@@ -180,7 +180,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
-| Tab nav · Page | Enabled / Home / Search / Progress / Feed / Profile | `active` | `undefined` / `home` / `search` / `progress` / `feed` | Enabled = no tab selected. Code swaps Profile for Settings (DES-368), which opens a sheet and has no selected state; the Library set still shows Profile until it is updated |
+| Tab nav · Page | Enabled / Home / Search / Progress / Feed / Profile | `active` | `undefined` / `home` / `search` / `team` / `learning` / `feed` | Enabled = no tab selected. Code has Home, Search, My Team, My Learning, Feed (DES-369); the Library set still shows Progress and Profile until it is updated |
 | Top nav/ App · Page | Home / Search / Progress / Feed / Profile / Detail page / Skill / Lesson feed / Mobile web | `variant` | `home` / `search` / `chips` / `title` / `profile` / `detail` / `skill` / `lesson-feed` / n/a | Progress uses the `chips` variant, Feed the `title` variant |
 
 - **Figma only:** `Page=Mobile web` (browser-chrome mock, reference only, not built).
@@ -343,7 +343,7 @@ Shared elements:
 |---|---|---|---|
 | Home | `1092:34690` | 65px, 16px/12px pad | Chips left ("For You" selected / "Your Workspace"); right cluster 16px gap: 28px flash-circle + 28px bell with red Nudge dot |
 | Search | `7632:8029` | 65px | Full-width search field: `--input-background` fill, 1px `--border`, radius 12px, 12px/8px padding, 18px magnifier, placeholder Poppins Regular 14 `--text-disabled` |
-| Progress | `7632:8164` | 65px | Chips "My Team" / "My Progress". My Progress is built (`src/pages/mobile/MyProgressScreen.tsx`, the web page's content in one column) and is the chip the tab opens on; My Team has no screen yet |
+| Progress | `7632:8164` | 65px | Now two tabs, My Team and My Learning, with no chips. My Learning wears the Profile top nav (avatar with the gear badge, name, role); the gear opens the settings menu. My Learning is built (`src/pages/mobile/MyLearningScreen.tsx`, DES-369) and shows the web page's four tabs (Engagement, Skills, Course Progress, External Training) in a tab bar that scrolls sideways at 16px gaps, with card lists instead of tables and the rest of a course or record in a Bottom Sheet; the Performance chart is web only. My Team has no screen yet |
 | Feed | `7632:8202` | 65px | Centred title Poppins Bold 16/1.5 `--text-primary` |
 | Profile | `7632:8270` | auto, 16px/12px pad | 40px avatar with settings mini-badge (top-right, `--input-background`, 9px `setting-2` icon), name Bold 14 + role Regular 12 `--text-secondary` (2px gap); right 40px `--primary-500` circular add button |
 | Detail page | `6162:9788` | auto, 16px/8px pad | Back button left, centred title Bold 16, empty 32px right spacer to keep the title centred |

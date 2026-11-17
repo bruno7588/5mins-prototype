@@ -19,8 +19,8 @@ import {
 } from '@/data/externalTraining'
 import './ExternalTrainingScreen.css'
 
-/* Native app "External Training" screen: what View All on the My Progress External
-   Training card opens. The web table's columns split in two: name, provider, expiry,
+/* Native app External Training list: the External Training tab of My Learning
+   (MyLearningScreen.tsx). The web table's columns split in two: name, provider, expiry,
    score and result on a card; the whole row in a bottom sheet behind a tap. Designed
    in the Cards lab (src/pages/cards-lab). Prefix: m-xt- */
 
@@ -54,8 +54,8 @@ function useLearnerRecords() {
 function ExternalTrainingScreen({ onOpenRecord }: { onOpenRecord: (id: string) => void }) {
   const reduce = useReducedMotion()
   const { rows, records } = useLearnerRecords()
-  /* The phone's content area keeps My Progress's scroll position, so a new screen
-     would open part-way down its list. Start it at the top. */
+  /* The phone's content area keeps the previous tab's scroll position, so the list
+     would open part-way down. Start it at the top. */
   const listRef = useRef<HTMLUListElement>(null)
   useLayoutEffect(() => {
     listRef.current?.closest('.m-phone__content')?.scrollTo(0, 0)

@@ -283,6 +283,8 @@ Add new entries here, not in the docs.
 
 ## [navigation.md](navigation.md)
 
+- 2026-11-17: Native tab bar is Home, Search, My Team, My Learning, Feed (DES-369). Progress and its chips are gone, Settings left the tab bar, and My Learning wears the Profile top nav whose gear opens the settings menu.
+- 2026-11-17: Native app Progress tab: the "My Progress" chip and screen became **My Learning** (`MyLearningScreen.tsx`, DES-369), with the web page's four tabs and card lists in place of tables.
 - 2026-11-17: Web app side panel: **My Learning** (`/my-learning`) replaces My Progress (DES-369), and Profile is no longer listed (DES-368). Mobile web chips are "My Team" / "My Learning".
 - 2026-10-14: Figma navigation reworked: Label text properties on admin and learner menu items and Breadcrumb item, Icon swap on learner items, State=Focus variants on menu items and breadcrumb links, Show link 3/4/5 booleans on Breadcrumb (current page moved last); descriptions rewritten. Figma to code tables updated.
 - 2026-10-05: `src/pages/your-courses/components/AddContentMenu/` - the Create Course Add Content picker. It replaced the right-edge rail on 2026-10-05 (user feedback: the rail icons confused admins) and is a DS listbox (listbox.md) with hover flyouts, not this menu-item language. Figma: Create Course `10210:26756`.

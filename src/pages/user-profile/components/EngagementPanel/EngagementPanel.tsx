@@ -1,10 +1,6 @@
-import { ArrowRight } from 'iconsax-react'
-import { getProgressIllustration } from '@/assets/progress-illustrations'
 import EmptyState from '@/components/EmptyState/EmptyState'
-import StatTile from '@/components/StatTile/StatTile'
 import { EngagementChart } from '@/pages/my-team/EngagementTab'
-import { LeaderboardCard } from '@/pages/my-progress/MyProgress'
-import { progressStats } from '@/pages/my-progress/myProgressData'
+import { LeaderboardCard, ProgressStatTiles } from '@/pages/my-progress/MyProgress'
 import noActivityIllustration from '@/assets/empty-state-illustrations/pie-chart.svg'
 import '@/pages/my-progress/MyProgress.css'
 import './EngagementPanel.css'
@@ -29,34 +25,7 @@ function EngagementPanel({
 }) {
   return (
     <div className="upe-panel">
-      <div className="mp-stats">
-        {progressStats.map((s) => (
-          <StatTile
-            key={s.key}
-            className="mp-stat"
-            icon={<img src={getProgressIllustration(s.key)} alt="" width={32} height={32} />}
-            label={s.label}
-            /* Below the icon: the tiles sit near the top of the page, and the tooltip is tall. */
-            tooltipPosition="Bottom"
-            tooltip={
-              <span className="mp-tip">
-                {s.info.title && <strong className="mp-tip__title">{s.info.title}</strong>}
-                {s.info.lines.map((line) => (
-                  <span className="mp-tip__line" key={line}>
-                    {s.info.title ? `• ${line}` : line}
-                  </span>
-                ))}
-              </span>
-            }
-            value={empty ? '0' : s.value}
-            trailing={
-              <span className="mp-stat__arrow" aria-hidden="true">
-                <ArrowRight size={20} color="var(--text-secondary)" variant="Linear" />
-              </span>
-            }
-          />
-        ))}
-      </div>
+      <ProgressStatTiles empty={empty} />
 
       {/* One row: the chart and the Leaderboard. Without the Leaderboard the chart takes the row. */}
       <div className="upe-row">

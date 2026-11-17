@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ImportCurve } from 'iconsax-react'
+import avatarAnthonny from '@/assets/avatars/avatar-1.jpg'
 import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import MobileTopNav from '@/components/mobile/TopNav/TopNav'
@@ -9,9 +10,9 @@ import MobileTabNav, { type MobileTab } from '@/components/mobile/TabNav/TabNav'
 import { getAllPrograms } from '@/pages/programs/programStore'
 import ForYouScreen from './ForYouScreen'
 import WorkspaceScreen from './WorkspaceScreen'
-import MyProgressScreen, { ProgressInfoSheet } from './MyProgressScreen'
+import MyLearningScreen, { CourseProgressSheet, ProgressInfoSheet } from './MyLearningScreen'
 import type { ProgressStat } from '@/pages/my-progress/myProgressData'
-import ExternalTrainingScreen, { ExternalRecordSheet } from './ExternalTrainingScreen'
+import { ExternalRecordSheet } from './ExternalTrainingScreen'
 import { downloadCertificate } from '@/pages/learning-records/components/ExternalTraining/ExternalRecordsTable'
 import ProgramScreen from './ProgramScreen'
 import LessonFeedScreen from './LessonFeedScreen'
@@ -41,12 +42,10 @@ function MobileApp() {
   const [searchParams] = useSearchParams()
   const [tab, setTab] = useState<MobileTab>('home')
   const [homeChip, setHomeChip] = useState('For You')
-  /* My Team is not built in the app yet, so the Progress tab opens on My Progress. */
-  const [progressChip, setProgressChip] = useState('My Progress')
-  /** A My Progress stat tile's info, open in a bottom sheet. */
+  /** A My Learning stat tile's info, open in a bottom sheet. */
   const [progressInfo, setProgressInfo] = useState<ProgressStat | null>(null)
-  /** External Training, opened by View All on My Progress; `externalRecordId` is its open sheet. */
-  const [externalOpen, setExternalOpen] = useState(false)
+  /** My Learning: the course or the external training record open in a bottom sheet. */
+  const [courseSheetId, setCourseSheetId] = useState<string | null>(null)
   const [externalRecordId, setExternalRecordId] = useState<string | null>(null)
   /** Detail screens push over the tabs rather than leaving the phone frame. */
   const [openProgramId, setOpenProgramId] = useState<string | null>(searchParams.get('program'))
@@ -84,7 +83,7 @@ function MobileApp() {
     setCertificateOpen(false)
     setFeedIndex(null)
     setProgressInfo(null)
-    setExternalOpen(false)
+    setCourseSheetId(null)
     setExternalRecordId(null)
     setSheetIndex(null)
     setWebView(null)
@@ -112,9 +111,6 @@ function MobileApp() {
     if (openProgram) {
       return <MobileTopNav variant="detail" title="Program" onBack={() => setOpenProgramId(null)} />
     }
-    if (externalOpen) {
-      return <MobileTopNav variant="detail" title="External Training" onBack={() => setExternalOpen(false)} />
-    }
     if (savedOpen) {
       return <MobileTopNav variant="detail" title="Saved" onBack={() => setSavedOpen(false)} />
     }
@@ -139,18 +135,18 @@ function MobileApp() {
         )
       case 'search':
         return <MobileTopNav variant="search" />
-      case 'progress':
+      /* My Team has no screen in the app yet: its tab shows the title only, as Feed does. */
+      case 'team':
+        return <MobileTopNav variant="title" title="My Team" />
+      /* My Learning wears the profile header; its gear opens the settings menu. */
+      case 'learning':
         return (
           <MobileTopNav
-            variant="chips"
-            chips={[
-              { label: 'My Team', active: progressChip === 'My Team', onClick: () => setProgressChip('My Team') },
-              {
-                label: 'My Progress',
-                active: progressChip === 'My Progress',
-                onClick: () => setProgressChip('My Progress'),
-              },
-            ]}
+            variant="profile"
+            name="Anthonny Wallace"
+            role="Customer Support Specialist"
+            avatar={avatarAnthonny}
+            onEditProfile={() => setSettingsOpen(true)}
           />
         )
       case 'feed':
@@ -174,6 +170,13 @@ function MobileApp() {
             />
           ) : null}
           {progressInfo ? <ProgressInfoSheet stat={progressInfo} onClose={() => setProgressInfo(null)} /> : null}
+          {courseSheetId ? (
+            <CourseProgressSheet
+              courseId={courseSheetId}
+              onClose={() => setCourseSheetId(null)}
+              onDownload={() => showToast('success', 'Downloading...', ImportCurve)}
+            />
+          ) : null}
           {externalRecordId ? (
             <ExternalRecordSheet
               recordId={externalRecordId}
@@ -240,11 +243,6 @@ function MobileApp() {
         <MobileTabNav
           active={tab}
           onNavigate={(next) => {
-            /* Settings opens its menu over the current screen; the tab underneath stays. */
-            if (next === 'settings') {
-              setSettingsOpen(true)
-              return
-            }
             closeDetails()
             setSavedOpen(false)
             setAccountOpen(false)
@@ -301,11 +299,8 @@ function MobileApp() {
       {feedIndex === null && !openProgram && !openCourseId && !menuScreenOpen && tab === 'home' && homeChip === 'Your Workspace' ? (
         <WorkspaceScreen onOpenProgram={setOpenProgramId} onOpenCourse={setOpenCourseId} />
       ) : null}
-      {feedIndex === null && !openProgram && !openCourseId && !menuScreenOpen && tab === 'progress' && progressChip === 'My Progress' && !externalOpen ? (
-        <MyProgressScreen onInfo={setProgressInfo} onViewAllExternal={() => setExternalOpen(true)} />
-      ) : null}
-      {feedIndex === null && !openProgram && !openCourseId && !menuScreenOpen && tab === 'progress' && externalOpen ? (
-        <ExternalTrainingScreen onOpenRecord={setExternalRecordId} />
+      {feedIndex === null && !openProgram && !openCourseId && !menuScreenOpen && tab === 'learning' ? (
+        <MyLearningScreen onInfo={setProgressInfo} onOpenCourse={setCourseSheetId} onOpenRecord={setExternalRecordId} />
       ) : null}
       {/* The remaining tab screens land here as they are built. */}
     </PhoneFrame>

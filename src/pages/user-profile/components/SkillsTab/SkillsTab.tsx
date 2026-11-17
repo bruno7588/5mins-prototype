@@ -11,16 +11,16 @@ import './SkillsTab.css'
    sortable by level, 10 per page. Read only for everyone: the rows are not pressable and
    there are no actions. Prefix: ups- */
 
-interface Skill {
+export interface Skill {
   name: string
   description: string
   level: number
 }
 
-const MAX_LEVEL = 5
+export const MAX_LEVEL = 5
 const PAGE_SIZE = 10
 
-const SKILLS: Skill[] = [
+export const SKILLS: Skill[] = [
   { name: 'Ability to Motivate', description: 'Encouraging others to do their best work and stay committed to shared goals.', level: 3 },
   { name: 'Negotiation', description: 'Reaching agreements that work for both sides.', level: 2 },
   { name: 'Commercial Acumen', description: 'Understanding how the business makes money and what drives commercial decisions.', level: 4 },
@@ -53,7 +53,7 @@ function SkillsTab() {
       cellClassName: 'is-overflow',
       render: (skill) => (
         <span className="ups-skill">
-          <img src={getSkillIllustrationByName(skill.name)} alt="" width={32} height={32} />
+          <img src={getSkillIllustrationByName(skill.name)} alt="" width={24} height={24} />
           <span className="ups-skill__name">{skill.name}</span>
           <Tooltip position="Top" text={skill.description} />
         </span>

@@ -1,0 +1,107 @@
+/* Native app "My Learning" screen (DES-369): a tab bar, then one tab's content. The app
+   is dark-only, so these tokens resolve to their dark values. Prefix: m-ml- */
+.m-ml {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Four tabs are wider than the screen: the bar scrolls sideways, without a scrollbar. */
+.m-ml__bar {
+  padding: var(--space-m) var(--space-m) 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.m-ml__bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile tabs sit 24px apart only when they fit the screen; these four do not, so 16px. */
+.m-phone .ds-tabs.m-ml__tabs {
+  gap: var(--space-m);
+  width: max-content;
+}
+
+.m-ml__tabs .ds-tab {
+  flex-shrink: 0;
+}
+
+/* Engagement: the app's 16px screen padding around the shared content
+   (.mp-page--native in src/pages/my-progress/MyProgress.css). */
+.m-ml__panel {
+  width: 100%;
+  padding: var(--space-m);
+}
+
+/* Skills: one row per skill, the name on top and the level bar under it. Outlined with
+   no fill, as the web table's rows: read only, so it is not pressable and has no hover. */
+.m-ml-skill {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.m-ml-skill__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  min-width: 0;
+}
+
+.m-ml-skill__head img {
+  flex-shrink: 0;
+}
+
+.m-ml-skill__name {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.m-ml-skill__level {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.m-ml-skill__value {
+  flex-shrink: 0;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* The stat info bottom sheet (Figma My Progress 13099:23927): a title, then the
+   explanation as a list or one sentence, 12px apart. The sheet supplies the padding. */
+.m-ml-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.m-ml-info__title {
+  margin: 0;
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.m-ml-info__list,
+.m-ml-info__text {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.m-ml-info__list {
+  padding-left: var(--space-ml);
+  list-style: disc;
+}

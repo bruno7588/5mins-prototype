@@ -83,7 +83,7 @@ const TABS: { key: string; label: string; panel?: Panel }[] = [
    can't open it yet; Failed = attempt finished below the pass mark. */
 type Status = 'Scheduled' | 'Not Started' | 'In Progress' | 'Overdue' | 'Failed' | 'Completed'
 
-interface CourseProgress {
+export interface CourseProgress {
   id: string
   course: string
   thumb: string
@@ -101,7 +101,7 @@ interface CourseProgress {
    holds to (today is Aug 2026): only Completed carries a completion date and
    100% progress; Failed finished its attempt but scored under the pass mark;
    Scheduled starts in the future, so progress is 0 and nothing is late. */
-const COURSES: CourseProgress[] = [
+export const COURSES: CourseProgress[] = [
   { id: '1', course: 'Anti Money Laundering and Terrorist Financing', thumb: thumb1, startDate: '2026-01-12', dueDate: '2026-02-13', progress: 100, score: 80, status: 'Completed', completionDate: '2026-02-02', compliance: true },
   { id: '2', course: 'Fraud Prevention and Risk Assessment', thumb: thumb2, startDate: '2026-02-02', dueDate: '2026-03-06', progress: 100, score: 92, status: 'Completed', completionDate: '2026-02-27', compliance: false },
   { id: '3', course: 'Compliance Strategies for Financial Institutions', thumb: thumb3, startDate: '2026-03-09', dueDate: '2026-04-10', progress: 100, score: 75, status: 'Completed', completionDate: '2026-04-01', compliance: true },
@@ -145,7 +145,7 @@ type CourseView = 'all' | 'compliance'
 
 /* Overdue and Failed intentionally share the red error pill — colour carries
    severity, the label carries which. Matches how Failed reads on My Team. */
-const STATUS_BADGE: Record<Status, 'success' | 'informative' | 'in-progress' | 'error' | 'scheduled'> = {
+export const STATUS_BADGE: Record<Status, 'success' | 'informative' | 'in-progress' | 'error' | 'scheduled'> = {
   Scheduled: 'scheduled',
   'Not Started': 'informative',
   'In Progress': 'in-progress',
