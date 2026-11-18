@@ -44,48 +44,6 @@
   padding: var(--space-m) var(--space-m) 0;
 }
 
-/* Skills: one row per skill, the name on top and the level bar under it. Outlined with
-   no fill, as the web table's rows: read only, so it is not pressable and has no hover. */
-.m-ml-skill {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  padding: var(--space-m);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-}
-
-.m-ml-skill__head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  min-width: 0;
-}
-
-.m-ml-skill__head img {
-  flex-shrink: 0;
-}
-
-.m-ml-skill__name {
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.m-ml-skill__level {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.m-ml-skill__value {
-  flex-shrink: 0;
-  font-size: var(--font-size-md);
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
 /* The stat info bottom sheet (Figma My Progress 13099:23927): a title, then the
    explanation as a list or one sentence, 12px apart. The sheet supplies the padding. */
 .m-ml-info {
@@ -114,4 +72,30 @@
 .m-ml-info__list {
   padding-left: var(--space-ml);
   list-style: disc;
+}
+
+/* Skills: the web tab's chips and cards, one column, the chips 24px above the cards. */
+
+.m-ml__panel .ups-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.m-ml__panel .mp-skill.ups-card {
+  padding: var(--space-sm);
+  gap: var(--space-sm);
+}
+
+.m-ml__panel .ups-card .mp-skill__level {
+  width: 48px;
+  height: 48px;
+}
+
+.m-ml__panel .ups-card .mp-skill__hint {
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+}
+
+.m-ml__panel .ups-card .mp-skill__name {
+  font-size: var(--font-size-md);
+  font-weight: 600;
 }

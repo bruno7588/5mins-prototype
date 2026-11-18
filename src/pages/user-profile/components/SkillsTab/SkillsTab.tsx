@@ -1,116 +1,108 @@
-import { useMemo, useState } from 'react'
-import { ArrowDown } from 'iconsax-react'
-import Table, { type Column } from '@/components/Table/Table'
-import Tooltip from '@/components/Tooltip/Tooltip'
-import { getSkillIllustrationByName } from '@/assets/skill-icons'
+import { useState } from 'react'
+import Chip from '@/components/Chip/Chip'
+import { getLevelIllustration, type SkillLevel } from '@/assets/level-illustrations'
 import '@/pages/my-progress/MyProgress.css'
 import './SkillsTab.css'
 
-/* Skills tab of the person profile / My Learning (DES-369), built from the production
-   Skills tab: a card-row table of the person's skills with each one's level out of 5,
-   sortable by level, 10 per page. Read only for everyone: the rows are not pressable and
-   there are no actions. Prefix: ups- */
+/* Skills tab of the person profile / My Learning (DES-369): Role, Life and Tool skill
+   chips over that group's skill cards, each with its level shield, the points still to
+   earn and a points bar (production Skill Development). Read only for everyone: the cards
+   are not pressable. Two columns on web, one in the app. Prefix: ups- */
+
+export type SkillCategory = 'role' | 'life' | 'tool'
+
+export const SKILL_CATEGORIES: { key: SkillCategory; label: string }[] = [
+  { key: 'role', label: 'Role Skills' },
+  { key: 'life', label: 'Life Skills' },
+  { key: 'tool', label: 'Tool Skills' },
+]
 
 export interface Skill {
   name: string
-  description: string
-  level: number
+  category: SkillCategory
+  level: Exclude<SkillLevel, 'advanced' | 'expert' | 'master'>
+  /** Points earned towards completing the current level. */
+  points: number
 }
 
-export const MAX_LEVEL = 5
-const PAGE_SIZE = 10
+/** Points that complete each level. */
+const LEVEL_TARGET: Record<Skill['level'], number> = { 1: 10, 2: 30, 3: 50, 4: 80, 5: 120 }
 
 export const SKILLS: Skill[] = [
-  { name: 'Ability to Motivate', description: 'Encouraging others to do their best work and stay committed to shared goals.', level: 3 },
-  { name: 'Negotiation', description: 'Reaching agreements that work for both sides.', level: 2 },
-  { name: 'Commercial Acumen', description: 'Understanding how the business makes money and what drives commercial decisions.', level: 4 },
-  { name: 'Sales Strategy', description: 'Planning how to reach, win and keep customers.', level: 1 },
-  { name: 'Decision Making', description: 'Weighing the options and choosing a course of action with confidence.', level: 3 },
-  { name: 'Revenue Operations', description: 'Aligning sales, marketing and customer success around revenue.', level: 0 },
-  { name: 'Communication', description: 'Sharing ideas clearly and listening well, in writing and in person.', level: 5 },
-  { name: 'Strategic Thinking', description: 'Seeing the bigger picture and planning for the long term.', level: 2 },
-  { name: 'Stakeholder Management', description: 'Building trust with the people who have an interest in your work.', level: 4 },
-  { name: 'Market & Customer Research', description: 'Learning what customers need and how the market is moving.', level: 1 },
-  { name: 'Leadership', description: 'Guiding and supporting a team towards its goals.', level: 3 },
-  { name: 'Data Analysis', description: 'Turning data into findings people can act on.', level: 0 },
+  { name: 'Ability to Motivate', category: 'role', level: 3, points: 34 },
+  { name: 'Negotiation', category: 'role', level: 2, points: 12 },
+  { name: 'Commercial Acumen', category: 'role', level: 4, points: 62 },
+  { name: 'Sales Strategy', category: 'role', level: 1, points: 6 },
+  { name: 'Stakeholder Management', category: 'role', level: 4, points: 20 },
+  { name: 'Revenue Operations', category: 'role', level: 1, points: 0 },
+  { name: 'Leadership', category: 'role', level: 3, points: 41 },
+  { name: 'Market & Customer Research', category: 'role', level: 1, points: 3 },
+  { name: 'Communication', category: 'life', level: 5, points: 96 },
+  { name: 'Decision Making', category: 'life', level: 3, points: 18 },
+  { name: 'Strategic Thinking', category: 'life', level: 2, points: 25 },
+  { name: 'Time Management', category: 'life', level: 1, points: 7 },
+  { name: 'Data Analysis', category: 'tool', level: 1, points: 0 },
+  { name: 'Microsoft Excel', category: 'tool', level: 2, points: 9 },
+  { name: 'Salesforce', category: 'tool', level: 1, points: 4 },
 ]
 
-function SkillsTab() {
-  const [sortDesc, setSortDesc] = useState(false)
-  const [page, setPage] = useState(0)
-
-  const sorted = useMemo(
-    () => [...SKILLS].sort((a, b) => (sortDesc ? b.level - a.level : a.level - b.level)),
-    [sortDesc],
+/** The Role / Life / Tool chips. */
+export function SkillCategoryChips({ value, onChange }: { value: SkillCategory; onChange: (c: SkillCategory) => void }) {
+  return (
+    <div className="ups-chips" role="group" aria-label="Skill type">
+      {SKILL_CATEGORIES.map((c) => (
+        <Chip key={c.key} label={c.label} selected={value === c.key} onClick={() => onChange(c.key)} />
+      ))}
+    </div>
   )
-  const from = page * PAGE_SIZE
-  const rows = sorted.slice(from, from + PAGE_SIZE)
+}
 
-  const columns: Column<Skill>[] = [
-    {
-      key: 'name',
-      header: 'Skill name',
-      cellClassName: 'is-overflow',
-      render: (skill) => (
-        <span className="ups-skill">
-          <img src={getSkillIllustrationByName(skill.name)} alt="" width={24} height={24} />
-          <span className="ups-skill__name">{skill.name}</span>
-          <Tooltip position="Top" text={skill.description} />
+/** One skill: level shield, name, the points to complete the level and the points bar. */
+export function SkillProgressCard({ skill }: { skill: Skill }) {
+  const target = LEVEL_TARGET[skill.level]
+  return (
+    <li className="mp-skill ups-card">
+      <img
+        className="mp-skill__level"
+        src={getLevelIllustration(skill.level, { size: 'small' })}
+        alt={`Level ${skill.level}`}
+        width={48}
+        height={48}
+      />
+      <span className="mp-skill__info">
+        <span className="mp-skill__titles">
+          <span className="mp-skill__name">{skill.name}</span>
+          <span className="mp-skill__hint">Earn {target} points to complete this level.</span>
         </span>
-      ),
-    },
-    {
-      key: 'level',
-      header: (
-        <span className="up-th-sort">
-          Skill level
-          <Tooltip position="Top" text="Each skill has a level from 0 to 5." />
-          <ArrowDown
-            size={16}
-            color="currentColor"
-            variant="Linear"
-            className={`up-sort up-sort--active${sortDesc ? ' up-sort--desc' : ''}`}
-          />
-        </span>
-      ),
-      sortable: true,
-      width: '0 0 360px',
-      align: 'right',
-      render: (skill) => (
-        <span className="ups-level">
+        <span className="mp-skill__progress">
           <span
             className="mp-bar"
             role="progressbar"
             aria-valuemin={0}
-            aria-valuemax={MAX_LEVEL}
-            aria-valuenow={skill.level}
-            aria-label={`${skill.name} level`}
+            aria-valuemax={target}
+            aria-valuenow={skill.points}
+            aria-label={`${skill.name} points`}
           >
-            <span className="mp-bar__fill" style={{ width: `${(skill.level / MAX_LEVEL) * 100}%` }} />
+            <span className="mp-bar__fill" style={{ width: `${(skill.points / target) * 100}%` }} />
           </span>
-          <span className="ups-level__value">{skill.level}/{MAX_LEVEL}</span>
+          <span className="mp-skill__points">{skill.points}/{target} pts</span>
         </span>
-      ),
-    },
-  ]
+      </span>
+    </li>
+  )
+}
 
+function SkillsTab() {
+  const [category, setCategory] = useState<SkillCategory>('role')
   return (
-    <Table
-      columns={columns}
-      rows={rows}
-      getRowKey={(skill) => skill.name}
-      onSort={() => {
-        setSortDesc((d) => !d)
-        setPage(0)
-      }}
-      pagination={{
-        from: from + 1,
-        to: from + rows.length,
-        total: sorted.length,
-        onPrev: page > 0 ? () => setPage((p) => p - 1) : undefined,
-        onNext: from + PAGE_SIZE < sorted.length ? () => setPage((p) => p + 1) : undefined,
-      }}
-    />
+    <div className="ups">
+      <SkillCategoryChips value={category} onChange={setCategory} />
+      <ul className="ups-grid">
+        {SKILLS.filter((s) => s.category === category).map((skill) => (
+          <SkillProgressCard key={skill.name} skill={skill} />
+        ))}
+      </ul>
+    </div>
   )
 }
 

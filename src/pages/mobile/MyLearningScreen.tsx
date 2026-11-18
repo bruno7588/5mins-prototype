@@ -6,15 +6,13 @@ import BottomSheet from '@/components/BottomSheet/BottomSheet'
 import Button from '@/components/Button/Button'
 import Tabs from '@/components/Tabs/Tabs'
 import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
-import { getSkillIllustrationByName } from '@/assets/skill-icons'
 import { formatDay } from '@/data/externalTraining'
 import { LeaderboardCard, ProgressStatTiles } from '@/pages/my-progress/MyProgress'
 import type { ProgressStat } from '@/pages/my-progress/myProgressData'
 import { COURSES, STATUS_BADGE, STAT_GROUPS, shareOf, type CourseProgress } from '@/pages/user-profile/UserProfile'
 import { COURSE_STATUS_CARDS } from '@/data/courseStatusCards'
 import StatTile from '@/components/StatTile/StatTile'
-import { MAX_LEVEL, SKILLS, type Skill } from '@/pages/user-profile/components/SkillsTab/SkillsTab'
-import InfoIcon from '@/components/icons/InfoIcon'
+import SkillsTab from '@/pages/user-profile/components/SkillsTab/SkillsTab'
 import ExternalTrainingScreen from './ExternalTrainingScreen'
 import './ExternalTrainingScreen.css'
 import './MyLearningScreen.css'
@@ -23,8 +21,7 @@ import './MyLearningScreen.css'
    four tabs as the web page (src/pages/user-profile), with nothing in a table:
    - Engagement: the stat tiles and the Leaderboard, in one column. The Performance chart
      is web only.
-   - Skills: one row per skill, the level bar and "n/5" under its name. Read only; the
-     info icon opens the skill's description in a bottom sheet (a tooltip on web).
+   - Skills: the web tab as it is (Role / Life / Tool chips over skill cards), in one column.
    - Course Progress: the four status tiles (Completed, In progress, At risk, Overdue), as
      on web, then one card per course; the rest of the row in a bottom sheet.
    - External Training: the card list that screen already had.
@@ -43,14 +40,11 @@ const statusBadge = (c: CourseProgress) => <Badge type={STATUS_BADGE[c.status]} 
 
 function MyLearningScreen({
   onInfo,
-  onSkillInfo,
   onOpenCourse,
   onOpenRecord,
 }: {
   /** A stat tile's info icon was tapped. */
   onInfo: (stat: ProgressStat) => void
-  /** A skill's info icon was tapped. */
-  onSkillInfo: (skill: Skill) => void
   /** A course card was tapped. */
   onOpenCourse: (id: string) => void
   /** An external training card was tapped. */
@@ -81,37 +75,9 @@ function MyLearningScreen({
       )}
 
       {tab === 'skills' && (
-        <motion.ul key="skills" className="m-xt-list" {...ARRIVE(reduce)} transition={arriveTransition(reduce)}>
-          {SKILLS.map((skill) => (
-            <li key={skill.name} className="m-ml-skill">
-              <span className="m-ml-skill__head">
-                <img src={getSkillIllustrationByName(skill.name)} alt="" width={20} height={20} />
-                <span className="m-ml-skill__name">{skill.name}</span>
-                <button
-                  type="button"
-                  className="mp-stat__info"
-                  aria-label={`About ${skill.name}`}
-                  onClick={() => onSkillInfo(skill)}
-                >
-                  <InfoIcon size={20} color="var(--text-secondary)" />
-                </button>
-              </span>
-              <span className="m-ml-skill__level">
-                <span
-                  className="mp-bar"
-                  role="progressbar"
-                  aria-valuemin={0}
-                  aria-valuemax={MAX_LEVEL}
-                  aria-valuenow={skill.level}
-                  aria-label={`${skill.name} level`}
-                >
-                  <span className="mp-bar__fill" style={{ width: `${(skill.level / MAX_LEVEL) * 100}%` }} />
-                </span>
-                <span className="m-ml-skill__value">{skill.level}/{MAX_LEVEL}</span>
-              </span>
-            </li>
-          ))}
-        </motion.ul>
+        <motion.div key="skills" className="m-ml__panel" {...ARRIVE(reduce)} transition={arriveTransition(reduce)}>
+          <SkillsTab />
+        </motion.div>
       )}
 
       {tab === 'course-progress' && (
@@ -229,19 +195,6 @@ export function CourseProgressSheet({
             Download Certificate
           </Button>
         )}
-      </div>
-    </BottomSheet>
-  )
-}
-
-/* What a skill's info icon opens in the app: its description, which the web shows in a
-   tooltip. Rendered in the phone's overlay layer by MobileApp. */
-export function SkillInfoSheet({ skill, onClose }: { skill: Skill; onClose: () => void }) {
-  return (
-    <BottomSheet onClose={onClose} ariaLabel={skill.name}>
-      <div className="m-ml-info">
-        <h2 className="m-ml-info__title">{skill.name}</h2>
-        <p className="m-ml-info__text">{skill.description}</p>
       </div>
     </BottomSheet>
   )

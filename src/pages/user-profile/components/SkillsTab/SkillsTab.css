@@ -1,28 +1,63 @@
-/* Skills tab of the person profile / My Learning (DES-369). Prefix: ups- */
-.ups-skill {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-sm);
-  min-width: 0;
-}
-
-.ups-skill img {
-  flex-shrink: 0;
-}
-
-.ups-skill__name {
-  color: var(--text-primary);
-}
-
-/* Level: the shared progress bar (.mp-bar) and "n/5", right-aligned in the cell. */
-.ups-level {
+/* Skills tab of the person profile / My Learning (DES-369). Prefix: ups-
+   The card itself is the shared .mp-skill (MyProgress.css). */
+.ups {
   display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  width: 100%;
+  flex-direction: column;
+  gap: var(--space-l);
 }
 
-.ups-level__value {
-  flex-shrink: 0;
-  color: var(--text-primary);
+.ups-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+/* Two columns on web, 16px apart; one column on a narrow screen. */
+.ups-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-m);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 767px) {
+  .ups-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Read only: the card has no hover or pointer (the old My Progress card was a button). */
+.mp-skill.ups-card {
+  padding: var(--space-m);
+  cursor: default;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.mp-skill.ups-card:hover {
+  background: var(--cards-background);
+}
+
+:root:not([data-theme='dark']) .mp-skill.ups-card {
+  box-shadow: var(--shadow-s);
+}
+
+/* Web: the level shield is 56px (the app keeps 48px). */
+.ups-card .mp-skill__level {
+  width: 56px;
+  height: 56px;
+}
+
+/* Web: the hint is Paragraph M (the app keeps Paragraph S). */
+.ups-card .mp-skill__hint {
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+}
+
+/* Web: the skill name is H4 (the app keeps Paragraph M semibold). */
+.ups-card .mp-skill__name {
+  font-size: var(--font-size-h4);
+  font-weight: 700;
 }
