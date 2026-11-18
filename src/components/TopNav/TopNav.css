@@ -55,6 +55,50 @@
   background: var(--page-background-hover);
 }
 
+.topnav-icon-btn:focus-visible,
+.topnav-menu-btn:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+/* The hamburger only exists on the small bar. */
+.topnav-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  border-radius: var(--radius-s);
+  cursor: pointer;
+}
+
+.topnav-theme {
+  display: contents;
+}
+
+/* Small Admin bar (Library 5385:21862): 72px, 8px 16px padding, hamburger in place of
+   the logo, Exit Admin then Log out 12px apart, no theme toggle. */
+@media (max-width: 767px) {
+  .topnav {
+    height: 72px;
+    padding: var(--space-s) var(--space-m);
+  }
+
+  .topnav-logo,
+  .topnav-theme {
+    display: none;
+  }
+
+  .topnav-menu-btn {
+    display: inline-flex;
+  }
+
+  .topnav-right {
+    gap: var(--space-sm);
+  }
+}
+
 /* Logout menu — listbox-style popover anchored to the logout icon */
 
 .topnav-menu-wrap {

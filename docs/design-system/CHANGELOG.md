@@ -390,3 +390,4 @@ Add new entries here, not in the docs.
 - 2026-09-29: Responsive typography: "The older tablet and mobile steps listed here (28px, 22px) were off the type scale and have been removed."
 - 2026-08-26: Paragraph Medium (500): "Figma Library `5445:24009` (row `12132:2824`, verified 2026-08-26)."
 - 2026-08-26: Paragraph Semibold (600): "Figma Library `5445:24009` (row `6634:1291`, verified 2026-08-26)."
+- 2026-11-18: Top nav: the learner (Web app) bar is the shared `WebAppTopNav` built from Library 5385:20145 (Get App Text-2, Create Outlined-2, Spark and Events Bold 24px with the Events dot), replacing the per-page copies; the Admin `TopNav` gains the small bar below 768px (5385:21862, hamburger opens the side menu as a slide-in panel); Moon/Sun are Bold.

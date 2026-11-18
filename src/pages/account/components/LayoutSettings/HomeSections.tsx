@@ -20,7 +20,7 @@ import './HomeSections.css'
 
 /* Account & Settings > Layout > Home page sections (DEV-5185): rename, reorder and
    hide the Your Workspace sections, and hide the home banner. Nothing reaches
-   learners until Save Changes.
+   learners until Save Changes; Reset to Default saves at once.
    Prefix: acl-hs- */
 
 /** What a hidden section leaves behind, said under its field. */
@@ -271,9 +271,12 @@ function HomeSections({ onSaved, onReset }: { onSaved: () => void; onReset: () =
         </Button>
         <Button
           variant="outlined-2"
-          disabled={isDefault}
+          disabled={isDefault && sameHomeSections(saved, defaultHomeSections())}
           onClick={() => {
-            setDraft(defaultHomeSections())
+            // Resetting saves straight away; no Save Changes needed.
+            const defaults = defaultHomeSections()
+            setHomeSections(defaults)
+            setDraft(defaults)
             onReset()
           }}
         >

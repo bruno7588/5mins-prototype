@@ -1,0 +1,78 @@
+/* Learner (Web app) top nav, Library 5385:20145: 70px, 32px sides, 16px between
+   Get App, Create and the icons. */
+.mt-topnav {
+  height: 70px;
+  /* The tenant's header bar colour when a custom theme is set (brandTheme.ts). */
+  background: var(--brand-header, var(--page-background));
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* Right: 32px less the last icon button's 4px inset, so the glyph sits 32px from the edge. */
+  padding: 0 calc(var(--space-xl) - var(--space-xs)) 0 var(--space-xl);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.mt-topnav__logo {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.mt-topnav__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+/* The 32px hover circles carry the 16px between the 24px glyphs (4 + 8 + 4). */
+.mt-topnav__icons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.mt-topnav__iconbtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: var(--space-xs);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.mt-topnav__iconbtn:hover {
+  background: var(--input-background);
+}
+
+.mt-topnav__iconbtn:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+/* Notification dot on Events: 8px Danger-500, top right of the glyph (Figma 5862:7805). */
+.mt-topnav__dot {
+  position: absolute;
+  top: 0;
+  right: var(--space-xxs);
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--danger-500);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mt-topnav__iconbtn {
+    transition: none;
+  }
+}

@@ -1,3 +1,4 @@
+import WebAppTopNav from '@/components/WebAppTopNav/WebAppTopNav'
 import { useState, type ReactNode } from 'react'
 import Avatar from '@/components/Avatar/Avatar'
 import CompanyAvatar from '@/components/CompanyAvatar/CompanyAvatar'
@@ -5,13 +6,7 @@ import { headingFor, useHomeSections, type SectionKey } from '@/data/homeSection
 import { ORG_USERS } from '@/data/orgUsers'
 import { COMPANY } from '@/data/people'
 import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
-import { useHeaderTheme } from '@/data/brandTheme'
 import { useNavigate, useLocation } from 'react-router-dom'
-import {
-  Add,
-  FlashCircle,
-  Mobile,
-} from 'iconsax-react'
 import { Logo, learnerSideItems } from '../my-team/MyTeam'
 import ProfileMenu from '../../components/ProfileMenu/ProfileMenu'
 import '../my-team/MyTeam.css'
@@ -38,8 +33,6 @@ function EnrolledCourseCard({ course, onOpen }: { course: WorkspaceCourse; onOpe
 
 function Workspace() {
   const navigate = useNavigate()
-  // A custom header colour: its contents switch mode so they read on it.
-  const headerTheme = useHeaderTheme()
   const location = useLocation()
   const [selectedEvent, setSelectedEvent] = useState<CalendarItem | null>(null)
   // Fade in when arriving straight from the onboarding loading screen.
@@ -162,26 +155,7 @@ function Workspace() {
 
   return (
     <div className={`mt-app${fromOnboarding ? ' mt-app--fade-in' : ''}`}>
-      <header className="mt-topnav" data-theme={headerTheme}>
-        <button type="button" className="mt-topnav__logo" aria-label="Home" onClick={() => navigate('/workspace')}>
-          <Logo size={22} />
-        </button>
-        <div className="mt-topnav__right">
-          <button type="button" className="mt-topnav__textbtn ui-disabled" disabled>
-            <Mobile size={20} color="var(--text-secondary)" variant="Linear" />
-            <span>Get App</span>
-          </button>
-          <button type="button" className="mt-topnav__outlinebtn ui-disabled" disabled>
-            <Add size={20} color="var(--text-primary)" variant="Linear" />
-            <span>Create</span>
-          </button>
-          <div className="mt-topnav__icons">
-            <button type="button" className="mt-topnav__iconbtn ui-disabled" aria-label="Notifications (coming soon)" disabled>
-              <FlashCircle size={24} color="var(--text-primary)" variant="Linear" />
-            </button>
-          </div>
-        </div>
-      </header>
+      <WebAppTopNav />
 
       <div className="mt-main">
         <aside className="mt-side">

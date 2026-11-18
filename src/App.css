@@ -16,6 +16,13 @@
   padding-top: 0;
 }
 
+/* The small Admin top nav is 72px tall (Library 5385:21862). */
+@media (max-width: 767px) {
+  .app-body:not(.app-body--no-nav) {
+    padding-top: 72px;
+  }
+}
+
 .app-content-area {
   display: flex;
   flex: 1;

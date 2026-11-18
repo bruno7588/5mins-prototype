@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { setAdminMenuOpen, useAdminMenuOpen } from '@/components/TopNav/adminMenu'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
   Home,
@@ -38,9 +39,13 @@ function LeftSidebar() {
   const [peopleOpen, setPeopleOpen] = useState(isPeopleSection)
   const [contentOpen, setContentOpen] = useState(true)
   const [recordsOpen, setRecordsOpen] = useState(activePage.startsWith('/learning-records'))
+  const menuOpen = useAdminMenuOpen()
+  // Picking a page closes the slide-in menu.
+  useEffect(() => setAdminMenuOpen(false), [activePage])
 
   return (
-    <aside className="left-sidebar">
+    <>
+    <aside className={`left-sidebar${menuOpen ? ' left-sidebar--open' : ''}`}>
       <nav className="left-sidebar-nav">
         {/* Home */}
         <button className="sidebar-item ui-disabled" disabled>
@@ -247,6 +252,10 @@ function LeftSidebar() {
         </div>
       </div>
     </aside>
+    {/* Below 768px the menu is a slide-in panel opened from the small Admin top nav;
+        the scrim closes it. */}
+    <div className="left-sidebar-scrim" aria-hidden="true" onClick={() => setAdminMenuOpen(false)} />
+    </>
   )
 }
 

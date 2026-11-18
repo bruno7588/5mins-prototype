@@ -1,8 +1,8 @@
+import WebAppTopNav from '@/components/WebAppTopNav/WebAppTopNav'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
-import { useHeaderTheme } from '@/data/brandTheme'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { ArrowDown, ArrowDown2, ImportCurve, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus, Mobile, Add, FlashCircle } from 'iconsax-react'
+import { ArrowDown, ArrowDown2, ImportCurve, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Badge from '../../components/Badge/Badge'
@@ -293,8 +293,6 @@ function ProgressCell({ value }: { value: number }) {
 
 function UserProfile() {
   const navigate = useNavigate()
-  // A custom header colour: its contents switch mode so they read on it.
-  const headerTheme = useHeaderTheme()
   const { id = '1' } = useParams<{ id: string }>()
   /* Two doors into this page, and the route says which one the visitor came
      through: /people/:id from the admin People table, /my-team/people/:id from
@@ -951,26 +949,7 @@ function UserProfile() {
   if (isLearnerView) {
     return (
       <div className="mt-app">
-        <header className="mt-topnav" data-theme={headerTheme}>
-          <button type="button" className="mt-topnav__logo" aria-label="Home" onClick={() => navigate('/workspace')}>
-            <Logo size={22} />
-          </button>
-          <div className="mt-topnav__right">
-            <button type="button" className="mt-topnav__textbtn ui-disabled" disabled>
-              <Mobile size={20} color="var(--text-secondary)" variant="Linear" />
-              <span>Get App</span>
-            </button>
-            <button type="button" className="mt-topnav__outlinebtn ui-disabled" disabled>
-              <Add size={20} color="var(--text-primary)" variant="Linear" />
-              <span>Create</span>
-            </button>
-            <div className="mt-topnav__icons">
-              <button type="button" className="mt-topnav__iconbtn ui-disabled" aria-label="Notifications (coming soon)" disabled>
-                <FlashCircle size={24} color="var(--text-primary)" variant="Linear" />
-              </button>
-            </div>
-          </div>
-        </header>
+        <WebAppTopNav />
 
         <div className="mt-main">
           <aside className="mt-side">

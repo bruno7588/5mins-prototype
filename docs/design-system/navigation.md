@@ -7,7 +7,7 @@ description: Navigation system for 5Mins.ai - Top Navigation bar (Web app and Ad
 
 The app shell chrome: a fixed **Top Navigation** bar and a left **Side Panel Navigation**, plus the Breadcrumb trail and the mobile app chrome. Top nav and side panel come in two systems, **Web app** (learner) and **Admin**, that share tokens but differ in density and item styling.
 
-**Code:** `import TopNav from '@/components/TopNav/TopNav'`, `import LeftSidebar from '@/components/LeftSidebar/LeftSidebar'`, `import Breadcrumb from '@/components/Breadcrumb/Breadcrumb'`, `import TabNav from '@/components/mobile/TabNav/TabNav'`, `import TopNav from '@/components/mobile/TopNav/TopNav'` (mobile). The Web app (learner) top nav and side panel have no shared component yet: hand-rolled per page as `.mt-topnav` / `.mt-side`.
+**Code:** `import TopNav from '@/components/TopNav/TopNav'`, `import LeftSidebar from '@/components/LeftSidebar/LeftSidebar'`, `import Breadcrumb from '@/components/Breadcrumb/Breadcrumb'`, `import TabNav from '@/components/mobile/TabNav/TabNav'`, `import TopNav from '@/components/mobile/TopNav/TopNav'` (mobile). The Web app (learner) top nav is `import WebAppTopNav from '@/components/WebAppTopNav/WebAppTopNav'` (`live` turns its controls on; otherwise they are `.ui-disabled`); the learner side panel is still hand-rolled per page as `.mt-side`.
 **Figma:** Library `EC26cSVe9KNTCWXvYovakw`. Top Nav/Admin `5385:20137` (Admin large `5385:20161`); Side navigation `4697:13314`; Menu/Itens/WebApp `4674:25675`; Menu/Itens/Admin `10372:4045`; Breadcrumb dark `8497:2231` / `8497:1494`, light `11935:2368` / `8517:34946`; mobile `Top nav/ App` `1910:18375`, `Tab nav` `1324:35285` (dark nodes)
 **Last verified:** 2026-09-29
 
@@ -29,7 +29,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 **Do**
 - Mount it once in the app shell (`App.tsx`), never per page.
 - Keep Exit Admin as the Outlined-2 `Button`, size Small (`size="sm"`, Bold 12).
-- Icon-only buttons: 36px, circular `var(--radius-full)` hover on `--page-background-hover`, 20px glyphs in `--text-primary` (Moon/Sun Linear, Logout Bold), with a Tooltip naming the action. They sit flush in one group, so the hover circles carry the 16px spacing between glyphs.
+- Icon-only buttons: 36px, circular `var(--radius-full)` hover on `--page-background-hover`, 20px glyphs in `--text-primary` (Moon/Sun Bold, Logout Bold), with a Tooltip naming the action. They sit flush in one group, so the hover circles carry the 16px spacing between glyphs.
 - Hide an icon button's tooltip while its menu is open.
 - Give the icon buttons an `aria-label`; the theme toggle also carries `aria-pressed`.
 
@@ -129,10 +129,10 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
-| System | Admin / Web app | n/a | `TopNav` is the Admin bar | Web app is hand-rolled per page (`.mt-topnav`) |
-| Breakpoint | large / small | n/a | large only | no small (375) Admin bar in code |
+| System | Admin / Web app | n/a | `TopNav` is the Admin bar, `WebAppTopNav` the Web app bar | |
+| Breakpoint | large / small | n/a | CSS: small below 768px (Admin only) | Small Admin bar: 72px, hamburger opens the side menu as a slide-in panel over a scrim, no theme toggle |
 
-- **Figma only:** `System=Web app` (no shared component), `Breakpoint=small`.
+- **Figma only:** none.
 - **Code only:** the Moon/Sun theme toggle state (`aria-pressed`), the Logout menu (Log Out, Mobile App).
 - **Drift:** `TopNav` is the Admin top nav (inline SVG logo, Exit Admin, Moon/Sun dark-mode toggle, Logout button that opens a menu with Log Out and Mobile App), background `--page-background`. Figma draws the Moon/Logout glyphs at 21px; the code uses 20px, the nearest icon-scale size.
 

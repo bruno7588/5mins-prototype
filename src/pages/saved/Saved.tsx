@@ -1,8 +1,7 @@
+import WebAppTopNav from '@/components/WebAppTopNav/WebAppTopNav'
 import { useState } from 'react'
 import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { Add, FlashCircle, Mobile } from 'iconsax-react'
-import { useHeaderTheme } from '@/data/brandTheme'
 import Tabs from '@/components/Tabs/Tabs'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import EmptyState from '@/components/EmptyState/EmptyState'
@@ -40,7 +39,6 @@ const illustration = (src: string) => <img src={src} alt="" width={72} height={7
 function Saved() {
   const navigate = useNavigate()
   const location = useLocation()
-  const headerTheme = useHeaderTheme()
   const [searchParams, setSearchParams] = useSearchParams()
   const tab: Tab = TABS.find((t) => t.key === searchParams.get('tab'))?.key ?? 'bookmarks'
   const view: View = VIEWS.find((v) => v === searchParams.get('view')) ?? 'lessons'
@@ -65,26 +63,7 @@ function Saved() {
 
   return (
     <div className="mt-app">
-      <header className="mt-topnav" data-theme={headerTheme}>
-        <button type="button" className="mt-topnav__logo" aria-label="Home" onClick={() => navigate('/workspace')}>
-          <Logo size={22} />
-        </button>
-        <div className="mt-topnav__right">
-          <button type="button" className="mt-topnav__textbtn ui-disabled" disabled>
-            <Mobile size={20} color="var(--text-secondary)" variant="Linear" />
-            <span>Get App</span>
-          </button>
-          <button type="button" className="mt-topnav__outlinebtn ui-disabled" disabled>
-            <Add size={20} color="var(--text-primary)" variant="Linear" />
-            <span>Create</span>
-          </button>
-          <div className="mt-topnav__icons">
-            <button type="button" className="mt-topnav__iconbtn ui-disabled" aria-label="Notifications (coming soon)" disabled>
-              <FlashCircle size={24} color="var(--text-primary)" variant="Linear" />
-            </button>
-          </div>
-        </div>
-      </header>
+      <WebAppTopNav />
 
       <div className="mt-main">
         <aside className="mt-side">

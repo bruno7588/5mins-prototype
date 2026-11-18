@@ -12,6 +12,46 @@
   top: 70px;
 }
 
+.left-sidebar-scrim {
+  display: none;
+}
+
+/* Below 768px the menu leaves the page and slides in from the left under the small
+   Admin top nav (72px), over a scrim. */
+@media (max-width: 767px) {
+  .left-sidebar {
+    position: fixed;
+    top: 72px;
+    left: 0;
+    z-index: 99;
+    height: calc(100vh - 72px);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 250ms ease-in-out, visibility 0s linear 250ms;
+  }
+
+  .left-sidebar--open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 250ms ease-in-out;
+  }
+
+  .left-sidebar--open + .left-sidebar-scrim {
+    display: block;
+    position: fixed;
+    inset: 72px 0 0 0;
+    z-index: 98;
+    background: var(--scrim);
+  }
+}
+
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  .left-sidebar,
+  .left-sidebar--open {
+    transition: none;
+  }
+}
+
 .left-sidebar-nav {
   display: flex;
   flex-direction: column;

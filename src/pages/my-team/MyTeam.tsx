@@ -1,4 +1,4 @@
-import { useHeaderTheme } from '@/data/brandTheme'
+import WebAppTopNav from '@/components/WebAppTopNav/WebAppTopNav'
 import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
 import Button from '@/components/Button/Button'
 import { useEffect, useMemo, useState } from 'react'
@@ -10,10 +10,7 @@ import {
   SearchNormal1,
   Award,
   Medal,
-  FlashCircle,
   Messages2,
-  Add,
-  Mobile,
   SmsNotification,
   ArrowDown,
   ArrowUp,
@@ -254,8 +251,6 @@ export const learnerSideItems: { label: string; icon: typeof Home2; path?: strin
 
 function MyTeam() {
   const navigate = useNavigate()
-  // A custom header colour: its contents switch mode so they read on it.
-  const headerTheme = useHeaderTheme()
   const location = useLocation()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
@@ -589,26 +584,7 @@ function MyTeam() {
 
   return (
     <div className="mt-app">
-      <header className="mt-topnav" data-theme={headerTheme}>
-        <button type="button" className="mt-topnav__logo" aria-label="Home" onClick={() => navigate('/workspace')}>
-          <Logo size={22} />
-        </button>
-        <div className="mt-topnav__right">
-          <button type="button" className="mt-topnav__textbtn ui-disabled" disabled>
-            <Mobile size={20} color="var(--text-secondary)" variant="Linear" />
-            <span>Get App</span>
-          </button>
-          <button type="button" className="mt-topnav__outlinebtn ui-disabled" disabled>
-            <Add size={20} color="var(--text-primary)" variant="Linear" />
-            <span>Create</span>
-          </button>
-          <div className="mt-topnav__icons">
-            <button type="button" className="mt-topnav__iconbtn ui-disabled" aria-label="Notifications (coming soon)" disabled>
-              <FlashCircle size={24} color="var(--text-primary)" variant="Linear" />
-            </button>
-          </div>
-        </div>
-      </header>
+      <WebAppTopNav />
 
       <div className="mt-main">
         <aside className="mt-side">

@@ -7,8 +7,8 @@ import { Clock, Danger, StatusUp, TickCircle } from 'iconsax-react'
    shows a value string and the other a computed share.
 
    "At risk" is Not Started plus Failed, per the Figma. It is not a deadline
-   signal; Overdue is the one that reads the due date. In progress carries no
-   tooltip — the label says all there is to say. */
+   signal; Overdue is the one that reads the due date. All four carry a tooltip
+   (Bruno, 2026-11-18). */
 
 export interface CourseStatusCard {
   key: 'completed' | 'in-progress' | 'at-risk' | 'overdue'
@@ -28,6 +28,7 @@ export const COURSE_STATUS_CARDS: CourseStatusCard[] = [
     key: 'in-progress',
     label: 'In progress',
     icon: <StatusUp size={24} color="var(--primary-600)" variant="Linear" />,
+    tooltip: 'Started and not yet finished, including courses where quizzes are being retaken.',
   },
   {
     key: 'at-risk',

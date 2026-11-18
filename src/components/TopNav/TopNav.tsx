@@ -1,15 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
-import { Moon, Logout, Sun1 } from 'iconsax-react'
+import { HambergerMenu, Moon, Logout, Sun1 } from 'iconsax-react'
 import { useNavigate } from 'react-router-dom'
 import Button from '../Button/Button'
 import Tooltip from '../Tooltip/Tooltip'
 import { useTheme } from '../../hooks/useTheme'
 import { useHeaderTheme } from '@/data/brandTheme'
+import { setAdminMenuOpen, useAdminMenuOpen } from './adminMenu'
 import './TopNav.css'
 
+/* Admin top nav (Library Top Nav/Admin 5385:20137). Large from 768px: logo, Exit Admin,
+   theme and Log out. Small below 768px (5385:21862): the hamburger replaces the logo and
+   opens the side menu, and the theme toggle drops out. */
 function TopNav() {
   const navigate = useNavigate()
   const { isDark, toggle } = useTheme()
+  const sideMenuOpen = useAdminMenuOpen()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const goToApp = () => navigate('/workspace')
@@ -27,6 +32,15 @@ function TopNav() {
   return (
     <nav className="topnav" data-theme={headerTheme}>
       <div className="topnav-left">
+        <button
+          type="button"
+          className="topnav-menu-btn"
+          aria-label={sideMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={sideMenuOpen}
+          onClick={() => setAdminMenuOpen(!sideMenuOpen)}
+        >
+          <HambergerMenu size={32} color="var(--text-primary)" variant="Linear" />
+        </button>
         <button
           type="button"
           className="topnav-logo"
@@ -59,6 +73,7 @@ function TopNav() {
         {/* Icon buttons sit flush: their 36px hover circles carry the 16px spacing
             between the 20px glyphs (Figma 5385:20161). */}
         <div className="topnav-icons">
+        <span className="topnav-theme">
         <Tooltip text={isDark ? 'Light mode' : 'Dark mode'} position="Bottom" alignment="End" icon={false}>
           <button
             className="topnav-icon-btn"
@@ -67,12 +82,13 @@ function TopNav() {
             onClick={toggle}
           >
             {isDark ? (
-              <Sun1 size={20} color="var(--text-primary)" variant="Linear" />
+              <Sun1 size={20} color="var(--text-primary)" variant="Bold" />
             ) : (
-              <Moon size={20} color="var(--text-primary)" variant="Linear" />
+              <Moon size={20} color="var(--text-primary)" variant="Bold" />
             )}
           </button>
         </Tooltip>
+        </span>
         <div className="topnav-menu-wrap" ref={menuRef}>
           {(() => {
             const logoutButton = (

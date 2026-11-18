@@ -1,18 +1,15 @@
+import WebAppTopNav from '@/components/WebAppTopNav/WebAppTopNav'
 import { Fragment, useState } from 'react'
 import LearnerMobileNav from '@/components/LearnerMobileNav/LearnerMobileNav'
-import { useHeaderTheme } from '@/data/brandTheme'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import {
-  Add,
   ArchiveAdd,
   ArrowLeft2,
   ArrowUp2,
   CalendarAdd,
   Clock,
-  FlashCircle,
   InfoCircle,
   Lock,
-  Mobile,
   PlayCircle,
   Share,
 } from 'iconsax-react'
@@ -120,8 +117,6 @@ function LessonCard({ lesson, onOpen }: { lesson: CourseLesson; onOpen?: () => v
 
 function ProgramCourseDetails() {
   const navigate = useNavigate()
-  // A custom header colour: its contents switch mode so they read on it.
-  const headerTheme = useHeaderTheme()
   const location = useLocation()
   const { id } = useParams<{ id: string }>()
 
@@ -204,26 +199,7 @@ function ProgramCourseDetails() {
           </PhoneFrame>
         </div>
       )}
-      <header className="mt-topnav" data-theme={headerTheme}>
-        <button type="button" className="mt-topnav__logo" aria-label="Home" onClick={() => navigate('/workspace')}>
-          <Logo size={22} />
-        </button>
-        <div className="mt-topnav__right">
-          <button type="button" className="mt-topnav__textbtn">
-            <Mobile size={20} color="var(--text-secondary)" variant="Linear" />
-            <span>Get App</span>
-          </button>
-          <button type="button" className="mt-topnav__outlinebtn">
-            <Add size={20} color="currentColor" variant="Linear" />
-            <span>Create</span>
-          </button>
-          <div className="mt-topnav__icons">
-            <button type="button" className="mt-topnav__iconbtn" aria-label="Notifications">
-              <FlashCircle size={24} color="var(--text-primary)" variant="Linear" />
-            </button>
-          </div>
-        </div>
-      </header>
+      <WebAppTopNav live />
 
       <div className="mt-main">
         <aside className="mt-side">
