@@ -74,54 +74,16 @@
   gap: var(--space-m);
 }
 
-/* The question and its charts in one bordered card, 20px between them; the card sits
-   24px above the toolbar on the page's own rhythm. */
+/* The question and its charts in one plain card, 20px between them; the card sits
+   24px above the toolbar on the page's own rhythm. Card fill, no border, the card shadow. */
 .asp-card {
   display: flex;
   flex-direction: column;
   gap: var(--space-ml);
   padding: var(--space-l);
-  border: 1px solid var(--border);
   border-radius: var(--radius-m);
-  /* A green glow from the top-left corner with a warm amber under it, fading into the page. */
-  /* stylelint-disable-next-line -- the glow is Success-500 in both modes */
-  --asp-glow-green: color-mix(in srgb, var(--success-500) 18%, transparent);
-  /* stylelint-disable-next-line -- the warm edge is Warning-500 in both modes */
-  --asp-glow-warm: color-mix(in srgb, var(--warning-500) 12%, transparent);
-  background:
-    radial-gradient(75% 90% at 0% 0%, var(--asp-glow-green), transparent 70%),
-    radial-gradient(50% 75% at 0% 75%, var(--asp-glow-warm), transparent 70%),
-    var(--page-background);
-}
-
-/* Dark mode carries the glow more strongly, as in the reference. */
-:root[data-theme='dark'] .asp-card {
-  /* stylelint-disable-next-line -- the glow is Success-500 in both modes */
-  --asp-glow-green: color-mix(in srgb, var(--success-500) 32%, transparent);
-  /* stylelint-disable-next-line -- the warm edge is Warning-500 in both modes */
-  --asp-glow-warm: color-mix(in srgb, var(--warning-500) 22%, transparent);
-}
-
-/* The card takes the same tint as its tile on the Answers grid (asg-tile--* in
-   AssessmentGrid.css), over the page fill. Not clickable, so no hover change. */
-.asp-card.asp-card--tinted,
-.asp-card.asp-card--tinted:hover {
-  background: var(--asg-tint, none), var(--page-background);
-}
-
-/* A format with a mesh gradient (answerMesh.ts) draws it on a canvas behind the
-   content; isolation keeps the canvas under the card's text and charts. */
-.asp-card.asp-card--mesh {
-  position: relative;
-  isolation: isolate;
-  /* No fill: the mesh sits straight on the page, inside the card's own border. */
-  background: transparent;
-}
-
-.asp-card__mesh {
-  z-index: -1;
-  border-radius: inherit;
-  pointer-events: none;
+  background: var(--cards-background);
+  box-shadow: var(--shadow-card);
 }
 
 /* ── Toolbar ─────────────────────────────────────────────────────────────── */

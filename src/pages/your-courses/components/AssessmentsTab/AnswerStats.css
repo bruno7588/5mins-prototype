@@ -47,6 +47,19 @@
   right: 0;
 }
 
+/* On the card fill the arrows wear the input fill, not the page ground. */
+.ast .cl-deck__chev {
+  background: var(--input-background);
+}
+
+.ast .cl-deck__chev:hover:not(:disabled) {
+  background: var(--input-background-hover);
+}
+
+.ast .cl-deck__page:hover {
+  background: var(--cards-background-hover);
+}
+
 /* The page titles itself with the question, so a card is its label then its bars, 12px apart. */
 .ast .cl-deck__card {
   gap: var(--space-sm);

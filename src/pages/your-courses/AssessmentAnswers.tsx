@@ -36,10 +36,6 @@ import {
   type TextResponse,
   type VoteResponse,
 } from './components/AssessmentsTab/assessmentResults'
-import { artOf, tintClass } from './components/AssessmentsTab/tileTint'
-import MeshGradient from '@/components/MeshGradient/MeshGradient'
-import { useTheme } from '@/hooks/useTheme'
-import { answerMesh, hasMesh } from './answerMesh'
 import { COURSE_TITLE } from './courseTitle'
 import './components/AssessmentsTab/AssessmentGrid.css'
 import './AssessmentAnswers.css'
@@ -277,13 +273,6 @@ function AssessmentAnswers() {
   }, [id])
 
   const assessment = courseAssessments.find((x) => x.id === id)
-  /* The question card glows with a mesh gradient where its format has one (answerMesh.ts). */
-  const { theme } = useTheme()
-  const meshArt = assessment ? artOf(assessment) : undefined
-  const mesh = useMemo(
-    () => (meshArt && hasMesh(meshArt) ? answerMesh(meshArt) : null),
-    [meshArt, theme],
-  )
   const courseTitle = (location.state as { courseTitle?: string } | null)?.courseTitle ?? COURSE_TITLE
 
   /* An id that names nothing goes back to the list rather than rendering a page
@@ -577,8 +566,7 @@ function AssessmentAnswers() {
           />
 
           {/* The question and its charts share one bordered card. */}
-          <div className={mesh ? 'asp-card asp-card--mesh' : `asp-card asp-card--tinted${tintClass(a, new Set())}`}>
-          {mesh && <MeshGradient config={mesh} interactive={false} breathe={0} className="asp-card__mesh" />}
+          <div className="asp-card">
           <header className="asp-header">
             <div className="asp-headline">
               {/* The question leads the page. A lesson quiz has several, so the title is
