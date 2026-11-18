@@ -107,6 +107,72 @@ html.pcm-active *:not([data-inspect-ignore], [data-inspect-ignore] *) {
   align-items: baseline;
 }
 
+/* Edit and Delete on a reply, at the end of its name row. */
+.pcm-msg__actions {
+  position: relative;
+  display: flex;
+  margin-left: auto;
+  align-self: center;
+}
+
+/* The reply ⋯ menu: Edit and Delete, under the button, right-aligned. */
+.pcm-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+  padding: 4px;
+  border: 1px solid #27272a;
+  border-radius: 6px;
+  background: var(--neutral-900);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.25), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+}
+
+.pcm-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--neutral-200);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pcm-menu__item:hover,
+.pcm-menu__item:focus-visible {
+  outline: none;
+  background: var(--neutral-700);
+}
+
+.pcm-menu__item--danger:hover,
+.pcm-menu__item--danger:focus-visible {
+  color: var(--danger-400);
+}
+
+.pcm-msg__actions .pcm-icon-btn {
+  width: 24px;
+  height: 24px;
+  color: var(--neutral-200);
+}
+
+.pcm-msg__edit {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.pcm-msg .pcm-confirm {
+  margin: 8px 0 0;
+}
+
 .pcm-msg__author {
   color: var(--neutral-200);
   font-weight: 600;

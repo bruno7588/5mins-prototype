@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { createPortal } from 'react-dom'
-import { TickCircle, Trash } from 'iconsax-react'
+import { Edit2, More, TickCircle, Trash } from 'iconsax-react'
 import { anchorFor, locate, placeFor, type Anchor } from './commentAnchor'
 import { currentTrail, isReplaying, recordClicks, replayTrail, resetTrail } from './clickTrail'
 import { sendToClaude, type SendResult } from './sendToClaude'
@@ -112,6 +112,8 @@ interface Props {
   onAdd: (c: NewComment) => Promise<PrototypeComment | undefined>
   onResolve: (id: string, resolved: boolean) => void
   onDelete: (id: string) => Promise<void>
+  /** Save a reply's edited text. */
+  onEdit: (id: string, text: string) => Promise<void>
   onExit: () => void
   /** The page on screen: its comments get pins; the list shows every page. */
   currentRoute: string
@@ -121,16 +123,35 @@ interface Props {
   focusId?: string | null
 }
 
-function CommentLayer({ active, showList, onCloseList, comments, people, error, onAdd, onResolve, onDelete, onExit, currentRoute, onGoTo, focusId }: Props) {
+function CommentLayer({ active, showList, onCloseList, comments, people, error, onAdd, onResolve, onDelete, onEdit, onExit, currentRoute, onGoTo, focusId }: Props) {
   const [, setTick] = useState(0)
   const [hover, setHover] = useState<DOMRect | null>(null)
   const [draft, setDraft] = useState<{ anchor: Anchor; where: string; x: number; y: number } | null>(null)
   const [openId, setOpenId] = useState<string | null>(null)
   const [showResolved, setShowResolved] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  /* A reply being edited (its draft text) or waiting on the delete confirm. One at a time. */
+  const [editing, setEditing] = useState<{ id: string; text: string } | null>(null)
+  const [deletingReply, setDeletingReply] = useState<string | null>(null)
+  /** The reply whose ⋯ menu is open. */
+  const [menuFor, setMenuFor] = useState<string | null>(null)
+  // Close the ⋯ menu on any click outside it.
+  useEffect(() => {
+    if (!menuFor) return
+    const close = (e: MouseEvent) => {
+      if (!(e.target as Element).closest?.('.pcm-msg__actions')) setMenuFor(null)
+    }
+    document.addEventListener('mousedown', close)
+    return () => document.removeEventListener('mousedown', close)
+  }, [menuFor])
   // @names a just-posted comment mentioned that Slack could not place, by comment id.
   const [missed, setMissed] = useState<Record<string, string[]>>({})
-  useEffect(() => setConfirmDelete(false), [openId])
+  useEffect(() => {
+    setConfirmDelete(false)
+    setEditing(null)
+    setDeletingReply(null)
+    setMenuFor(null)
+  }, [openId])
   // Send to Claude Code (dev only): what happened to the open thread's last send.
   const [sent, setSent] = useState<{ id: string; state: 'sending' | SendResult } | null>(null)
   const threadDrag = useDrag(openId)
@@ -398,9 +419,114 @@ function CommentLayer({ active, showList, onCloseList, comments, people, error, 
               <div key={c.id} className="pcm-msg">
                 <div className="pcm-msg__meta">
                   <span className="pcm-msg__author">{c.author}</span>
-                  <span className="pcm-msg__time">{timeAgo(c.createdAt)}</span>
+                  <span className="pcm-msg__time">
+                    {timeAgo(c.createdAt)}
+                    {c.editedAt && ' · edited'}
+                  </span>
+                  {/* Replies can be edited or deleted; the thread's first comment uses the header's Delete. */}
+                  {c.id !== open.id && editing?.id !== c.id && (
+                    <span className="pcm-msg__actions">
+                      <button
+                        type="button"
+                        className="pcm-icon-btn"
+                        aria-label="Reply actions"
+                        aria-haspopup="menu"
+                        aria-expanded={menuFor === c.id}
+                        onClick={() => setMenuFor((m) => (m === c.id ? null : c.id))}
+                      >
+                        <More size={16} color="currentColor" variant="Bold" />
+                      </button>
+                      {menuFor === c.id && (
+                        <span className="pcm-menu" role="menu" onKeyDown={(e) => e.key === 'Escape' && setMenuFor(null)}>
+                          <button
+                            type="button"
+                            role="menuitem"
+                            className="pcm-menu__item"
+                            autoFocus
+                            onClick={() => {
+                              setMenuFor(null)
+                              setDeletingReply(null)
+                              setEditing({ id: c.id, text: c.text })
+                            }}
+                          >
+                            <Edit2 size={16} color="currentColor" variant="Linear" />
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            role="menuitem"
+                            className="pcm-menu__item pcm-menu__item--danger"
+                            onClick={() => {
+                              setMenuFor(null)
+                              setEditing(null)
+                              setDeletingReply(c.id)
+                            }}
+                          >
+                            <Trash size={16} color="currentColor" variant="Linear" />
+                            Delete
+                          </button>
+                        </span>
+                      )}
+                    </span>
+                  )}
                 </div>
-                <p className="pcm-msg__text">{c.text}</p>
+                {editing?.id === c.id ? (
+                  <form
+                    className="pcm-msg__edit"
+                    onSubmit={async (e) => {
+                      e.preventDefault()
+                      const text = editing.text.trim()
+                      if (!text) return
+                      setEditing(null)
+                      if (text !== c.text) await onEdit(c.id, text)
+                    }}
+                  >
+                    <textarea
+                      className="pcm-input pcm-textarea"
+                      aria-label="Edit reply"
+                      rows={3}
+                      autoFocus
+                      value={editing.text}
+                      onChange={(e) => setEditing({ id: c.id, text: e.target.value })}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Escape') {
+                          e.stopPropagation()
+                          setEditing(null)
+                        }
+                      }}
+                    />
+                    <div className="pcm-composer__actions">
+                      <button type="button" className="pcm-btn" onClick={() => setEditing(null)}>
+                        Cancel
+                      </button>
+                      <button type="submit" className="pcm-btn pcm-btn--primary" disabled={!editing.text.trim()}>
+                        Save
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <p className="pcm-msg__text">{c.text}</p>
+                )}
+                {deletingReply === c.id && (
+                  <div className="pcm-confirm" role="alertdialog" aria-label="Delete this reply?">
+                    <p className="pcm-confirm__text">Delete this reply? This can't be undone.</p>
+                    <div className="pcm-composer__actions">
+                      <button type="button" className="pcm-btn" onClick={() => setDeletingReply(null)}>
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        className="pcm-btn pcm-btn--danger"
+                        onClick={async () => {
+                          setDeletingReply(null)
+                          await onDelete(c.id)
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                )}
                 {/* Who an @mention sent the comment to, as a Slack DM. */}
                 {!!c.to?.length && <p className="pcm-msg__time pcm-msg__to">To {c.to.join(', ')}</p>}
                 {!!missed[c.id]?.length && (

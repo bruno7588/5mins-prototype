@@ -12,6 +12,8 @@ export interface PrototypeComment {
   createdAt: string
   resolved: boolean
   parentId: string | null
+  /** When the text was last edited; absent if never. */
+  editedAt?: string
   /** The clicks on the page that led to the anchor (clickTrail.ts); older comments have none. */
   steps?: string[]
   /** Where the anchor was when posted, e.g. "Assign courses, Select people to enrol". */
@@ -147,5 +149,21 @@ export function useComments(route: string, enabled: boolean) {
     [comments],
   )
 
-  return { comments, people, error, loading, add, setResolved, remove, reload: load }
+  // Edit a comment's text (used for replies). Shows at once; rolls back if the save fails.
+  const edit = useCallback(
+    async (id: string, text: string) => {
+      const target = comments.find((c) => c.id === id)
+      if (!target) return
+      setComments((prev) => prev.map((c) => (c.id === id ? { ...c, text, editedAt: new Date().toISOString() } : c)))
+      try {
+        await request({ method: 'PATCH', body: JSON.stringify({ route: target.route, id, text }) })
+      } catch (e) {
+        setComments((prev) => prev.map((c) => (c.id === id ? target : c)))
+        setError((e as Error).message)
+      }
+    },
+    [comments],
+  )
+
+  return { comments, people, error, loading, add, setResolved, remove, edit, reload: load }
 }

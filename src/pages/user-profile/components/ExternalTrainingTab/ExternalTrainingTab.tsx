@@ -122,7 +122,9 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast, addButto
           description={
             isAdmin
               ? `Record training ${firstName} has done outside 5Mins to track when it expires.`
-              : "Your admin records training done outside 5Mins from the certificate."
+              : isLearner
+                ? "Your admin records training done outside 5Mins from the certificate."
+                : 'Training done outside 5Mins appears here once added by an admin.'
           }
           primaryAction={canAddTraining ? { label: 'Add Training', onClick: () => openDrawer(null) } : undefined}
         />

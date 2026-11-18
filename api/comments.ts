@@ -46,6 +46,8 @@ export interface StoredComment {
   createdAt: string
   resolved: boolean
   parentId: string | null
+  /** When the text was last edited; absent if never. */
+  editedAt?: string
   /** Clicks (CSS paths) that reopen the drawer or step the anchor sits in. */
   steps?: string[]
   /** Readable location of the anchor, shown when it cannot be reopened. */
@@ -445,12 +447,18 @@ export async function PATCH(request: Request) {
   const body = (await request.json().catch(() => null)) as Record<string, unknown> | null
   const route = str(body?.route, MAX_ROUTE)
   const id = str(body?.id, 64)
-  if (!route || !id || typeof body?.resolved !== 'boolean') {
-    return json({ error: 'route, id and resolved are required' }, 400)
+  // Either resolve / reopen a thread, or edit a comment's text (no accounts: anyone can, like deleting).
+  const text = typeof body?.text === 'string' ? str(body.text, MAX_TEXT) : null
+  if (!route || !id || (typeof body?.resolved !== 'boolean' && !text)) {
+    return json({ error: 'route, id and resolved or text are required' }, 400)
   }
   const raw = (await redis('HGET', keyFor(route), id)) as string | null
   if (!raw) return json({ error: 'Not found' }, 404)
-  const comment = { ...(JSON.parse(raw) as StoredComment), resolved: body.resolved }
+  const stored = JSON.parse(raw) as StoredComment
+  const comment: StoredComment =
+    text
+      ? { ...stored, text, editedAt: new Date().toISOString() }
+      : { ...stored, resolved: body!.resolved as boolean }
   await redis('HSET', keyFor(route), id, JSON.stringify(comment))
   return json({ comment: publicView(comment) })
 }
