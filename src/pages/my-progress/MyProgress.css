@@ -305,10 +305,12 @@
   flex: 1 0 auto;
 }
 
-/* On the web Engagement tabs (My Learning and My Team) the Leaderboard is a filled
-   card like the Performance chart beside it: card fill, no border, the card shadow. */
+/* On the web Engagement tabs (My Learning and My Team) and in the app the Leaderboard
+   is a filled card, like the Performance chart beside it on the web: card fill, no
+   border, the card shadow. */
 .upe-row .mp-leaderboard,
-.eng .mp-leaderboard {
+.eng .mp-leaderboard,
+.mp-page--native .mp-leaderboard {
   border: none;
   background: var(--cards-background);
   box-shadow: var(--shadow-card);
