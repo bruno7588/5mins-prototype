@@ -782,7 +782,7 @@ function UserProfile() {
                 return (
                   <Tooltip text="No certificates to download" icon={false} disabled={n > 0}>
                     <Button
-                      variant="outlined-2"
+                      variant="outlined"
                       icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
                       disabled={!n}
                       onClick={() => showToast('success', `Downloading ${n} certificate${n === 1 ? '' : 's'}`)}
