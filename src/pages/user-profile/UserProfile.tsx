@@ -724,8 +724,9 @@ function UserProfile() {
                 <h2 className="up-name">{person.name}</h2>
                 <p className="up-meta">{person.role} · {person.email}</p>
               </div>
-              {/* The person's own page only; nobody edits someone else's. What it opens is not designed yet. */}
-              {isOwn && (
+              {/* The person's own page, and admins on People; a manager never edits their team.
+                  What it opens is not designed yet. */}
+              {(isOwn || externalViewer === 'admin') && (
                 <div className="up-ctas">
                   <Button variant="filled">
                     Edit Profile
@@ -782,7 +783,7 @@ function UserProfile() {
                 return (
                   <Tooltip text="No certificates to download" icon={false} disabled={n > 0}>
                     <Button
-                      variant="outlined"
+                      variant={externalViewer === 'admin' ? 'outlined-2' : 'outlined'}
                       icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
                       disabled={!n}
                       onClick={() => showToast('success', `Downloading ${n} certificate${n === 1 ? '' : 's'}`)}
