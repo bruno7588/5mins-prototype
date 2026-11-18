@@ -2,13 +2,9 @@ import { useState } from 'react'
 import { ArrowDown2, Diagram } from 'iconsax-react'
 import Checkbox from '../../components/Checkbox/Checkbox'
 import Tooltip from '../../components/Tooltip/Tooltip'
-import Avatar from '@/components/Avatar/Avatar'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
+import { LeaderboardCard } from '@/pages/my-progress/MyProgress'
 import { getSkillIllustrationByName } from '../../assets/skill-icons'
-import avatar1 from './assets/m1.jpg'
-import avatar2 from './assets/m2.jpg'
-import avatar3 from './assets/m3.jpg'
-import avatar4 from './assets/m4.jpg'
 import './EngagementTab.css'
 
 function InfoIcon({ className }: { className?: string }) {
@@ -48,31 +44,6 @@ const softSkills: Skill[] = [
   { name: 'Time Management', icon: '⏰', description: 'Ability to prioritise tasks, manage deadlines, and maintain productivity under pressure.', level: 2, maxLevel: 5 },
 ]
 
-interface LeaderboardEntry {
-  rank: number
-  name: string
-  role: string
-  avatarSrc?: string
-  initials: string
-  points: number
-  trend: 'up' | 'down' | 'same'
-}
-
-const leaderboardData: LeaderboardEntry[] = [
-  { rank: 1, name: 'Amina Al-Farsi', role: 'Client Relationship Manager', avatarSrc: avatar1, initials: 'AA', points: 1204, trend: 'up' },
-  { rank: 2, name: "Liam O'Sullivan", role: 'Customer Engagement Specialist', avatarSrc: avatar2, initials: 'LO', points: 1134, trend: 'down' },
-  { rank: 3, name: 'Sofia Gonzalez', role: 'User Experience Advocate', avatarSrc: avatar3, initials: 'SG', points: 1078, trend: 'same' },
-  { rank: 4, name: 'Akira Tanaka', role: 'Client Retention Strategist', avatarSrc: avatar4, initials: 'AT', points: 956, trend: 'up' },
-  { rank: 5, name: 'Nia Nkosi', role: 'Customer Insights Analyst', initials: 'NN', points: 944, trend: 'up' },
-  { rank: 6, name: 'Oliver Schmidt', role: 'Account Management Executive', initials: 'OS', points: 867, trend: 'down' },
-  { rank: 7, name: 'Fatima El-Mansour', role: 'Customer Success Consultant', initials: 'FE', points: 789, trend: 'down' },
-  { rank: 8, name: 'Raj Patel', role: 'Client Onboarding Specialist', initials: 'RP', points: 611, trend: 'down' },
-  { rank: 9, name: 'Chloe Dubois', role: 'Customer Support Coordinator', initials: 'CD', points: 595, trend: 'up' },
-  { rank: 10, name: 'Carlos Silva', role: 'Account Development Manager', initials: 'CS', points: 544, trend: 'up' },
-  { rank: 11, name: 'Yuki Sato', role: 'Customer Loyalty Director', initials: 'YS', points: 471, trend: 'down' },
-  { rank: 12, name: 'Zara Khan', role: 'Client Success Officer', initials: 'ZK', points: 329, trend: 'down' },
-]
-
 const chartBars = [
   { lessons: 47, quizzes: 59 },
   { lessons: 70, quizzes: 96 },
@@ -84,38 +55,6 @@ const chartBars = [
 
 const months = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar']
 const yLabels = ['2500', '2000', '1500', '1000', '500', '0']
-
-/* ── Rank badge for top 3 ── */
-
-const goldBadge = 'data:image/svg+xml,' + encodeURIComponent(`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#FFB800"/><circle cx="12" cy="12" r="9.5" fill="#FFCF74"/><circle cx="12" cy="12" r="9.5" fill="url(#g)" fill-opacity="0.3"/><defs><radialGradient id="g" cx="12" cy="4" r="16"><stop stop-color="white"/><stop offset="1" stop-color="white" stop-opacity="0"/></radialGradient></defs></svg>`)
-const silverBadge = 'data:image/svg+xml,' + encodeURIComponent(`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#9EA4B3"/><circle cx="12" cy="12" r="9.5" fill="#BFC2CC"/><circle cx="12" cy="12" r="9.5" fill="url(#g)" fill-opacity="0.3"/><defs><radialGradient id="g" cx="12" cy="4" r="16"><stop stop-color="white"/><stop offset="1" stop-color="white" stop-opacity="0"/></radialGradient></defs></svg>`)
-const bronzeBadge = 'data:image/svg+xml,' + encodeURIComponent(`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#C3771D"/><circle cx="12" cy="12" r="9.5" fill="#D4944A"/><circle cx="12" cy="12" r="9.5" fill="url(#g)" fill-opacity="0.3"/><defs><radialGradient id="g" cx="12" cy="4" r="16"><stop stop-color="white"/><stop offset="1" stop-color="white" stop-opacity="0"/></radialGradient></defs></svg>`)
-
-const rankBadges = [goldBadge, silverBadge, bronzeBadge]
-
-function ArrowUpIcon() {
-  return (
-    <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-      <path d="M4 1.5L7 5.5H1L4 1.5Z" fill="white" />
-    </svg>
-  )
-}
-
-function ArrowDownIcon() {
-  return (
-    <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-      <path d="M4 6.5L1 2.5H7L4 6.5Z" fill="white" />
-    </svg>
-  )
-}
-
-function DashIcon() {
-  return (
-    <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-      <rect x="1" y="3.5" width="6" height="1" rx="0.5" fill="white" />
-    </svg>
-  )
-}
 
 /* ── Skills competency card ── */
 
@@ -293,67 +232,6 @@ export function EngagementChart({
   )
 }
 
-/* ── Leaderboard card ── */
-
-function Leaderboard() {
-  const [scope, setScope] = useState<'team' | 'company'>('team')
-
-  return (
-    <div className="eng-card eng-leaderboard">
-      <div className="eng-card__headline">
-        <h3 className="eng-card__title">Leaderboard</h3>
-        <button type="button" className="eng-dropdown">
-          <span>This month</span>
-          <ArrowDown2 size={20} color="var(--text-secondary)" variant="Linear" />
-        </button>
-      </div>
-
-      <ContentSwitcher
-        className="eng-switcher--full"
-        ariaLabel="Leaderboard scope"
-        items={[
-          { key: 'team', label: 'Team' },
-          { key: 'company', label: 'Company' },
-        ]}
-        activeKey={scope}
-        onChange={(key) => setScope(key as typeof scope)}
-      />
-
-      <div className="eng-lb__list">
-        {leaderboardData.map((entry) => (
-          <div className="eng-lb__item" key={entry.rank}>
-            <div className="eng-lb__rank">
-              {entry.rank <= 3 ? (
-                <div className="eng-lb__rank-badge">
-                  <img src={rankBadges[entry.rank - 1]} alt="" />
-                  <span className="eng-lb__rank-num">{entry.rank}</span>
-                </div>
-              ) : (
-                <span className="eng-lb__rank-plain">{entry.rank}</span>
-              )}
-            </div>
-
-            <Avatar name={entry.name} src={entry.avatarSrc} size={40} />
-
-            <div className="eng-lb__info">
-              <p className="eng-lb__name">{entry.name}</p>
-              <p className="eng-lb__role">{entry.role}</p>
-            </div>
-
-            <span className="eng-lb__points">{entry.points} pt</span>
-
-            <div className={`eng-lb__arrow eng-lb__arrow--${entry.trend}`}>
-              {entry.trend === 'up' && <ArrowUpIcon />}
-              {entry.trend === 'down' && <ArrowDownIcon />}
-              {entry.trend === 'same' && <DashIcon />}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 /* ── Main engagement tab ── */
 
 function EngagementTab() {
@@ -363,7 +241,7 @@ function EngagementTab() {
         <SkillsCompetency />
         <EngagementChart />
       </div>
-      <Leaderboard />
+      <LeaderboardCard />
     </section>
   )
 }

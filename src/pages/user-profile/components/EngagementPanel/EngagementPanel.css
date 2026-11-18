@@ -14,13 +14,6 @@
   gap: var(--space-l);
 }
 
-/* Here the chart card is outlined with no fill, like the Leaderboard card beside it. */
-.upe-row .eng-card {
-  border: 1px solid var(--border);
-  background: none;
-  box-shadow: none;
-}
-
 .upe-row > :only-child {
   grid-column: 1 / -1;
 }
@@ -29,26 +22,4 @@
   .upe-row {
     grid-template-columns: minmax(0, 1fr);
   }
-}
-
-/* Leaderboard controls: Team / Company at one end of the card and the period at the
-   other (auto gap), on their own row under the title. */
-.upe-row .mp-leaderboard .mp-card__ctas {
-  flex: 1 0 100%;
-  justify-content: space-between;
-}
-
-/* The period dropdown is as wide as its text, not the space left over. */
-.upe-row .mp-leaderboard .dropdown-field {
-  width: auto;
-}
-
-/* Leaderboard rows: 8px between the medal (or rank number) and the avatar. The rank slot
-   is the medal's 24px, and the row's own 8px gap does the spacing. */
-.upe-row .mp-rank__position {
-  flex-basis: 24px;
-}
-
-.upe-row .mp-rank__person {
-  padding-left: 0;
 }
