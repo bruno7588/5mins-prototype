@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { createPortal } from 'react-dom'
-import { Edit2, More, TickCircle, Trash } from 'iconsax-react'
+import { Edit2, TickCircle, Trash } from 'iconsax-react'
+import MoreIcon from '@/components/icons/MoreIcon'
 import { anchorFor, locate, placeFor, type Anchor } from './commentAnchor'
 import { currentTrail, isReplaying, recordClicks, replayTrail, resetTrail } from './clickTrail'
 import { sendToClaude, type SendResult } from './sendToClaude'
@@ -434,7 +435,7 @@ function CommentLayer({ active, showList, onCloseList, comments, people, error, 
                         aria-expanded={menuFor === c.id}
                         onClick={() => setMenuFor((m) => (m === c.id ? null : c.id))}
                       >
-                        <More size={16} color="currentColor" variant="Bold" />
+                        <MoreIcon size={20} />
                       </button>
                       {menuFor === c.id && (
                         <span className="pcm-menu" role="menu" onKeyDown={(e) => e.key === 'Escape' && setMenuFor(null)}>
