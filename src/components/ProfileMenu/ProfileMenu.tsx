@@ -62,7 +62,7 @@ export default function ProfileMenu({
             }}
           >
             <Save2 size={20} color="var(--text-primary)" variant="Linear" />
-            <span>Saved</span>
+            <span>Saved content</span>
           </button>
           {/* Left enabled but not wired to a page on purpose: its destination is designed
               later (Bruno, 2026-11-17). It only closes the menu. */}

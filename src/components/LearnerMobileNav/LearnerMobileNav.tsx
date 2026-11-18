@@ -142,7 +142,7 @@ function LearnerMobileNav() {
               </button>
               <button type="button" role="menuitem" className="profile-menu__item" onClick={() => go('/saved')}>
                 {menuIcon(Save2)}
-                <span>Saved</span>
+                <span>Saved content</span>
               </button>
               <button type="button" role="menuitem" className="profile-menu__item ui-disabled" disabled>
                 {menuIcon(MonitorMobbile)}
