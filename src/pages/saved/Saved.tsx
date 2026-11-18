@@ -17,6 +17,7 @@ import { bookmarkedCourses, bookmarkedLessons, followedInstructors, likedLessons
 import noBookmarks from '@/assets/empty-state-illustrations/no-bookmarks.svg'
 import noLikes from '@/assets/empty-state-illustrations/no-likes.svg'
 import notFollowing from '@/assets/empty-state-illustrations/not-following.svg'
+import noCourses from '@/assets/empty-state-illustrations/no-playlists.svg'
 import '@/pages/my-team/MyTeam.css'
 import './Saved.css'
 
@@ -51,7 +52,7 @@ function Saved() {
     setSearchParams(next, { replace: true })
   }
 
-  const exploreLessons = { label: 'Explore Lessons', onClick: () => navigate('/for-you') }
+  const watchLessons = { label: 'Watch Lessons', onClick: () => navigate('/for-you') }
 
   const lessonGrid = (lessons: LessonGridCardProps[]) => (
     <div className="saved-lesson-grid">
@@ -99,7 +100,7 @@ function Saved() {
             <header className="mt-pageheader">
               <div className="mt-pageheader__row">
                 <div className="mt-pageheader__headline">
-                  <h2 className="mt-pageheader__title">Saved</h2>
+                  <h2 className="mt-pageheader__title">Saved content</h2>
                 </div>
               </div>
               <div className="mt-pageheader__divider" />
@@ -129,9 +130,9 @@ function Saved() {
                   ) : (
                     <EmptyState
                       illustration={illustration(noBookmarks)}
-                      title="No bookmarked lessons yet"
-                      description="Use the bookmark on any lesson to keep it here for later."
-                      secondaryAction={exploreLessons}
+                      title="No lessons here!"
+                      description="Spot a lesson of your interest? Bookmark it to watch anytime."
+                      secondaryAction={watchLessons}
                     />
                   ))}
                 {view === 'courses' &&
@@ -143,10 +144,10 @@ function Saved() {
                     </div>
                   ) : (
                     <EmptyState
-                      illustration={illustration(noBookmarks)}
-                      title="No bookmarked courses yet"
-                      description="Use the bookmark on any course to keep it here for later."
-                      secondaryAction={{ label: 'Browse Courses', onClick: () => navigate('/workspace') }}
+                      illustration={illustration(noCourses)}
+                      title="No course!"
+                      description="Teams that use courses have a 60% boost in learning efficiency."
+                      secondaryAction={{ label: 'Find Courses', onClick: () => navigate('/workspace') }}
                     />
                   ))}
               </div>
@@ -158,9 +159,9 @@ function Saved() {
               ) : (
                 <EmptyState
                   illustration={illustration(noLikes)}
-                  title="No likes yet"
-                  description="Lessons you like will be here, so they're easy to find again."
-                  secondaryAction={exploreLessons}
+                  title="No likes!"
+                  description="Tap Like on any lesson you enjoy, and they'll appear right here for easy access."
+                  secondaryAction={watchLessons}
                 />
               ))}
 
@@ -173,9 +174,9 @@ function Saved() {
               ) : (
                 <EmptyState
                   illustration={illustration(notFollowing)}
-                  title="Not following anyone yet"
-                  description="Follow an instructor from one of their lessons and they'll be listed here."
-                  secondaryAction={exploreLessons}
+                  title="Not following yet!"
+                  description="Pick your top instructors, and Follow to stay updated with content you'll love!"
+                  secondaryAction={{ label: 'Check Top Instructors', onClick: () => navigate('/for-you') }}
                 />
               ))}
           </div>
