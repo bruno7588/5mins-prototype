@@ -6,8 +6,8 @@ import './SkillsTab.css'
 
 /* Skills tab of the person profile / My Learning (DES-369): Role, Life and Tool skill
    chips over that group's skill cards, each with its level shield, the points still to
-   earn and a points bar (production Skill Development). Read only for everyone: the cards
-   are not pressable. Two columns on web, one in the app. Prefix: ups- */
+   earn and a points bar (production Skill Development). A card opens the skill's learning
+   path (not built yet), so it has a hover state. Two columns on web, one in the app. Prefix: ups- */
 
 export type SkillCategory = 'role' | 'life' | 'tool'
 
@@ -61,7 +61,9 @@ export function SkillCategoryChips({ value, onChange }: { value: SkillCategory; 
 export function SkillProgressCard({ skill }: { skill: Skill }) {
   const target = LEVEL_TARGET[skill.level]
   return (
-    <li className="mp-skill ups-card">
+    <li>
+      {/* Opens the skill's learning path, which is not built yet: hover only for now. */}
+      <button type="button" className="mp-skill ups-card">
       <img
         className="mp-skill__level"
         src={getLevelIllustration(skill.level, { size: 'small' })}
@@ -88,6 +90,7 @@ export function SkillProgressCard({ skill }: { skill: Skill }) {
           <span className="mp-skill__points">{skill.points}/{target} pts</span>
         </span>
       </span>
+      </button>
     </li>
   )
 }

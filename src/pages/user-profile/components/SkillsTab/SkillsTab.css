@@ -28,16 +28,11 @@
   }
 }
 
-/* Read only: the card has no hover or pointer (the old My Progress card was a button). */
+/* The card is a button (.mp-skill gives the pointer, the hover fill and the focus ring). */
 .mp-skill.ups-card {
   padding: var(--space-m);
-  cursor: default;
   align-items: flex-start;
   gap: var(--space-sm);
-}
-
-.mp-skill.ups-card:hover {
-  background: var(--cards-background);
 }
 
 :root:not([data-theme='dark']) .mp-skill.ups-card {
