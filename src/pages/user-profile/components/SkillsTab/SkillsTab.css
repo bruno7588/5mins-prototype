@@ -44,7 +44,7 @@
   box-shadow: var(--shadow-s);
 }
 
-/* Web: the level shield is 56px (the app keeps 48px). */
+/* Web: the level shield is 56px (the app uses 40px). */
 .ups-card .mp-skill__level {
   width: 56px;
   height: 56px;
