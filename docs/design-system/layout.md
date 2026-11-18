@@ -32,6 +32,44 @@ Layout foundations: spacing, roundness, padding, margins, icon sizes, shadows, a
 - Don't write raw px that a token covers.
 - Don't use the micro tokens `--space-xxs` / `--space-xss` / `--space-ssm` (2/6/10px) for layout spacing; they are for inside components.
 
+### Page composition
+
+**Intent:** one spacing rhythm between the blocks of a page, so every screen reads the same. Values from the Library Screens templates (`7372:8701`) and the handed-off My Progress V2 (`BOhmqUXffhkK0lGxLKfhAE`, `13032:4312`) and Training Records (`zVlBdYROn1nHLLKGJRK505`, `12403:117166`) screens.
+
+**Web (Admin and Web app)**
+
+| Relationship | Value |
+|---|---|
+| Page padding (Body, beside the side panel) | 20px top and bottom, 24px sides (`--space-ml` `--space-l`); 24px top when the page has no Header |
+| Page Header → first block | 24px `--space-l` |
+| Page block → page block (header, filter bar, toolbar, stat row, table, card rows) | 24px `--space-l` |
+| Card → card in a row or grid, row → row | 24px `--space-l` |
+| Inside the page Header: label row, title row, divider, tabs | 16px `--space-m` |
+| Title → supporting text | 4px `--space-xs` |
+| Header CTA cluster | 12px `--space-sm` |
+| Toolbar buttons (e.g. Download Report, Add Training) | 16px `--space-m` |
+| Panel / card padding (dashboard panel) | 16px `--space-m` |
+| Panel header → panel body | 16px `--space-m` |
+| List items inside a panel | 20px `--space-ml` |
+| Table header → first row, row → row | 12px `--space-sm` |
+| Compact rows (leaderboard) | 12px `--space-sm` |
+
+**Mobile app** (Library `Type=Mobile App`, 375 x 812)
+
+| Relationship | Value |
+|---|---|
+| Body padding | 16px all round `--space-m` (content 343px wide) |
+| Block → block in the body | 16px `--space-m` |
+| Top nav | 64px high, 12px 16px padding, chips 8px apart, 28px icons 16px apart |
+| Tab bar | 8px 16px padding, tabs 4px padding, 24px icon 4px above a 10px label |
+
+**Do**
+- Use 24px between every top-level block on a web page; go tighter only inside a block.
+- Use 16px for both padding and gaps in the mobile app.
+
+**Don't**
+- Don't use 20px or 32px between top-level page blocks on web.
+
 ### Radius
 
 **Intent:** consistent corner roundness that tells surfaces and controls apart.
@@ -40,7 +78,7 @@ Layout foundations: spacing, roundness, padding, margins, icon sizes, shadows, a
 - Setting any `border-radius`.
 
 **Don't use when**
-- Icon-only button hover or avatars → always `var(--radius-full)`, never a square
+- Icon-only button hover or people avatars → always `var(--radius-full)`, never a square; company and instructor avatars are square at `var(--radius-sm)` ([doc](avatars.md))
 
 **Do**
 - Buttons, inputs, cards, table rows, dialogs and modals: `var(--radius-sm)` (12px).
@@ -60,7 +98,7 @@ Layout foundations: spacing, roundness, padding, margins, icon sizes, shadows, a
 **Don't use when**
 
 **Do**
-- Use `var(--shadow-s)` or `var(--shadow-l)` (`var(--shadow-xl)` exists but is currently unused); `var(--shadow-card)` for a `--cards-background` card on `--page-background`; `var(--shadow-panel)` for right-anchored side panels.
+- Use `var(--shadow-s)` or `var(--shadow-l)` (`var(--shadow-xl)` exists but is currently unused); `var(--shadow-card)` for a `--cards-background` card on `--page-background` (Shadow S in light mode, none in dark); `var(--shadow-panel)` for right-anchored side panels.
 - Write raw leftward Shadow L values as `var(--shadow-l)`.
 
 **Don't**
@@ -176,9 +214,9 @@ Values above 40px have no named token - use the rem value directly (e.g. `3rem` 
 - Card padding → `--space-m` compact / `--space-l` standard
 
 **Layout spacing**
-- Form element gaps, section gaps → `--space-ml` (20px)
-- Page padding, page section gaps → `--space-l` (24px)
-- Large section separation → `--space-xl` / `--space-xxl` (32/40px)
+- Form field gaps, list items inside a panel → `--space-ml` (20px)
+- Page block gaps, card gaps, page side padding → `--space-l` (24px); full table in Page composition above
+- Mobile app body padding and block gaps → `--space-m` (16px)
 
 ### Roundness (border radius)
 
@@ -214,7 +252,7 @@ Three elevation levels per the Figma styles:
 | `--shadow-l` | Dialogs, modals, menus, dropdowns, tooltips, popovers |
 | `--shadow-xl` | Currently unused (modals and dialogs use Shadow L) |
 
-`--shadow-card` is Shadow S in both modes, matching the Figma cards. Use it wherever a `--cards-background` card sits directly on `--page-background`.
+`--shadow-card` is Shadow S in light mode and none in dark (Bruno, 2026-11-18): dark cards separate from the page by their fill. Use it wherever a `--cards-background` card sits directly on `--page-background`.
 
 `--shadow-panel` (`-24px 0 24px 0 rgba(32, 34, 42, 0.04)`) is the leftward shadow for right-anchored side panels. Shadow L itself is leftward in Figma, and the token matches it. A few `filter: drop-shadow()` surfaces (Tooltip and some popovers) cannot take the token and write the same value by hand.
 

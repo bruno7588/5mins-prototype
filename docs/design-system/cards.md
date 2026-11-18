@@ -309,7 +309,7 @@ A single video micro-lesson. Three desktop variants plus a mobile list card. Sou
 
 #### Lesson grid tile (170 x 230)
 
-Use in grid or library browse layouts. Carries Shadow S (`var(--shadow-card)`) like every card.
+Use in grid or library browse layouts. Carries Shadow S (`var(--shadow-card)`, light mode only) like every card.
 
 Anatomy, top to bottom:
 
@@ -682,7 +682,7 @@ An admin library grouping ("folder") that previews its courses as a stacked deck
 
 Anatomy (12px gap between card and info, `var(--space-sm)`):
 
-- **Card surface:** `--cards-background`, radius 12px, 24px padding, `var(--shadow-card)` (Shadow S in both modes).
+- **Card surface:** `--cards-background`, radius 12px, 24px padding, `var(--shadow-card)` (Shadow S, light mode only).
 - **Thumb stack** centred in a 240 x 164 area, all layers radius 8px, front image bottom-anchored:
   - Back layer (3+ only): 208 x 118, `--input-background`, centred 23px above the middle
   - Middle layer (2 and 3+): 224 x 132, `--cards-background-hover`, centred 4px above the middle
@@ -832,7 +832,7 @@ Shared values used by every card:
 - **Font:** Poppins. Title = Bold 700. Metadata = Regular 400. Pills = Medium 500.
 - **Type scale:** H4 = 16px / line-height 1.5. H5 = 14px / 1.5. Paragraph M = 14px / 1.5. Paragraph S = 12px / 1.2.
 - **Radius:** cards use 12px. Inner thumbnails use 8px.
-- **Card shadow (Shadow S):** `box-shadow: var(--shadow-s);` (see `layout.md` for the shadow scale).
+- **Card shadow (Shadow S, light mode only):** `box-shadow: var(--shadow-card);` (see `layout.md` for the shadow scale).
 - **Spacing tokens:** XS 4px, S 8px, SM 12px, M 16px, L 24px, ML 20px, XXL 40px.
 - **Progress:** lesson and skill progress `--primary-600` (cyan); course progress `--selected` (gold); completed `--success-500`.
 

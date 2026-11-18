@@ -260,7 +260,7 @@
   padding: var(--space-m);
   background: var(--cards-background);
   border-radius: 12px;
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-card);
   transition: background 150ms ease;
 }
 

@@ -8,7 +8,7 @@
   padding: var(--space-sm);
   background: var(--cards-background);
   border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-card);
   text-align: left;
 }
 

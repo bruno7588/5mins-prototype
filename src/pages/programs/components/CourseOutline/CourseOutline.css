@@ -75,7 +75,7 @@
   align-items: center;
   border-radius: var(--radius-sm);
   background: var(--cards-background);
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-card);
   transition: background 150ms ease;
 }
 

@@ -7,7 +7,7 @@
   background: var(--cards-background);
   border-radius: var(--radius-s);
   overflow: hidden;
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-card);
   text-align: left;
 }
 

@@ -1665,7 +1665,7 @@
 .roles-single-panel {
   display: flex;
   flex-direction: column;
-  gap: var(--space-ml);
+  gap: var(--space-l);
   flex: 1;
   min-height: 0;
   overflow-y: auto;

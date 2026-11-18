@@ -9,7 +9,7 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: var(--space-m);
+  gap: var(--space-l);
 }
 
 .your-content-header {

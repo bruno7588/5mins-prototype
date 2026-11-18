@@ -183,7 +183,7 @@
   padding: var(--space-sm);
   border-radius: var(--radius-sm);
   background: var(--cards-background);
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-card);
 }
 
 /* With a button under the text the card grows, so the art sits at the top. */

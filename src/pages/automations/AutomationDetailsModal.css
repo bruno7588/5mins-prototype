@@ -96,7 +96,7 @@
   padding: var(--space-m);
   background: var(--cards-background);
   border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-card);
 }
 
 .automation-details-card-lead {
@@ -267,7 +267,7 @@
   align-items: center;
   background: var(--cards-background);
   border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-card);
 }
 
 /* Dark mode keeps the border instead of the shadow. */

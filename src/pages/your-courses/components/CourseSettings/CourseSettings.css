@@ -85,7 +85,7 @@
   padding: var(--space-m);
   border-radius: var(--radius-sm);
   background: var(--cards-background);
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-card);
 }
 
 /* A single setting row inside the section card */

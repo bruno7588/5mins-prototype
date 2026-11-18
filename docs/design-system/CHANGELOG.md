@@ -6,6 +6,11 @@ Add new entries here, not in the docs.
 
 ## Library-wide
 
+- 2026-11-18: New `mobile.md`: mobile app foundations (dark only, no hover or tooltips, 16px body padding and gaps, compact type, button size per placement, map of mobile specs). Component mobile specs stay in their own docs.
+- 2026-11-18: Page-level containers use 24px between blocks (Workspace and Events sections were 32px; Your Content, Questions Bank and SCORM 16px; Program details, Program admin, Automations, For You and Roles 20px; Calendar columns 32px).
+- 2026-11-18: `layout.md` gains a Page composition table (web and mobile app), read from the Library Screens templates and the My Progress V2 and Training Records screens: 24px between top-level page blocks and cards on web (was "section gaps 20px"), 16px body padding and gaps in the app.
+- 2026-11-18: Square avatar (companies and instructors) radius back to 12px (`--radius-sm`, was 8px `--radius-s` since 2026-10-15).
+- 2026-11-18: Card Shadow S is light mode only: `--shadow-card` is `none` in dark (was Shadow S in both modes); dark cards separate from the page by their fill.
 - 2026-11-12: Three Surface colours added in the Library for badge fills: `Badge-success-background`, `Badge-warning-background` and `Badge-danger-background` (Success-500 / Warning-500 / Danger-500 @ 16%, both modes; `--badge-success-background`, `--badge-warning-background`, `--badge-danger-background`). The Success, Warning and Error badges use them. The Warning badge is back to 16% (was `Alert-background` at 12%); `Alert-background` is now the Alert banner only.
 - 2026-11-12: Danger menu items (RowActionsMenu `danger`) colour their supporting text `--text-error` as well as the label and icon (was `--text-tertiary`); disabled danger items stay `--text-disabled`.
 - 2026-11-12: Alert and Callout with supporting text: the action moved from under the text to the far right, centred on the alert, 24px from the text (was under the supporting text, 8px below). Library variants and the shared Alert component updated.

@@ -21,7 +21,7 @@
   flex-direction: column;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-card);
 }
 
 .event-drawer__card-header {

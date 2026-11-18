@@ -50,7 +50,7 @@
 .automations-manage {
   display: flex;
   flex-direction: column;
-  gap: var(--space-ml); /* 20px */
+  gap: var(--space-l);
 }
 
 /* ── Template cards ── */
@@ -338,7 +338,7 @@
 .automations-activity {
   display: flex;
   flex-direction: column;
-  gap: var(--space-ml); /* 20px */
+  gap: var(--space-l);
 }
 
 /* ── Stat cards ── */

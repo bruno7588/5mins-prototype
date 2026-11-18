@@ -34,6 +34,7 @@ Every component doc follows `_template.md`: Usage, then Figma to code. Read the 
 | `colors.md` | Palettes, semantic surface/text tokens, light/dark values, three-amber system | Any colour decision |
 | `typography.md` | Poppins scale, weights, line heights, `--font-size-*` | Any text style |
 | `layout.md` | Spacing, radius, icon sizes, shadows, scrim | Any spacing, radius, elevation or backdrop |
+| `mobile.md` | Mobile app foundations: dark only, no hover, layout, compact type, buttons, spec map | Any mobile app screen |
 | `motion.md` | When to animate, durations, easing, which tool, reduced motion | Adding or changing any animation or transition |
 | `iconography.md` | Iconsax rules, variants, colours, skill illustrations | Choosing or sizing an icon |
 | `buttons.md` | All button families, sizes, states, AI gradient | Any button or link |
@@ -99,7 +100,8 @@ Every component doc follows `_template.md`: Usage, then Figma to code. Read the 
 | Button padding (Medium) | 10px 20px (`--space-ssm` `--space-ml`) |
 | Card padding (standard / compact) | 24px `--space-l` / 16px `--space-m` |
 | Input / badge padding | 8px 12px (`--space-s` `--space-sm`) / 6px 12px (`--space-xss` `--space-sm`) |
-| Form gaps / page padding | 20px `--space-ml` / 24px `--space-l` |
+| Form gaps / page block gaps / page padding | 20px `--space-ml` / 24px `--space-l` / 20px 24px (full table: Page composition in `layout.md`) |
+| Mobile app body padding and gaps | 16px `--space-m` |
 | Dialog and Modal / Side Drawer padding | 24px uniform `--space-l` / 20px vertical, 24px horizontal |
 
 ### What radius for…

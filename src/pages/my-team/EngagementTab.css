@@ -22,7 +22,7 @@
   background: var(--cards-background);
   border-radius: var(--radius-m);
   padding: var(--space-m);
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
   gap: var(--space-ml);
