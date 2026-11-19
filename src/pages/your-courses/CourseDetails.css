@@ -246,26 +246,23 @@
   gap: var(--space-xs);
 }
 
-/* Selected option uses the mode-aware selected colour, not a semantic status colour. */
+/* Option card (Figma Course details 12730:109557): 12px padding, 8px between the
+   DS Radio and the text. Selected = Selected stroke on the Selected-row fill. */
+.cd-cert-card {
+  padding: var(--space-sm);
+  gap: var(--space-s);
+}
+
+/* The shared card hides native radios (display: none); the DS Radio keeps its own
+   invisible input so it stays focusable and shows its focus ring. */
+.confirm-modal-radio-card.cd-cert-card input.radio__input {
+  display: block;
+}
+
 .cd-cert-card--selected,
 .cd-cert-card--selected:hover {
   border-color: var(--selected);
-  background: var(--selected-tint);
-}
-
-.cd-cert-card--selected .confirm-modal-radio-custom {
-  border-color: var(--selected);
-}
-
-.cd-cert-card--selected .confirm-modal-radio-custom::after {
-  content: '';
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 10px;
-  height: 10px;
-  border-radius: var(--radius-full);
-  background: var(--selected);
+  background: var(--selected-row);
 }
 
 .cd-cert-cards {

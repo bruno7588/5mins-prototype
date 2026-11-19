@@ -700,6 +700,7 @@
 
 .confirm-modal-radio-card:hover {
   border-color: var(--border-hover);
+  background: var(--input-background);
 }
 
 /* Semantic @ 12%: a mode-invariant tint, lighter than the 16% the DS uses for
@@ -713,6 +714,7 @@
 
 .confirm-modal-radio-card--danger:hover {
   border-color: var(--danger-500);
+  background: color-mix(in srgb, var(--danger-500) 12%, transparent); /* keep the selected tint */
 }
 
 .confirm-modal-radio-card--warning {
@@ -722,6 +724,7 @@
 
 .confirm-modal-radio-card--warning:hover {
   border-color: var(--warning-500);
+  background: color-mix(in srgb, var(--warning-500) 12%, transparent); /* keep the selected tint */
 }
 
 .confirm-modal-radio-card input[type="radio"] {

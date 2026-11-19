@@ -29,6 +29,7 @@ import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import Alert from '../../components/Alert/Alert'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Button from '../../components/Button/Button'
+import Radio from '@/components/Radio/Radio'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import MoreIcon from '../../components/icons/MoreIcon'
 import CsvIcon from '@/components/icons/CsvIcon'
@@ -801,9 +802,10 @@ function CourseDetails() {
           />
         )}
 
-        {/* Download Certificates: "Active people only" is selected by default; the
-           admin opts in to deactivated people's certificates. */}
-        <ConfirmModal open={certOpen} onClose={closeCert} ariaLabel="Download certificates">
+        {/* Download Certificates: a modal (close X, backdrop, Escape), one commit button.
+           "Active people only" is selected by default; the admin opts in to
+           deactivated people's certificates. */}
+        <ConfirmModal open={certOpen} onClose={closeCert} ariaLabel="Download certificates" closable>
           <div className="confirm-modal-header">
             <h2 className="confirm-modal-title">Download certificates</h2>
             <p className="confirm-modal-body cd-cert-body">
@@ -815,9 +817,8 @@ function CourseDetails() {
               ['active', 'Active people only', certCount(CERTS_ACTIVE)],
               ['all', 'Include deactivated people', `${certCount(CERTS_ALL)}, including people who no longer have access`],
             ] as const).map(([value, title, desc]) => (
-              <label key={value} className={`confirm-modal-radio-card${certScope === value ? ' cd-cert-card--selected' : ''}`}>
-                <input type="radio" name="cd-cert-scope" checked={certScope === value} onChange={() => setCertScope(value)} />
-                <span className="confirm-modal-radio-custom" />
+              <label key={value} className={`confirm-modal-radio-card cd-cert-card${certScope === value ? ' cd-cert-card--selected' : ''}`}>
+                <Radio name="cd-cert-scope" checked={certScope === value} onChange={() => setCertScope(value)} />
                 <div className="confirm-modal-radio-card-text cd-cert-card-text">
                   <span className="confirm-modal-radio-card-title cd-cert-card-title">{title}</span>
                   <span className="confirm-modal-radio-card-desc cd-cert-card-desc">{desc}</span>
@@ -826,7 +827,6 @@ function CourseDetails() {
             ))}
           </div>
           <div className="confirm-modal-actions">
-            <Button variant="outlined-2" onClick={closeCert}>Cancel</Button>
             <Button
               onClick={() => {
                 showToast('success', `Downloading ${certCount(certScope === 'all' ? CERTS_ALL : CERTS_ACTIVE)}`)
