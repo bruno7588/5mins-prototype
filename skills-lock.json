@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "skills": {
+    "animation-vocabulary": {
+      "source": "emilkowalski/skills",
+      "commit": "64eb3deb9a5fbfa041faf783e0bc3fd635872e9c",
+      "sourceType": "github",
+      "skillPath": "skills/animation-vocabulary/SKILL.md",
+      "computedHash": "e1d19134dc63dfb09379f7b42557b63b6123becdd36d15bae991d0b6ca5b2110"
+    }
+  }
+}
