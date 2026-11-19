@@ -21,7 +21,7 @@
 }
 
 .m-assessment-card[role='button']:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -94,7 +94,7 @@
 }
 
 .m-assessment-card__review:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

@@ -156,7 +156,7 @@ Screenshot: pill-shaped labels, yellow selected state.
 | false      | true       | Enabled    | transparent (keeps the 1px, so the row doesn't shift) | `--secondary-500`, `--secondary-600` on hover | `--text-on-selected` | 700         |
 | true       | false      | n/a        | `--border`     | transparent            | `--text-disabled` | 400         |
 
-**Focus-visible:** `2px solid var(--primary-button-background)` outline, 2px offset (the same cyan ring the buttons and the switcher use).
+**Focus-visible:** `2px solid var(--focus-ring)` outline, 2px offset (the same cyan ring the buttons and the switcher use).
 
 ## Tokens
 
@@ -182,7 +182,7 @@ Screenshot: pill-shaped labels, yellow selected state.
 ## Accessibility
 
 - With `onClick`, the component supplies `role="button"`, `aria-pressed` and Enter/Space handling.
-- Visible `:focus-visible` ring: `2px solid var(--primary-button-background)`, 2px offset.
+- Visible `:focus-visible` ring: `2px solid var(--focus-ring)`, 2px offset.
 - Disabled chips are non-interactive (`pointer-events: none`, `cursor: not-allowed`).
 
 ## Content
@@ -348,18 +348,18 @@ Item content in Figma is the `Content` variant: Label, Leading icon (**20px**, e
 | Unselected | transparent | Regular, `--text-secondary` |
 | Unselected hover | `--input-background-hover` | Regular, `--text-secondary` |
 | Disabled | transparent | Regular, `--text-disabled` |
-| Focus-visible | unchanged | `2px solid var(--primary-button-background)` outline, 2px offset |
+| Focus-visible | unchanged | `2px solid var(--focus-ring)` outline, 2px offset |
 
 The selected item's hover has no further change; it is already the active segment.
 
 ## Tokens
 
-`--input-background` (track), `--input-background-hover` (unselected hover), `--secondary-500` (selected fill, raw palette token, both modes), `--text-on-selected`, `--text-secondary`, `--text-disabled`, `--primary-button-background` (focus ring); spacing `--space-xs`, `--space-s`, `--space-sm`; radius `--radius-sm`.
+`--input-background` (track), `--input-background-hover` (unselected hover), `--secondary-500` (selected fill, raw palette token, both modes), `--text-on-selected`, `--text-secondary`, `--text-disabled`, `--focus-ring` (focus ring); spacing `--space-xs`, `--space-s`, `--space-sm`; radius `--radius-sm`.
 
 ## Accessibility
 
 - Renders `role="tablist"` with `role="tab"` buttons and `aria-selected`; `ariaLabel` labels the tablist.
-- Visible `:focus-visible` ring: `2px solid var(--primary-button-background)`, 2px offset.
+- Visible `:focus-visible` ring: `2px solid var(--focus-ring)`, 2px offset.
 - The selected pill slides via Framer Motion `layoutId` and respects reduced motion.
 
 ## Content
@@ -543,7 +543,7 @@ Tab Name 0      ← Hover + Counter (counter text brightens too)
 | false      | Hover    | no              | `--text-primary`    | 500          | -                    | none      |
 | false      | Hover    | yes             | `--text-primary`    | 500          | `--text-secondary`   | none      |
 
-**Focus-visible:** `2px solid var(--primary-button-background)` outline, 2px offset (the same cyan ring Chip and ContentSwitcher use).
+**Focus-visible:** `2px solid var(--focus-ring)` outline, 2px offset (the same cyan ring Chip and ContentSwitcher use).
 
 ## Tokens
 
@@ -572,7 +572,7 @@ Tab Name 0      ← Hover + Counter (counter text brightens too)
 ## Accessibility
 
 - Mark up with `role="tablist"`, `role="tab"` and `aria-selected`.
-- Give each tab a visible `:focus-visible` outline: `2px solid var(--primary-button-background)`, 2px offset.
+- Give each tab a visible `:focus-visible` outline: `2px solid var(--focus-ring)`, 2px offset.
 
 ## Content
 

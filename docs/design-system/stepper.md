@@ -42,7 +42,7 @@ A row of numbered steps across the top of a multi-step wizard. It shows where th
   - Current: a 20 × 20px frame with the Library `Illustrations/ Progress` `Type=Nearly there` (orange) at 16 × 16px, centred (`12451:80`), and the number 12px / 500 in `--page-background` on top; pops in (320ms overshoot) when the step becomes current.
   - Done: Library `Illustrations/ Progress` `Type=Passed` (green) at 16 × 16px (`12451:46`) with a `--page-background` tick, 1.25px.
 - Label: 14px / 400 `--text-secondary` (Paragraph M regular); Current is 14px / 500 `--text-primary` (Paragraph M medium). Count "(N)" 14px / 400 `--text-secondary`, `var(--space-xs)` (4px) after the label.
-- Hover (clickable steps only): pill fill `--page-background-hover`. Focus-visible: 2px `--primary-button-background` outline, 2px offset.
+- Hover (clickable steps only): pill fill `--page-background-hover`. Focus-visible: 2px `--focus-ring` outline, 2px offset.
 - Line between steps: the Library Divider, 40 × 1px `--border-elevated`, `var(--space-s)` (8px) each side.
 
 ## Figma to code
@@ -115,14 +115,14 @@ Step pill (badge + label + optional count), joined to the next step by a 40px Di
 |---|---|---|
 | Upcoming | Enabled | ring 1px `--border-elevated`, number `--text-primary`, label `--text-secondary` |
 | Upcoming / Done | Hover (clickable steps only) | pill fill `--page-background-hover`; ring unchanged |
-| Upcoming / Done | Focus-visible | 2px `--primary-button-background` outline, 2px offset |
+| Upcoming / Done | Focus-visible | 2px `--focus-ring` outline, 2px offset |
 | Upcoming (not reached) | Enabled only | same as Upcoming; no hover, plain cursor, `aria-disabled` |
 | Current | n/a | `Type=Nearly there` badge, number `--page-background`, label 500 `--text-primary` |
 | Done | Enabled | `Type=Passed` badge, `--page-background` tick |
 
 ## Tokens
 
-`var(--border-elevated)` (ring, lines), `var(--text-primary)`, `var(--text-secondary)`, `var(--page-background)` (number on Current, Done tick), `var(--page-background-hover)` (hover), `var(--primary-button-background)` (focus ring), `var(--radius-full)`, `var(--space-xs)`, `var(--space-s)`.
+`var(--border-elevated)` (ring, lines), `var(--text-primary)`, `var(--text-secondary)`, `var(--page-background)` (number on Current, Done tick), `var(--page-background-hover)` (hover), `var(--focus-ring)` (focus ring), `var(--radius-full)`, `var(--space-xs)`, `var(--space-s)`.
 
 ## Accessibility
 

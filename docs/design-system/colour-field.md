@@ -74,7 +74,7 @@ The popover renders inside the field (not portalled) so it stays inside a modal'
 | Hover | Border and tint | `--border-hover`, `--input-background` |
 | Active / open | Amber border | `--selected` (mode-aware) |
 | Eyedropper hover | Circular tint | `--input-background` |
-| Focus-visible | 2px ring, 2px offset on the eyedropper, square and hue slider; the field shows the active border | `--primary-button-background`, `--selected` |
+| Focus-visible | 2px ring, 2px offset on the eyedropper, square and hue slider; the field shows the active border | `--focus-ring`, `--selected` |
 | Popover open | Fades and drops 4px in over 150ms; no motion with reduced motion | |
 
 ## Tokens

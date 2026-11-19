@@ -29,7 +29,7 @@
 }
 
 .acl-hs-chevron-btn:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -93,7 +93,7 @@
 }
 
 .acl-hs-move-btn:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -159,7 +159,7 @@
 
 .acl-hs-grip:focus-visible,
 .acl-hs-lock:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

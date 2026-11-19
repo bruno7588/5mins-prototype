@@ -66,7 +66,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 - Don't use a filled amber row for the selected item.
 - Don't use raw `--secondary-*` for selected text; use the mode-aware `--text-selected`.
 
-**Canonical spec:** width 240px; `var(--page-background)` with `1px solid var(--border)` right edge; item padding `var(--space-sm) var(--space-m)` (12px 16px), gap `var(--space-s)` (8px); menu padding 16px top and bottom, 12px sides; 4px between top-level entries; sub-items (padding 12px 16px 12px 42px) stack flush, 0 gap, directly under their group heading; 20px Linear icons; Regular 14 `--text-secondary`, selected Bold `--text-selected`; group chevron 14px; focus ring `2px solid var(--primary-button-background)`, 4px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `4697:13314`, menu items `4674:25675` (Web app) and `10372:4045` (Admin).
+**Canonical spec:** width 240px; `var(--page-background)` with `1px solid var(--border)` right edge; item padding `var(--space-sm) var(--space-m)` (12px 16px), gap `var(--space-s)` (8px); menu padding 16px top and bottom, 12px sides; 4px between top-level entries; sub-items (padding 12px 16px 12px 42px) stack flush, 0 gap, directly under their group heading; 20px Linear icons; Regular 14 `--text-secondary`, selected Bold `--text-selected`; group chevron 14px; focus ring `2px solid var(--focus-ring)`, 4px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `4697:13314`, menu items `4674:25675` (Web app) and `10372:4045` (Admin).
 
 **Prototype:** `src/components/LeftSidebar/LeftSidebar.tsx`
 - No props. Expandable People & Teams, Content and Learning Records groups; selection from `useLocation().pathname`.
@@ -93,7 +93,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 - Don't add a chevron after the last item or make it a link.
 - Don't restyle the hover; links go `--text-primary` with an underline.
 
-**Canonical spec:** Poppins Regular 14px/1.5; items gap `var(--space-xs)` (4px); 16px `ArrowRight2` Linear separator in `--text-tertiary`; links `--text-tertiary` (hover `--text-primary` + underline), current `--text-secondary`, disabled `--text-disabled`; focus ring `2px solid var(--primary-button-background)`, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11935:2368` / `8517:34946`, dark `8497:2231` / `8497:1494`.
+**Canonical spec:** Poppins Regular 14px/1.5; items gap `var(--space-xs)` (4px); 16px `ArrowRight2` Linear separator in `--text-tertiary`; links `--text-tertiary` (hover `--text-primary` + underline), current `--text-secondary`, disabled `--text-disabled`; focus ring `2px solid var(--focus-ring)`, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11935:2368` / `8517:34946`, dark `8497:2231` / `8497:1494`.
 
 **Prototype:** `src/components/Breadcrumb/Breadcrumb.tsx`
 - `items: { label, onClick?, disabled? }[]`; the last entry renders as the current page (`aria-current="page"`).
@@ -277,7 +277,7 @@ CSS (Admin panel, matches `LeftSidebar`):
 .side-nav__item:hover      { background: var(--input-background); }
 .side-nav__item--selected  { font-weight: 700; color: var(--text-selected); }  /* + Bold icon variant */
 .side-nav__item--parent    { font-weight: 700; }  /* open group with the selected child: + Bold icon, stays --text-secondary, no fill */
-.side-nav__item:focus-visible { outline: 2px solid var(--primary-button-background); outline-offset: 4px; }
+.side-nav__item:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
 
 .side-nav__sub-item {
   padding: var(--space-sm) var(--space-m);     /* 12px 16px */
@@ -308,7 +308,7 @@ The learner **mobile app** chrome (phone-frame prototype): a top header and a bo
 Shared elements:
 
 - **Back button**: 40px circle, 8px padding around a 24px `ArrowLeft` Linear icon, radius full, `--input-background` fill (`rgba(15,16,20,0.5)` on Lesson feed, a fixed legibility fill over video, not the `--scrim` overlay token, which is mode-aware; see `layout.md` §7).
-- **Header chips** (Home/Progress), per `mobile/TopNav.css`: selected = `--secondary-500` fill and border, Poppins Medium 14, `--text-on-selected` text (always-dark text on amber); unselected = transparent, 1px `--border-elevated`, Regular 14 `--text-secondary`. Both: `var(--space-xss) var(--space-sm)` (6px 12px) padding, `var(--radius-full)`, 8px gap; focus ring `2px solid var(--primary-button-background)`. (Figma draws selected Bold, 12px/8px padding, radius 24px.)
+- **Header chips** (Home/Progress), per `mobile/TopNav.css`: selected = `--secondary-500` fill and border, Poppins Medium 14, `--text-on-selected` text (always-dark text on amber); unselected = transparent, 1px `--border-elevated`, Regular 14 `--text-secondary`. Both: `var(--space-xss) var(--space-sm)` (6px 12px) padding, `var(--radius-full)`, 8px gap; focus ring `2px solid var(--focus-ring)`. (Figma draws selected Bold, 12px/8px padding, radius 24px.)
 - Title is Bold 16 when alone, Bold 14 when paired with a leading icon (Skill).
 
 ## Variants
@@ -376,12 +376,12 @@ Shared elements:
 | **Disabled** | Link items | `--text-disabled` | non-interactive, `cursor: not-allowed` |
 | **Current** | Last item | `--text-secondary` | no chevron, `aria-current="page"`, not a link |
 | Separator | between items | `--text-tertiary` | `ArrowRight2`, 16px |
-| Focus-visible | Link items | unchanged | `2px solid var(--primary-button-background)`, 2px offset |
+| Focus-visible | Link items | unchanged | `2px solid var(--focus-ring)`, 2px offset |
 
 ### Mobile tab states
 
 - **Selection**: icon fill + label switch from `--text-secondary` to `--selected` (amber). Nothing else: same Bold glyph in both states, no weight bump, no indicator dot/pill/underline, no badges. No hover/pressed states (touch).
-- Header chips focus-visible: `2px solid var(--primary-button-background)`.
+- Header chips focus-visible: `2px solid var(--focus-ring)`.
 
 ### TopNav icon buttons
 
@@ -411,7 +411,7 @@ Shared elements:
 
 - The active navigation item carries `aria-current="page"` (side panel, Breadcrumb current item, mobile TabNav).
 - TopNav icon buttons have an `aria-label` and a Tooltip naming the action; the theme toggle also carries `aria-pressed`. Hide the tooltip while the button's menu is open.
-- Breadcrumb is a `<nav aria-label="Breadcrumb">`; links show the cyan focus ring `2px solid var(--primary-button-background)`, 2px offset.
+- Breadcrumb is a `<nav aria-label="Breadcrumb">`; links show the cyan focus ring `2px solid var(--focus-ring)`, 2px offset.
 - Mobile header chips show the same cyan focus ring.
 - Collapsed side panel items expose their label through the flyout tooltip on hover.
 

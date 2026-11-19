@@ -80,7 +80,7 @@ All colours are semantic tokens. Both light- and dark-mode resolutions are liste
 | AI feature | Filled (gradient) | AI | Medium |
 | Mark complete | Filled | Success | Medium |
 
-**Canonical spec:** height Small 32px / Medium 41px / Large 48px; radius `var(--radius-sm)` (12px); Poppins Bold 12px / 14px / 16px (H6 / H5 / H4); Link is Paragraph S / M / L medium, underlined; Medium padding 10px `var(--space-ml)` (20px); icon gap `var(--space-xs)` (4px) Small, `var(--space-s)` (8px) Medium and Large; Text buttons use 4px at Medium too. Filled `var(--primary-button-background)` with `var(--text-button-foreground)` label; Outlined-2 `var(--border-elevated)` 1px border with `var(--text-primary)` label; disabled `var(--button-background-disabled)` + `var(--text-button-disabled)`; focus 2px `var(--primary-button-background)` outline, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `10825:3269` (parent frame `5453:38273`).
+**Canonical spec:** height Small 32px / Medium 41px / Large 48px; radius `var(--radius-sm)` (12px); Poppins Bold 12px / 14px / 16px (H6 / H5 / H4); Link is Paragraph S / M / L medium, underlined; Medium padding 10px `var(--space-ml)` (20px); icon gap `var(--space-xs)` (4px) Small, `var(--space-s)` (8px) Medium and Large; Text buttons use 4px at Medium too. Filled `var(--primary-button-background)` with `var(--text-button-foreground)` label; Outlined-2 `var(--border-elevated)` 1px border with `var(--text-primary)` label; disabled `var(--button-background-disabled)` + `var(--text-button-disabled)`; focus 2px `var(--focus-ring)` outline, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `10825:3269` (parent frame `5453:38273`).
 
 ## Figma to code
 
@@ -89,7 +89,7 @@ All colours are semantic tokens. Both light- and dark-mode resolutions are liste
 | Variant | Filled / Outlined / Outlined-2 / Text / Link | `variant` | `filled` (default) / `outlined` / `outlined-2` / `text` / `text-2` / `link` | one-to-one; `text-2` is code-only so far (neutral Text, 2026-11-05), not yet in the Library |
 | Semantic | Primary / Danger / Warning / Success / AI | `semantic` | `primary` (default) / `danger` / `warning` / `success` / `ai` | one-to-one. AI exists only with Filled and Outlined, and the props type rejects `semantic="ai"` with any other variant; `variant="outlined-2"` with a semantic renders the Outlined treatment, `variant="link"` with a semantic renders the Text treatment |
 | Size | Large / Medium / Small | `size` | `lg` / `md` (default) / `sm` | Figma default is Large; code default is `md` |
-| State | Enabled / Hover / Pressed / Focus | n/a | CSS `:hover`, `:active`, `:focus-visible` | states are CSS, not props. Focus draws a 2px `Primary-button-background` ring 2px outside the button (a `Focus ring` layer) |
+| State | Enabled / Hover / Pressed / Focus | n/a | CSS `:hover`, `:active`, `:focus-visible` | states are CSS, not props. Focus draws a 2px `Primary-500` ring 2px outside the button (a `Focus ring` layer) |
 | State | Loading | `loading` | `true` / `false` | |
 | State | n/a | n/a | n/a | only used with Disabled=true |
 | Disabled | false / true | `disabled` | native attribute | `loading` also sets `disabled` |
@@ -458,7 +458,7 @@ Text buttons (Text and Danger / Warning / Success Text) have no padding; their i
 | Pressed | `…-pressed` (L: 900 / D: 700) | **transparent** / `…-pressed` | `--primary-button-background-pressed` | `--primary-button-background-pressed` |
 | Disabled | `--button-background-disabled` + `--text-button-disabled` | transparent / `--text-disabled` | `--text-disabled` | `--text-disabled` |
 | Loading | `--button-background-disabled` + 20px spinner, width preserved | same pattern | spinner replaces label | n/a |
-| Focus-visible | 2px `var(--primary-button-background)` outline, 2px offset | same | same | same |
+| Focus-visible | 2px `var(--focus-ring)` outline, 2px offset | same | same | same |
 
 ### Loading
 
@@ -536,7 +536,7 @@ Everything else is the plain Loading state: disabled background, 20px `currentCo
 ```
 
 ```css
-.btn:focus-visible { outline: 2px solid var(--primary-button-background); outline-offset: 2px; }
+.btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 ```
 
 - **Loading name.** The label is the button's accessible name, and the Loading state hides it, so the component keeps it as an `aria-label` for the duration (only when the label is a string and the caller has not named the button themselves). Without that, a button in this state is announced as an unnamed disabled button for as long as the work runs.

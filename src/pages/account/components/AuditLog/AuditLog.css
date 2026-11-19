@@ -121,7 +121,7 @@
 }
 
 .audit-mo:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: -2px;
 }
 
@@ -172,7 +172,7 @@
 }
 
 .audit-export:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -269,7 +269,7 @@
 }
 
 .audit-row:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: -2px;
   border-radius: var(--radius-sm);
 }
@@ -423,7 +423,7 @@
 }
 
 .audit-course-link:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: var(--radius-s);
 }
@@ -493,7 +493,7 @@
   color: var(--text-button-hover);
 }
 .audit-value-more:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -547,7 +547,7 @@
 }
 
 .audit-pagination-nav:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -613,7 +613,7 @@
 }
 
 .audit-empty-cta:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -668,7 +668,7 @@
 }
 
 .audit-date-preset:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: -2px;
 }
 
@@ -761,7 +761,7 @@
 }
 
 .audit-cal-nav-btn:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -857,7 +857,7 @@
 }
 
 .audit-cal-cancel:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -883,6 +883,6 @@
 }
 
 .audit-cal-apply:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }

@@ -210,13 +210,13 @@ Not in the Library Badge component. They follow the same box and typography; tre
 |---|---|---|---|
 | Enabled | all types | type fill (see Variants) | no chrome, inherits text colour |
 | Hover | dismissible badges only | unchanged (Enabled fill) | sits on a 24% disc of the type colour (informative: Neutral-200 light / Neutral-500 dark) |
-| Focus-visible | the ✕ button | unchanged | 2px `var(--primary-button-background)` outline, 2px offset, `var(--radius-xs)` |
+| Focus-visible | the ✕ button | unchanged | 2px `var(--focus-ring)` outline, 2px offset, `var(--radius-xs)` |
 
 A badge without a ✕ is read-only and has no hover.
 
 ## Tokens
 
-`--space-xss`, `--space-sm`, `--space-xs`, `--space-s`, `--radius-full`, `--radius-xs`; text `--text-success`, `--text-warning`, `--text-error`, `--text-progress`, `--text-secondary`, `--neutral-25`, `--text-quiz`, `--course-assessments`; fills `--input-background`, `--danger-400`, `--quiz-background`; focus `--primary-button-background`. Values per type and mode are in the Variants tables.
+`--space-xss`, `--space-sm`, `--space-xs`, `--space-s`, `--radius-full`, `--radius-xs`; text `--text-success`, `--text-warning`, `--text-error`, `--text-progress`, `--text-secondary`, `--neutral-25`, `--text-quiz`, `--course-assessments`; fills `--input-background`, `--danger-400`, `--quiz-background`; focus `--focus-ring`. Values per type and mode are in the Variants tables.
 
 ## Accessibility
 

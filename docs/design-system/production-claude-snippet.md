@@ -16,7 +16,7 @@ Paste everything between the two lines into the production repo's root `CLAUDE.m
 ### Non-negotiables
 - Build UI from `@web/ui` components. Don't import an MUI component directly in `apps/*` when `@web/ui` has one for the job. If `@web/ui` lacks it, say so; don't hand-roll a lookalike.
 - Theme values only: no raw hex, rgba or px for colour, spacing, radius, type or shadow in `styled()`, `sx` or style props. Missing a value? Add it to the theme.
-- Every interactive element has a visible `:focus-visible` indicator, in `--primary-button-background` (cyan).
+- Every interactive element has a visible `:focus-visible` indicator, in `--focus-ring` (cyan).
 - Icons: Iconsax (`iconsax-reactjs`) only, 16 / 20 / 24 / 32px, `color` passed explicitly. Icon-only buttons have a circular hover and an `aria-label`.
 - Type: Poppins, weights 400 / 500 / 600 / 700 only. Bold for headings and buttons, Semibold for field labels, Medium for emphasis, Regular for body.
 - Copy: button labels in Title Case; everything else in sentence case.

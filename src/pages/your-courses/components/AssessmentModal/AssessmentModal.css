@@ -329,7 +329,7 @@
 }
 
 .assessment-modal-image-tile-action:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -430,7 +430,7 @@
 }
 
 .assessment-modal-image-remove:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

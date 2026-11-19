@@ -184,7 +184,7 @@
 
 /* Figma row State=Focus (12496:15053): 2px cyan ring, radius M, 2px offset. */
 .tbl-row.is-clickable:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: var(--radius-m);
 }
@@ -379,7 +379,7 @@
 }
 
 .tbl-action .icon-btn:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

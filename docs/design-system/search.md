@@ -120,7 +120,7 @@ Font:           Poppins 16px / 1.5  (Regular 400)
 | Enabled | `--input-background` | `--border` (`--border-elevated` with `elevated`) |
 | Hover | `--input-background-hover` | `--border-hover` |
 | Active (focused) | `--input-background` | `--selected` (`#EDA30D` light / `#FFBB38` dark) |
-| Clear focus-visible | n/a | 2px `--primary-button-background` outline on the clear button |
+| Clear focus-visible | n/a | 2px `--focus-ring` outline on the clear button |
 
 - The border is the primary state signal - background only changes on Hover.
 - **On the page ground and inside drawers and modals, Search keeps the quiet `--border`.** It carries a fill at rest, so there it does not need the stronger edge the transparent fields use. This is deliberate.
@@ -226,7 +226,7 @@ Font:           Poppins 16px / 1.5  (Regular 400)
 ## Accessibility
 
 - Pass `ariaLabel`; it falls back to the placeholder as the input's `aria-label`.
-- The clear button is a `<button>` with `aria-label="Clear search"` and a 2px `--primary-button-background` focus-visible outline; clearing refocuses the input.
+- The clear button is a `<button>` with `aria-label="Clear search"` and a 2px `--focus-ring` focus-visible outline; clearing refocuses the input.
 - Focus on the input shows the `--selected` border through `:focus-within` on the wrapper.
 
 ## Examples

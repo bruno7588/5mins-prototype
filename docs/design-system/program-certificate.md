@@ -66,7 +66,7 @@ The `onGetCertificate` handler downloads/opens the issued document (`2504:51984`
 | Locked | `var(--cards-background)`, `1.5px var(--border)` | Lock badge, `--text-secondary` title, skeleton lines |
 | Unlocked | `var(--cards-background)`, Shadow-S | medallion, `--text-primary` title, Get Certificate button |
 | Get Certificate hover | `var(--primary-button-background-hover)` | |
-| Get Certificate focus-visible | 2px `var(--primary-button-background)` outline, offset 2px | |
+| Get Certificate focus-visible | 2px `var(--focus-ring)` outline, offset 2px | |
 
 ## Accessibility
 

@@ -88,7 +88,7 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 - Don't re-implement radios with `div`s.
 - Don't ship a lone radio; with one option use a checkbox or toggle.
 
-**Canonical spec:** 24 × 24px hit area with a fully round (30px) hover halo in `--page-background-hover`; 15 × 15px ring, 1.5px `--text-primary` (unchanged on hover; hover only adds the halo); selected ring and 7px dot `--selected`; disabled `--text-disabled`; focus-visible 2px `--primary-button-background` outline. Row gap `var(--space-s)` (8px), option text 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5001:18926`.
+**Canonical spec:** 24 × 24px hit area with a fully round (30px) hover halo in `--page-background-hover`; 15 × 15px ring, 1.5px `--text-primary` (unchanged on hover; hover only adds the halo); selected ring and 7px dot `--selected`; disabled `--text-disabled`; focus-visible 2px `--focus-ring` outline. Row gap `var(--space-s)` (8px), option text 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5001:18926`.
 
 ### Toggle
 
@@ -113,7 +113,7 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 **Don't**
 - Don't hand-roll a switch from a `<button role="switch">`; use the Toggle.
 - Don't add a hover halo; the toggle has none.
-- Don't remove the focus outline; focus-visible draws 2px `--primary-button-background` around the track.
+- Don't remove the focus outline; focus-visible draws 2px `--focus-ring` around the track.
 
 **Canonical spec:** md track 36 × 20px, sm track 28 × 16px; thumb 16px (sm 12px) in `--neutral-25` with a 2px inset. Track off `--text-disabled`, on `--selected`; disabled off `--text-disabled`, disabled on `--selected` at 40% opacity. Row gap `var(--space-s)` (8px), label 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8160:364`.
 
@@ -246,7 +246,7 @@ The thumb sits 2px inside the track in both sizes. Use Small where a 20px track 
 | Hover, selected | yes | `--selected` ring + dot (unchanged) | 24 × 24 px `--page-background-hover` circle |
 | Disabled, unselected | no | `--text-disabled` (`#9EA4B3`) ring | none |
 | Disabled, selected | yes | `--text-disabled` ring + dot | none |
-| Focus-visible | either | unchanged | 2px `--primary-button-background` outline, 2px offset, on the ring |
+| Focus-visible | either | unchanged | 2px `--focus-ring` outline, 2px offset, on the ring |
 
 ```css
 /* src/components/Radio/Radio.css */
@@ -348,7 +348,7 @@ The thumb sits 2px inside the track in both sizes. Use Small where a 20px track 
 | On (enabled) | `var(--selected)` (`#EDA30D` light / `#FFBB38` dark) | `--neutral-25` | right |
 | Off (disabled) | `--text-disabled` (`#9EA4B3`, neutral-300) | `--neutral-25` | left |
 | On (disabled) | `var(--selected)` at 40% opacity | `--neutral-25` | right |
-| Focus-visible (either) | same + 2px `--primary-button-background` outline around track, 2px offset | n/a | n/a |
+| Focus-visible (either) | same + 2px `--focus-ring` outline around track, 2px offset | n/a | n/a |
 
 No hover halo on the toggle (unlike radio/checkbox). Optional subtle darkening of the track on hover is acceptable.
 

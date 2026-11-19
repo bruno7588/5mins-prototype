@@ -26,7 +26,7 @@
 }
 
 .st-drawer__back:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -80,7 +80,7 @@
 }
 
 .st-drawer__guidance-toggle:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -228,7 +228,7 @@
 }
 
 .st-drawer__question-toggle:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }
@@ -255,7 +255,7 @@
 }
 
 .st-drawer__question-chevron:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -275,7 +275,7 @@
 }
 
 .st-drawer__question-remove:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

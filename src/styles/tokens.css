@@ -146,6 +146,8 @@
   --text-progress: var(--primary-700);
   --text-quiz: var(--certificate-quiz);
   --primary-button-background: var(--primary-700);
+  /* Keyboard focus ring: Primary-500 in both modes (Library Focus ring layers, 2026-11-19). */
+  --focus-ring: var(--primary-500);
   --primary-button-background-hover: var(--primary-800);
   --primary-button-background-pressed: var(--primary-900);
   --button-background-disabled: var(--neutral-100);

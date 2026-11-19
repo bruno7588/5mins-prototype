@@ -62,7 +62,7 @@ There is no `Listbox` or `ListItem` React component. Figma properties map to whe
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
-| State | Enabled / Hover / Read-only / Focus | `disabled` (RowActionsMenu item, Dropdown option) | Read-only = `disabled: true` | Hover is CSS `:hover`; Focus is `:focus-visible` (2px inset `--primary-button-background` ring). The embedded Search row has no Focus variant: its focus is the amber Selected state |
+| State | Enabled / Hover / Read-only / Focus | `disabled` (RowActionsMenu item, Dropdown option) | Read-only = `disabled: true` | Hover is CSS `:hover`; Focus is `:focus-visible` (2px inset `--focus-ring` ring). The embedded Search row has no Focus variant: its focus is the amber Selected state |
 | Label (text) | "Input text" | RowActionsMenu item `label`; Dropdown option `label` | `string` | |
 | Description (text) | "Write supporting text here" | RowActionsMenu `description`; Dropdown option `description` | `string` | the avatar-with-supporting-text rows keep their own sample text ("Supporting text here") unbound |
 | Helper text (text) | "text" | n/a | not built | |

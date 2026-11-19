@@ -68,7 +68,7 @@ The Figma table is four component sets; code is one data-driven `Table` whose ce
 | State | Enabled / Hover / n/a | `getRowState` | `'enabled'` / `'hover'` | hover is also CSS `:hover`; `n/a` has no code value |
 | Selected | false / true | `getRowState` or `isSelected` | `'selected'` | Selected + Hover is CSS `:hover` on a selected row |
 | Disabled | false / true | `getRowState` | `'disabled'` | read-only rows |
-| State | Focus | n/a | CSS `:focus-visible` | clickable rows (`onRowClick`) only: `tabIndex={0}`, Enter/Space open the row, 2px `--primary-button-background` ring, `var(--radius-m)`, 2px offset (Figma `12496:15053`) |
+| State | Focus | n/a | CSS `:focus-visible` | clickable rows (`onRowClick`) only: `tabIndex={0}`, Enter/Space open the row, 2px `--focus-ring` ring, `var(--radius-m)`, 2px offset (Figma `12496:15053`) |
 
 **Table header** (`11872:3077`)
 
@@ -215,7 +215,7 @@ Helper classes `Table.css` provides for cell content: `.tbl-media` (media + text
 | Selected | `--selected-row` | `--selected-row` | `--text-primary` |
 | Selected + Hover | `--selected-row-hover` | `--selected-row-hover` | `--text-primary` |
 | Disabled (read-only) | transparent | `--border` | `--text-disabled` |
-| Focus (clickable rows) | unchanged | unchanged, plus a 2px `--primary-button-background` outline, 2px offset, radius `var(--radius-m)` | unchanged |
+| Focus (clickable rows) | unchanged | unchanged, plus a 2px `--focus-ring` outline, 2px offset, radius `var(--radius-m)` | unchanged |
 
 Selected rows use `var(--selected-row)` when enabled and `var(--selected-row-hover)` on hover, applied to both background and border (`Table.css`). They mirror the Figma variables `Selected-row` / `Selected-row-hover`: Secondary-500 `#FFBB38` at 16% / 24% in both modes, so there is no dark override. Do not use the solid amber for the row fill. Checkboxes take their checked fill from `selection-controls.md` (`--control-selected`).
 
@@ -248,7 +248,7 @@ Use the semantic token names, not raw hex. Cross-reference `colors.md`, `layout.
 | `--text-success` | `#11763D` | `#18A957` | success badge text |
 | `--primary-600` | `#00AFC4` | `#00AFC4` | progress bar fill |
 | `--success-500` | `#18A957` | `#18A957` | progress bar fill at 100% |
-| `--primary-button-background` | per colors.md | per colors.md | clickable row focus ring |
+| `--focus-ring` | per colors.md | per colors.md | clickable row focus ring |
 | `--selected-row` / `--selected-row-hover` | Secondary-500 at 16% / 24% | same | selected row background and border |
 
 ### Typography

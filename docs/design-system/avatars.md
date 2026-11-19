@@ -46,7 +46,7 @@ Identical structure in both modes; borders, fallback and counter colours are sem
 - Don't use the old smiley or a coloured letter chip as the fallback; initials sit on the neutral `var(--border)` circle
 - Don't hard-code the fallback colours; the circle and initials flip with the mode
 
-**Canonical spec:** sizes 24, 32, 40, 48, 56, 64, 72px; radius `var(--radius-full)` (circle, people) or `var(--radius-s)` 8px (square, companies and instructors); photo `object-fit: cover`; fallback initials `var(--text-secondary)` on a `var(--border)` circle (type per size in Variants); group sizes 24 / 32 / 40px with overlap -8 / -12 / -16px; ring 1px `var(--page-background)`; "+N" bubble `var(--border)` (same 1px ring at every size) with `var(--text-tertiary)` Regular text 8 / 10 / 12px. Figma: Library `EC26cSVe9KNTCWXvYovakw`, board `5453:37805`, Avatar `5097:5884`, Avatar Group `5097:5584`.
+**Canonical spec:** sizes 24, 32, 40, 48, 56, 64, 72px; radius `var(--radius-full)` (circle, people) or `var(--radius-s)` 8px at every size (square, companies and instructors; 12px would turn the 24px avatar into a circle); photo `object-fit: cover`; fallback initials `var(--text-secondary)` on a `var(--border)` circle (type per size in Variants); group sizes 24 / 32 / 40px with overlap -8 / -12 / -16px; ring 1px `var(--page-background)`; "+N" bubble `var(--border)` (same 1px ring at every size) with `var(--text-tertiary)` Regular text 8 / 10 / 12px. Figma: Library `EC26cSVe9KNTCWXvYovakw`, board `5453:37805`, Avatar `5097:5884`, Avatar Group `5097:5584`.
 
 ## Figma to code
 
@@ -186,7 +186,7 @@ A horizontal stack of avatars with a trailing "+N" counter bubble.
 
 ### Square avatar (companies and instructors)
 
-`<Avatar shape="square">`: the same sizes, photo and fallback as the circle, with an 8px radius (`var(--radius-s)`). Square so the creator of content (a company or an instructor) never reads as a person who learns.
+`<Avatar shape="square">`: the same sizes, photo and fallback as the circle, with an 8px radius (`var(--radius-s)`) at every size. Square so the creator of content (a company or an instructor) never reads as a person who learns.
 
 - **Company:** `import CompanyAvatar from '@/components/CompanyAvatar/CompanyAvatar'` renders the tenant's company image (`src/data/companyImage.ts`) as a square Avatar. It never shows the fallback, because a company always has an image (an upload or a default from `src/assets/company-images`).
 - **Instructor:** `<Avatar src={instructor.avatar} shape="square" />`, e.g. the creator row in the lesson feed (desktop and mobile).

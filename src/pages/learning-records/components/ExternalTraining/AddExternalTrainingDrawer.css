@@ -136,7 +136,7 @@
 }
 
 .aetd-cert-box--empty:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -185,7 +185,7 @@
 }
 
 .aetd-cert-box--previewable:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -204,7 +204,7 @@
 
 
 .aetd-cert-remove:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

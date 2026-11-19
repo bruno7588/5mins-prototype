@@ -230,7 +230,7 @@ Page Header compared with Section Header:
 | Chip | Selected | 14px Bold `--neutral-800` |
 | Chip | Unselected | 14px Regular `--text-secondary` |
 | Breadcrumb | Link / current | `--text-tertiary` / `--text-secondary` (hover and disabled: [navigation.md](navigation.md)) |
-| Breadcrumb link, tab, chip | Focus-visible | `outline: 2px solid var(--primary-button-background)`, `outline-offset: 2px` |
+| Breadcrumb link, tab, chip | Focus-visible | `outline: 2px solid var(--focus-ring)`, `outline-offset: 2px` |
 
 Colours are the same in both modes through the semantic tokens; see Tokens for the light and dark values.
 

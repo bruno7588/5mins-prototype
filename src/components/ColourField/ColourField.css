@@ -91,7 +91,7 @@
 }
 
 .colour-field__dropper:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -159,7 +159,7 @@
 
 .colour-field__square:focus-visible,
 .colour-field__hue:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

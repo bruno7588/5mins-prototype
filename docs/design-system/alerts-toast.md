@@ -146,7 +146,7 @@ Supporting text: [ icon ] [ Title                          ]
 
 ### States
 
-Alert and Callout are static; only the action and the close × are interactive. The action has the Text button states ([buttons.md](buttons.md)); the close × fills `--page-background-hover` on hover; both show the 2px `--primary-button-background` ring on focus-visible.
+Alert and Callout are static; only the action and the close × are interactive. The action has the Text button states ([buttons.md](buttons.md)); the close × fills `--page-background-hover` on hover; both show the 2px `--focus-ring` ring on focus-visible.
 
 ### Tokens
 
@@ -406,7 +406,7 @@ Caret:       12×6px triangle pointing at the trigger;
 | Visible | on `mouseenter` and focus; bubble and caret `var(--tooltip-background)` |
 | Hide | immediately on leave, blur or Esc (there is no hover-out delay) |
 | Disabled | `disabled` keeps the wrapper mounted and never shows the bubble |
-| Trigger focus-visible | `outline: 2px solid var(--primary-button-background)`, offset 2px, radius 4px |
+| Trigger focus-visible | `outline: 2px solid var(--focus-ring)`, offset 2px, radius 4px |
 
 ### Tokens
 

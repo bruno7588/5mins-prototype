@@ -77,7 +77,7 @@
 }
 
 .gl-blobs__toggle:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }
@@ -169,7 +169,7 @@
 }
 
 .gl-pad__thumb:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -249,7 +249,7 @@
 }
 
 .gl-slots__slot:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -311,7 +311,7 @@
 }
 
 .gl-slots__save:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

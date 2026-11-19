@@ -16,7 +16,7 @@ The index for the 5Mins.ai design system: the global rules, a map of every doc, 
 5. **Poppins only**, weights 400/500/600/700: Bold for headings and buttons, Semibold for form-field labels, Medium for emphasis, Regular for body.
 6. **Iconsax React only**, at 16/20/24/32px, with an explicit `color`. Icon-only buttons get an `aria-label`, a DS Tooltip on web and a circular `var(--radius-full)` hover.
 7. **4px spacing.** Layout spacing is on the 4px scale; the 2/6/10px tokens are for inside components only.
-8. **Visible focus everywhere.** Every interactive element has a `:focus-visible` ring: `outline: 2px solid var(--primary-button-background); outline-offset: 2px`.
+8. **Visible focus everywhere.** Every interactive element has a `:focus-visible` ring: `outline: 2px solid var(--focus-ring); outline-offset: 2px`.
 9. **Copy casing.** Button labels in Title Case ("Save Mapping"); headings and other UI copy in sentence case.
 10. **Colour roles.** Never `--primary-500` as text on white; never cyan or amber for warnings or errors; amber is selection only (see the three-amber system in `colors.md`).
 11. **Overlays.** Backdrops are `var(--scrim)`; side drawers are 720px wide.

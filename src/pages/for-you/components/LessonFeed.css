@@ -162,7 +162,7 @@
 }
 
 .lf-icon-btn:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -235,7 +235,7 @@
 }
 
 .lf-follow:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -290,7 +290,7 @@
 }
 
 .lf-info__link:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }
@@ -523,7 +523,7 @@
 }
 
 .lf-menu__item:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }

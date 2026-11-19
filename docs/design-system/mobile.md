@@ -94,7 +94,7 @@ Labels in Title Case, as on web ([doc](buttons.md)). Row chevrons are `--text-se
 | Enabled | as specified per component |
 | Hover | none in the app |
 | Pressed | the component's pressed token where it has one |
-| Focus-visible | `outline: 2px solid var(--primary-button-background); outline-offset: 2px` |
+| Focus-visible | `outline: 2px solid var(--focus-ring); outline-offset: 2px` |
 | Disabled / not built | `--text-disabled` / `--button-background-disabled`; unbuilt controls `.ui-disabled` |
 
 Surfaces: cards `var(--cards-background)` with no shadow (Shadow S is light mode only, so `var(--shadow-card)` resolves to none in the app); mobile list cards radius 8px.

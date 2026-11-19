@@ -6,6 +6,8 @@ Add new entries here, not in the docs.
 
 ## Library-wide
 
+- 2026-11-19: Square avatar radius is 8px (`--radius-s`) at every size, in code and Library (was 12px `--radius-sm` since 2026-11-18). 12px made the 24px avatar a circle and the 32px one nearly round, so companies and instructors read as people.
+- 2026-11-19: Focus rings are Primary-500 in both modes (were `Primary-Button-background`, Primary-700 in light). Library: every `Focus ring` layer and the Calendar Day focus border rebound. Code: new `--focus-ring` token (`var(--primary-500)`), used by every `:focus-visible` outline.
 - 2026-11-18: New `mobile.md`: mobile app foundations (dark only, no hover or tooltips, 16px body padding and gaps, compact type, button size per placement, map of mobile specs). Component mobile specs stay in their own docs.
 - 2026-11-18: Page-level containers use 24px between blocks (Workspace and Events sections were 32px; Your Content, Questions Bank and SCORM 16px; Program details, Program admin, Automations, For You and Roles 20px; Calendar columns 32px).
 - 2026-11-18: `layout.md` gains a Page composition table (web and mobile app), read from the Library Screens templates and the My Progress V2 and Training Records screens: 24px between top-level page blocks and cards on web (was "section gaps 20px"), 16px body padding and gaps in the app.

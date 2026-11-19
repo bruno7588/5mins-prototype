@@ -92,18 +92,18 @@ The collapsed summary fades out (220ms) while the body opens with `Collapse` (GS
 | Clear All hover, pressed | label `--text-error` |
 | Clear All disabled | `--text-disabled`, tooltip "No filters to clear" |
 | Add Filter disabled | tooltip gives the reason ("All filters are already added") |
-| Focus-visible | cyan `--primary-button-background` ring, 2px, offset 2 |
+| Focus-visible | cyan `--focus-ring` ring, 2px, offset 2 |
 
 ## Tokens
 
-`var(--cards-background)`, `var(--cards-background-hover)`, `var(--page-background-hover)` (chevron hover), `var(--input-background-elevated)`, `var(--text-primary)`, `var(--text-secondary)`, `var(--text-error)`, `var(--text-disabled)`, `var(--primary-button-background)` (focus ring), `var(--shadow-s)`, `var(--radius-sm)`, `var(--space-xss)`, `var(--space-s)`, `var(--space-sm)`, `var(--space-m)`.
+`var(--cards-background)`, `var(--cards-background-hover)`, `var(--page-background-hover)` (chevron hover), `var(--input-background-elevated)`, `var(--text-primary)`, `var(--text-secondary)`, `var(--text-error)`, `var(--text-disabled)`, `var(--focus-ring)` (focus ring), `var(--shadow-s)`, `var(--radius-sm)`, `var(--space-xss)`, `var(--space-s)`, `var(--space-sm)`, `var(--space-m)`.
 
 ## Accessibility
 
 - The "Filters" label and the chevron are both buttons with `aria-expanded`; the chevron's name is "Expand filters" / "Collapse filters".
 - Each remove button is named "Remove <Field> filter".
 - Add Filter sets `aria-haspopup="listbox"` and `aria-expanded`; when disabled, its tooltip says why.
-- Focus rings: cyan `--primary-button-background`, 2px, offset 2.
+- Focus rings: cyan `--focus-ring`, 2px, offset 2.
 
 ## Examples
 

@@ -156,7 +156,7 @@ What `src/components/Dropdown/Dropdown.css` draws:
 - Selected: `var(--selected)` fill with `var(--text-on-selected)` text at weight 500. No tick icon.
 - Disabled: `var(--text-disabled)`, not clickable.
 - Option with `description`: label 500 over a `var(--text-tertiary)` description that may wrap, 4px apart (`var(--space-xs)`); on the amber selected row the description is `var(--text-on-selected)`.
-- Checkbox rows: 12px (`var(--space-sm)`) from the box to the label. Checkbox and "All" rows focus with a 2px `var(--primary-button-background)` inset ring.
+- Checkbox rows: 12px (`var(--space-sm)`) from the box to the label. Checkbox and "All" rows focus with a 2px `var(--focus-ring)` inset ring.
 
 The menu border is `var(--border-elevated)` (Figma `9162:1042`), as `RowActionsMenu` uses; `--border` would vanish against `--cards-background` in dark mode.
 

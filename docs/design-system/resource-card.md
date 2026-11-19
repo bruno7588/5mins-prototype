@@ -148,18 +148,18 @@ File tiles are finished artwork with their colours baked in; don't recolour them
 | Hover (action) | unchanged | `--text-primary` on `--input-background-hover`, plus the Tooltip |
 | Hover (Remove) | unchanged | trash `--text-error` on `--input-background-hover` |
 | Open disabled (`openDisabled`) | unchanged | icon greys out but stays in place, so every card keeps the same shape |
-| Focus-visible (action) | unchanged | visible ring `--primary-button-background` |
+| Focus-visible (action) | unchanged | visible ring `--focus-ring` |
 
 - Hovering the icon shows the DS Tooltip (`Position=Top, Alignment=Center, Icon=False`) reading "Download" or "Open link", as in the Web/Admin Hover variant. This applies at every size on web, including `device="mobile"` cards on desktop For You. The mobile app passes `tooltip={false}`: a phone has no hover.
 - Use `openDisabled` when there's nothing to download (e.g. an admin's file isn't in the session any more).
 
 ## Tokens
 
-`--cards-background`, `--cards-background-hover`, `--shadow-card`, `--text-primary`, `--text-secondary`, `--text-tertiary`, `--text-error` (Remove hover), `--input-background-hover` (action hover fill), `--primary-button-background` (focus ring), `--certificate-quiz` (External link tile); spacing `--space-xs`, `--space-s`, `--space-sm`, `--space-m`; radius `--radius-sm`, `--radius-s`, `--radius-full`.
+`--cards-background`, `--cards-background-hover`, `--shadow-card`, `--text-primary`, `--text-secondary`, `--text-tertiary`, `--text-error` (Remove hover), `--input-background-hover` (action hover fill), `--focus-ring` (focus ring), `--certificate-quiz` (External link tile); spacing `--space-xs`, `--space-s`, `--space-sm`, `--space-m`; radius `--radius-sm`, `--radius-s`, `--radius-full`.
 
 ## Accessibility
 
-- The action button has a visible `:focus-visible` ring (`--primary-button-background`) and an `aria-label` of "Download <title>" or "Open link <title>".
+- The action button has a visible `:focus-visible` ring (`--focus-ring`) and an `aria-label` of "Download <title>" or "Open link <title>".
 - Learner cards (no `onRemove`) are clickable end to end; the icon button stays the keyboard and screen-reader target. Authoring cards with Remove keep icon-only actions so a tap on the row never downloads by accident.
 
 ## Content

@@ -179,7 +179,7 @@ font: 700 14px/1.5 'Poppins';   /* S: 12px/1.2 */
 | Rest | transparent fill, 1px `--border-elevated`, label `--text-primary` |
 | Hover (the button itself is hovered, or the whole zone is in `state === 'Hover'` or being dragged over) | `background: var(--button-outline-fill-hover)`; border and label `var(--primary-button-background-hover)` |
 | Pressed | transparent fill, border and label `--primary-button-background-pressed` |
-| Focus-visible (zone and button) | cyan ring, `outline: 2px solid var(--primary-button-background)`, offset 2px |
+| Focus-visible (zone and button) | cyan ring, `outline: 2px solid var(--focus-ring)`, offset 2px |
 
 ## Tokens
 

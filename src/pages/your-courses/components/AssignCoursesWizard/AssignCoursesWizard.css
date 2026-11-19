@@ -65,7 +65,7 @@
 .acw-courses .automation-details-row-drag:focus-visible,
 .acw-courses .automation-details-row-remove:focus-visible,
 .acw-courses .automation-details-cell-trigger:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -290,7 +290,7 @@
 }
 
 .acw-review-course:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }

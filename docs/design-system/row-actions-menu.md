@@ -42,7 +42,7 @@ The kebab button at the end of a table row and the action menu it opens: the DS 
 - Don't give a danger item's icon a raw palette colour such as `var(--danger-500)`; it reads darker than the label in dark mode.
 - Don't wrap the menu in your own portal or popover; it already portals and positions itself.
 
-**Canonical spec:** trigger 28px circle `var(--radius-full)`, hover and open `var(--input-background)`, kebab icon 20px; menu width fits its content (max-content), `var(--cards-background)`, 1px `var(--border-elevated)`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), item gap 0 (items sit flush; the divider keeps 4px above and below), shadow `var(--shadow-l)`, 8px from the trigger; item padding `var(--space-s)` `var(--space-sm)` (8px 12px), radius `var(--radius-s)` (8px), hover `var(--cards-background-hover)`, label 14px Regular `var(--text-primary)` (Medium when stacked), icon `var(--text-primary)`, description 14px `var(--text-tertiary)`, danger `var(--text-error)`, disabled `var(--text-disabled)`; divider 1px `var(--border-elevated)`; focus 2px `var(--primary-button-background)` inset outline.
+**Canonical spec:** trigger 28px circle `var(--radius-full)`, hover and open `var(--input-background)`, kebab icon 20px; menu width fits its content (max-content), `var(--cards-background)`, 1px `var(--border-elevated)`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), item gap 0 (items sit flush; the divider keeps 4px above and below), shadow `var(--shadow-l)`, 8px from the trigger; item padding `var(--space-s)` `var(--space-sm)` (8px 12px), radius `var(--radius-s)` (8px), hover `var(--cards-background-hover)`, label 14px Regular `var(--text-primary)` (Medium when stacked), icon `var(--text-primary)`, description 14px `var(--text-tertiary)`, danger `var(--text-error)`, disabled `var(--text-disabled)`; divider 1px `var(--border-elevated)`; focus 2px `var(--focus-ring)` inset outline.
 
 ## Figma to code
 
@@ -132,7 +132,7 @@ button.ram-trigger   aria-haspopup="menu", aria-expanded
 | Danger | n/a | label and icon `var(--text-error)` |
 | Disabled | n/a | label, icon and description `var(--text-disabled)`, `aria-disabled`, not clickable |
 | Inert | n/a | looks enabled, arrow cursor, does nothing |
-| Focus-visible | no ring of its own yet; add one when touching it | 2px `var(--primary-button-background)` inset outline |
+| Focus-visible | no ring of its own yet; add one when touching it | 2px `var(--focus-ring)` inset outline |
 
 ## Tokens
 

@@ -52,7 +52,7 @@
 }
 
 .m-lf-slide__tap:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: -4px;
 }
 
@@ -102,7 +102,7 @@
 }
 
 .m-lf-info__more:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }
@@ -171,7 +171,7 @@
 
 .m-lf-side__action:focus-visible,
 .m-lf-side__more:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }

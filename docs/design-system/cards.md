@@ -60,7 +60,7 @@ Only the cards below have a shared component. Lesson list rows, Assessment rows,
 - The item is a course resource file or link → use ResourceCard ([doc](resource-card.md))
 
 **Do**
-- Pass `onOpen` when the card opens something; only then does it get `role="button"`, Enter/Space, the hover fill and the cyan `--primary-button-background` focus ring.
+- Pass `onOpen` when the card opens something; only then does it get `role="button"`, Enter/Space, the hover fill and the cyan `--focus-ring` focus ring.
 - Leave `onOpen` off for a static preview with nothing to open yet.
 - Use New for recently added courses and Due date for a compliance deadline; both can show at once.
 - Keep the progress fill `--selected` (gold), switching to `--success-500` once the course is complete.
@@ -85,7 +85,7 @@ Only the cards below have a shared component. Lesson list rows, Assessment rows,
 **Do**
 - Keep the glow-stack thumbnail with no surface fill; the glow is the card.
 - Use `disabled` for a category outside the plan: it shows the lock, turns the title and meta icons `--text-disabled` (meta labels stay `--text-secondary`) and stops the card being clickable.
-- Pass `onClick` to make it interactive (`role="button"`, Enter/Space, cyan `--primary-button-background` focus ring).
+- Pass `onClick` to make it interactive (`role="button"`, Enter/Space, cyan `--focus-ring` focus ring).
 
 **Don't**
 - Don't add a card fill, border or shadow around the glow stack.
@@ -106,7 +106,7 @@ Only the cards below have a shared component. Lesson list rows, Assessment rows,
 - A mobile lesson list → use the Lesson mobile list card (this doc)
 
 **Do**
-- Pass `onOpen` to make the tile open the lesson; it then gets `role="button"`, an `aria-label`, Enter/Space and the cyan `--primary-button-background` focus ring.
+- Pass `onOpen` to make the tile open the lesson; it then gets `role="button"`, an `aria-label`, Enter/Space and the cyan `--focus-ring` focus ring.
 - Set `completed` so every segment turns `--success-500`.
 
 **Don't**
@@ -815,7 +815,7 @@ Badges and the progress bar stay put on top during the hover zoom; the zoom is d
 | Hover / focus-visible | `--cards-background-hover` | scaled to 5/6 (200 x 137), centred | `--input-background-elevated` |
 
 - **Animation:** surface fill, stack scale and middle-layer fill all ease over 300ms `cubic-bezier(0.42, 0, 0.58, 1)` (ease-in-out), in and out. Under `prefers-reduced-motion` the change snaps.
-- **Focus:** keyboard focus shows the hover state plus a 2px `--primary-button-background` ring, 2px offset, on the surface.
+- **Focus:** keyboard focus shows the hover state plus a 2px `--focus-ring` ring, 2px offset, on the surface.
 - The 0-course illustration shrinks with the stack (155 x 96 → 117 x 72).
 - **New Folder tile:** hover eases the fill to `--input-background` over 300ms; the border stays put.
 
@@ -838,7 +838,7 @@ Shared values used by every card:
 
 ## Accessibility
 
-- Interactive cards (`onOpen` or `onClick` set) get `role="button"`, Enter/Space handling and a visible `:focus-visible` ring: 2px `--primary-button-background` (cyan), 2px offset. Without the handler they are static.
+- Interactive cards (`onOpen` or `onClick` set) get `role="button"`, Enter/Space handling and a visible `:focus-visible` ring: 2px `--focus-ring` (cyan), 2px offset. Without the handler they are static.
 - `LessonGridCard` with `onOpen` also gets an `aria-label`.
 - Icon-only controls carry an `aria-label` (e.g. "Edit assessment", "Remove skill").
 - Disabled cards are not clickable (desktop Category card, Assessment and Lesson disabled variants).

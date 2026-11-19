@@ -143,7 +143,7 @@ button.wzs-step:hover:not(:disabled) {
 }
 
 button.wzs-step:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -234,7 +234,7 @@ button.wzs-stepper-step:hover:not(.wzs-stepper-step--locked) {
 }
 
 button.wzs-stepper-step:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

@@ -194,7 +194,7 @@ import CloseButton from '@/components/CloseButton/CloseButton'
 <CloseButton onClick={onClose} />
 ```
 
-`src/components/CloseButton/CloseButton.css`: 32 × 32px, circular `var(--radius-full)`, transparent at rest with a `var(--text-secondary)` glyph, `var(--input-background)` fill on hover, 2px `var(--primary-button-background)` focus outline with 2px offset. The page-level wrapper only positions it in the top-right corner.
+`src/components/CloseButton/CloseButton.css`: 32 × 32px, circular `var(--radius-full)`, transparent at rest with a `var(--text-secondary)` glyph, `var(--input-background)` fill on hover, 2px `var(--focus-ring)` focus outline with 2px offset. The page-level wrapper only positions it in the top-right corner.
 
 ### Close button (full-screen modal)
 
@@ -211,7 +211,7 @@ A full-screen modal (lesson editors, Create Flashcard, the Add Content lesson fo
 | Glyph | `IoCloseOutline`, 36 × 36px box, two 15.75px strokes at 1.5px, round caps |
 | Glyph colour | `--text-secondary` |
 | Hover | Fill `--input-background-hover`, glyph `--text-primary` |
-| Focus | 2px `--primary-button-background` outline, 2px offset (shared `.close-btn`) |
+| Focus | 2px `--focus-ring` outline, 2px offset (shared `.close-btn`) |
 
 **Use the component, never hand-roll it:**
 
@@ -614,7 +614,7 @@ All four icons render at 56×56px; the Info icon sits inside a plain flex wrappe
 |---|---|---|
 | Rest | transparent, glyph `var(--text-secondary)` | fill `var(--input-background)`, glyph `var(--text-secondary)` |
 | Hover | fill `var(--input-background)` | fill `var(--input-background-hover)`, glyph `var(--text-primary)` |
-| Focus-visible | 2px `var(--primary-button-background)` outline, 2px offset | 2px `var(--primary-button-background)` outline, 2px offset |
+| Focus-visible | 2px `var(--focus-ring)` outline, 2px offset | 2px `var(--focus-ring)` outline, 2px offset |
 
 Dialog and drawer buttons take their states from [buttons.md](buttons.md).
 
@@ -645,7 +645,7 @@ Dialog and drawer buttons take their states from [buttons.md](buttons.md).
 
 **Focus management:** when any overlay opens, focus must move to the first interactive element inside the panel. When closed, focus returns to the element that triggered the overlay. Tab key must cycle only through elements inside the overlay (focus trap). Use `useOverlayA11y(panelRef, open, { onEscape })` (`src/hooks/useOverlayA11y.ts`), which `ConfirmModal` already calls.
 
-**Focus-visible:** close buttons show a 2px `var(--primary-button-background)` outline with 2px offset (see States).
+**Focus-visible:** close buttons show a 2px `var(--focus-ring)` outline with 2px offset (see States).
 
 ## Content
 

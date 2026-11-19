@@ -71,7 +71,7 @@ A date input field that opens a month-grid calendar popover. Weeks start on **Mo
 | Disabled | false / true | `MiniCalendar` `maxDate` / `minDate` | days outside the bounds | outside-month days use the same look but stay clickable |
 | Day | text (default "01") | n/a | computed day number | |
 
-- **Figma only:** `State=Illustration` (23×28px streak graphic for the learner streak calendar). The month grid `11529:430` is a frame, not a component. The Figma light date field shows a raw `Secondary-500` binding on the active border; treat that as stale, `--selected` is the rule. The light Calendar set uses the dark Day item instance. The Day item `State=Focus` border is bound to `Primary-Button-background` (cyan), matching the code; it was `Selected` before 2026-10-14.
+- **Figma only:** `State=Illustration` (23×28px streak graphic for the learner streak calendar). The month grid `11529:430` is a frame, not a component. The Figma light date field shows a raw `Secondary-500` binding on the active border; treat that as stale, `--selected` is the rule. The light Calendar set uses the dark Day item instance. The Day item `State=Focus` border is bound to `Primary-500` (cyan), matching the code; it was `Selected` before 2026-10-14.
 - **Code only:** `MiniCalendar` `onSelect(iso)`, `minDate` (ISO; days before it render disabled, the mirror of `maxDate`).
 
 MiniCalendar props: `value` (ISO `yyyy-mm-dd`), `onSelect(iso)`, `maxDate` (ISO), `minDate` (ISO).
@@ -165,7 +165,7 @@ Source:      Figma Library Calendar 11529:430
 | Outside month | - | - | 4px | Regular 14 `--text-disabled`, **50% opacity** on the cell; still clickable (selects that day) |
 | Disabled (after `maxDate`) | - | - | 4px | Regular 14 `--text-disabled`, **50% opacity**, not clickable |
 | Hover | `--cards-background-hover` | - | 8px | Regular 14 `--text-primary` |
-| Focus | - | 1px `--primary-button-background` | 8px | Regular 14 `--text-primary` |
+| Focus | - | 1px `--focus-ring` | 8px | Regular 14 `--text-primary` |
 | Current day | - | 1px `--border-elevated` | 8px | Regular 14 `--text-primary` |
 | **Selected** | `--secondary-500` (mode-invariant) | - | 8px | **Bold 14 `--text-on-selected`** - dark label in both modes |
 | Illustration | - | - | - | 23×28px streak graphic replaces the number (learner streak calendar) |
@@ -219,7 +219,7 @@ Source:      Figma Library Calendar 11529:430
 .cal-day--outside  { color: var(--text-disabled); opacity: 0.5; }   /* still clickable */
 .cal-day--disabled { color: var(--text-disabled); opacity: 0.5; pointer-events: none; }
 .cal-day:hover     { background: var(--cards-background-hover); border-radius: var(--radius-s); }
-.cal-day:focus-visible { border: 1px solid var(--primary-button-background); border-radius: var(--radius-s); outline: none; }
+.cal-day:focus-visible { border: 1px solid var(--focus-ring); border-radius: var(--radius-s); outline: none; }
 .cal-day--today    { border: 1px solid var(--border-elevated); border-radius: var(--radius-s); }
 .cal-day--selected {
   background: var(--secondary-500);                      /* mode-invariant */
@@ -244,7 +244,7 @@ Source:      Figma Library Calendar 11529:430
 
 ## Accessibility
 
-- Day cells are buttons (focus ring = 1px `--primary-button-background`, cyan like every focus ring), and Enter selects a focused day.
+- Day cells are buttons (focus ring = 1px `--focus-ring`, cyan like every focus ring), and Enter selects a focused day.
 - Where `MiniCalendar` is embedded inline (`ReleasePopover`, `EnrolPeopleDrawer`) the days are reachable with Tab. In `DatePickerField` the popover is portalled to the end of `<body>` and focus does not move into it, so Tab from the field does not reach the days; Esc closes the popover.
 - Arrow-key movement between days is not built.
 
