@@ -40,14 +40,15 @@ Asset libraries for learner progression UI. All are exact Figma exports: never r
 | Illustrations/ Learning path | Level | 1 / 2 / 3 / 4 / 5 / Advanced / Expert / Master | `getLevelIllustration(level)` | `SkillLevel`: `1 \| 2 \| 3 \| 4 \| 5 \| 'advanced' \| 'expert' \| 'master'` | |
 | | Size | small / large | `options.size` | `'small'` (default) / `'large'` | 56px / 72px |
 | | Disabled | false / true | `options.disabled` | `false` (default) / `true` | grayscale |
-| Illustrations/ Progress | Type | Streak / Points / Jewels / Certificates / Passed / Nearly there / Not passed | `getProgressIllustration(type)` | `'streak'` / `'points'` / `'jewels'` / `'certificates'` / `'passed'` / `'nearly-there'` / `'not-passed'` | 40px |
-| Illustrations/ Assessments | Type | see the assessment table below | `getAssessmentIllustration(type, device)` | `AssessmentType` keys | Figma has 11 Type values; code and this doc have 10 |
+| Illustrations/ Progress | Type | Streak / Points / Jewels / Certificates / Passed / Nearly there / Not passed | `getProgressIllustration(type)` | `'streak'` / `'points'` / `'jewels'` / `'certificates'` / `'passed'` / `'nearly-there'` / `'not-passed'` | 32px |
+| Illustrations/ Assessments | Type | see the assessment table below | `getAssessmentIllustration(type, device)` | `AssessmentType` keys | 12 Type values in Figma, code and this doc |
 | | Device | Mobile / Desktop | `device` | `'mobile'` / `'desktop'` | 56px / 80px |
 | Illustrations/Certificate | Size | XL / L / M / S | `getCertificateIllustration(size)` | `'xl'` / `'l'` / `'m'` / `'s'` | 240 / 80 / 56 / 20px |
 | Illustrations/Gamification | Type | Progress / Certificate / Quiz / Learning Path | `getGamificationIllustration(type)` | `'progress'` / `'certificate'` / `'quiz'` / `'learning-path'` | 96px |
 
 - **Ranking, leaderboard** (`2613:26421`): no code component, but the gold, silver and bronze medals are assets: `getRankMedal(rank)` from `@/assets/ranking-illustrations` (24px disc for ranks 1 to 3, the number drawn over it in code; rank 4 and below is a plain number). Used on the Leaderboard card (`LeaderboardCard`, exported from `src/pages/my-progress/MyProgress.tsx`): Team / Company Content Switcher, a period Dropdown, then the ranked list scrolling inside the card. It sits on the Engagement tab of My Learning (web, the person's own page only) and on the Engagement tab of the native app's My Learning screen. **Gap:** there is no "this person's row" state, so the Leaderboard is hidden when a manager or admin views someone else's profile (DES-369); it needs a Figma design before it can show there.
-- **Figma only:** Learning path (`5514:8463`), Certificate instances (`5514:2390`), Quiz/Options (`5504:24966`), Progress bar (`7046:25097`), Thumbnail type (`9537:7400`) have no code component; the 11th Assessments Type value has no code key. Their component properties: Learning path `Description` and `Progress` (text); Quiz/Options `Label` and `Explanation` (text) plus `State=Focus` (desktop, before submitting; `:focus-visible` when built).
+- **Figma only:** Learning path (`5514:8463`), Certificate instances (`5514:2390`), Quiz/Options (`5504:24966`), Progress bar (`7046:25097`), Thumbnail type (`9537:7400`) have no code component. Their component properties: Learning path `Description` and `Progress` (text); Quiz/Options `Label` and `Explanation` (text) plus `State=Focus` (desktop, before submitting; `:focus-visible` when built).
+- **Illustrations/ Functions** (`9120:9874`): 20 function artworks at 96px in the Library; no code assets yet.
 - **Code only:** `assessmentTypeFromLabel(label)` bridges an outline card's display label to an `AssessmentType` key.
 
 **Production:**
@@ -78,16 +79,17 @@ Small and large are **different artwork**, not scaled copies; always pick by var
 
 ### Progress illustrations
 
-Assets in `src/assets/progress-illustrations/`. Seven **40×40** stat icons for "My progress" surfaces (profile stats, progress summaries, quiz results): `streak`, `points`, `jewels`, `certificates`, plus the quiz-outcome trio `passed`, `nearly-there`, `not-passed`. Render at native 40px.
+Assets in `src/assets/progress-illustrations/`. Seven **32×32** stat icons (Figma `10157:9081`; the art is drawn on a 40×40 viewBox and the SVGs default to 32px) for "My progress" surfaces (profile stats, progress summaries, quiz results): `streak`, `points`, `jewels`, `certificates`, plus the quiz-outcome trio `passed`, `nearly-there`, `not-passed`. Render at 32px.
 
 **Export them transparent.** Figma's SVG export carries the artboard out with the artwork: a 40×40 `#F5F5F5` rect, the full-bleed `#20222A` "Dark mode" section rect, and the purple dashed component-set marker. Clipped by the viewBox they read as a solid square behind the illustration. Strip all three after any re-export; the icons must sit on whatever surface hosts them.
 
 ### Assessment illustrations
 
-Assets in `src/assets/assessment-illustrations/` with a typed index. **Eleven** assessment/quiz types, one artwork each, in two device variants: Mobile **56px** and Desktop **80px**.
+Assets in `src/assets/assessment-illustrations/` with a typed index, from Figma `9120:8850`. **Twelve** assessment/quiz types, one artwork each, in two device variants: Mobile **56px** and Desktop **80px**.
 
 | Key | Figma variant | Mobile / Desktop node | Artwork |
 |---|---|---|---|
+| `lesson-quiz` | Lesson quiz | not recorded | lesson quiz artwork |
 | `multiple-choice` | Multiple choice | `9120:8851` / `10978:11975` | amber lightbulb |
 | `short-text` | Short text | `9120:8885` / `10978:12003` | pen on a scroll |
 | `exercise` | Exercise | `10247:7546` / `10978:12375` | folder of documents |
@@ -156,7 +158,7 @@ import { getLevelIllustration } from '@/assets/level-illustrations'
 ```tsx
 import { getProgressIllustration } from '@/assets/progress-illustrations'
 
-<img src={getProgressIllustration('streak')} alt="" width={40} height={40} />
+<img src={getProgressIllustration('streak')} alt="" width={32} height={32} />
 ```
 
 ```tsx

@@ -29,7 +29,7 @@
 }
 
 .radio--selected .radio__ring {
-  border-color: var(--control-selected);
+  border-color: var(--selected);
 }
 
 .radio--selected .radio__ring::after {
@@ -37,7 +37,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--control-selected);
+  background: var(--selected);
 }
 
 .radio--disabled {

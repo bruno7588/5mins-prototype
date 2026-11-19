@@ -68,7 +68,7 @@ The Figma table is four component sets; code is one data-driven `Table` whose ce
 | State | Enabled / Hover / n/a | `getRowState` | `'enabled'` / `'hover'` | hover is also CSS `:hover`; `n/a` has no code value |
 | Selected | false / true | `getRowState` or `isSelected` | `'selected'` | Selected + Hover is CSS `:hover` on a selected row |
 | Disabled | false / true | `getRowState` | `'disabled'` | read-only rows |
-| State | Focus | n/a | CSS `:focus-visible` | cyan ring on a clickable row (`onRowClick`) |
+| State | Focus | n/a | CSS `:focus-visible` | clickable rows (`onRowClick`) only: `tabIndex={0}`, Enter/Space open the row, 2px `--primary-button-background` ring, `var(--radius-m)`, 2px offset (Figma `12496:15053`) |
 
 **Table header** (`11872:3077`)
 
@@ -194,7 +194,7 @@ Every cell is `flex: 1; display: flex; align-items: center; padding: 8px 12px; m
 | Avatar group | `<AvatarGroup size={32}>`: overlapping 32px avatars (`-12px` overlap, 1px `--page-background` ring); "+N" is a same-size 32px circle via `remaining` ([avatars.md](avatars.md)) |
 | Illustration | 24px skill / gamification icon + text |
 | Thumbnail | 72×44 rounded (`8px`) image + text (`.tbl-thumb`) |
-| Progress bar | 72px x 8px segmented bar (8 segments) + % label, `gap: 8px`; row height 56px |
+| Progress bar | 72px x 8px segmented bar (8 segments) + % label, `gap: 8px`; row height 56px; filled segments `--primary-600`, all `--success-500` at 100% (`.tbl-progress.is-complete`, Figma `Progress=100%` `7046:25170`) |
 | Action icon | centred 20px kebab in a 28px circular button; hover fills it with `--input-background-hover` |
 | Badge | status pill (e.g. success: tick + label on `rgba(24,169,87,0.16)`) |
 | Button | small outlined button (`12px` Bold label, `8px` radius) |
@@ -215,6 +215,7 @@ Helper classes `Table.css` provides for cell content: `.tbl-media` (media + text
 | Selected | `--selected-row` | `--selected-row` | `--text-primary` |
 | Selected + Hover | `--selected-row-hover` | `--selected-row-hover` | `--text-primary` |
 | Disabled (read-only) | transparent | `--border` | `--text-disabled` |
+| Focus (clickable rows) | unchanged | unchanged, plus a 2px `--primary-button-background` outline, 2px offset, radius `var(--radius-m)` | unchanged |
 
 Selected rows use `var(--selected-row)` when enabled and `var(--selected-row-hover)` on hover, applied to both background and border (`Table.css`). They mirror the Figma variables `Selected-row` / `Selected-row-hover`: Secondary-500 `#FFBB38` at 16% / 24% in both modes, so there is no dark override. Do not use the solid amber for the row fill. Checkboxes take their checked fill from `selection-controls.md` (`--control-selected`).
 
@@ -246,6 +247,8 @@ Use the semantic token names, not raw hex. Cross-reference `colors.md`, `layout.
 | `--cards-background-hover` | `#EFF0F2` | `#383D4C` | row checkbox hover disc |
 | `--text-success` | `#11763D` | `#18A957` | success badge text |
 | `--primary-600` | `#00AFC4` | `#00AFC4` | progress bar fill |
+| `--success-500` | `#18A957` | `#18A957` | progress bar fill at 100% |
+| `--primary-button-background` | per colors.md | per colors.md | clickable row focus ring |
 | `--selected-row` / `--selected-row-hover` | Secondary-500 at 16% / 24% | same | selected row background and border |
 
 ### Typography
@@ -266,6 +269,7 @@ All table text is Poppins, `14px`, `line-height: 1.5`.
 ## Accessibility
 
 - Every interactive cell element needs a visible `:focus-visible` indicator and an `aria-label` where there is no text (action icons, pagination nav).
+- A clickable row (`onRowClick`) is in the Tab order and opens on Enter or Space; keys pressed inside its own controls (checkbox, buttons, inputs) stay with those controls.
 - Pagination nav buttons are named "Previous page" / "Next page" and set `aria-disabled` at the ends.
 - `RowActionsMenu` takes an `ariaLabel` naming the row.
 

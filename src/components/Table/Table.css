@@ -182,6 +182,13 @@
   cursor: pointer;
 }
 
+/* Figma row State=Focus (12496:15053): 2px cyan ring, radius M, 2px offset. */
+.tbl-row.is-clickable:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-m);
+}
+
 .tbl-row.is-hover,
 .tbl-row:hover {
   background: var(--input-background);
@@ -336,6 +343,11 @@
 
 .tbl-progress .seg.fill {
   background: var(--primary-600);
+}
+
+/* Progress=100% (Figma 7046:25170): the full bar turns success green. */
+.tbl-progress.is-complete .seg.fill {
+  background: var(--success-500);
 }
 
 .tbl-progress .pct {

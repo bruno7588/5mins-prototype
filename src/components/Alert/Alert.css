@@ -1,6 +1,6 @@
 /* Alert / Callout - Figma Library Alert 3658:32304, docs/design-system/alerts-toast.md
 
-   Callout: neutral text (Text-primary title, Text-secondary supporting text), Text button.
+   Callout: neutral text (Text-secondary title and message), Text button.
    Alert: every line in Text-warning on the warning tint, Filled Warning button. */
 
 .alert {
@@ -8,7 +8,7 @@
   align-items: center;
   border-radius: var(--radius-sm);
   padding: var(--space-sm) var(--space-m); /* 12px 16px */
-  gap: var(--space-sm); /* icon to text */
+  gap: var(--space-s); /* 8px after an illustration, or with no icon */
   width: 100%;
   box-sizing: border-box;
   position: relative;
@@ -19,9 +19,15 @@
   color: var(--text-primary);
 }
 
+/* 12px only when an icon is set (Library). */
+.alert--with-icon {
+  gap: var(--space-sm);
+}
+
 /* ── Callout: neutral guidance ── */
 .alert--callout {
   background: var(--input-background);
+  color: var(--text-secondary);
 }
 
 .alert--callout .alert__icon {

@@ -62,7 +62,7 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 - Don't use a checkbox for mutually exclusive choices.
 - Never give the glyph its own colour.
 
-**Canonical spec:** 32 × 32px hit area with `var(--space-s)` (8px) padding and a `var(--radius-full)` hover halo in `--page-background-hover`; 16 × 16px box, 4px radius, 1.5px border `--text-secondary`; checked and indeterminate fill `--selected` with the tick or minus bar cut out of the box, so the surface shows through; disabled `--text-disabled`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `6339:10484`.
+**Canonical spec:** 32 × 32px hit area with `var(--space-s)` (8px) padding and a `var(--radius-full)` hover halo in `--page-background-hover`; 16 × 16px box, 4px radius, 1px border `--text-primary`; checked and indeterminate fill `--selected` with the tick or minus bar cut out of the box, so the surface shows through; disabled `--text-disabled`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `6339:10484`.
 
 ### Radio
 
@@ -88,7 +88,7 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 - Don't re-implement radios with `div`s.
 - Don't ship a lone radio; with one option use a checkbox or toggle.
 
-**Canonical spec:** 24 × 24px hit area with a fully round (30px) hover halo in `--page-background-hover`; 15 × 15px ring, 1.5px `--text-primary` (unchanged on hover; hover only adds the halo); selected ring and 7px dot `--control-selected`; disabled `--text-disabled`; focus-visible 2px `--primary-button-background` outline. Row gap `var(--space-s)` (8px), option text 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5001:18926`.
+**Canonical spec:** 24 × 24px hit area with a fully round (30px) hover halo in `--page-background-hover`; 15 × 15px ring, 1.5px `--text-primary` (unchanged on hover; hover only adds the halo); selected ring and 7px dot `--selected`; disabled `--text-disabled`; focus-visible 2px `--primary-button-background` outline. Row gap `var(--space-s)` (8px), option text 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5001:18926`.
 
 ### Toggle
 
@@ -180,7 +180,7 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 | Visible box / fill | 16 × 16 px |
 | Halo border-radius | fully round, `var(--radius-full)` |
 | Box border-radius | 4 px |
-| Box border width | 1.5 px |
+| Box border width | 1 px |
 
 `src/components/Checkbox/Checkbox.css` holds the hit area and hover halo; the box, tick and minus bar are inline SVG in `Checkbox.tsx`. The tick and minus bar are not white: they are cut out of a single filled path copied from Figma (`CHECKED_PATH`, `INDETERMINATE_PATH`), filled `--selected` (also when disabled), so the surface behind shows through (light on light pages, dark in dark mode).
 
@@ -227,10 +227,10 @@ The thumb sits 2px inside the track in both sizes. Use Small where a 20px track 
 
 | State | Checked variant | Box fill | Box border | Glyph | Halo |
 |---|---|---|---|---|---|
-| Enabled, not checked | Not checked | transparent | `--text-secondary` | none | none |
+| Enabled, not checked | Not checked | transparent | `--text-primary` | none | none |
 | Enabled, checked | Checked | `--selected` (`#EDA30D`) | `--selected` | check, cut out | none |
 | Enabled, indeterminate | Indeterminate | `--selected` | `--selected` | minus bar, cut out | none |
-| Hover, not checked | Not checked | transparent | `--text-secondary` | none | 32 × 32 `--page-background-hover` (`#EFF0F2`) |
+| Hover, not checked | Not checked | transparent | `--text-primary` | none | 32 × 32 `--page-background-hover` (`#EFF0F2`) |
 | Hover, checked | Checked | `--selected` | `--selected` | check, cut out | 32 × 32 `--page-background-hover` |
 | Hover, indeterminate | Indeterminate | `--selected` | `--selected` | minus bar, cut out | 32 × 32 `--page-background-hover` |
 | Disabled, not checked | Not checked | transparent | `--text-disabled` (`#9EA4B3`) | none | none |
@@ -241,9 +241,9 @@ The thumb sits 2px inside the track in both sizes. Use Small where a 20px track 
 | State | Selected | Ring / dot colour | Halo |
 |---|---|---|---|
 | Enabled, unselected | no | `--text-primary` ring | none |
-| Enabled, selected | yes | `--control-selected` (`#EDA30D`) ring + filled dot | none |
+| Enabled, selected | yes | `--selected` (`#EDA30D`) ring + filled dot | none |
 | Hover, unselected | no | `--text-primary` ring (unchanged) | 24 × 24 px `--page-background-hover` (`#EFF0F2`) circle |
-| Hover, selected | yes | `--control-selected` ring + dot (unchanged) | 24 × 24 px `--page-background-hover` circle |
+| Hover, selected | yes | `--selected` ring + dot (unchanged) | 24 × 24 px `--page-background-hover` circle |
 | Disabled, unselected | no | `--text-disabled` (`#9EA4B3`) ring | none |
 | Disabled, selected | yes | `--text-disabled` ring + dot | none |
 | Focus-visible | either | unchanged | 2px `--primary-button-background` outline, 2px offset, on the ring |
@@ -281,7 +281,7 @@ The thumb sits 2px inside the track in both sizes. Use Small where a 20px track 
 }
 
 .radio--selected .radio__ring {
-  border-color: var(--control-selected);
+  border-color: var(--selected);
 }
 
 .radio--selected .radio__ring::after {
@@ -289,7 +289,7 @@ The thumb sits 2px inside the track in both sizes. Use Small where a 20px track 
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--control-selected);
+  background: var(--selected);
 }
 
 .radio--disabled {
@@ -415,18 +415,18 @@ All three controls pull from the same token set. Selected/on state colour differ
 
 | Role | Token | Light | Dark | Notes |
 |---|---|---|---|---|
-| Selected colour (radio, checkbox) | `--control-selected` (radio) / `--selected` (checkbox) | `#EDA30D` | `#FFBB38` | Ring + dot, box fill; mode-aware, both tokens resolve to the same values |
+| Selected colour (radio, checkbox) | `--selected` | `#EDA30D` | `#FFBB38` | Ring + dot, box fill; mode-aware |
 | On colour (toggle track) | `--selected` | `#EDA30D` | `#FFBB38` | Mode-aware, brighter amber in dark mode |
 | Hover halo background | `--page-background-hover` | `#EFF0F2` | `#2D313D` | Circular halo around radio and checkbox on hover |
-| Default stroke colour | `--text-primary` (radio) / `--text-secondary` (checkbox) | `#20222A` / `#454C5E` | `#F9F9FA` / `#BFC2CC` | Unselected radio ring; unchecked checkbox border |
+| Default stroke colour | `--text-primary` | `#20222A` | `#F9F9FA` | Unselected radio ring (1.5px); unchecked checkbox border (1px) |
 | Disabled colour | `--text-disabled` | `#9EA4B3` | `#656B7C` | Rings, borders, off-track when disabled |
 | Thumb colour (toggle) | `--neutral-25` | `#F9F9FA` | `#F9F9FA` | Toggle knob |
 
-Always use the semantic token; the hexes are documented so prototypes render correctly if tokens are not yet wired up. `--control-selected` is defined in `tokens.css` as `var(--secondary-600)` in light and `var(--secondary-500)` in dark.
+Always use the semantic token; the hexes are documented so prototypes render correctly if tokens are not yet wired up. `--selected` is defined in `tokens.css` as `var(--secondary-600)` in light and `var(--secondary-500)` in dark.
 
 | Control | Selected / On colour | Hover halo | Disabled colour |
 |---|---|---|---|
-| Radio | `var(--control-selected)` | `var(--page-background-hover)`, 24 × 24 | `var(--text-disabled)` (ring + dot) |
+| Radio | `var(--selected)` | `var(--page-background-hover)`, 24 × 24 | `var(--text-disabled)` (ring + dot) |
 | Checkbox | `var(--selected)` | `var(--page-background-hover)`, 32 × 32 | `var(--text-disabled)` (border) |
 | Toggle | `var(--selected)` | none | off track `var(--text-disabled)`; on track `var(--selected)` at 40% opacity |
 

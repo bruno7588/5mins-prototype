@@ -49,7 +49,7 @@ function Alert({
     <div
       className={`alert alert--${type.toLowerCase()}${
         hasBody ? ' alert--with-body' : ''
-      } ${className}`.trim()}
+      }${showIcon ? ' alert--with-icon' : ''} ${className}`.trim()}
     >
       {/* Default glyph is the platform's own info icon (Tooltip, PoolHeader, the
           situational drawer's guidance callout) rather than Iconsax's. */}

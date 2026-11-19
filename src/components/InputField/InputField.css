@@ -90,6 +90,7 @@
 }
 
 .input-field--disabled .input-field__wrapper {
-  border-color: var(--border);
+  /* Figma Outlined disabled binds Border-elevated (8974:24610). */
+  border-color: var(--border-elevated);
   pointer-events: none;
 }

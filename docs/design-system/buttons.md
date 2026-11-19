@@ -80,7 +80,7 @@ All colours are semantic tokens. Both light- and dark-mode resolutions are liste
 | AI feature | Filled (gradient) | AI | Medium |
 | Mark complete | Filled | Success | Medium |
 
-**Canonical spec:** height Small 33px / Medium 41px / Large 48px; radius `var(--radius-sm)` (12px); Poppins Bold 12px / 14px / 16px (H6 / H5 / H4); Link is Paragraph S / M / L medium, underlined; Medium padding 10px `var(--space-ml)` (20px); icon gap `var(--space-xs)` (4px) Small, `var(--space-s)` (8px) Medium and Large; Text buttons use 4px at Medium too. Filled `var(--primary-button-background)` with `var(--text-button-foreground)` label; Outlined-2 `var(--border-elevated)` 1px border with `var(--text-primary)` label; disabled `var(--button-background-disabled)` + `var(--text-button-disabled)`; focus 2px `var(--primary-button-background)` outline, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `10825:3269` (parent frame `5453:38273`).
+**Canonical spec:** height Small 32px / Medium 41px / Large 48px; radius `var(--radius-sm)` (12px); Poppins Bold 12px / 14px / 16px (H6 / H5 / H4); Link is Paragraph S / M / L medium, underlined; Medium padding 10px `var(--space-ml)` (20px); icon gap `var(--space-xs)` (4px) Small, `var(--space-s)` (8px) Medium and Large; Text buttons use 4px at Medium too. Filled `var(--primary-button-background)` with `var(--text-button-foreground)` label; Outlined-2 `var(--border-elevated)` 1px border with `var(--text-primary)` label; disabled `var(--button-background-disabled)` + `var(--text-button-disabled)`; focus 2px `var(--primary-button-background)` outline, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `10825:3269` (parent frame `5453:38273`).
 
 ## Figma to code
 
@@ -189,11 +189,11 @@ The ladder is **mode-aware**: light gets darker on interaction, dark gets *light
 | State | Fill | Border + text | Light | Dark |
 |-------|------|---------------|-------|------|
 | Enabled | transparent | `--text-button-outlined` | Primary-700 `#008393` | Primary-500 `#00CEE6` |
-| Hover | `rgba(0,206,230,0.16)` | `--text-button-hover` | Primary-700 `#008393` | Primary-400 `#33E2F7` |
+| Hover | `rgba(0,206,230,0.16)` | `--primary-button-background-hover` | Primary-800 `#005862` | Primary-400 `#33E2F7` |
 | Pressed | transparent | `--primary-button-background-pressed` | Primary-900 `#002C31` | Primary-600 `#00AFC4` |
 | Disabled | transparent | `--text-disabled` | Neutral-300 | Neutral-400 |
 
-In **light** mode the rest and hover chrome are the same colour; the hover cue is the 16% fill. In **dark** mode the chrome also brightens.
+Hover steps the chrome along the filled ladder (light Primary-800, dark Primary-400) on top of the 16% fill. Outlined-2 disabled keeps its `--border-elevated` border with a `--text-disabled` label.
 
 ```css
 .btn-outlined {
@@ -290,7 +290,7 @@ Darkens on interaction in **both** modes:
 .btn-danger:hover    { background: var(--button-danger-hover); }     /* Danger-600 #9C0F2E */
 .btn-danger:active   { background: var(--button-danger-pressed); }   /* Danger-700 #59091A */
 
-.btn-danger-outlined          { background: transparent; color: var(--danger-500); border: 1px solid var(--danger-500); }
+.btn-danger-outlined          { background: transparent; color: var(--text-error); border: 1px solid var(--text-error); }
 .btn-danger-outlined:hover    { background: rgba(223, 22, 66, 0.24); /* Danger-500 @ 24% */
                                 color: var(--text-error); border-color: var(--text-error); } /* light #DF1642 / dark Danger-400 #E95C7B */
 .btn-danger-outlined:active   { background: transparent;
@@ -315,6 +315,8 @@ Default is **Warning-600**. One darkening ladder in both modes (token values in 
 .btn-warning-outlined:active   { background: transparent;
                                  color: var(--button-warning-background-pressed); border-color: var(--button-warning-background-pressed); }
 .btn-warning-text     { background: transparent; border: none; padding: 0; color: var(--button-warning-background); }
+.btn-warning-text:hover  { color: var(--text-warning); }
+.btn-warning-text:active { color: var(--button-warning-background-pressed); }
 ```
 
 #### Success (positive actions)
@@ -333,6 +335,8 @@ One darkening ladder in both modes (token values in [Tokens](#tokens)).
 .btn-success-outlined:active   { background: transparent;
                                  color: var(--button-success-background-pressed); border-color: var(--button-success-background-pressed); }
 .btn-success-text     { background: transparent; border: none; padding: 0; color: var(--button-success-background); }
+.btn-success-text:hover  { color: var(--text-success); }
+.btn-success-text:active { color: var(--button-success-background-pressed); }
 ```
 
 Disabled state for all semantic variants = the shared disabled treatment (`--button-background-disabled` fill for filled; transparent fill + `--text-disabled` chrome for outlined/text).
@@ -344,7 +348,7 @@ AI buttons use a diagonal **gradient that ends at Blaze `#8158EC`** and *starts*
 | State | Light gradient start | Dark gradient start | Extra chrome |
 |-------|---------------------|---------------------|--------------|
 | Enabled | Primary-700 `#008393` | Primary-500 `#00CEE6` | none |
-| Hover | Primary-800 `#005862` | Primary-400 `#33E2F7` | **2px `#00CEE6` ring + glow** `drop-shadow(1px 1px 16px rgba(129,88,236,0.5))` |
+| Hover | Primary-800 `#005862` | Primary-400 `#33E2F7` | **2px `#00CEE6` ring + glow** `drop-shadow(1px 1px 32px rgba(129,88,236,0.5))` |
 | Pressed | Primary-900 `#002C31` | Primary-600 `#00AFC4` | 1px `#00CEE6` ring |
 | Disabled | standard disabled fill + label | standard | none |
 
@@ -362,7 +366,7 @@ The fill has no border to colour, so the AI hover's 2px cyan ring is drawn as an
 .btn-ai:hover {
   background: radial-gradient(circle at top left, var(--primary-button-background-hover) 0%, var(--blaze-quiz) 100%);
   box-shadow: inset 0 0 0 2px var(--primary-500);   /* 2px cyan ring, both modes */
-  filter: drop-shadow(1px 1px 16px rgba(129, 88, 236, 0.5));
+  filter: drop-shadow(1px 1px 32px rgba(129, 88, 236, 0.5));
 }
 .btn-ai:active {
   background: radial-gradient(circle at top left, var(--primary-button-background-pressed) 0%, var(--blaze-quiz) 100%);
@@ -397,7 +401,7 @@ The ring is drawn as a **masked pseudo-element**, not a border: the button is tr
 /* the ring follows the same state ladder as the label */
 .btn-ai-outlined:hover::before  { background: radial-gradient(circle at top left, var(--text-button-hover) 0%, #8158EC 100%); }
 .btn-ai-outlined:active::before { background: radial-gradient(circle at top left, var(--primary-button-background-pressed) 0%, #8158EC 100%); }
-.btn-ai-outlined:disabled::before { display: none; }   /* disabled takes the shared flat treatment */
+.btn-ai-outlined:disabled::before { display: none; }   /* disabled: transparent fill, 1px --text-disabled border and label (Library) */
 .btn-ai-outlined:hover {
   /* wash = the HOVER gradient at 24% opacity, plus a soft glow */
   background: radial-gradient(circle at top left,
@@ -427,7 +431,7 @@ All sizes share `border-radius: var(--radius-sm)` (12px) and Poppins **Bold** la
 
 | Size | Height | Padding (no icon) | Padding (with icon) | Icon gap | Font | Icon |
 |------|--------|-------------------|---------------------|----------|------|------|
-| **Small** | 33px | 8px 16px | 8px **12px**/16px | 4px (`--space-xs`) | 12px / 1.4 (Button S) | 16px |
+| **Small** | 32px | 8px 16px | 8px **12px**/16px | 4px (`--space-xs`) | 12px / 1.2 (H6) | 16px |
 | **Medium** | 41px | **10px** 20px (10px is intentionally off the 4px scale) | 10px **16px**/20px | 8px (`--space-s`); Text buttons 4px (`--space-xs`) | 14px / 1.5 (H5) | 20px |
 | **Large** | 48px | 12px 24px | 12px **20px**/24px | 8px (`--space-s`) | 16px / 1.5 (H4) | 24px |
 
@@ -437,7 +441,7 @@ Text buttons (Text and Danger / Warning / Success Text) have no padding; their i
 
 ```css
 .btn    { border-radius: var(--radius-sm); font-family: 'Poppins'; font-weight: 700; }
-.btn-sm { padding: var(--space-s) var(--space-m);  font-size: 12px; line-height: 1.4; gap: var(--space-xs); }
+.btn-sm { padding: var(--space-s) var(--space-m);  font-size: 12px; line-height: 1.2; gap: var(--space-xs); }
 .btn-md { padding: 10px var(--space-ml);           font-size: 14px; line-height: 1.5; gap: var(--space-s); }
 .btn-lg { padding: var(--space-sm) var(--space-l); font-size: 16px; line-height: 1.5; gap: var(--space-s); }
 /* Text buttons: 4px icon gap at Medium as well */

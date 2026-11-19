@@ -311,7 +311,7 @@
   white-space: nowrap;
   pointer-events: none;
   z-index: 10;
-  filter: drop-shadow(-4px 0px 24px rgba(32, 34, 42, 0.12));
+  filter: drop-shadow(-4px 0px 24px rgba(15, 16, 20, 0.24));
 }
 
 .automations-action-menu-item[disabled][data-tooltip]:hover::before {

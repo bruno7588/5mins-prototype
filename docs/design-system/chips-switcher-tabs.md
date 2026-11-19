@@ -463,7 +463,7 @@ An underlined bar that moves between sibling sections of one page or object.
 - Don't change the indicator colour or thickness, and never hide it on the selected tab
 - Don't put tabs and chips in the same row
 
-**Canonical spec:** label 14px, Medium (500) unselected / Bold (700) selected; indicator 2px `var(--selected)` (#EDA30D light / #FFBB38 dark); label to indicator gap `var(--space-xs)` (4px); gap between tabs `var(--space-m)` (16px) on web, `var(--space-l)` (24px) in the mobile app whenever the tabs fit the screen width (fall back to 16px only when they would not); counter pill `var(--input-background)`, radius `var(--radius-full)`, text `var(--text-tertiary)`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8497:24855` + item `1939:18281`.
+**Canonical spec:** label 14px, Medium (500) unselected / Bold (700) selected; indicator 2px `var(--selected)` (#EDA30D light / #FFBB38 dark); label to indicator gap 4px (bottom padding `var(--space-xss)`, 6px, holds the gap plus the 2px indicator, so a tab is 27px tall); gap between tabs `var(--space-m)` (16px) on web, `var(--space-l)` (24px) in the mobile app whenever the tabs fit the screen width (fall back to 16px only when they would not); counter pill 20px tall, `var(--input-background)`, radius `var(--radius-full)`, text 14px at line-height 1 `var(--text-tertiary)`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8497:24855` + item `1939:18281`.
 
 ## Figma to code
 
@@ -515,10 +515,10 @@ Tab Name 0   Tab Name 0   Tab Name 0
 
 - Tab item is a vertical column: `[label row]` on top, optional `[indicator]` below
 - Label row is horizontal: `[label] [counter?]` with `gap: 4px`
-- Indicator (when selected) is a 2px tall bar matching the full width of the label row (text + optional counter)
+- Indicator (when selected) is a 2px tall bar matching the full width of the label row (text + optional counter), 4px below it: the tab's 6px bottom padding (`var(--space-xss)`) holds the gap and the bar
 - In the tab bar, items are laid out horizontally with `gap: 16px`, aligned to the top
 - **Mobile app:** the gap is `24px` (`var(--space-l)`) whenever the tabs fit the screen width; drop to `16px` only when they would not. In code this is automatic inside `PhoneFrame` (`.m-phone .ds-tabs`)
-- **Counter padding:** `0 6px` horizontal; **counter border-radius:** `100px` (fully rounded pill)
+- **Counter padding:** `0 6px` horizontal; **counter height:** `20px` fixed, text centred at line-height 1; **counter border-radius:** `100px` (fully rounded pill)
 - **Tab bar bottom border:** none in the component itself; if you need a divider beneath the whole bar, add a 1px `--border` line in the parent container
 
 ## States
@@ -557,7 +557,8 @@ Tab Name 0      ← Hover + Counter (counter text brightens too)
 
 | Token  | px  | Used for                                                       |
 |--------|-----|----------------------------------------------------------------|
-| `--xs` | 4   | Gap between label and indicator (vertical); label↔counter gap  |
+| `--xs` | 4   | Label↔counter gap                                              |
+| `--xss` | 6  | Tab bottom padding: 4px label↔indicator gap + 2px indicator    |
 | `--m`  | 16  | Gap between tab items in the tab bar                           |
 
 **Typography:**
@@ -566,7 +567,7 @@ Tab Name 0      ← Hover + Counter (counter text brightens too)
 |-----------------------------|----------|---------|------|-------------|
 | Selected label              | Poppins  | 700     | 14px | 1.5         |
 | Default / Hover label       | Poppins  | 500     | 14px | 1.5         |
-| Counter (all states)        | Poppins  | 500     | 14px | 1.5         |
+| Counter (all states)        | Poppins  | 500     | 14px | 1 (20px pill) |
 
 ## Accessibility
 

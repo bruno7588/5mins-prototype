@@ -37,10 +37,10 @@ A row of numbered steps across the top of a multi-step wizard. It shows where th
 
 **Canonical spec:**
 - Step pill: radius `var(--radius-full)`, padding `var(--space-xs)` (4px all round), gap `var(--space-s)` (8px), 29px high, hugs content.
-- Badge 20 × 20px:
-  - Upcoming: 1px `--border-elevated` ring (same on hover), number 12px / 500 `--text-primary`, line height 1.
-  - Current: Library `Illustrations/ Progress` `Type=Nearly there` (orange) with the number 12px / 500 in `--page-background` on top; pops in (320ms overshoot) when the step becomes current.
-  - Done: Library `Illustrations/ Progress` `Type=Passed` (green) with a `--page-background` tick, 1.25px.
+- Badge:
+  - Upcoming: 20 × 20px, 1px `--border-elevated` ring (same on hover), number 12px / 500 `--text-primary`, line height 1.
+  - Current: a 20 × 20px frame with the Library `Illustrations/ Progress` `Type=Nearly there` (orange) at 16 × 16px, centred (`12451:80`), and the number 12px / 500 in `--page-background` on top; pops in (320ms overshoot) when the step becomes current.
+  - Done: Library `Illustrations/ Progress` `Type=Passed` (green) at 16 × 16px (`12451:46`) with a `--page-background` tick, 1.25px.
 - Label: 14px / 400 `--text-secondary` (Paragraph M regular); Current is 14px / 500 `--text-primary` (Paragraph M medium). Count "(N)" 14px / 400 `--text-secondary`, `var(--space-xs)` (4px) after the label.
 - Hover (clickable steps only): pill fill `--page-background-hover`. Focus-visible: 2px `--primary-button-background` outline, 2px offset.
 - Line between steps: the Library Divider, 40 × 1px `--border-elevated`, `var(--space-s)` (8px) each side.

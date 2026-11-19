@@ -39,7 +39,7 @@ A standalone search input with a leading search icon, placeholder text, and a cl
 - Don't wrap it in a `<form>` or add a submit button; filter live from `onChange` (the component has no `onKeyDown` or submit prop). The search icon is decorative, not interactive.
 - Don't change the font weight on focus or fill; it stays Regular 400.
 
-**Canonical spec:** size M: padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), gap `var(--space-s)` (8px), 18px search icon, 20px clear icon, text 14px / 400 / 1.5. Fill `--input-background` (`--input-background-hover` on hover); border `--border`, `--border-hover` on hover, `--selected` on focus. Search icon `--text-tertiary`, clear icon `--text-secondary` (`--text-primary` on hover, with a circular `--input-background-hover` fill; 24px hit area, 28px at L), placeholder `--text-disabled`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `697:33529`.
+**Canonical spec:** size M: padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), gap `var(--space-s)` (8px), 18px search icon, 20px clear icon, text 14px / 400 / 1.5. Fill `--input-background` (`--input-background-hover` on hover); border `--border`, `--border-hover` on hover, `--selected` on focus. Search icon and clear icon `--text-secondary` (clear `--text-primary` on hover, with a circular `--input-background-hover` fill; 24px hit area, 28px at L), placeholder `--text-disabled`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `697:33529`.
 
 ## Figma to code
 
@@ -70,7 +70,7 @@ A standalone search input with a leading search icon, placeholder text, and a cl
 
 | Design system | `@web/ui` component | Props mapping | Known drift |
 |---|---|---|---|
-| Search | _to be mapped by engineering_ | | Clear glyph is an Iconsax `Add` rotated to an × instead of io5 `IoCloseOutline`; the L radius is written as a raw `16px` rather than `var(--radius-m)` |
+| Search | _to be mapped by engineering_ | | Clear glyph is an Iconsax `Add` rotated to an × instead of io5 `IoCloseOutline` |
 
 ## Anatomy
 
@@ -84,10 +84,10 @@ A standalone search input with a leading search icon, placeholder text, and a cl
 [ SearchIcon ] [ value text          ] [ × ]
 ```
 
-- **SearchIcon** - Iconsax `SearchNormal1` Outline, `--text-tertiary` (18px M / 20px L)
+- **SearchIcon** - Iconsax `SearchNormal1` Outline, `--text-secondary` in every state (18px M / 20px L)
 - **Placeholder** - Regular 400, `--text-disabled`
 - **Value text** - Regular 400, `--text-primary`, `flex: 1`
-- **Clear** - `IoCloseOutline` (io5 set, same glyph as dismissible badges), 20px M / 24px L in a 24px / 28px circular hit area, `--text-secondary` (hover `--text-primary` on an `--input-background-hover` circle), calls `onClear`. Note it is one step stronger than the leading SearchIcon: the clear is an action, the search icon is decoration. The clear icon colour matches the close glyph on CloseButton and the dismissible badge.
+- **Clear** - `IoCloseOutline` (io5 set, same glyph as dismissible badges), 20px M / 24px L in a 24px / 28px circular hit area, `--text-secondary` (hover `--text-primary` on an `--input-background-hover` circle), calls `onClear`. It shares the leading SearchIcon's colour, as in Figma. The clear icon colour matches the close glyph on CloseButton and the dismissible badge.
 
 ## Sizes
 
@@ -220,8 +220,7 @@ Font:           Poppins 16px / 1.5  (Regular 400)
 | `var(--border)` / `var(--border-hover)` | `#DFE1E6` / `#9EA4B3` | `#2D313D` / `#9EA4B3` | Default / hover border |
 | `var(--selected)` | `#EDA30D` | `#FFBB38` | Active/focused border |
 | `var(--text-primary)` | `#20222A` | `#F9F9FA` | Value text |
-| `var(--text-tertiary)` | `#656B7C` | `#9EA4B3` | Search icon |
-| `var(--text-secondary)` | `#454C5E` | `#BFC2CC` | Clear (×) icon |
+| `var(--text-secondary)` | `#454C5E` | `#BFC2CC` | Search icon, clear (×) icon |
 | `var(--text-disabled)` | `#9EA4B3` | `#656B7C` | Placeholder (empty field) |
 
 ## Accessibility

@@ -22,6 +22,10 @@
   color: var(--text-secondary);
 }
 
+/* Figma Error state (12267:790) and Disabled (10927:8673) tint the label too. */
+.dropdown-label.is-error { color: var(--text-error); }
+.dropdown-label.is-disabled { color: var(--text-disabled); }
+
 /* Trigger — transparent, border only, 12px radius */
 .dropdown-trigger {
   display: flex;
@@ -100,12 +104,21 @@
 }
 
 /* The chevron is --text-secondary whatever colour the value is, so it reads as
-   the control's affordance rather than part of the text. Read-only still tints
-   it with everything else. */
+   the control's affordance rather than part of the text. Open it goes
+   --text-primary (Figma 8925:1449); read-only tints it with everything else. */
 .dropdown-chevron {
   flex-shrink: 0;
   color: var(--text-secondary);
   transition: transform 150ms ease;
+}
+
+.dropdown-trigger.is-active .dropdown-chevron {
+  color: var(--text-primary);
+}
+
+/* Error state: Iconsax Danger (Bold) in --text-error before the chevron (Figma 12267:790). */
+.dropdown-error-icon {
+  flex-shrink: 0;
 }
 
 .dropdown-trigger:disabled .dropdown-chevron,
@@ -188,7 +201,7 @@
 .dropdown-option__text {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xxs);
+  gap: var(--space-xs);
   min-width: 0;
 }
 
@@ -203,7 +216,7 @@
   font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
   /* Wraps rather than runs on. The menu sizes to max-content by default, where the
      description never needs a second line and this changes nothing — but a menu given a
      width (see .mt-cp__scope-menu) had the description overflow the panel instead of
@@ -212,7 +225,7 @@
 }
 
 .dropdown-option.is-selected .dropdown-option__desc {
-  color: var(--neutral-700);
+  color: var(--text-on-selected);
 }
 
 /* Helper / Error */
@@ -228,14 +241,19 @@
   color: var(--text-error);
 }
 
+.dropdown-helper.is-disabled {
+  color: var(--text-disabled);
+}
+
 
 /* ===== Multi-select rows (checkbox) ===== */
 
 /* Checkbox sits against the label rather than opposite it — the row's default
-   space-between is for the single-select's right-hand helper slot. 8px gap per
+   space-between is for the single-select's right-hand helper slot. 12px gap per
    listbox.md's checkbox item. */
 .dropdown-option--check {
   justify-content: flex-start;
+  gap: var(--space-sm);
 }
 
 /* The box states the selection, so the row keeps its normal fill and weight: the
@@ -252,6 +270,11 @@
   font-weight: 400;
 }
 
+/* No amber behind it, so the supporting text stays --text-tertiary. */
+.dropdown-option--check.is-selected .dropdown-option__desc {
+  color: var(--text-tertiary);
+}
+
 /* Selected + Hover on a checkbox row is the plain hover fill (listbox.md). The
    :not(:disabled) matches the generic selected rule's weight, which would otherwise
    win on hover and paint the row amber over its amber checkbox. */
@@ -262,7 +285,7 @@
 }
 
 .dropdown-option--check:focus-visible {
-  outline: 2px solid var(--text-selected);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: -2px;
 }
 
@@ -285,7 +308,7 @@
 }
 
 .dropdown-option--all:focus-visible {
-  outline: 2px solid var(--text-selected);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: -2px;
 }
 
@@ -334,9 +357,16 @@
 
 /* ===== Single-select radio rows (listbox.md radio item) ===== */
 
-/* Radio sits on the label's line when there is supporting text beneath. */
+/* Radio sits on the label's line when there is supporting text beneath. The radio
+   item keeps 8px to the label and 2px label to description (listbox.md), unlike the
+   checkbox row's 12px and the 4px elsewhere. */
 .dropdown-option--radio {
   align-items: flex-start;
+  gap: var(--space-s);
+}
+
+.dropdown-option--radio .dropdown-option__text {
+  gap: var(--space-xxs);
 }
 
 .dropdown-option--radio .radio {
@@ -352,7 +382,7 @@
 }
 
 .dropdown-option--radio.is-selected .dropdown-option__desc {
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
 }
 
 /* Leading icon slot (listbox.md): sits before the label; rows put the text first

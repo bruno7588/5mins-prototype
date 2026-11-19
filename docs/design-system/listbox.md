@@ -43,7 +43,7 @@ The floating menu surface: a container of list items that appears from a trigger
 - Don't add an empty icon slot to rows that have no icon; plain choice lists carry no icons.
 - Don't build a new menu surface for a page when `RowActionsMenu` or `Dropdown` covers it.
 
-**Canonical spec:** container `--cards-background`, 1px `--border-elevated`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), shadow `var(--shadow-l)` (see `layout.md`). Item padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-s)` (8px), label 14px / 400 / 1.5 `--text-primary`, icon-to-label gap `var(--space-s)` (8px). Hover `--cards-background-hover`; selected (plain, icon, avatar, skill-icon and supporting-text rows) `--secondary-500` with `--text-on-selected` at weight 500; selected checkbox / radio / Integer rows keep the plain background and show the ticked control, hovering to `--cards-background-hover`; read-only `--text-disabled`. Integer row: radio, then a column with an 8px gap: label 14px / 500 `--text-primary` over supporting text 14px / 400 `--text-tertiary` (4px gap), then the Input integer stepper and the unit 14px / 400 `--text-secondary`, 8px apart; on an Integer row that is not selected the stepper value and unit are `--text-disabled`. Radio + Supporting text rows keep 2px between label and description. Figma: Library `EC26cSVe9KNTCWXvYovakw`, Listbox `9162:1042`, List items `9162:941`.
+**Canonical spec:** container `--cards-background`, 1px `--border-elevated`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), shadow `var(--shadow-l)` (see `layout.md`); items sit flush, 0 gap between them within a list slot. Item padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-s)` (8px), label 14px / 400 / 1.5 `--text-primary`, icon-to-label gap `var(--space-s)` (8px). Hover `--cards-background-hover`; selected (plain, icon, avatar, skill-icon and supporting-text rows) `--secondary-500` with `--text-on-selected` at weight 500; selected checkbox / radio / Integer rows keep the plain background and show the ticked control, hovering to `--cards-background-hover`; read-only `--text-disabled`. Integer row: radio, then a column with an 8px gap: label 14px / 500 `--text-primary` over supporting text 14px / 400 `--text-tertiary` (4px gap), then the Input integer stepper and the unit 14px / 400 `--text-secondary`, 8px apart; on an Integer row that is not selected the stepper value and unit are `--text-disabled`. Radio + Supporting text rows keep 2px between label and description. Figma: Library `EC26cSVe9KNTCWXvYovakw`, Listbox `9162:1042`, List items `9162:941`.
 
 ## Figma to code
 
@@ -117,8 +117,8 @@ Shadow:      var(--shadow-l)
 }
 
 .listbox__group-header {
-  padding: 8px 4px;
-  font: 500 14px/1.5 'Poppins', sans-serif;
+  padding: 8px 12px;
+  font: 600 14px/1.5 'Poppins', sans-serif;
   color: var(--text-tertiary);
 }
 .listbox__group + .listbox__group .listbox__group-header { padding-top: 12px; }
@@ -135,14 +135,14 @@ All slots are combinable per the Figma variant axes; gaps are the load-bearing d
 | Slot | Spec | Gap to label |
 |---|---|---|
 | **Icon left** | 20px Iconsax Linear, `--text-primary` | 8px |
-| **Icon right / chevron** | 21px `ArrowRight2` for submenu / drill-in | in right cluster |
+| **Icon right / chevron** | 21px `ArrowRight2` for submenu / drill-in | 16px |
 | **Helper ("options") text** | Regular 14 `--text-secondary` + chevron, right-aligned cluster (8px internal gap) | **24px** from the label cluster |
-| **Avatar** | 40px circular (see `avatars.md`) | 12px |
+| **Avatar** | 24px circular (see `avatars.md`) | 8px |
 | **Skill icon** | 20px illustration (see skill card) | 8px |
 | **Checkbox** | 16px checkbox box (see `selection-controls.md`) - multi-select lists. No amber fill when selected | **12px** |
 | **Radio** | radio in a 16 x 24 column - single-select lists. No amber fill when selected | 8px |
 | **Integer** | radio + supporting text, then an Input integer stepper (see `input.md`) and a unit ("day" / "days", 14px `--text-secondary`) 8px apart, 8px under the text. Label Medium 500. Figma `12432:11845` (Disabled `12432:13335`: every text `--text-disabled`). Used by the Assign courses timing popover | 8px |
-| **Supporting text** | second line, Regular 14. The two built menus differ: `RowActionsMenu` uses a **Medium (500)** label over a `--text-tertiary` description (Figma Library spec), while `Dropdown` uses the same **Medium (500)** label over a `--text-secondary` description that may wrap (`Dropdown.css`). **4px** column gap in `RowActionsMenu`; items top-aligned; in `RowActionsMenu` both lines stay on one row (no wrap). Read-only turns both lines `--text-disabled`. Figma Library List items `10187:2585` | - |
+| **Supporting text** | second line, Regular 14. Both built menus use a **Medium (500)** label over a `--text-tertiary` description (Figma Library spec), **4px** column gap; on an amber selected row the description is `--text-on-selected`. Items top-aligned; in `RowActionsMenu` both lines stay on one row (no wrap), in `Dropdown` the description may wrap. Read-only turns both lines `--text-disabled`. Figma Library List items `10187:2585` | - |
 | **Search** | an embedded search field as the first item: 240px, `--input-background` fill, radius 12, `8px 12px` padding, 18px icon, placeholder `--text-disabled`. States: Enabled, Hover (`--border-hover` outline), Selected (focused: `--selected` border, typed text, clear ×), Read-only. Figma `10775:2692` | - |
 
 Item heights for reference: 37px plain · 40px with avatar/radio · ~60–62px with supporting text · 107px Integer row · 53px search row.
@@ -154,7 +154,7 @@ interface ListboxItemProps {
   label: string;
   supporting?: string;
   iconLeft?: ReactNode;      // 20px
-  avatar?: string;           // 40px src
+  avatar?: string;           // 24px src
   options?: string;          // right helper text (+ chevron for submenu)
   checkbox?: boolean;
   radio?: boolean;
@@ -177,7 +177,7 @@ interface ListboxItemProps {
 | **Caret = Bottom** | Menu opens *below* the trigger - caret (8px arrow) points up from the container's top-right |
 | **Caret = Top** | Menu opens *above* - caret points down at bottom-right (16px inset) |
 | **No caret** | Default attached menu (dropdown lists) |
-| **Wrapping menu items** (grouped) | Sections with a **group header** (Poppins Medium 14, `--text-tertiary`, `4px` h-padding / `8px` v-padding; subsequent groups `12px` top) separated by a 1px `--border-elevated` divider; 4px gap between groups |
+| **Wrapping menu items** (grouped) | Sections with a **group header** (Poppins SemiBold 14, `--text-tertiary`, `8px 12px` padding; subsequent groups `12px` top) separated by a 1px `--border-elevated` divider; 4px gap between groups |
 
 ## States
 
@@ -199,7 +199,7 @@ There is no keyboard-highlight state in Figma or code; arrow-key navigation is n
 .listbox__item {
   display: flex;
   align-items: center;
-  gap: var(--space-s);                  /* 8px; avatar rows use 12px */
+  gap: var(--space-s);                  /* 8px; checkbox rows 12px, icon-right 16px */
   padding: var(--space-s) var(--space-sm);  /* 8px 12px */
   border-radius: var(--radius-s);       /* 8px */
   font: 400 14px/1.5 'Poppins', sans-serif;
@@ -220,7 +220,7 @@ There is no keyboard-highlight state in Figma or code; arrow-key navigation is n
   color: var(--text-secondary);
 }
 
-/* Supporting-text rows (both menus: label 500; Dropdown description --text-secondary) */
+/* Supporting-text rows (both menus: label 500, description --text-tertiary) */
 .listbox__item--rich { align-items: flex-start; }
 .listbox__item--rich .listbox__item-info { display: flex; flex-direction: column; gap: var(--space-xs); white-space: nowrap; }
 .listbox__item--rich .listbox__item-title { font-weight: 500; }

@@ -41,7 +41,7 @@ function Checkbox({ checked, indeterminate = false, onChange, disabled = false, 
         </svg>
       ) : (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="0.75" y="0.75" width="14.5" height="14.5" rx="3.25" stroke={disabled ? 'var(--text-disabled)' : 'var(--text-secondary)'} strokeWidth="1.5" />
+          <rect x="0.5" y="0.5" width="15" height="15" rx="3.5" stroke={disabled ? 'var(--text-disabled)' : 'var(--text-primary)'} strokeWidth="1" />
         </svg>
       )}
     </button>

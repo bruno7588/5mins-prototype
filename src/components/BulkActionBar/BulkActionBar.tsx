@@ -15,7 +15,7 @@ interface BulkActionBarProps {
 
 /**
  * Floating bulk-action pill shown when rows are selected in a table.
- * The surface uses --tooltip-background (Neutral-800 light / Neutral-900 dark),
+ * The surface uses --tooltip-background (Neutral-900 in both modes),
  * the same dark chip as the tooltip, so light text reads in both modes.
  * Anchored bottom-centre, offset for the 240px side panel.
  *

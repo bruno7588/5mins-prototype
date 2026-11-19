@@ -516,9 +516,22 @@
   gap: var(--space-m);
 }
 
+/* Icon to title stays 16px; title to body is 8px, as in the left-aligned header
+   (Library Dialog Info slot, gap S). */
+.confirm-modal-header--center > .confirm-modal-title + .confirm-modal-body {
+  margin-top: calc(var(--space-s) - var(--space-m));
+}
+
 .confirm-modal-icon {
-  margin-bottom: var(--space-xs);
   color: var(--danger-500);
+}
+
+/* Type icons render at the Figma 56px (7308:85) whatever size the call site passes;
+   the Body gap does the spacing, so no extra margin. */
+.confirm-modal-icon svg,
+.confirm-modal-icon img {
+  width: 56px;
+  height: 56px;
 }
 
 .confirm-modal-title {
@@ -657,8 +670,13 @@
 .confirm-modal-actions {
   display: flex;
   justify-content: center;
-  gap: var(--space-m);
+  gap: var(--space-sm); /* 12px, Figma Dialog 7308:85 */
   width: 100%;
+}
+
+/* A modal (closable) spaces its Cancel and primary buttons 16px apart (Figma Modal 7479:4350). */
+.confirm-modal--modal .confirm-modal-actions {
+  gap: var(--space-m);
 }
 
 /* Radio cards (deactivate-bulk modal) */

@@ -90,6 +90,12 @@
   -moz-appearance: textfield;
 }
 
+/* The resting 0 reads like a placeholder (Figma 10145:10895): Text-disabled until
+   a value is set. */
+.input-integer__value--zero {
+  color: var(--text-disabled);
+}
+
 .input-integer__value:focus {
   outline: none;
 }

@@ -55,7 +55,7 @@ Both nodes have the same structure; only the resolved text/fill tokens differ pe
 
 Badges appear inside table cells, cards, headers, and list rows.
 
-**Canonical spec:** padding `var(--space-xss) var(--space-sm)` (6px 12px); radius `var(--radius-full)`; gap `var(--space-xs)` (4px), `var(--space-s)` (8px) once a × is present; label 14px Medium, line height 1.2; icons 16px `currentColor`; text tokens `--text-success`, `--text-warning`, `--text-error`, `--text-progress`, `--text-secondary`; fills are 16% tints of the type colour, `var(--input-background)` for informative, solid `var(--danger-400)` for new; ✕ is io5 `IoCloseOutline` (1px stroke, 16px box); Hover (dismissible only) doubles the fill to 32% and puts the ✕ on a 24% disc of the type colour (informative: Neutral-200 light / Neutral-500 dark). Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5799:479`.
+**Canonical spec:** padding `var(--space-xss) var(--space-sm)` (6px 12px); radius `var(--radius-full)`; gap `var(--space-xs)` (4px), `var(--space-s)` (8px) once a × is present; label 14px Medium, line height 1.2; icons 16px `currentColor`; text tokens `--text-success`, `--text-warning`, `--text-error`, `--text-progress`, `--text-secondary`; fills are 16% tints of the type colour, `var(--input-background)` for informative, solid `var(--danger-400)` for new; ✕ is io5 `IoCloseOutline` (1px stroke, 16px box); Hover (dismissible only) keeps the Enabled fill and puts the ✕ on a 24% disc of the type colour (informative: Neutral-200 light / Neutral-500 dark). Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5799:479`.
 
 ## Figma to code
 
@@ -209,7 +209,7 @@ Not in the Library Badge component. They follow the same box and typography; tre
 | State | Applies to | Pill fill | ✕ |
 |---|---|---|---|
 | Enabled | all types | type fill (see Variants) | no chrome, inherits text colour |
-| Hover | dismissible badges only | type colour at 32% (informative: Neutral-200 light / Neutral-500 dark at 32%) | sits on a 24% disc of the type colour (informative: Neutral-200 light / Neutral-500 dark) |
+| Hover | dismissible badges only | unchanged (Enabled fill) | sits on a 24% disc of the type colour (informative: Neutral-200 light / Neutral-500 dark) |
 | Focus-visible | the ✕ button | unchanged | 2px `var(--primary-button-background)` outline, 2px offset, `var(--radius-xs)` |
 
 A badge without a ✕ is read-only and has no hover.

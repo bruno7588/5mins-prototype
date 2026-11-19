@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ArrowDown2 } from 'iconsax-react'
+import { ArrowDown2, Danger } from 'iconsax-react'
 import Button from '../Button/Button'
 import Checkbox from '../Checkbox/Checkbox'
 import Radio from '../Radio/Radio'
@@ -208,7 +208,9 @@ function Dropdown({
         .filter(Boolean)
         .join(' ')}
     >
-      {label && <label className="dropdown-label">{label}</label>}
+      {label && (
+        <label className={`dropdown-label${readOnly ? ' is-disabled' : error ? ' is-error' : ''}`}>{label}</label>
+      )}
 
       <button
         ref={triggerRef}
@@ -230,6 +232,9 @@ function Dropdown({
           <span className="dropdown-trigger-leading">{iconLeft ?? selected?.icon}</span>
         )}
         <span className={`dropdown-trigger-text${showsPlaceholder ? ' dropdown-trigger-text--placeholder' : ''}`}>{triggerLabel}</span>
+        {error && (
+          <Danger size={size === 'sm' ? 16 : 20} color="var(--text-error)" variant="Bold" className="dropdown-error-icon" aria-hidden="true" />
+        )}
         <ArrowDown2
           size={size === 'sm' ? 16 : 20}
           color="currentColor"
@@ -445,7 +450,7 @@ function Dropdown({
       )}
 
       {(error || helperText) && (
-        <span className={`dropdown-helper${error ? ' is-error' : ''}`}>{error || helperText}</span>
+        <span className={`dropdown-helper${error ? ' is-error' : readOnly ? ' is-disabled' : ''}`}>{error || helperText}</span>
       )}
     </div>
   )

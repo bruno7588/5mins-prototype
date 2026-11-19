@@ -30,9 +30,8 @@
   animation: toast-slide-in 250ms ease;
 }
 
-/* Info is a fixed dark neutral in both modes — the library binds it to Border,
-   whose light value would make the near-white label illegible (see doc). */
-.toast--info    { background: var(--neutral-600); }
+/* Info is Neutral-700 in both modes, as the Library binds it (5812:115). */
+.toast--info    { background: var(--neutral-700); }
 .toast--success { background: var(--success-500); }
 .toast--warning { background: var(--warning-600); }
 .toast--error   { background: var(--danger-500); }

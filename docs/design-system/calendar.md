@@ -50,13 +50,13 @@ A date input field that opens a month-grid calendar popover. Weeks start on **Mo
 - Reuse `MiniCalendar` rather than building a new picker.
 - Open on today's month with today selected when there is no value yet.
 - Pass `maxDate` when later days aren't valid (e.g. a completion date of today or earlier); later days then render disabled and the next-month chevron stops.
-- Mark the selected day with `--selected` fill and `--text-on-selected` label (dark in both modes).
+- Mark the selected day with a `--secondary-500` fill (mode-invariant) and a Bold `--text-on-selected` label (dark in both modes).
 
 **Don't**
 - Don't render the popover inside a clipping ancestor; portal it, as `DatePickerField` does.
 - Don't start weeks on Sunday; weeks are Monday-first.
 
-**Canonical spec:** popover `--cards-background`, 1px `--border-elevated`, radius `var(--radius-sm)` (12px), Shadow L, 352px wide. Day cells 40 × 40px, 8px gap; hover `--cards-background-hover` at `var(--radius-s)` (8px); current day 1px `--border-elevated` ring; selected `--selected` fill with Medium 14 `--text-on-selected`; out-of-month and disabled `--text-disabled` at 50% opacity. Month title Semibold 16 `--text-primary`; weekdays Regular 14 `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, day item `5279:26511`, Calendar `11529:430`.
+**Canonical spec:** popover `--cards-background`, 1px `--border-elevated`, radius `var(--radius-sm)` (12px), Shadow L, 352px wide. Day cells 40 × 40px, 8px gap; hover `--cards-background-hover` at `var(--radius-s)` (8px); current day 1px `--border-elevated` ring; selected `--secondary-500` fill (mode-invariant) with Bold 14 `--text-on-selected`; out-of-month and disabled `--text-disabled` at 50% opacity. Month title Semibold 16 `--text-primary`; weekdays Regular 14 `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, day item `5279:26511`, Calendar `11529:430`.
 
 ## Figma to code
 
@@ -109,10 +109,10 @@ Radius:   12px       (--radius-sm)
 Gap:      8px between value and icon   (--space-s)
 Icon:     calendar, 20px, trailing
 Value:    Poppins Regular 14, defaults to today's date; placeholder "dd/mm/yyyy" only when deliberately empty
-Label:    Poppins Semibold 14, var(--text-secondary)   (Paragraph M semibold)
+Label:    Poppins Semibold 14, var(--text-secondary)   (Paragraph M semibold); var(--text-error) in the Error state
 ```
 
-The date field shares the amber `--selected` active border with `input.md`, but has no hover fill and its own 8px 12px padding.
+The date field shares the amber `--selected` active border with `input.md`, and on hover takes the `--input-background` fill under the `--border-hover` border; its padding is its own 8px 12px.
 
 ### Calendar popover
 
@@ -150,12 +150,12 @@ Source:      Figma Library Calendar 11529:430
 | State | Border (1px) | Background | Value text | Extras |
 |---|---|---|---|---|
 | Enabled | `--border-elevated` | transparent | `--text-primary` (placeholder `--text-disabled`) | - |
-| Hover | `--border-hover` | transparent | `--text-primary` (placeholder `--text-disabled`) | - |
+| Hover | `--border-hover` | `--input-background` | `--text-primary` (placeholder `--text-disabled`) | - |
 | Active (open) | `--selected` (`#EDA30D` light / `#FFBB38` dark) | transparent | `--text-primary` | popover renders below |
-| Error | `--text-error` | transparent | `--text-primary` | warning-triangle icon (20px) before the calendar icon; helper text below. The label is rendered by the caller and stays `--text-secondary` (Figma's Error variant reds the label; no call site does) |
+| Error | `--text-error` | transparent | `--text-primary` | warning-triangle icon (20px) before the calendar icon; helper text below. The label turns `--text-error`: the caller renders it as the field's previous sibling and `DatePickerField.css` colours it |
 
 - **Error helper:** Poppins Regular 14, `var(--text-error)` (e.g. "Date is required!").
-- Token rule: **form-field active borders use the mode-aware `--selected` token** (`#EDA30D` light / `#FFBB38` dark - date field, dropdown, inputs, search), the same token as selection fills (day cells, tab indicator).
+- Token rule: **form-field active borders use the mode-aware `--selected` token** (`#EDA30D` light / `#FFBB38` dark - date field, dropdown, inputs, search), the same token as the tab indicator. The selected day cell is the exception: raw `--secondary-500` in both modes (Figma).
 
 ### Day item (40×40)
 
@@ -167,7 +167,7 @@ Source:      Figma Library Calendar 11529:430
 | Hover | `--cards-background-hover` | - | 8px | Regular 14 `--text-primary` |
 | Focus | - | 1px `--primary-button-background` | 8px | Regular 14 `--text-primary` |
 | Current day | - | 1px `--border-elevated` | 8px | Regular 14 `--text-primary` |
-| **Selected** | `--selected` | - | 8px | **Medium 14 `--text-on-selected`** - dark label in both modes |
+| **Selected** | `--secondary-500` (mode-invariant) | - | 8px | **Bold 14 `--text-on-selected`** - dark label in both modes |
 | Illustration | - | - | - | 23×28px streak graphic replaces the number (learner streak calendar) |
 
 ```css
@@ -175,6 +175,7 @@ Source:      Figma Library Calendar 11529:430
 .date-field { display: flex; flex-direction: column; gap: var(--space-s); }
 
 .date-field__label { font: 600 14px/1.5 'Poppins'; color: var(--text-secondary); }
+.date-field--error .date-field__label { color: var(--text-error); }
 
 .date-field__input {
   display: flex; align-items: center; gap: var(--space-s);
@@ -185,7 +186,7 @@ Source:      Figma Library Calendar 11529:430
   font: 400 14px/1.5 'Poppins'; color: var(--text-primary);
   cursor: pointer;
 }
-.date-field__input:hover  { border-color: var(--border-hover); }
+.date-field__input:hover  { border-color: var(--border-hover); background: var(--input-background); }
 .date-field__input.is-open  { border-color: var(--selected); color: var(--text-primary); }
 .date-field--error .date-field__input { border-color: var(--text-error); color: var(--text-primary); }
 .date-field__helper--error { color: var(--text-error); font: 400 14px/1.5 'Poppins'; }
@@ -221,9 +222,9 @@ Source:      Figma Library Calendar 11529:430
 .cal-day:focus-visible { border: 1px solid var(--primary-button-background); border-radius: var(--radius-s); outline: none; }
 .cal-day--today    { border: 1px solid var(--border-elevated); border-radius: var(--radius-s); }
 .cal-day--selected {
-  background: var(--selected);
+  background: var(--secondary-500);                      /* mode-invariant */
   border-radius: var(--radius-s);
-  font-weight: 500;
+  font-weight: 700;
   color: var(--text-on-selected);                        /* dark label in BOTH modes */
 }
 ```
@@ -233,11 +234,13 @@ Source:      Figma Library Calendar 11529:430
 | Token | Light | Dark | Used for |
 |---|---|---|---|
 | `var(--border-elevated)` / `var(--border-hover)` | `#DFE1E6` / `#9EA4B3` | `#383D4C` / `#9EA4B3` | Field border + current-day ring / hover |
-| `var(--selected)` | `#EDA30D` | `#FFBB38` | Field active border, selected day fill |
+| `var(--selected)` | `#EDA30D` | `#FFBB38` | Field active border |
+| `var(--secondary-500)` | `#FFBB38` | `#FFBB38` | Selected day fill |
+| `var(--input-background)` | Neutral-200 @ 16% | Neutral-500 @ 16% | Field hover fill |
 | `var(--cards-background)` / `var(--cards-background-hover)` | `#FFFFFF` / `#EFF0F2` | `#2D313D` / `#383D4C` | Popover / day hover |
 | `var(--text-primary)` / `var(--text-secondary)` / `var(--text-disabled)` | per colors.md | per colors.md | Day / weekday / outside-month text |
-| `var(--text-error)` | `#DF1642` | `#E95C7B` | Error border, warning icon, helper |
-| `var(--text-on-selected)` | `#20222A` | `#20222A` | Selected-day label (weight 500) |
+| `var(--text-error)` | `#DF1642` | `#E95C7B` | Error border, warning icon, helper, Error label |
+| `var(--text-on-selected)` | `#20222A` | `#20222A` | Selected-day label (weight 700) |
 
 ## Accessibility
 
@@ -250,4 +253,4 @@ Source:      Figma Library Calendar 11529:430
 - [date-picker-field.md](date-picker-field.md) - the built date field component
 - `5mins-colors` (colors.md) - the semantic tokens above
 - `layout.md` - spacing/radius scale, Shadow L
-- `input.md` - text inputs (the date field shares the amber `--selected` active border, but has no hover fill and its own 8px 12px padding)
+- `input.md` - text inputs (the date field shares the amber `--selected` active border and the `--input-background` hover fill, with its own 8px 12px padding)

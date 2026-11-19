@@ -24,6 +24,7 @@
 
 .dpf-field:hover {
   border-color: var(--border-hover);
+  background: var(--input-background);
 }
 
 .dpf-field--active {
@@ -39,6 +40,12 @@
 /* Error state (calendar.md): error border, value stays primary. */
 .dpf-field--error {
   border-color: var(--text-error);
+}
+
+/* The label is rendered by the caller as the field's previous sibling; the
+   Error variant turns it --text-error (Figma Calendar=Error). */
+:has(+ .dpf > .dpf-field--error) {
+  color: var(--text-error);
 }
 
 .dpf-icons {

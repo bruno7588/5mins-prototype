@@ -5,7 +5,7 @@
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  padding: var(--space-m) var(--space-sm) var(--space-s); /* Figma menu: 16px top, 12px sides */
+  padding: var(--space-m) var(--space-sm); /* Figma menu: 16px top and bottom, 12px sides */
   overflow-y: auto;
   height: calc(100vh - 70px);
   position: sticky;
@@ -73,7 +73,7 @@
   line-height: 1.2;
   font-weight: 400;
   color: var(--text-tertiary);
-  padding: var(--space-sm) var(--space-sm);
+  padding: var(--space-sm) calc(var(--space-l) + var(--space-xs)); /* Figma 12px 28px; 28 has no single token */
   margin-top: var(--space-s);
 }
 
@@ -110,6 +110,20 @@
 .sidebar-item--active {
   color: var(--brand-selected, var(--text-selected));
   font-weight: 700;
+}
+
+/* An open group whose child is the current page: Bold label (the Bold icon is set in
+   the TSX), staying --text-secondary with no row fill (Figma 10372:4045). */
+.sidebar-item--parent {
+  font-weight: 700;
+}
+
+/* Figma Focus state: 2px Primary-Button-background ring, 4px offset. The ring follows
+   the 8px row radius out by the offset, so it draws at the Figma 12px. */
+.sidebar-item:focus-visible,
+.sidebar-sub-item:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 4px;
 }
 
 .sidebar-item-icon {

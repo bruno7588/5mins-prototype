@@ -25,7 +25,7 @@ Each type has its own block below. These rules apply to all of them:
 - **Placeholder colour is `--text-disabled`, everywhere.** Any control whose value slot is empty - text input, textarea, search field, unselected dropdown trigger, unset date field - renders its placeholder in `--text-disabled`, then switches to `--text-primary` once filled. `--text-tertiary` is for helper text, captions, and icons, never for a placeholder.
 - **The label is Paragraph M semibold** (Figma `5445:24009`) - 14px / 600 / 1.5, `--text-secondary`. This holds for *every* field label in the product, not just `InputField`: dropdowns, date fields, textareas, steppers, and the hand-rolled `<label>` elements in page-local drawers and modals. Never drop back to Medium 500, and never reach for Bold 700 to make a label stand out - 600 is the label weight. Option text inside a radio, checkbox, or toggle row is **not** a field label - that stays Regular 400 (see `selection-controls.md`).
 - **Field borders use `--border-elevated`.** `--border` is the quiet weight for the page ground and inside drawers and modals, and `--border-elevated` is one step stronger, used on cards and menus and for field chrome. Enabled, filled and success borders are `--border-elevated`.
-- **Disabled drops back to `--border`.** A disabled field should not hold an edge as firmly as a live one, so every disabled control - Outlined, Radio, Integer, and the Chip and Dropdown outside this doc - uses the quiet weight.
+- **Disabled border follows the Figma set.** The Outlined field keeps `--border-elevated` when disabled (Figma `8974:24610`); the Radio, Integer, Chip and Dropdown sets drop back to the quieter `--border`.
 - **Two field fills, one rule.** `--input-background` is the default - any field, search, dropdown, or chip sitting on the page surface. Reach for `--input-background-elevated` only when the field sits on a card fill (`--cards-background`): in dark mode the default 16% tint lands within a point of the card and the field visually disappears, so the elevated token steps the tint up to 32%. Light mode already separates page and card, but the elevated token still steps up to 32% there (`tokens.css`), so the two are not interchangeable in either mode.
 - **Helper text is not one colour.** Outlined helper text is `--text-tertiary`; **Integer** helper text is `--text-secondary`. Error helper text is `--text-error` in both.
 - Hexes in the token tables are dark-mode values; tokens resolve per mode (see `colors.md`).
@@ -73,7 +73,7 @@ The `InputField` component is the standard text entry control across the 5Mins.a
 | Building your own password icon layout | Pass `iconRight`; composition is automatic |
 | `readOnly` for disabled | `disabled={true}` |
 
-**Canonical spec:** padding `var(--space-s) var(--space-sm)` (8px 12px); radius `var(--radius-sm)` (12px); label to field to helper gap `var(--space-s)` (8px); text Paragraph M (14px / 400 / 1.5). Border `--border-elevated` at rest, `--border-hover` + `--input-background` fill on hover (the component always uses `--input-background`; a caller on a card fill overrides it with `--input-background-elevated`), `--selected` on focus, `--border` when disabled, `--text-error` on error. Placeholder `--text-disabled`, helper `--text-tertiary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8974:24610`.
+**Canonical spec:** padding `var(--space-s) var(--space-sm)` (8px 12px); radius `var(--radius-sm)` (12px); label to field to helper gap `var(--space-s)` (8px); text Paragraph M (14px / 400 / 1.5). Border `--border-elevated` at rest, `--border-hover` + `--input-background` fill on hover (the component always uses `--input-background`; a caller on a card fill overrides it with `--input-background-elevated`), `--selected` on focus, `--border-elevated` when disabled, `--text-error` on error. Placeholder `--text-disabled`, helper `--text-tertiary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8974:24610`.
 
 ### Figma to code
 
@@ -90,7 +90,7 @@ The `InputField` component is the standard text entry control across the 5Mins.a
 | Placeholder (text) | "Input text" | `placeholder` | `string` (default "Input text") | bound on Enabled, Active and n/a variants |
 | Value (text) | "Input text" | `value` | `string` | bound on Filled variants |
 
-- **Figma only:** the `n/a` State value. The Outlined disabled variants bind their border to `Border-elevated`; the Radio, Integer, Chip and Dropdown sets bind disabled to `Border`. Treat the Outlined disabled binding as stale, and `--border` as the rule.
+- **Figma only:** the `n/a` State value. The Outlined disabled variants bind their border to `Border-elevated` (code matches); the Radio, Integer, Chip and Dropdown sets bind disabled to `Border`.
 - **Code only:** `validation="warning"`, `onChange`, `onBlur`, `type` (default `'text'`), `autoFocus`, `className`.
 
 | Prop | Type | Default | Description |
@@ -141,7 +141,7 @@ When `validation="error"` or `"success"` is combined with `iconRight`, the valid
 | **Hover** | Mouse over field | Border `--border-hover` + background `--input-background` (translucent tint) - `--input-background-elevated` when the field sits on a card fill |
 | **Active / Focused** | Input focused | Border `--selected` (gold) - **no** background fill |
 | **Filled** | `value.length > 0` | Text switches from `--text-disabled` (placeholder) to `--text-primary` |
-| **Disabled** | `disabled={true}` | Border drops to `--border`; label, value and helper all `--text-disabled`; no hover |
+| **Disabled** | `disabled={true}` | Border stays `--border-elevated`; label, value and helper all `--text-disabled`; no hover |
 | **Error** | `validation="error"` | Border, label and helper text `--text-error`; Danger icon (20px, Bold) auto-appears on the right, before any `iconRight` |
 | **Warning** | `validation="warning"` | `--text-warning` and a Linear `Danger` icon |
 | **Success** | `validation="success"` | Border stays `--border-elevated`; label and helper keep their normal colours; TickCircle icon (20px, Bold, `--text-success`) auto-appears on right |
@@ -152,8 +152,7 @@ When `validation="error"` or `"success"` is combined with `iconRight`, the valid
 
 | Token | Dark value | Used for |
 |---|---|---|
-| `var(--border-elevated)` | `#383d4c` | field border - enabled, filled, success |
-| `var(--border)` | `#2d313d` | the quiet weight - any field border when disabled |
+| `var(--border-elevated)` | `#383d4c` | field border - enabled, filled, success, disabled |
 | `var(--border-hover)` | `#9ea4b3` | hovered border |
 | `var(--selected)` | `#ffbb38` | focused / active border |
 | `var(--text-error)` | `#e95c7b` | error label + border + helper |
@@ -280,7 +279,7 @@ The `InputInteger` component is the numeric stepper used for small whole-number 
 - Don't show native number spinners; the − / + controls are the only steppers.
 - Don't give the whole box a hover fill; hover shows on the − / + control under the pointer (circular `--page-background-hover`).
 
-**Canonical spec:** height 37px (matches the medium Dropdown, `8925:1408`, so the two line up in a row; the 24px hover circles overhang the 8px padding instead of growing the field to 42px); padding `var(--space-s) var(--space-sm)` (8px 12px); radius `var(--radius-sm)` (12px); gap between controls `var(--space-sm)` (12px); 20px Iconsax glyph in a 24px `var(--radius-full)` hover target; width fits content. Border `--border-elevated`, `--border-hover` on hover, `--selected` on focus, `--text-error` on error, `--border` when disabled. Helper `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `10145:10895`.
+**Canonical spec:** height 37px (matches the medium Dropdown, `8925:1408`, so the two line up in a row; the 24px hover circles overhang the 8px padding instead of growing the field to 42px); padding `var(--space-s) var(--space-sm)` (8px 12px); radius `var(--radius-sm)` (12px); gap between controls `var(--space-sm)` (12px); 20px Iconsax glyph in a 24px `var(--radius-full)` hover target; width fits content. Border `--border-elevated`, `--border-hover` on hover, `--selected` on focus, `--text-error` on error, `--border` when disabled. Value `--text-primary`; the resting `0` is `--text-disabled`. Helper `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `10145:10895`.
 
 ### Figma to code
 
@@ -293,7 +292,7 @@ The `InputInteger` component is the numeric stepper used for small whole-number 
 | Helper text + Helper text (text) | false / true; "Helper text" | `helperText` | `ReactNode`, omitted = none | still a variant: error variants show their message under `Helper text=false` |
 | Error message (text) | "Error message" | `helperText` with `validation="error"` | `ReactNode` | |
 
-- **Figma only:** the `n/a` State value. The value text ("0" / "100") has no property because it differs by state. Figma draws the step icons at `21×21px`; code uses 20px (see Anatomy).
+- **Figma only:** the `n/a` State value. The value text ("0" / "100") has no property because it differs by state. Figma draws the step icons at `20×20px`, matching code (see Anatomy).
 - **Code only:** `value`, `onChange`, `min` (default 0), `max`, `step` (default 1), `suffix`, `className` (incl. `input-integer--inline`), `ariaLabel`.
 
 | Prop | Type | Default | Description |
@@ -325,7 +324,7 @@ The `InputInteger` component is the numeric stepper used for small whole-number 
 | Field border-radius | `12px` (`--radius-sm`) |
 | Field height | `37px` |
 | Gap (− / value / +) | `12px` (`--space-sm`) |
-| Step control icons | Figma draws `21×21px`; the built control uses the DS-standard **20px** Iconsax glyph inside a **24px** circular hover target (`--radius-full`), the one deliberate deviation - 21px would sit under the minimum pointer target |
+| Step control icons | **20px** Iconsax glyph (Figma `20×20px`) inside a **24px** circular hover target (`--radius-full`), the one deliberate deviation - a bare 20px icon would sit under the minimum pointer target |
 | Value box | `26px` wide, centred |
 | Gap (label → field → helper) | `8px` |
 | Field width | Content-sized (`fit-content`) - ~116px at the default 3-digit value |
@@ -344,7 +343,7 @@ The `InputInteger` component is the numeric stepper used for small whole-number 
 | **Enabled** | Default | Border `--border-elevated`; helper `--text-secondary` |
 | **Hover** | Mouse over field | Border `--border-hover`. **The field itself gets no fill** - instead the − / + control under the pointer picks up a circular `--page-background-hover` background |
 | **Active / Focused** | Field focused (typing) | Border `--selected` (gold), blinking caret |
-| **Filled** | Value set by the user | Value `--text-primary`, including the resting `0` |
+| **Filled** | Value set by the user | Value `--text-primary`. The resting `0` (Enabled, Hover, Active) is `--text-disabled`, like a placeholder (Figma `10145:10895`) |
 | **Error** | `validation="error"` | Border, **label** and helper all `--text-error` |
 | **Success** | `validation="success"` | Border stays `--border-elevated` - no tick icon; the Integer has no icon slot |
 | **Disabled** | `disabled={true}` | Border drops to `--border`; label / value / helper `--text-disabled` |
@@ -359,7 +358,7 @@ The `InputInteger` component is the numeric stepper used for small whole-number 
 
 ### Tokens
 
-Shares the InputField tokens above; the Integer adds `var(--page-background-hover)` for the circular step-control hover and uses `var(--text-secondary)` for helper text.
+Shares the InputField tokens above; the Integer adds `var(--page-background-hover)` for the circular step-control hover, uses `var(--text-secondary)` for helper text and `var(--border)` for its disabled border.
 
 ### Accessibility
 

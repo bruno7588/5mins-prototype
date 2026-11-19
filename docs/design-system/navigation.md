@@ -37,7 +37,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 - Don't add page-specific actions to the top nav.
 - Don't use a squared hover on the icon buttons.
 
-**Canonical spec:** height 70px; `var(--page-background)` with a `1px solid var(--border)` bottom edge; padding `var(--space-s) var(--space-l) var(--space-s) var(--space-xl)` (the right 24px plus the icon button's 8px inset puts the last glyph 32px from the edge); logo 102×22; Exit Admin Small Outlined-2; 16px from Exit Admin to the first glyph and between glyphs; icon buttons 36px, `var(--radius-full)`, 20px `--text-primary` glyphs. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5385:20137` (Admin large `5385:20161`).
+**Canonical spec:** height 70px; `var(--page-background)` with a `1px solid var(--border)` bottom edge; padding `var(--space-s) var(--space-l) var(--space-s) var(--space-xl)` (the right 24px plus the icon button's 8px inset puts the last glyph 32px from the edge, where Figma's 32px right padding puts its bare 20px glyph, so the visible edge matches; do not raise it to 32px); logo 102×22; Exit Admin Small Outlined-2; 16px from Exit Admin to the first glyph and between glyphs; icon buttons 36px, `var(--radius-full)`, 20px `--text-primary` glyphs. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5385:20137` (Admin large `5385:20161`).
 
 **Prototype:** `src/components/TopNav/TopNav.tsx`
 - No props. Logo and Exit Admin go to `/workspace`; the Moon/Sun button calls `useTheme().toggle`; the Logout button opens a menu (Log Out, Mobile App).
@@ -66,7 +66,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 - Don't use a filled amber row for the selected item.
 - Don't use raw `--secondary-*` for selected text; use the mode-aware `--text-selected`.
 
-**Canonical spec:** width 240px; `var(--page-background)` with `1px solid var(--border)` right edge; item padding `var(--space-sm) var(--space-m)` (12px 16px), gap `var(--space-s)` (8px); menu padding 16px top, 12px sides; 4px between top-level entries; sub-items (padding 12px 16px 12px 42px) stack flush, 0 gap, directly under their group heading; 20px Linear icons; Regular 14 `--text-secondary`, selected Bold `--text-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `4697:13314`, menu items `4674:25675` (Web app) and `10372:4045` (Admin).
+**Canonical spec:** width 240px; `var(--page-background)` with `1px solid var(--border)` right edge; item padding `var(--space-sm) var(--space-m)` (12px 16px), gap `var(--space-s)` (8px); menu padding 16px top and bottom, 12px sides; 4px between top-level entries; sub-items (padding 12px 16px 12px 42px) stack flush, 0 gap, directly under their group heading; 20px Linear icons; Regular 14 `--text-secondary`, selected Bold `--text-selected`; group chevron 14px; focus ring `2px solid var(--primary-button-background)`, 4px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `4697:13314`, menu items `4674:25675` (Web app) and `10372:4045` (Admin).
 
 **Prototype:** `src/components/LeftSidebar/LeftSidebar.tsx`
 - No props. Expandable People & Teams, Content and Learning Records groups; selection from `useLocation().pathname`.
@@ -134,7 +134,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 
 - **Figma only:** none.
 - **Code only:** the Moon/Sun theme toggle state (`aria-pressed`), the Logout menu (Log Out, Mobile App).
-- **Drift:** `TopNav` is the Admin top nav (inline SVG logo, Exit Admin, Moon/Sun dark-mode toggle, Logout button that opens a menu with Log Out and Mobile App), background `--page-background`. Figma draws the Moon/Logout glyphs at 21px; the code uses 20px, the nearest icon-scale size.
+- **Drift:** `TopNav` is the Admin top nav (inline SVG logo, Exit Admin, Moon/Sun dark-mode toggle, Logout button that opens a menu with Log Out and Mobile App), background `--page-background`. Moon and Logout glyphs are 20px, as in Figma.
 
 ### LeftSidebar (Side navigation `4697:13314`; Menu/Itens/Admin `10372:4045`)
 
@@ -145,13 +145,13 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 | Menu/Itens/Admin · Type | Menu / Sub-menu | n/a | `.sidebar-item` / `.sidebar-sub-item` | rows are internal to `LeftSidebar`, no props |
 | Menu/Itens/Admin · Selected | false / true | n/a | route match (`useLocation().pathname`) | `.sidebar-sub-item--active` |
 | Menu/Itens/Admin · chevron right | false / true | n/a | groups only (People & Teams, Content, Learning Records) | `ArrowDown2` / `ArrowUp2` chevron |
-| Menu/Itens/Admin · State | Hover / Enabled / Focus | n/a | CSS `:hover`, `:focus-visible` | states are CSS, not props; Focus is the cyan ring (not yet in code, see Drift) |
+| Menu/Itens/Admin · State | Hover / Enabled / Focus | n/a | CSS `:hover`, `:focus-visible` | states are CSS, not props; Focus is the cyan ring, 2px, 4px offset |
 | Menu/Itens/Admin · Expanded | true / false | n/a | internal `peopleOpen` / `contentOpen` | not a prop |
 | Menu/Itens/Admin · Label (text) | "Item" | n/a | item text | no icon swap property: Selected rows use the Bold glyph, the rest Linear |
 
-- **Figma only:** `State=Collapsed` and the collapsed hover flyout tooltip; the open-group row fill (`--page-background-hover`).
+- **Figma only:** `State=Collapsed` and the collapsed hover flyout tooltip.
 - **Code only:** a red count badge on the Roles sub-item and a red dot on the collapsed People & Teams group (neither is part of the Library component).
-- **Drift:** the active item has no `aria-current="page"`; selected icons use `--secondary-600` rather than `--text-selected`; items have no `:focus-visible` style; no open-group fill.
+- **Drift:** the active item has no `aria-current="page"`. (Selected icons now use `--text-selected` and items have the `:focus-visible` ring.)
 
 **Menu/Itens/WebApp** (`4674:25675`): `Selected` (false / true), `State` (Hover / Enabled / Focus, Focus = `:focus-visible` cyan ring), `Expanded` (true / false), `Label` (text, item text), `Icon` (swap, the Bold Iconsax glyph). No shared component: each learner page hand-rolls the shell with `.mt-topnav` / `.mt-side` classes (defined in `pages/my-team/MyTeam.css`), in `MyTeam.tsx`, `ForYou.tsx`, `Workspace.tsx`, `ProgramDetails.tsx`, `ProgramCourseDetails.tsx`, `UserProfile.tsx` and `Events.tsx`. The side panel reuses the shared `AdminMenuItem` (the learner menu's Admin entry, a `.mt-side__item` locked during impersonation, [doc](impersonation-banner.md)) and `ProfileMenu` components, which have no doc yet. Its selected icon is raw `--secondary-500`, not `--text-selected`. Extracting a shared learner shell is a candidate clean-up.
 
@@ -237,7 +237,7 @@ Menu container:
 | System | Padding | Item gap |
 |---|---|---|
 | Web app | `16px` | 0 |
-| Admin | `16px 12px 8px` (`--space-m --space-sm --space-s`, expanded; `LeftSidebar`) · `16px 8px` (collapsed, Figma only) | 4px (`--space-xs`) between top-level entries |
+| Admin | `16px 12px` (`--space-m --space-sm`, expanded; `LeftSidebar`) · `16px 8px` (collapsed, Figma only) | 4px (`--space-xs`) between top-level entries |
 
 Footer:
 
@@ -251,7 +251,7 @@ Powered by (bottom row):
 | System | Spec |
 |---|---|
 | Web app | `padding: 12px 24px` - "Powered by" Regular **10** `--text-tertiary` + logo at 12px height, 4px gap |
-| Admin | `padding: 12px 28px` (Figma; `LeftSidebar` uses `12px`) - "Powered by" Regular **12** `--text-tertiary` + logo at 14px height, 4px gap |
+| Admin | `padding: 12px 28px` (`LeftSidebar`: `var(--space-sm) calc(var(--space-l) + var(--space-xs))`, as 28px has no single token) - "Powered by" Regular **12** `--text-tertiary` + logo at 14px height, 4px gap |
 
 CSS (Admin panel, matches `LeftSidebar`):
 
@@ -261,7 +261,7 @@ CSS (Admin panel, matches `LeftSidebar`):
   display: flex; flex-direction: column;
   background: var(--page-background);
   border-right: 1px solid var(--border);       /* Admin only */
-  padding: var(--space-m) var(--space-sm) var(--space-s);  /* 16px 12px 8px */
+  padding: var(--space-m) var(--space-sm);  /* 16px 12px */
 }
 .side-nav__menu { flex: 1; display: flex; flex-direction: column; gap: var(--space-xs); }  /* 4px */
 
@@ -276,7 +276,8 @@ CSS (Admin panel, matches `LeftSidebar`):
 }
 .side-nav__item:hover      { background: var(--input-background); }
 .side-nav__item--selected  { font-weight: 700; color: var(--text-selected); }  /* + Bold icon variant */
-.side-nav__item--open      { background: var(--page-background-hover); }
+.side-nav__item--parent    { font-weight: 700; }  /* open group with the selected child: + Bold icon, stays --text-secondary, no fill */
+.side-nav__item:focus-visible { outline: 2px solid var(--primary-button-background); outline-offset: 4px; }
 
 .side-nav__sub-item {
   padding: var(--space-sm) var(--space-m);     /* 12px 16px */
@@ -317,7 +318,7 @@ Shared elements:
 | Variant | Left | Right (CTA cluster) |
 |---|---|---|
 | **Web app · large** | Logo (content column is centred at 1536px, `padding-left: 32px`) | gap 24: **Get App** text button (Bold 14 `--text-secondary` + 20px `Mobile` icon, 4px gap) · **Create** outlined button (Bold 14 `--text-primary`, 1px `--text-primary` border, `8px 16px`, radius 8, + 20px `Add` icon) · icon group gap 16: `FlashCircle` 24px (4px padding) + events/calendar 24px with an 8px `--danger-500` notification dot at its top-right |
-| **Admin · large** | Logo, with a 16px-gap slot before it for the sidebar expand/collapse control | gap 16: **Exit Admin** Outlined-2 Small button (Bold **12** `--text-primary`, 1px `--border-elevated` border, `8px 16px`, radius 12) · `Moon` (theme toggle) · `Logout` (Bold), both `--text-primary`; Figma draws them at 21px, the prototype uses 20px, the nearest icon-scale size |
+| **Admin · large** | Logo, with a 16px-gap slot before it for the sidebar expand/collapse control | gap 16: **Exit Admin** Outlined-2 Small button (Bold **12** `--text-primary`, 1px `--border-elevated` border, `8px 16px`, radius 12) · `Moon` (theme toggle) · `Logout` (Bold), both `--text-primary`, 20px as in Figma |
 | **Admin · small** (375) | Hamburger menu icon 32px | gap 12: **Exit Admin** (same as large) · 34×34 icon button (radius 4) with 21px logout icon |
 
 - The Exit Admin button is the **Outlined-2** family (border follows text colour, not primary); see `buttons.md`.
@@ -329,7 +330,7 @@ Shared elements:
 
 **Admin.** Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label **Regular 14**, 8px gap. Items: Home, People & Teams ▾, Content ▾, Automations, Reports, Skills, Learning Records ▾ (5Mins Courses `/learning-records`, External Training `/learning-records/external`, whose page has Records and Approved list tabs; Approved list for full admins only), Events, Account & Settings.
 
-**Expandable groups** (People & Teams, Content, Learning Records) append a 16px `ArrowDown2`/`ArrowUp2` chevron in `--text-tertiary`, right-aligned (label flexes). **Sub-menu items** are text-only rows: `padding: 12px 16px 12px 42px` (aligns text under the parent label), Regular 14 `--text-tertiary`. The reference is the component set `10372:4045` (full Menu/Sub-menu × selected × Enabled/Hover matrix), not the assembled Side navigation panel `4697:13314`, which draws sub-items at 44px left / 8px vertical.
+**Expandable groups** (People & Teams, Content, Learning Records) append a 14px `ArrowDown2`/`ArrowUp2` chevron in `--text-tertiary`, right-aligned (label flexes). **Sub-menu items** are text-only rows: `padding: 12px 16px 12px 42px` (aligns text under the parent label), Regular 14 `--text-tertiary`. The reference is the component set `10372:4045` (full Menu/Sub-menu × selected × Enabled/Hover matrix), not the assembled Side navigation panel `4697:13314`, which draws sub-items at 44px left / 8px vertical.
 
 ### Collapsed side panel
 
@@ -361,7 +362,7 @@ Shared elements:
 | Hover | `--input-background` | unchanged | unchanged |
 | **Selected** | transparent | **amber Bold variant** | **Bold**, `--text-selected` (`#EDA30D` light / `#FFBB38` dark) |
 | Selected + Hover | `--input-background` | amber Bold | Bold `--text-selected` |
-| Open group with selected child (Admin) | `--page-background-hover` (Figma; `LeftSidebar` leaves it transparent) | unchanged | Regular `--text-secondary`, chevron up |
+| Open group with selected child (Admin) | transparent (no fill) | Bold variant, `--text-secondary` | **Bold**, `--text-secondary`, chevron up |
 
 - Selection is expressed by **colour + weight only**, no filled amber row (unlike listbox items).
 - `--text-selected` = `--secondary-600` light / `--secondary-500` dark, the text-safe amber ramp (see `colors.md`).
@@ -389,7 +390,7 @@ Shared elements:
 ### Behaviour
 
 - Expandable Admin groups toggle their sub-menu; expand/collapse animates per the project GSAP ease-in-out convention (`Collapse` component). The chevron flips between `ArrowDown2`/`ArrowUp2`.
-- A group stays visually "open" (`--page-background-hover` row) while one of its children is selected.
+- A group shows as the parent of the current page while it is open and one of its children is selected: Bold label and Bold icon, both `--text-secondary`, no row fill (`.sidebar-item--parent`).
 - Collapsing the panel keeps the selected state on the icon (amber Bold); labels move into the flyout tooltip on hover.
 - Selected item = current route; navigation items are links/buttons with `aria-current="page"` on the active one.
 
@@ -400,7 +401,7 @@ Shared elements:
 | `--page-background` | `#F9F9FA` | `#20222A` | Bar + panel background |
 | `--border` | `#DFE1E6` | `#2D313D` | Bottom / right hairline |
 | `--input-background` | `#BFC2CC` @16% | `#454C5E` @16% | Item hover, profile card |
-| `--page-background-hover` | `#EFF0F2` | `#2D313D` | Open-group row |
+| `--page-background-hover` | `#EFF0F2` | `#2D313D` | Icon-only button hover |
 | `--text-selected` | `#EDA30D` | `#FFBB38` | Selected item label + icon |
 | `--text-secondary` / `--text-tertiary` | per colors.md | per colors.md | Item / sub-item + footer labels |
 | `--tooltip-background` | `#20222A` | `#20222A` | Collapsed-hover flyout |

@@ -179,7 +179,7 @@
 
 .file-uploader--S .file-uploader__btn-outlined {
   font-size: var(--font-size-sm);
-  line-height: 1.4;
+  line-height: 1.2; /* Figma 120% */
 }
 
 /* Hovering the zone lights the button too (Library Hover state). */

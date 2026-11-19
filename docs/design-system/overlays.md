@@ -47,7 +47,7 @@ The overlay components, **Dialog**, **Modal** and **Side Drawer** on desktop and
 - Don't use primary Outlined for Cancel.
 - Don't hard-code the scrim colour; use `var(--scrim)`.
 
-**Canonical spec:** width 560px (max 100%); padding `var(--space-l)` (24px); radius `var(--radius-sm)` (12px); gap `var(--space-ml)` (20px); surface `var(--page-background)`; scrim `var(--scrim)`; title 20px Bold `var(--text-primary)`; body 16px Regular `var(--text-secondary)`; type icon 56px (72px Iconsax in current call sites).
+**Canonical spec:** width 560px (max 100%); padding `var(--space-l)` (24px); radius `var(--radius-sm)` (12px); gap `var(--space-ml)` (20px); surface `var(--page-background)`; scrim `var(--scrim)`; title 20px Bold `var(--text-primary)`; body 16px Regular `var(--text-secondary)`; type icon 56px with no margin of its own (the shared `.confirm-modal-icon` CSS renders any call-site icon at 56px); CTA row gap `var(--space-sm)` (12px). Centred icon dialogs: icon to title 16px, title to body 8px (`var(--space-s)`), in both layouts.
 
 ### Modal
 
@@ -124,7 +124,7 @@ The overlay components, **Dialog**, **Modal** and **Side Drawer** on desktop and
 - Don't use a raw overlay colour; it is `var(--scrim)`.
 - Don't animate it linearly or with a short ease; it rises on a long decelerating curve (see States).
 
-**Canonical spec:** fills its positioned parent (the phone screen). Overlay `var(--scrim)` (Neutral-900 at 72% in the dark mobile app). Sheet `var(--page-background)`, top corners `var(--radius-sm)` (12px), padding `0 var(--space-m) var(--space-xl)` (0 16px 32px), gap `var(--space-s)` (8px), max height 90%, content scrolls. Header: `var(--space-m)` (16px) padding around a 64 × 4px handle, `var(--neutral-500)`, radius `var(--radius-s)`.
+**Canonical spec:** fills its positioned parent (the phone screen). Overlay `var(--scrim)` (Neutral-900 at 64% in the dark mobile app). Sheet `var(--page-background)`, top corners `var(--radius-sm)` (12px), padding `0 var(--space-m) var(--space-xl)` (0 16px 32px), gap `var(--space-s)` (8px), max height 90%, content scrolls. Header: `var(--space-m)` (16px) padding around a 64 × 4px handle, `var(--neutral-500)`, radius `var(--radius-s)`.
 
 ## Figma to code
 
@@ -176,7 +176,7 @@ A full-screen semi-transparent layer that dims the page content and prevents int
 }
 ```
 
-Scrim values (Neutral-900 @ 25% light / 72% dark) are defined in `layout.md`; always use `var(--scrim)`, never a literal.
+Scrim values (Neutral-900 @ 32% light / 64% dark) are defined in `layout.md`; always use `var(--scrim)`, never a literal.
 
 ### Close behaviour
 
@@ -282,7 +282,7 @@ A compact, centered overlay for critical decisions. Dialogs block the page until
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xs);                  /* 4px between title and description */
+  gap: var(--space-s);                   /* 8px between title and description */
 }
 ```
 
@@ -291,7 +291,7 @@ A compact, centered overlay for critical decisions. Dialogs block the page until
 ```css
 .dialog__cta {
   display: flex;
-  gap: 16px;
+  gap: var(--space-sm);                 /* 12px (Figma Dialog 7308:85) */
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -312,7 +312,7 @@ A compact, centered overlay for critical decisions. Dialogs block the page until
 
 ### Modal
 
-A centered overlay panel for focused tasks with moderate content. Modals include a section header with title, supporting text, a content area, and an action button.
+A centered overlay panel for focused tasks with moderate content. Modals include a section header with title, supporting text, a content area, and a centred Cancel and primary button pair.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -325,9 +325,9 @@ A centered overlay panel for focused tasks with moderate content. Modals include
 │                     320px min height                         │
 │                                                              │
 │                                                              │
-│                      ┌──────────┐                            │
-│                      │  Button  │                            │
-│                      └──────────┘                            │
+│               ┌──────────┐  ┌──────────┐                     │
+│               │  Cancel  │  │  Button  │                     │
+│               └──────────┘  └──────────┘                     │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -401,20 +401,14 @@ A centered overlay panel for focused tasks with moderate content. Modals include
 }
 ```
 
-**CTA button:** a single centered primary (filled) button at the bottom.
+**CTA row:** two centred buttons, an Outlined-2 Cancel (`<Button variant="outlined-2">`) then a filled primary, `var(--space-m)` (16px) apart (Figma Modal `7479:4350`). In code a `closable` ConfirmModal gets `.confirm-modal--modal`, which sets `.confirm-modal-actions` to that 16px gap.
 
 ```css
 .modal__cta {
-  background: var(--primary-button-background, #00AFC4);
-  color: var(--text-button-foreground, #F9F9FA);
-  padding: 10px var(--space-ml);
-  border-radius: var(--radius-sm);
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 1.5;
-  border: none;
-  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  gap: var(--space-m);                    /* 16px between Cancel and the primary button */
+  width: 100%;
 }
 ```
 
@@ -581,7 +575,7 @@ All four icons render at 56×56px; the Info icon sits inside a plain flex wrappe
 | **Backdrop click** | Does nothing | Closes | Closes |
 | **Escape key** | Does nothing | Closes | Does nothing |
 | **Header style** | Centered, type icon | Left-aligned, section header | Left-aligned, section header |
-| **CTA buttons** | 2 (type-colored) | 1 (primary centered) | 2 (primary, sticky footer) |
+| **CTA buttons** | 2 (type-colored) | 2 (Outlined-2 Cancel + primary, centred, 16px gap) | 2 (primary, sticky footer) |
 | **Scrollable content** | No | Optional | Yes (flex body) |
 
 ## States
@@ -632,7 +626,7 @@ Dialog and drawer buttons take their states from [buttons.md](buttons.md).
 | `--text-primary` | `#20222A` | `#F9F9FA` | Titles and primary text |
 | `--text-secondary` | `#454C5E` | `#BFC2CC` | Supporting text and descriptions |
 | `--border` | `#DFE1E6` | `#2D313D` | Divider lines |
-| `--scrim` | Neutral-900 @ 25% | Neutral-900 @ 72% | Backdrop fill (see `layout.md`) |
+| `--scrim` | Neutral-900 @ 32% | Neutral-900 @ 64% | Backdrop fill (see `layout.md`) |
 | `--radius-sm` | `12px` | same | Panel corner rounding (Dialog & Modal; Drawer has none) and button corner rounding |
 
 **Shadow:** Modal and Dialog panels use Shadow L, `box-shadow: var(--shadow-l);`.

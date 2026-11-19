@@ -122,7 +122,7 @@ function FilterBar({
           onClick={onToggleExpanded}
         >
           <span className={`filter-bar__chevron${expanded ? ' filter-bar__chevron--open' : ''}`}>
-            <ArrowDown2 size={16} color="var(--text-tertiary)" variant="Linear" />
+            <ArrowDown2 size={24} color="var(--text-secondary)" variant="Linear" />
           </span>
         </button>
       </div>
@@ -132,7 +132,7 @@ function FilterBar({
           {filters.map((f) => (
             <div className="filter-bar__row" key={f.id}>
               <span className="filter-bar__row-icon">
-                <f.Icon size={20} color="var(--text-secondary)" variant="Linear" />
+                <f.Icon size={20} color="var(--text-primary)" variant="Linear" />
               </span>
               <span className="filter-bar__row-label">{f.rowLabel ?? `${f.title} is`}</span>
               {f.control}

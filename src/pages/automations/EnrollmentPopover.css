@@ -11,7 +11,7 @@
   background: var(--cards-background);
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
-  filter: drop-shadow(-4px 0 24px rgba(32, 34, 42, 0.12));
+  filter: drop-shadow(-4px 0 24px rgba(15, 16, 20, 0.24));
 }
 
 /* Top-left caret pointing up to the trigger */

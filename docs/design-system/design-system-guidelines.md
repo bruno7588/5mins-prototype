@@ -82,7 +82,7 @@ Every component doc follows `_template.md`: Usage, then Figma to code. Read the 
 | Radio / checkbox selected | `--control-selected` |
 | Success / warning / error status icon; text | `--success-500` / `--warning-500` / `--danger-500`; `--text-success` / `--text-warning` / `--text-error` |
 | AI features | `--blaze-quiz`; gradients `--gradient-ai` / `--gradient-ai-diagonal` |
-| Overlay backdrop | `--scrim` (Neutral-900 @ 25% light / 50% dark) |
+| Overlay backdrop | `--scrim` (Neutral-900 @ 32% light / 64% dark) |
 | Overlay panel surface | `--page-background` |
 
 ### What size for…

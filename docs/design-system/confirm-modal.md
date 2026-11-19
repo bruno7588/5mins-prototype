@@ -44,7 +44,7 @@ The Dialog spec itself (types, icons, button colours per type) lives in [overlay
 - Don't use primary Outlined or a text button for Cancel.
 - Don't hard-code the scrim or panel colour; use `var(--scrim)` and `var(--page-background)`.
 
-**Canonical spec:** panel width 560px, `max-width: 100%`; padding `var(--space-l)` (24px); radius `var(--radius-sm)` (12px); gap `var(--space-ml)` (20px); surface `var(--page-background)`; shadow `var(--shadow-l)`; overlay `var(--scrim)` at `z-index: 1050` with `var(--space-l)` (24px) padding; title 20px Bold `var(--text-primary)`; body 16px Regular `var(--text-secondary)`; actions gap `var(--space-m)` (16px).
+**Canonical spec:** panel width 560px, `max-width: 100%`; padding `var(--space-l)` (24px); radius `var(--radius-sm)` (12px); gap `var(--space-ml)` (20px); surface `var(--page-background)`; shadow `var(--shadow-l)`; overlay `var(--scrim)` at `z-index: 1050` with `var(--space-l)` (24px) padding; title 20px Bold `var(--text-primary)`; body 16px Regular `var(--text-secondary)`; actions gap `var(--space-sm)` (12px) in a dialog and `var(--space-m)` (16px) in a `closable` modal (`.confirm-modal--modal`); type icon 56px, no margin; title to body 8px in both header layouts (icon to title 16px in the centred one).
 
 ## Figma to code
 
@@ -81,10 +81,10 @@ The Dialog spec itself (types, icons, button colours per type) lives in [overlay
 
 ```
 .confirm-modal-overlay   fixed, inset 0, var(--scrim), z-index 1050, scrolls
-└─ .confirm-modal        role="alertdialog", aria-modal, 560px panel
+└─ .confirm-modal        role="alertdialog", aria-modal, 560px panel, `--modal` when closable
    ├─ CloseButton        only when closable (modal), top-right
    ├─ .confirm-modal-header [--center]
-   │  ├─ .confirm-modal-icon   optional, 72px Iconsax in current call sites
+   │  ├─ .confirm-modal-icon   optional, rendered at 56px by the shared CSS whatever size the call site passes
    │  ├─ .confirm-modal-title
    │  └─ .confirm-modal-body
    └─ .confirm-modal-actions   Cancel (Outlined-2) + commit

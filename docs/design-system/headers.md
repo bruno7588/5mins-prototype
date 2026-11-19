@@ -62,9 +62,9 @@ The base component exposes three swappable slots: **label** (eyebrow metadata â†
 **Don't**
 - Don't hand-roll a new title block for a drawer or modal; reuse the Section Header.
 
-**Canonical spec:** title Bold 20px/1.5 `--text-primary`; description Regular 14px/1.5 `--text-secondary`; title/description gap `var(--space-xs)` (4px); CTA gap `var(--space-m)` (16px); divider `1px var(--border)`; section gap `var(--space-m)` (16px; Figma draws 12px). Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `9531:2974` / dark `7902:1018`.
+**Canonical spec:** title Bold 20px/1.5 `--text-primary`; description Regular 14px/1.5 `--text-secondary`; title/description gap `var(--space-xs)` (4px); CTA gap `var(--space-sm)` (12px); divider `1px var(--border)`; section gap `var(--space-sm)` (12px). Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `9531:2974` / dark `7902:1018`.
 
-**Prototype:** `src/pages/your-courses/components/SectionHeader/SectionHeader.tsx` (page-local, used by the course drawers and modals). It renders an `<h3>` title (20px Bold) with the description 4px below, the `ctas` cluster on the right (16px gap), and always draws the 1px `--border` divider under the headline, 16px below it. It has no eyebrow, tabs, chips, icon or avatar slots; compose those around it if a design needs them.
+**Prototype:** `src/pages/your-courses/components/SectionHeader/SectionHeader.tsx` (page-local, used by the course drawers and modals). It renders an `<h3>` title (20px Bold) with the description 4px below, the `ctas` cluster on the right (12px gap), and always draws the 1px `--border` divider under the headline, 12px below it. It has no eyebrow, tabs, chips, icon or avatar slots; compose those around it if a design needs them.
 
 ### When to use each header
 
@@ -161,7 +161,7 @@ interface SectionHeaderProps {
 
 ### CTA cluster (reference composition)
 
-The `ctas` slot is free-form, but the Figma base ships this reference layout, right-aligned with a **12px gap** (the prototype pages use 16px, `var(--space-m)`):
+The `ctas` slot is free-form, but the Figma base ships this reference layout, right-aligned with a **12px gap** (`SectionHeader` uses it, `var(--space-sm)`; the page-local Page Headers still use 16px):
 
 1. **Search field** - 400px wide (Page) / 300px (Section); `--input-background` fill, 1px `--border`, radius 12, `8px 12px` padding, 18px search icon, placeholder Regular 14 `--text-disabled` (see `search.md`)
 2. **AI icon button** - 40px circular hit area (`radius-full`), 24px AI-sparkle icon
@@ -182,7 +182,7 @@ Swap, drop, or reorder items per page needs; icon-only buttons always keep the c
 | Component | Purpose | Title size | Gap | Unique feature |
 |-----------|---------|------------|-----|----------------|
 | **Page Header** | Main page identification | 24px (`<h2>`) | 16px | Breadcrumb support |
-| **Section Header** | Content sections, modals | 20px (`<h3>`) | 16px (Figma 12px) | Compact layout |
+| **Section Header** | Content sections, modals | 20px (`<h3>`) | 12px | Compact layout |
 
 Page Header compared with Section Header:
 
@@ -190,13 +190,13 @@ Page Header compared with Section Header:
 |---------|-------------|----------------|
 | Title | 24px Bold | 20px Bold |
 | Description | 16px Regular | 14px Regular |
-| Section gap | 16px | 16px (Figma 12px) |
+| Section gap | 16px | 12px |
 | Title/description gap | 4px | 4px |
-| CTA cluster gap | 16px (Figma 12px) | 16px (Figma 12px) |
+| CTA cluster gap | 16px (Figma 12px) | 12px |
 | Eyebrow icon / text | 16px / 14px (1.5) | 14px / 12px (1.2) |
 | Tab selected | 14px Bold | 14px Bold |
 | Tab unselected | 14px Medium | 14px Medium |
-| Tabs gap | 16px | 20px (Figma; no prototype tabs) |
+| Tabs gap | 16px | 16px (Figma; no prototype tabs) |
 | Chip | 14px | 14px |
 | Chips gap | 16px | 16px |
 | Search width (reference) | 400px | 300px |

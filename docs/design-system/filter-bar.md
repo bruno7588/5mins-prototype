@@ -64,15 +64,15 @@ A card that holds a list's field filters. The head always shows **Filters** and 
 | Part | Spec |
 |---|---|
 | Card | `--cards-background`, radius `--radius-sm` (12), padding `--space-s` (8) vertical / `--space-sm` (12) horizontal, `--shadow-s` |
-| Head | row, gap `--space-sm` (12), min height 37 |
+| Head | row, gap `--space-sm` (12), min height 33 |
 | "Filters" | Poppins Bold 14 (H5), `--text-primary` |
-| Count | pill, `--input-background-elevated`, Regular 14 `--text-secondary`, padding 1px `--space-xss` (6), min width 24, radius full |
+| Count | pill, `--input-background-elevated`, Regular 14 / line height 1 `--text-secondary`, 20px high, padding 0 `--space-xss` (6), min width 20, radius full |
 | Collapsed, empty | Add Filter text button (20px `Add` icon) |
 | Collapsed, filled | one Chip per filter (16px field icon, label, ×), gap `--space-sm` (12); past `maxPills` (default 6) a "+N" chip. Clicking a pill expands the bar; its × removes the filter. |
-| Chevron | 16px `ArrowDown2`, `--text-tertiary`, in a 28px circle (hover `--cards-background-hover`); rotates 180° when expanded |
+| Chevron | Library Chevron: 24px `ArrowDown2`, `--text-secondary`, in a 32px circle (hover `--page-background-hover`); rotates 180° when expanded |
 | Body (expanded) | column, gap `--space-sm` (12); `--space-m` (16) under the head, `--space-sm` (12) when empty |
-| Filter row | 20px field icon (`--text-secondary`), "<Field> is" Regular 14 `--text-primary`, the control, 16px CloseButton remove (hover: `--cards-background-hover` circle, glyph `--text-error`, Tooltip "Remove <Field> filter"); gap `--space-s` (8), min height 37 |
-| Actions | Add Filter + Clear All text buttons, gap `--space-m` (16). Clear All rests `--text-primary`, hover and pressed `--text-error`, disabled `--text-disabled` |
+| Filter row | 20px field icon (`--text-primary`), "<Field> is" Regular 14 `--text-primary`, the control, 16px CloseButton remove (hover: `--cards-background-hover` circle, glyph `--text-error`, Tooltip "Remove <Field> filter"); gap `--space-s` (8), min height 37 |
+| Actions | Add Filter + Clear All text buttons, gap `--space-m` (16), `--space-m` (16) under the last row. Clear All rests `--text-primary`, hover and pressed `--text-error`, disabled `--text-disabled` |
 
 The collapsed summary fades out (220ms) while the body opens with `Collapse` (GSAP), so the head never jumps. Reduced motion turns both off.
 
@@ -87,7 +87,7 @@ The collapsed summary fades out (220ms) while the body opens with `Collapse` (GS
 
 | Interaction | Tokens |
 |---|---|
-| Chevron hover | 28px circle `--cards-background-hover` |
+| Chevron hover | 32px circle `--page-background-hover` |
 | Row remove hover | `--cards-background-hover` circle, glyph `--text-error` |
 | Clear All hover, pressed | label `--text-error` |
 | Clear All disabled | `--text-disabled`, tooltip "No filters to clear" |
@@ -96,7 +96,7 @@ The collapsed summary fades out (220ms) while the body opens with `Collapse` (GS
 
 ## Tokens
 
-`var(--cards-background)`, `var(--cards-background-hover)`, `var(--input-background-elevated)`, `var(--text-primary)`, `var(--text-secondary)`, `var(--text-tertiary)`, `var(--text-error)`, `var(--text-disabled)`, `var(--primary-button-background)` (focus ring), `var(--shadow-s)`, `var(--radius-sm)`, `var(--space-xss)`, `var(--space-s)`, `var(--space-sm)`, `var(--space-m)`.
+`var(--cards-background)`, `var(--cards-background-hover)`, `var(--page-background-hover)` (chevron hover), `var(--input-background-elevated)`, `var(--text-primary)`, `var(--text-secondary)`, `var(--text-error)`, `var(--text-disabled)`, `var(--primary-button-background)` (focus ring), `var(--shadow-s)`, `var(--radius-sm)`, `var(--space-xss)`, `var(--space-s)`, `var(--space-sm)`, `var(--space-m)`.
 
 ## Accessibility
 

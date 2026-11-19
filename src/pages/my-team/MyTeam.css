@@ -63,10 +63,6 @@
   font-weight: 700;
 }
 
-.mt-side__item--active:hover {
-  background: transparent;
-}
-
 .mt-side__profile {
   margin: var(--space-sm);
   padding: var(--space-s) var(--space-m);

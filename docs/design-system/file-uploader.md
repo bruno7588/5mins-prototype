@@ -38,7 +38,7 @@ A drop zone that lets the user drag in or pick one file, then shows its progress
 - Don't use `filledPreview` for a document or any file the user doesn't crop; the file name is what confirms the pick. Exception: a certificate the admin checks against AI-filled fields (Add external training) shows a preview up to 200px tall, with the file name and a Change File text button underneath.
 - Don't put the zoom slider inside the preview; it sits below the uploader.
 
-**Canonical spec:** radius `var(--radius-sm)` (12px). L: width 100%, min height 240px, padding `var(--space-l)` (24px), gap `var(--space-ml)` (20px), icon-to-text gap 16px, 40px icon, body 14px / 1.5. S: width 180px, min height 260px, padding `var(--space-m)` (16px), gap 16px (24px when Filled), icon-to-text gap 8px, 32px icon, body 12px / 1.4 (1.2 when Uploading or Filled). Border dashed `--border-elevated` (solid when Filled), `--border-hover` + `--input-background` on hover or drag, `--danger-500` over a 16% Danger-500 wash on error. Body text `--text-secondary`; error list Regular `--text-error` (14px / 1.5 L, 12px / 1.2 S), "+N errors" 12px. Button "Select File": 1px `--border-elevated`, radius 12px, padding 10px 20px (L) / 8px 16px (S), Bold `--text-primary`; hover `--button-outline-fill-hover` with `--primary-button-background-hover`. Progress ring 64px, `--primary-600` on `--border`.
+**Canonical spec:** radius `var(--radius-sm)` (12px). L: width 100%, min height 240px, padding `var(--space-l)` (24px), gap `var(--space-ml)` (20px), icon-to-text gap 16px, 40px icon, body 14px / 1.5. S: width 180px, min height 260px, padding `var(--space-m)` (16px), gap 16px (24px when Filled), icon-to-text gap 8px, 32px icon, body 12px / 1.4 (1.2 when Uploading or Filled). Border dashed `--border-elevated` (solid when Filled), `--border-hover` + `--input-background` on hover or drag, `--danger-500` over a 16% Danger-500 wash on error. Body text `--text-secondary`; error list Regular `--text-error` (14px / 1.5 L, 12px / 1.2 S), "+N errors" 12px. Button "Select File": 1px `--border-elevated`, radius 12px, padding 10px 20px (L) / 8px 16px (S), Bold `--text-primary` (14px / 1.5 L, 12px / 1.2 S); hover `--button-outline-fill-hover` with `--primary-button-background-hover`. Progress ring 64px, `--primary-600` on `--border`.
 
 ## Figma to code
 
@@ -143,7 +143,7 @@ border-radius: var(--radius-sm);   /* 12px */
 padding: var(--space-ssm) var(--space-ml);   /* L 10px 20px; S var(--space-s) var(--space-m), 8px 16px */
 background: transparent;
 color: var(--text-primary);
-font: 700 14px/1.5 'Poppins';   /* S: 12px/1.4 */
+font: 700 14px/1.5 'Poppins';   /* S: 12px/1.2 */
 ```
 
 ## Sizes
@@ -157,7 +157,7 @@ font: 700 14px/1.5 'Poppins';   /* S: 12px/1.4 */
 | Main gap | `20px` | `16px` (Filled: `24px`) |
 | Icon-to-text gap | `16px` | `8px` |
 | Body font | `14px / 1.5` | `12px / 1.4` (Uploading, Filled: `1.2`) |
-| Button font | `14px Bold` | `12px Bold` |
+| Button font | `14px / 1.5 Bold` | `12px / 1.2 Bold` |
 
 ## States
 

@@ -181,7 +181,7 @@
   padding: var(--space-s) var(--space-sm);
   border-radius: var(--radius-sm);
   max-width: 288px;
-  filter: drop-shadow(-4px 0px 24px rgba(32, 34, 42, 0.12));
+  filter: drop-shadow(-4px 0px 24px rgba(15, 16, 20, 0.24));
 }
 
 .force-trigger-tooltip__caret {

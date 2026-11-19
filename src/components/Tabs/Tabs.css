@@ -15,7 +15,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 0 0 var(--space-xs);
+  padding: 0 0 var(--space-xss);
   border: none;
   background: none;
   font-family: inherit;
@@ -59,7 +59,11 @@
 }
 
 .ds-tab__counter {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
   padding: 0 var(--space-xss);
+  line-height: 1;
   border-radius: var(--radius-full);
   background: var(--input-background);
   font-weight: 500;

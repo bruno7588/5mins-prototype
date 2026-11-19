@@ -857,7 +857,7 @@
   max-width: 288px;
   background: var(--tooltip-background);
   border-radius: var(--radius-sm);
-  filter: drop-shadow(-4px 0px 24px rgba(32, 34, 42, 0.12));
+  filter: drop-shadow(-4px 0px 24px rgba(15, 16, 20, 0.24));
   pointer-events: none;
   opacity: 0;
   transition: opacity 150ms ease;

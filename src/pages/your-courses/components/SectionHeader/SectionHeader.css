@@ -1,7 +1,7 @@
 .section-header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-m); /* 16px section gap */
+  gap: var(--space-sm); /* 12px section gap (Figma 7902:1019) */
 }
 
 .section-header__headline {
@@ -34,7 +34,7 @@
 .section-header__ctas {
   display: flex;
   align-items: center;
-  gap: var(--space-m);
+  gap: var(--space-sm); /* 12px (Figma 7902:1019) */
   flex-shrink: 0;
 }
 

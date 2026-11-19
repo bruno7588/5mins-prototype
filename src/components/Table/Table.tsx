@@ -177,6 +177,19 @@ export function Table<T>({
               .filter(Boolean)
               .join(' ')}
             onClick={onRowClick ? () => onRowClick(row) : undefined}
+            tabIndex={onRowClick ? 0 : undefined}
+            onKeyDown={
+              onRowClick
+                ? (e) => {
+                    // Only the row itself: keys pressed in an inner control stay with that control.
+                    if (e.target !== e.currentTarget) return
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      onRowClick(row)
+                    }
+                  }
+                : undefined
+            }
           >
             {selectable && (
               <div

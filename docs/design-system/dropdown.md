@@ -36,8 +36,8 @@ A closed field that opens a listbox so the user picks one value, or several, fro
 - Use `readOnly` for a disabled dropdown (e.g. while its card's toggle is off).
 - Default to `size="md"` (the most used size); `size="sm"` is used for compact filter rows, small popovers and the label-start course status filter. `lg` has no call site.
 - Style the menu through `menuClassName`; it is portalled to `<body>`, so descendant selectors from the field's ancestors won't reach it.
-- Show errors with the `error` prop: it draws the `--text-error` border and replaces the helper text.
-- Colour a leading icon `--text-primary`, the same as the trigger text; the chevron is `--text-secondary`.
+- Show errors with the `error` prop: it draws the `--text-error` border, turns the label `--text-error`, adds a trailing 20px Iconsax `Danger` (Bold, `--text-error`) before the chevron, and replaces the helper text.
+- Colour a leading icon `--text-primary`, the same as the trigger text; the chevron is `--text-secondary` at rest and `--text-primary` while open.
 - Constrain the width at the wrapper level (`<div style={{ width: 'auto' }}>` or a utility class) rather than mutating the component.
 
 **Don't**
@@ -46,7 +46,7 @@ A closed field that opens a listbox so the user picks one value, or several, fro
 - Don't use `--danger-500` for the error border; Dropdown and InputField share `--text-error`, held on hover.
 - Don't copy the `.dropdown-*` classes into a new component; extend `Dropdown` instead.
 
-**Canonical spec:** md trigger 37px high, padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), text 14px / 400 / 1.5; sm is 33px with 4px 12px padding and 12px text. Border `--border-elevated`, hover `--border-hover` + `--input-background`, open or focused `--selected`, read-only `--border` with `--text-disabled`, error `--text-error`. Placeholder `--text-disabled`, label Paragraph M semibold `--text-secondary`, helper `--text-tertiary`. Menu: `--cards-background`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), max height 400px, selected row `--secondary-500` (#FFBB38, both modes, as the Content Switcher pill) with `--text-on-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8925:1408`.
+**Canonical spec:** md trigger 37px high, padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), text 14px / 400 / 1.5; sm is 33px with 4px 12px padding and 12px text. Border `--border-elevated`, hover `--border-hover` + `--input-background`, open or focused `--selected` (chevron `--text-primary`), read-only `--border` with `--text-disabled` (label and helper too), error `--text-error` (border, label, trailing `Danger` icon and message). Placeholder `--text-disabled`, label Paragraph M semibold `--text-secondary`, helper `--text-tertiary`. Menu: `--cards-background`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), max height 400px, selected row `--secondary-500` (#FFBB38, both modes, as the Content Switcher pill) with `--text-on-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8925:1408`.
 
 ## Figma to code
 
@@ -101,7 +101,11 @@ Use `ArrowDown2` from Iconsax. Rotate 180° in the Active state, OR swap to `Arr
 .dropdown-trigger.is-active .dropdown-chevron { transform: rotate(180deg); }
 ```
 
-Chevron color is `--text-secondary`, not the value's colour - it is the control's affordance, not part of the text. Read-only tints it `--text-disabled` with the rest of the trigger.
+Chevron colour is `--text-secondary` at rest, not the value's colour - it is the control's affordance, not part of the text. Active (open) turns it `--text-primary` (Figma `8925:1449`). Read-only tints it `--text-disabled` with the rest of the trigger.
+
+### Error icon
+
+In the Error state a 20px Iconsax `Danger` (variant Bold, `--text-error`) sits before the chevron (Figma `12267:790`); 16px at `size="sm"`, like the chevron.
 
 ### Label
 
@@ -112,6 +116,8 @@ Two placements supported in the Figma library: **top** (default) and **start** (
   font: 600 14px/1.5 'Poppins', sans-serif; /* Paragraph M semibold - the label weight */
   color: var(--text-secondary);             /* #BFC2CC - Figma value */
 }
+.dropdown-label.is-error    { color: var(--text-error); }    /* State=Error */
+.dropdown-label.is-disabled { color: var(--text-disabled); } /* Read-only */
 
 /* labelStart variant */
 .dropdown-field.label-start {
@@ -136,6 +142,7 @@ Required-field indicator:
   margin-top: 8px;                          /* column gap --s */
 }
 .dropdown-helper.is-error { color: var(--text-error); }
+.dropdown-helper.is-disabled { color: var(--text-disabled); } /* Read-only */
 ```
 
 Visible only when `helperText` is true (matches the Figma variant). In error state, the helper text replaces the neutral helper.
@@ -148,7 +155,8 @@ What `src/components/Dropdown/Dropdown.css` draws:
 - `.dropdown-option`: padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-s)` (8px), 14px / 400 / 1.5 `var(--text-primary)`; hover `var(--cards-background-hover)`.
 - Selected: `var(--selected)` fill with `var(--text-on-selected)` text at weight 500. No tick icon.
 - Disabled: `var(--text-disabled)`, not clickable.
-- Option with `description`: label 600 over a `var(--text-secondary)` description that may wrap.
+- Option with `description`: label 500 over a `var(--text-tertiary)` description that may wrap, 4px apart (`var(--space-xs)`); on the amber selected row the description is `var(--text-on-selected)`.
+- Checkbox rows: 12px (`var(--space-sm)`) from the box to the label. Checkbox and "All" rows focus with a 2px `var(--primary-button-background)` inset ring.
 
 The menu border is `var(--border-elevated)` (Figma `9162:1042`), as `RowActionsMenu` uses; `--border` would vanish against `--cards-background` in dark mode.
 
@@ -187,8 +195,8 @@ Medium is 37px: the Figma node states no height, and 37px is the frame with its 
 | Enabled | transparent | `--border-elevated` | `--text-primary` (placeholder `--text-disabled`) |
 | Hover | `--input-background` | `--border-hover` | `--text-primary` |
 | Active (open / focused, incl. `:focus-visible`) | transparent | `--selected` | `--text-primary` |
-| Read-only (disabled) | transparent | `--border` | `--text-disabled`, `cursor: not-allowed` |
-| Error | transparent | `--text-error` (held on hover) | helper `--text-error` |
+| Read-only (disabled) | transparent | `--border` | `--text-disabled` (label and helper too), `cursor: not-allowed` |
+| Error | transparent | `--text-error` (held on hover) | label, `Danger` icon and helper `--text-error` |
 
 All form-field active borders (dropdown, date field, inputs, search) use the mode-aware `--selected` token (`#EDA30D` light / `#FFBB38` dark), the same token as selection fills.
 
@@ -250,8 +258,11 @@ The leading icon (when present) greys to `--text-disabled` in read-only only if 
 | Value text (something selected) | `var(--text-primary)` | `#20222A` |
 | Placeholder text (nothing selected) | `var(--text-disabled)` | `#9EA4B3` light / `#656B7C` dark |
 | Label text | `var(--text-secondary)` | `#454C5E` light / `#BFC2CC` dark |
+| Label, icon and helper text (Error) | `var(--text-error)` | `#DF1642` light / `#E95C7B` dark |
 | Helper text | `var(--text-tertiary)` | `#9EA4B3` |
-| Read-only text / icon | `var(--text-disabled)` | `#9EA4B3` light / `#656B7C` dark |
+| Chevron (Enabled / Hover) | `var(--text-secondary)` | |
+| Chevron (Active) | `var(--text-primary)` | |
+| Read-only text / icon / label / helper | `var(--text-disabled)` | `#9EA4B3` light / `#656B7C` dark |
 | Radius | `var(--radius-sm)` | `12px` |
 | Medium padding | `var(--space-s) var(--space-sm)` | `8px 12px` |
 

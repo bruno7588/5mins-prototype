@@ -27,7 +27,7 @@ description: DatePickerField for 5Mins.ai, the shared date input that shows a dd
 **Do**
 - Use `DatePickerField` for every date input; don't use `<input type="date">` or `InputField type="date"`.
 - Pass a specific `ariaLabel` (e.g. "Completion date", "Start date"); the default "Choose a date" doesn't say which date.
-- Render the visible label yourself above the field, as Paragraph M semibold (14px / 600) in `--text-secondary`; the component has no `label` prop. The label stays `--text-secondary` in the Error state at every current call site.
+- Render the visible label yourself above the field, as Paragraph M semibold (14px / 600) in `--text-secondary`; the component has no `label` prop. Put the label directly before the field (previous sibling): in the Error state `DatePickerField.css` turns it `--text-error`, as in Figma.
 - Pass `maxDate` when later days aren't valid, and say so in the label hint (e.g. "today or earlier").
 - Pass `error` with the message when a missing or invalid date blocks saving, so the field shows the problem where it is rather than only on the button.
 - For a range, place two fields side by side with "from" and "to" `ariaLabel`s.
@@ -36,11 +36,11 @@ description: DatePickerField for 5Mins.ai, the shared date input that shows a dd
 
 **Don't**
 - Don't restyle the popover through ancestor selectors; it is portalled to `<body>`, outside the field's DOM.
-- Don't give the field a hover fill; hover only changes the border to `--border-hover`.
+- Don't drop the hover fill: hover changes the border to `--border-hover` and fills `--input-background`.
 - Don't use raw `--secondary-500` for the open border; use the mode-aware `--selected`.
 - Don't pass a display-formatted string (`dd/mm/yyyy`) as `value`.
 
-**Canonical spec:** min width 160px, min height 37px, padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), gap `var(--space-s)` (8px), text 14px Poppins. Border `--border-elevated`, `--border-hover` on hover, `--selected` while open, `--text-error` on error. Value `--text-primary`, placeholder `--text-disabled`. Calendar icon 20px Linear `--text-primary`; on error a 20px Linear `Danger` in `--text-error` sits before it; error helper 14px / 400 / 1.5 `--text-error`, `var(--space-s)` (8px) below. Popover per `calendar.md`, with Shadow L (`var(--shadow-l)`). Figma: Library `EC26cSVe9KNTCWXvYovakw`, `11529:406`.
+**Canonical spec:** min width 160px, min height 37px, padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), gap `var(--space-s)` (8px), text 14px Poppins. Border `--border-elevated`, `--border-hover` on hover (with an `--input-background` fill), `--selected` while open, `--text-error` on error. Value `--text-primary`, placeholder `--text-disabled`. Calendar icon 20px Linear `--text-primary`; on error a 20px Linear `Danger` in `--text-error` sits before it; error helper 14px / 400 / 1.5 `--text-error`, `var(--space-s)` (8px) below. Popover per `calendar.md`, with Shadow L (`var(--shadow-l)`). Figma: Library `EC26cSVe9KNTCWXvYovakw`, `11529:406`.
 
 ## Figma to code
 
@@ -53,7 +53,7 @@ description: DatePickerField for 5Mins.ai, the shared date input that shows a dd
 | Helper text | text | `error` | the error message | Error only |
 | Month | text | n/a | month title computed from the value | inside the Active popover |
 
-- **Figma only:** the `Show label` boolean and `Label` text; Figma's Error variant reds the label, which no call site does. There is no separate Focus variant: like Dropdown, the focused field shows the amber `Active` border. Keyboard focus (`:focus-visible`) shows the same amber `--selected` border.
+- **Figma only:** the `Show label` boolean and `Label` text (the caller renders the label; its Error red comes from `DatePickerField.css`). There is no separate Focus variant: like Dropdown, the focused field shows the amber `Active` border. Keyboard focus (`:focus-visible`) shows the same amber `--selected` border.
 - **Code only:** `value`, `onChange`, `placeholder`, `ariaLabel`, `maxDate`, `minDate`, `className`. There is no Disabled state in Figma or code.
 
 | Prop | Type | Default | Description |
@@ -96,7 +96,7 @@ Date is required.                 ← helper line (Error only)
 
 ## States
 
-Enabled, Hover (border only), Active while open (`--selected` border), Error (`--text-error` border, warning icon, helper). Placeholder and value colours follow `input.md`: `--text-disabled` empty, `--text-primary` filled. Full state table in [calendar.md](calendar.md).
+Enabled, Hover (`--border-hover` border, `--input-background` fill), Active while open (`--selected` border), Error (`--text-error` border, warning icon, helper). Placeholder and value colours follow `input.md`: `--text-disabled` empty, `--text-primary` filled. Full state table in [calendar.md](calendar.md).
 
 ## Accessibility
 

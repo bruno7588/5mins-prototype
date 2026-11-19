@@ -31,7 +31,7 @@ function ConfirmModal({ open, onClose, children, className, ariaLabel, closable 
     <div className="confirm-modal-overlay" onMouseDown={closable ? onClose : undefined}>
       <div
         ref={panelRef}
-        className={`confirm-modal${className ? ` ${className}` : ''}`}
+        className={`confirm-modal${closable ? ' confirm-modal--modal' : ''}${className ? ` ${className}` : ''}`}
         role="alertdialog"
         aria-modal="true"
         aria-label={ariaLabel ?? 'Confirm action'}

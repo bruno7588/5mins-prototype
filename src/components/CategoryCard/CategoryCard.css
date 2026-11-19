@@ -93,10 +93,10 @@
   position: absolute;
   top: -11px;
   left: 30px;
-  padding: var(--space-xss) var(--space-s);
-  border-radius: 40px;
+  padding: var(--space-xss) var(--space-sm);
+  border-radius: var(--radius-full);
   background: var(--danger-400);
-  font: 500 12px/1.2 Poppins, sans-serif;
+  font: 600 12px/1.2 Poppins, sans-serif;
   color: var(--neutral-25);
 }
 

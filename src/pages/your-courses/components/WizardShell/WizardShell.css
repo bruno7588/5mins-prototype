@@ -265,7 +265,8 @@ button.wzs-stepper-step:focus-visible {
 }
 
 /* Current: the orange progress illustration with the number on top (Medium 12,
-   --page-background), popping in when the step becomes current. */
+   --page-background), popping in when the step becomes current. The badge stays
+   20px; the illustration is 16px, centred (Figma 12451:80). */
 .wzs-stepper-num--current {
   position: relative;
   border: none;
@@ -274,7 +275,7 @@ button.wzs-stepper-step:focus-visible {
 
 .wzs-stepper-num--current img {
   position: absolute;
-  inset: 0;
+  inset: var(--space-xxs);
 }
 
 .wzs-stepper-num--current span {

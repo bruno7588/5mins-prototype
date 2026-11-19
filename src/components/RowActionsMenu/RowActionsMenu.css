@@ -27,7 +27,7 @@
 .ram-menu {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs); /* 4px between items */
+  gap: 0; /* items sit flush in each list slot (Figma Library Listbox 9162:1042) */
   /* Hugs its items: each line stays on one row (Figma Library List items 9162:941). */
   width: max-content;
   background: var(--cards-background);
@@ -154,7 +154,8 @@
    --cards-background are the same colour. */
 .ram-divider {
   height: 1px;
-  margin: 0 var(--space-xs);
+  /* 4px above and below keeps the gap between groups (listbox.md) while items sit flush. */
+  margin: var(--space-xs);
   background: var(--border-elevated);
 }
 

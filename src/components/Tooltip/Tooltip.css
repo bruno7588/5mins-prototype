@@ -14,7 +14,7 @@
 }
 
 .tooltip__trigger:focus-visible {
-  outline: 2px solid var(--primary-500);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -41,7 +41,7 @@
   text-align: left;
   /* Always wrap inside the bubble, even if an ancestor sets white-space: nowrap. */
   white-space: normal;
-  filter: drop-shadow(-4px 0px 24px rgba(32, 34, 42, 0.12));
+  filter: drop-shadow(-4px 0px 24px rgba(15, 16, 20, 0.24));
 }
 
 /* ===== Caret ===== */
@@ -128,7 +128,7 @@
 /* ===== Position: Left ===== */
 /* Bubble sits left of the trigger, so the caret follows the label on the right. */
 .tooltip__body--left-center {
-  right: calc(100% + var(--space-xs));
+  right: calc(100% + var(--space-s)); /* 8px beside the trigger (Library) */
   top: 50%;
   transform: translateY(-50%);
   flex-direction: row;
@@ -137,7 +137,7 @@
 
 /* ===== Position: Right ===== */
 .tooltip__body--right-center {
-  left: calc(100% + var(--space-xs));
+  left: calc(100% + var(--space-s)); /* 8px beside the trigger (Library) */
   top: 50%;
   transform: translateY(-50%);
   flex-direction: row;

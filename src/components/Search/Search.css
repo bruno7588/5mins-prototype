@@ -30,7 +30,7 @@
 .search--l {
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-m);
-  border-radius: 16px;
+  border-radius: var(--radius-m);
 }
 
 /* ── Hover ── */

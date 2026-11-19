@@ -53,7 +53,7 @@ function Search({
       <SearchNormal1
         size={iconSize}
         variant="Outline"
-        color="var(--text-tertiary)"
+        color="var(--text-secondary)"
         className="search__icon"
       />
       <input

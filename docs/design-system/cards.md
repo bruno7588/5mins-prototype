@@ -69,7 +69,7 @@ Only the cards below have a shared component. Lesson list rows, Assessment rows,
 - Don't fill course progress with `--primary-600` (cyan); that colour belongs to lesson progress.
 - Don't drop the `prefers-reduced-motion` guard on the hover image zoom.
 
-**Canonical spec:** width 300px; radius `var(--radius-sm)` (12px); `var(--shadow-s)`; image 140px tall; body padding `var(--space-l)` (24px), gap `var(--space-m)` (16px); title Poppins Bold 16px/1.5 `--text-primary`, 3 lines; meta Regular 14px `--text-secondary`; empty segments `--border-elevated`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5132:5756`.
+**Canonical spec:** width 300px; radius `var(--radius-sm)` (12px); `var(--shadow-s)`; image 140px tall; body padding `var(--space-l)` (24px), gap `var(--space-m)` (16px); title Poppins Bold 16px/1.5 `--text-primary`, 3 lines; meta Regular 14px `--text-secondary`; empty segments `--border`; "New" badge per Badge `Type=New` (6px / 12px padding, SemiBold 12px/1.2 `--neutral-25` on `--danger-400`, `var(--radius-full)`). Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5132:5756`.
 
 ### CategoryCard (desktop Category card)
 
@@ -91,7 +91,7 @@ Only the cards below have a shared component. Lesson list rows, Assessment rows,
 - Don't add a card fill, border or shadow around the glow stack.
 - Don't animate the frame on hover; only the image inside it zooms.
 
-**Canonical spec:** width 300px; thumbnail 204px tall with the sharp image 240 x 140 at `var(--radius-sm)` (12px); glow `blur(16px)` at 32% opacity; gap `var(--space-m)` (16px); title Poppins Bold 16px/1.5, one line; "New Courses" badge `--danger-400` fill, `--neutral-25` text. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `10176:1806`.
+**Canonical spec:** width 300px; thumbnail 204px tall with the sharp image 240 x 140 at `var(--radius-sm)` (12px); glow `blur(16px)` at 32% opacity; gap `var(--space-m)` (16px); title Poppins Bold 16px/1.5, one line; "New Courses" badge per Badge `Type=New`: 6px / 12px padding, SemiBold 12px/1.2 `--neutral-25` on `--danger-400`, `var(--radius-full)`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `10176:1806`.
 
 ### LessonGridCard (Lesson grid tile)
 
@@ -508,7 +508,7 @@ A course or playlist, that is a group of lessons. One desktop card, 300px wide, 
 
 Anatomy, top to bottom:
 
-- **Image area** 300 x 140, top corners rounded 12px. A 2px segmented progress bar sits flush at the bottom of the image (8 segments, radius 20px ends). Course progress fill is `--selected` (gold), not cyan; a completed course fills every segment `--success-500`; empty segments are `--border-elevated` (they sit on the card).
+- **Image area** 300 x 140, top corners rounded 12px. A 2px segmented progress bar sits flush at the bottom of the image (8 segments, radius 20px ends). Course progress fill is `--selected` (gold), not cyan; a completed course fills every segment `--success-500`; empty segments are `--border` (Figma binds Border).
 - **Body** 24px padding, 16px gap, column, bottom corners rounded 12px. Title Poppins Bold 16px `--text-primary`, clamped to 3 lines (height 72px). Below it a duration row, 8px gap: a 16px play-circle icon plus `17 lessons`, then a 16px clock icon plus `20 min`, both in Poppins Regular 14px `--text-secondary`.
 
 ```html
@@ -553,13 +553,13 @@ Anatomy, top to bottom:
   .course-card__picture { transition: none; }
   .course-card:hover .course-card__picture { transform: none; }
 }
-.progress-bar--course i { background: var(--border-elevated); }  /* empty segments sit on the card */
+.progress-bar--course i { background: var(--border); }  /* empty segments (Figma: Border) */
 .progress-bar--course i.on { background: var(--selected); }   /* gold, not cyan */
-.badge-new {
+.badge-new {                                  /* Badge Type=New */
   position: absolute; top: 10px; left: 10px;
-  padding: 4px 8px; border-radius: 20px;
+  padding: 6px 12px; border-radius: var(--radius-full);
   background: var(--danger-400);
-  font: 500 12px/1.5 Poppins; color: var(--neutral-25);
+  font: 600 12px/1.2 Poppins; color: var(--neutral-25);
 }
 .badge-due {
   position: absolute; top: 10px; right: 10px;
@@ -588,7 +588,7 @@ Use in the mobile app prototype. Source: the Mobile variants of `Card/Courses` i
 
 Same anatomy as desktop, scaled down. Container: **272px** wide (fixed; mobile course cards sit in horizontal scrollers), column, `--cards-background`, radius 12px.
 
-- **Image area** 272 x **120** (desktop 300 x 140), top corners rounded 12px, with the 2px 8-segment progress bar flush at the bottom (fill `--selected` gold, empty `--border`). `New` badge top-left at 10px inset (same tokens as desktop: `--danger-400` fill, 4px/8px padding, radius 20px, Medium 12px/1.2 white `--neutral-0`). Due-date pill top-right at 10px inset: `--cards-background` fill, 6px/12px padding, radius 40px; text drops to Poppins **Regular 12px/1.2** `--text-warning` (desktop uses Medium 14px).
+- **Image area** 272 x **120** (desktop 300 x 140), top corners rounded 12px, with the 2px 8-segment progress bar flush at the bottom (fill `--selected` gold, empty `--border`). `New` badge top-left at 10px inset (`--danger-400` fill, 4px/8px padding, radius 20px, Medium 12px/1.2 white `--neutral-0`; desktop now follows Badge `Type=New`). Due-date pill top-right at 10px inset: `--cards-background` fill, 6px/12px padding, radius 40px; text drops to Poppins **Regular 12px/1.2** `--text-warning` (desktop uses Medium 14px).
 - **Body** **16px padding, 12px gap** (desktop 24px/16px). Title Poppins Bold **14px**/1.5 `--text-primary`, clamped to 2 lines (height 42px). Duration row 8px gap, items 4px icon gap: **14px** play-circle icon + `17 lessons`, 14px clock icon + `20 min`, Poppins Regular **12px/1.2** `--text-secondary`.
 
 ### Skill card
@@ -633,7 +633,7 @@ Anatomy, top to bottom (16px gap between thumbnail area and info):
 
 - **Thumbnail stack:** a blurred "glow" copy of the category image fills the full 300 x 204 area (`filter: blur(16px)`, 32% opacity, radius 12px) with the sharp 240 x 140 image (radius 12px) centered on top. The card has **no surface fill**; the glow is the card.
 - **Info** below: 8px gap. Title Poppins Bold 16px `--text-primary`, single line, ellipsis. Metadata row, 16px gap, two items in Poppins Regular 14px `--text-secondary`, each with a 4px icon gap: a 20px collection-play icon + `12 courses`, and a 16px play-circle icon + `24 lessons`.
-- **"New Courses" badge** (New variant): overlaps the card's top edge (absolute, top −11px, left 30px); `--danger-400` fill, 6px / 8px padding, radius 40px, label Poppins Medium 12px `--neutral-25`.
+- **"New Courses" badge** (New variant): overlaps the card's top edge (absolute, top −11px, left 30px); Badge `Type=New`: `--danger-400` fill, 6px / 12px padding, `var(--radius-full)`, label Poppins SemiBold 12px/1.2 `--neutral-25`.
 
 ```html
 <article class="category-card">
@@ -674,7 +674,7 @@ Same glow-stack anatomy as desktop, scaled down. Container: **272px** wide (fixe
 
 - **Thumbnail stack** 272 x **180** (desktop 300 x 204), 32px padding: blurred glow copy fills the area (`blur(16px)`, 32% opacity, radius 12px) with the sharp **208 x 116** image (radius 12px) centered on top.
 - **Info**: **4px gap** (desktop 8px). Title Poppins Bold **14px**/1.5 `--text-primary`, single line, ellipsis. Metadata row **8px gap** (desktop 16px), items 4px icon gap: **18px** collection-play icon + `12 courses`, 16px play-circle icon + `24 lessons`, Poppins Regular **12px/1.2** `--text-secondary`.
-- **"New Courses" badge**: identical to desktop (absolute, top −11px, left 30px, `--danger-400` fill, 6px/8px padding, radius 40px, Poppins Medium 12px/1.2 `--neutral-25`).
+- **"New Courses" badge**: same position and colours as desktop (absolute, top −11px, left 30px, `--danger-400` fill, 6px/8px padding, radius 40px, Poppins Medium 12px/1.2 `--neutral-25`); desktop now follows Badge `Type=New`.
 
 ### Folder card
 

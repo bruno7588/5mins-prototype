@@ -1,5 +1,5 @@
 // 5Mins "My progress" illustrations — Figma "Illustrations/ Progress" (frame 10157:9081,
-// downloaded 2026-07-13). Seven 40×40 stat icons for the learner progress surfaces:
+// downloaded 2026-07-13). Seven 32×32 stat icons (40×40 viewBox) for the learner progress surfaces:
 // streak, points, jewels, certificates, plus the quiz-outcome trio.
 
 import streak from './streak.svg'
@@ -29,7 +29,7 @@ export const progressIllustrations: Record<ProgressIllustrationType, string> = {
   'not-passed': notPassed,
 }
 
-/** All artwork is 40×40 — render at native size. */
+/** All artwork renders at 32×32 by default (Figma size). */
 export function getProgressIllustration(type: ProgressIllustrationType): string {
   return progressIllustrations[type]
 }

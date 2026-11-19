@@ -40,7 +40,7 @@ A centred composition shown when a content area has nothing to display, always p
 - Don't stack more than two CTAs
 - Don't use it for loading (show a loading placeholder) or errors (use alerts/dialogs)
 
-**Canonical spec:** padding `var(--space-l)` (24px), `var(--space-xl)` (32px) on the dropzone; gap `var(--space-ml)` (20px); info gap `var(--space-s)` (8px); illustration 72 × 72px; title 20px Bold `var(--text-primary)` (16px on mobile); description 14px Regular `var(--text-secondary)`, max width 600px; CTA gap `var(--space-m)` (16px); radius `var(--radius-ml)` (20px); dropzone fill `var(--input-background)` with a 2px dashed `DashedBorder` outline.
+**Canonical spec:** padding `var(--space-l)` (24px), `var(--space-xl)` (32px) on the dropzone, `var(--space-m)` (16px) on mobile including the mobile dropzone; gap `var(--space-ml)` (20px); info gap `var(--space-s)` (8px); illustration 72 × 72px; title 20px Bold `var(--text-primary)` (16px on mobile); description 14px Regular `var(--text-secondary)`, max width 600px; CTA gap `var(--space-m)` (16px); radius `var(--radius-ml)` (20px); dropzone fill `var(--input-background)` with a 2px dashed `DashedBorder` outline.
 
 ## Figma to code
 
@@ -105,7 +105,7 @@ Mobile (variant `Device=Mobile`, dark node `5452:37381`) is used in the mobile a
 
 ### Surface
 
-`surface="dropzone"` puts the empty state on `--input-background` inside a dashed outline, for an area the admin fills themselves (the course builder's Content and Resources tabs, the lesson editor's Resources tab). Padding is `var(--space-xl)` (32px). The outline is a `DashedBorder` overlay rather than `border: dashed`, because CSS gives no control over dash length or the space between dashes. `plain` (default) has no fill and no border.
+`surface="dropzone"` puts the empty state on `--input-background` inside a dashed outline, for an area the admin fills themselves (the course builder's Content and Resources tabs, the lesson editor's Resources tab). Padding is `var(--space-xl)` (32px); on `device="mobile"` it stays the mobile `var(--space-m)` (16px), Figma `Device=Mobile, Surface=Dropzone` `12296:18`. The outline is a `DashedBorder` overlay rather than `border: dashed`, because CSS gives no control over dash length or the space between dashes. `plain` (default) has no fill and no border.
 
 ## States
 

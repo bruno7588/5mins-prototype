@@ -202,7 +202,7 @@ Backgrounds, borders, and button fills.
 
 | Figma variable | CSS | Dark mode | Light mode | Usage |
 |---|---|---|---|---|
-| Tooltip-background | `--tooltip-background` | Neutral-900 `#0F1014` | Neutral-800 `#20222A` | Tooltip and popover containers |
+| Tooltip-background | `--tooltip-background` | Neutral-900 `#0F1014` | Neutral-900 `#0F1014` | Tooltip and popover containers |
 | Page-background | `--page-background` | Neutral-800 `#20222A` | Neutral-25 `#F9F9FA` | Main page/screen background; overlay panel surfaces (dialog, modal, side drawer, bottom sheet) |
 | Page-background-hover | `--page-background-hover` | Neutral-700 `#2D313D` | Neutral-50 `#EFF0F2` | Hovered row, list item, sidebar item |
 | Cards-background | `--cards-background` | Neutral-700 `#2D313D` | Neutral-0 `#FFFFFF` | Cards, panels, menus |
@@ -275,7 +275,7 @@ Backgrounds, borders, and button fills.
 | `--selected-fill` | Secondary-100 `#FFF8EB` | Secondary-800 `#33250B` | Opaque fill for sticky cells over scrolling content |
 | `--selected-fill-hover` | `#FDECC5` | `rgba(255, 187, 56, 0.24)` | Hover state of `--selected-fill` / selected rows. The dark value is a translucent stand-in pending designer review |
 | `--control-selected` | `var(--secondary-600)` | `var(--secondary-500)` | Radio/checkbox selected amber, per selection-controls.md |
-| `--scrim` | `rgba(15, 16, 20, 0.25)` | `rgba(15, 16, 20, 0.5)` | Overlay backdrop fill - Neutral-900 @ 25% light / 50% dark; spec in `layout.md` |
+| `--scrim` | `rgba(15, 16, 20, 0.32)` | `rgba(15, 16, 20, 0.64)` | Overlay backdrop fill - Neutral-900 @ 32% light / 64% dark; spec in `layout.md` |
 | `--quiz-background` | `rgba(99, 104, 219, 0.16)` | same | Certificate-quiz @ 16%: quiz badge fill, callout on assessment drawers |
 | `--ai-callout-background` | `rgba(0, 131, 147, 0.16)` | same | AI callout banner fill |
 | `--ai-callout-text` | `var(--primary-700)` | `var(--secondary-400)` | AI callout banner text |

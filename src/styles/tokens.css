@@ -129,7 +129,7 @@
   --border: var(--neutral-100);
   --border-elevated: var(--neutral-100);
   --border-hover: var(--neutral-300);
-  --tooltip-background: var(--neutral-800);
+  --tooltip-background: var(--neutral-900);
   --text-primary: var(--neutral-800);
   --text-secondary: var(--neutral-500);
   --text-tertiary: var(--neutral-400);
@@ -203,7 +203,7 @@
   --selected-fill: var(--secondary-100); /* opaque fill for sticky cells over scrolling content */
   --selected-fill-hover: #FDECC5; /* hover state of --selected-fill / selected rows (opaque) */
   --control-selected: var(--secondary-600); /* radio/checkbox selected amber, per selection-controls.md */
-  --scrim: rgba(15, 16, 20, 0.25); /* overlay backdrop — Neutral-900 @ 25%; overridden to 72% in dark mode (layout.md §7) */
+  --scrim: rgba(15, 16, 20, 0.32); /* overlay backdrop — Neutral-900 @ 32%; overridden to 64% in dark mode (layout.md §7) */
 
   /* Spacing (4px base) */
   --space-xxs: 0.125rem; /* 2px */
@@ -248,7 +248,7 @@
 
   /* Shadows — see docs/design-system/layout.md */
   --shadow-s: -1px -1px 4px 0 rgba(32, 34, 42, 0.04), 1px 1px 4px 0 rgba(32, 34, 42, 0.04);
-  --shadow-l: -4px 0 24px 0 rgba(32, 34, 42, 0.12); /* Figma effect style Shadow L: offset -4, 0, blur 24 */
+  --shadow-l: -4px 0 24px 0 rgba(15, 16, 20, 0.24); /* Figma effect style Shadow L: offset -4, 0, blur 24, Neutral-900 @ 24%, both modes */
   --shadow-xl: 0 4px 32px 0 rgba(32, 34, 42, 0.24);
   --shadow-panel: -24px 0px 24px 0px rgba(32, 34, 42, 0.04);
   /* A table's frozen first column once scrolled: Shadow L cast rightward. */
@@ -279,8 +279,6 @@
   --page-background-hover: var(--neutral-700);
   --cards-background: var(--neutral-700);
   --shadow-card: none; /* Shadow S is light mode only (Bruno, 2026-11-18); dark cards separate by fill */
-  /* Shadow L at 12% vanishes on a dark page; dark uses Neutral-900 at 24% (Bruno, 2026-11-04). */
-  --shadow-l: -4px 0 24px 0 rgba(15, 16, 20, 0.24);
   /* Neutral-800 on the Neutral-800 page casts nothing; black reads on dark. */
   --shadow-sticky: 4px 0 24px 0 rgba(0, 0, 0, 0.48);
   --cards-background-hover: var(--neutral-600);
@@ -293,7 +291,6 @@
   --border: var(--neutral-700);
   --border-elevated: var(--neutral-600);
   --border-hover: var(--neutral-300);
-  --tooltip-background: var(--neutral-900);
 
   /* Text */
   --text-primary: var(--neutral-25);
@@ -326,8 +323,8 @@
   /* Translucent stand-in for the opaque light-mode fill — designer review pending */
   --selected-fill-hover: rgba(255, 187, 56, 0.24);
 
-  /* Overlay backdrop — Neutral-900 @ 72% in dark mode (layout.md §7) */
-  --scrim: rgba(15, 16, 20, 0.72);
+  /* Overlay backdrop — Neutral-900 @ 64% in dark mode (layout.md §7) */
+  --scrim: rgba(15, 16, 20, 0.64);
 }
 
 /* Prototype-wide "not built yet" treatment: controls that look real but have no

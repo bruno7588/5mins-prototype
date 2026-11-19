@@ -126,7 +126,7 @@ Inline banners: one React component, `type="Callout"` or `type="Alert"`.
 
 ### Shared spec
 
-Both types follow common practice across mature design systems (Polaris Banner, Atlassian Section message, Carbon inline notification, Apple HIG): one padding, the icon on the first line, the title and supporting text read as one group, and one action. The Callout is neutral (Text-primary / Text-secondary, Text button); the Alert keeps every line in `--text-warning` with a Filled Warning button.
+Both types follow common practice across mature design systems (Polaris Banner, Atlassian Section message, Carbon inline notification, Apple HIG): one padding, the icon on the first line, the title and supporting text read as one group, and one action. The Callout is neutral (Text-secondary title and message, Text button); the Alert keeps every line in `--text-warning` with a Filled Warning button.
 
 ```
 One line:        [ icon ] [ message ...................... ] [ Action ] [ × ]
@@ -137,10 +137,10 @@ Supporting text: [ icon ] [ Title                          ]
 | Part | Spec |
 |---|---|
 | Container | radius `var(--radius-sm)` (12px); padding `var(--space-sm) var(--space-m)` (12px 16px) in every variant; no border |
-| Icon | 20px; centred on a one-line row, on the first line with supporting text; 12px (`--space-sm`) to the text |
-| Title | Paragraph M SemiBold (14 / 600); Callout `--text-primary`, Alert `--text-warning` |
+| Icon | 20px; centred on a one-line row, on the first line with supporting text; 12px (`--space-sm`) to the text. With an illustration or no icon the row gap is 8px (`--space-s`) |
+| Title | Paragraph M SemiBold (14 / 600); Callout `--text-secondary`, Alert `--text-warning` |
 | Supporting text | 14px, 4px (`--space-xs`) under the title; Callout Paragraph M Regular `--text-secondary`, Alert Paragraph M Medium `--text-warning`; bullets 21px indent, 4px apart |
-| One-line message | Callout: Paragraph M Regular, `--text-primary`. Alert: Paragraph M SemiBold, `--text-warning` |
+| One-line message | Callout: Paragraph M Regular, `--text-secondary`. Alert: Paragraph M SemiBold, `--text-warning` |
 | Action | Callout: shared `Button variant="text"`; Alert: `Button variant="filled" semantic="warning"` (Medium). On the far right, 24px from the text; with supporting text it is centred on the alert (the icon stays on the first line) |
 | Close × (`onClose`) | 24px round button at the row end, `--text-secondary`, `--text-primary` on hover |
 
@@ -155,12 +155,13 @@ Alert and Callout are static; only the action and the close × are interactive. 
 | `--input-background` | Callout surface |
 | `--alert-background` (Warning-500 @ 12%) | Alert surface |
 | `--text-warning` | Alert glyph, title, message |
-| `--text-primary` / `--text-secondary` | Title and one-line message / supporting text, Callout icon, close × |
-| `--radius-sm`, `--space-sm`, `--space-m`, `--space-xs`, `--space-s` | radius, padding, icon gap, title gap, action gap |
+| `--text-secondary` | Callout title, message, supporting text and icon; close × |
+| `--text-primary` | Close × on hover |
+| `--radius-sm`, `--space-sm`, `--space-m`, `--space-xs`, `--space-s` | radius, padding and icon gap, padding, title gap, row gap with an illustration or no icon |
 
 ### Accessibility
 
-- Callout text is `--text-primary` / `--text-secondary`. Alert text is `--text-warning` on its tint, which measures about 2.4:1 in light mode, under the 4.5:1 AA minimum; keep Alert copy short and paired with the warning glyph.
+- Callout text is `--text-secondary`. Alert text is `--text-warning` on its tint, which measures about 2.4:1 in light mode, under the 4.5:1 AA minimum; keep Alert copy short and paired with the warning glyph.
 - The warning glyph and the word in the title carry the meaning together; colour is never the only signal.
 - The close × is a button named "Dismiss". The bell emoji is decorative (`aria-hidden`).
 
@@ -230,7 +231,7 @@ A floating feedback pill that appears after an action (save, delete, error) and 
 - Don't shorten the 5s auto-dismiss; long messages need the reading time
 - Don't hand-roll a toast or recolour the fills
 
-**Canonical spec:** padding `var(--space-sm) var(--space-m)` (12px 16px); radius `var(--radius-sm)` (12px); gap `var(--space-s)` (8px); label 16px Bold `var(--neutral-25)` on every fill; icon 24px; fills `var(--success-500)`, `var(--danger-500)`, `var(--warning-600)`, `var(--neutral-600)` (info); stacked bottom centre, `var(--space-l)` (24px) from the bottom, above drawers; 5s including a 300ms fade. **Mobile app:** full width with `var(--space-m)` (16px) sides, `var(--space-ml)` (20px) from the bottom edge, label wraps (Figma Lessons-Feed `10758:36883`); the phone frame scopes this, so pages call Toast as usual.
+**Canonical spec:** padding `var(--space-sm) var(--space-m)` (12px 16px); radius `var(--radius-sm)` (12px); gap `var(--space-s)` (8px); label 16px Bold `var(--neutral-25)` on every fill; icon 24px; fills `var(--success-500)`, `var(--danger-500)`, `var(--warning-600)`, `var(--neutral-700)` (info); stacked bottom centre, `var(--space-l)` (24px) from the bottom, above drawers; 5s including a 300ms fade. **Mobile app:** full width with `var(--space-m)` (16px) sides, `var(--space-ml)` (20px) from the bottom edge, label wraps (Figma Lessons-Feed `10758:36883`); the phone frame scopes this, so pages call Toast as usual.
 
 ### Figma to code
 
@@ -242,7 +243,7 @@ A floating feedback pill that appears after an action (save, delete, error) and 
 
 - **Figma only:** none.
 - **Code only:** a custom icon (third `show` argument, an Iconsax icon that replaces the type icon when the action has its own glyph); for work under way, pass `ToastSpinner`, a 24px ring in `currentColor` that turns every 0.8s (1.6s under reduced motion), e.g. `show('success', 'Downloading plan.pdf', ToastSpinner)`; `ToastContainer` `className`; the `useToast()` hook (`{ toasts, show }`).
-- **Figma vs code drift:** Figma's Info icon is io5 `IoInformationCircleOutline`; code uses Iconsax `InfoCircle`, because Iconsax is the project's only icon set. Figma binds the Info fill to `Neutral-700`; code uses `--neutral-600` (see States). The single Figma node has no light pair.
+- **Figma vs code drift:** Figma's Info icon is io5 `IoInformationCircleOutline`; code uses Iconsax `InfoCircle`, because Iconsax is the project's only icon set. The single Figma node has no light pair.
 
 **Production:**
 
@@ -266,7 +267,7 @@ Width:     hugs content (no fixed width)
 
 | Type | Background | Icon (24px) |
 |---|---|---|
-| **Info** | `--neutral-600` `#383D4C`, a fixed dark neutral pill in both modes | Iconsax `InfoCircle` |
+| **Info** | `--neutral-700` `#2D313D`, a fixed dark neutral pill in both modes (Library `5812:115`) | Iconsax `InfoCircle` |
 | **Success** | `--success-500` `#18A957` | Iconsax `TickCircle` |
 | **Warning** | `--warning-600` `#E88206` | warning triangle (Iconsax `Danger`) |
 | **Error** | `--danger-500` `#DF1642` | warning triangle (Iconsax `Danger`) |
@@ -279,7 +280,7 @@ Width:     hugs content (no fixed width)
 | Fading | auto-dismisses after ~5s with a 300ms fade. Budget roughly 1s to notice the pill plus ~300ms per word (200wpm); raise the duration rather than let a long message time out before it can be read |
 | Action focus-visible | `outline: 2px solid currentColor`, offset 3px, radius 2px |
 
-**Info fill:** the Library's Toast has a single node and its Info fill does not work in light mode under the near-white label. Treat the Info pill as a fixed dark neutral (`--neutral-600` `#383D4C`) in both modes until the library adds a light node.
+**Info fill:** the Library binds Info to `Neutral-700` (`5812:115`). Code uses the raw `--neutral-700` (`#2D313D`), which does not change per mode, so the near-white label stays legible in light mode too.
 
 ### Tokens
 
@@ -297,7 +298,7 @@ Width:     hugs content (no fixed width)
   width: fit-content;
 }
 
-.toast--info    { background: var(--neutral-600); }  /* see the Info fill note */
+.toast--info    { background: var(--neutral-700); }  /* see the Info fill note */
 .toast--success { background: var(--success-500); }
 .toast--warning { background: var(--warning-600); }
 .toast--error   { background: var(--danger-500); }
@@ -360,7 +361,7 @@ A small dark floating label that appears on hover or focus of a trigger. The inf
 - Don't put bold text, links or buttons inside (interactive content belongs in a popover/listbox)
 - Don't hardcode the background; use `var(--tooltip-background)`
 
-**Canonical spec:** background `var(--tooltip-background)` (#20222A light / #0F1014 dark); text 14px Regular `var(--neutral-25)`; padding `var(--space-sm)` (12px all round); radius `var(--radius-sm)` (12px); max width 288px; caret 12×6px; 4px (`var(--space-xs)`) between the trigger and the bubble; anchor icon 20px (16px in dense rows).
+**Canonical spec:** background `var(--tooltip-background)` (Neutral-900 `#0F1014` in both modes); text 14px Regular `var(--neutral-25)`; padding `var(--space-sm)` (12px all round); radius `var(--radius-sm)` (12px); max width 288px; caret 12×6px; 4px (`var(--space-xs)`) between the trigger and the bubble for Top and Bottom, 8px (`var(--space-s)`) for Left and Right; shadow Shadow L as `filter: drop-shadow(...)` so the caret is shadowed too; anchor icon 20px (16px in dense rows).
 
 ### Figma to code
 
@@ -383,13 +384,15 @@ A small dark floating label that appears on hover or focus of a trigger. The inf
 ### Anatomy
 
 ```
-Background:  var(--tooltip-background)   /* #20222A (Neutral-800) light, #0F1014 (Neutral-900) dark */
+Background:  var(--tooltip-background)   /* #0F1014 (Neutral-900), both modes */
 Padding:     12px       (--space-sm)
-Gap:         4px        (--space-xs) between the trigger and the bubble
+Gap:         4px        (--space-xs) between the trigger and the bubble, Top and Bottom
+             8px        (--space-s) for Left and Right
 Radius:      12px       (--radius-sm)
 Text:        Poppins Regular 14 / 1.5, var(--neutral-25)
 Max width:   288px - wrap, don't overflow
-Shadow:      Shadow L, var(--shadow-l)
+Shadow:      Shadow L as filter: drop-shadow(-4px 0 24px rgba(15, 16, 20, 0.24)),
+             not box-shadow var(--shadow-l), so the caret gets the shadow too
 Caret:       12×6px triangle pointing at the trigger;
              Start/End alignments inset it 16px from the body edge;
              rotated 90° for Left/Right positions
@@ -403,11 +406,11 @@ Caret:       12×6px triangle pointing at the trigger;
 | Visible | on `mouseenter` and focus; bubble and caret `var(--tooltip-background)` |
 | Hide | immediately on leave, blur or Esc (there is no hover-out delay) |
 | Disabled | `disabled` keeps the wrapper mounted and never shows the bubble |
-| Trigger focus-visible | `outline: 2px solid var(--primary-500)`, offset 2px, radius 4px |
+| Trigger focus-visible | `outline: 2px solid var(--primary-button-background)`, offset 2px, radius 4px |
 
 ### Tokens
 
-The tooltip background is always `var(--tooltip-background)` in the app. `tokens.css` resolves it to `#20222A` in light mode and `#0F1014` in dark mode. The token is the rule, never a hex; the bubble and caret use it with no hex fallback. Text is `var(--neutral-25)`, shadow `var(--shadow-l)`.
+The tooltip background is always `var(--tooltip-background)` in the app. `tokens.css` resolves it to Neutral-900 `#0F1014` in both modes. The token is the rule, never a hex; the bubble and caret use it with no hex fallback. Text is `var(--neutral-25)`. The shadow is the Shadow L value applied as `filter: drop-shadow(...)` on the bubble wrapper rather than `box-shadow: var(--shadow-l)`, so the caret is shadowed along with the bubble.
 
 ### Accessibility
 

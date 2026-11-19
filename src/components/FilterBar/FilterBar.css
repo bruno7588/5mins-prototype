@@ -12,7 +12,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  min-height: 37px;
+  min-height: 33px; /* Figma collapsed head (12438:2724) */
 }
 
 .filter-bar__toggle {
@@ -38,12 +38,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 24px;
-  padding: 1px var(--space-xss);
+  min-width: 20px;
+  height: 20px; /* Figma 20x20 (12442:6089) */
+  padding: 0 var(--space-xss);
   border-radius: var(--radius-full);
   background: var(--input-background-elevated);
   font-size: var(--font-size-md);
-  line-height: 1.5;
+  line-height: 1;
   color: var(--text-secondary);
 }
 
@@ -74,8 +75,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   margin-left: auto;
   border-radius: var(--radius-full);
   background: transparent;
@@ -84,8 +85,9 @@
   transition: background 120ms ease;
 }
 
+/* Library Chevron component: 32px disc in Page-background-hover. */
 .filter-bar__chevron-btn:hover {
-  background: var(--cards-background-hover);
+  background: var(--page-background-hover);
 }
 
 .filter-bar__chevron {
@@ -145,6 +147,11 @@
   display: flex;
   align-items: center;
   gap: var(--space-m);
+}
+
+/* 16px under the last row (Library): the body's 12px gap plus 4px. */
+.filter-bar__row + .filter-bar__actions {
+  margin-top: var(--space-xs);
 }
 
 .filter-bar__add {

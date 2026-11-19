@@ -97,7 +97,7 @@ function InputInteger({
         </button>
         <span className="input-integer__field">
           <input
-            className="input-integer__value"
+            className={`input-integer__value${(draft ?? String(value)) === '0' ? ' input-integer__value--zero' : ''}`}
             id={id}
             type="text"
             inputMode="numeric"

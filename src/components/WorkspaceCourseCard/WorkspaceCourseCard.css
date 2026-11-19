@@ -45,13 +45,13 @@
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  padding: var(--space-xs) var(--space-s);
+  padding: var(--space-xss) var(--space-sm);
   background: var(--danger-400);
   color: var(--neutral-25);
   font-size: var(--font-size-sm);
-  font-weight: 500;
-  line-height: 1.5;
-  border-radius: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+  border-radius: var(--radius-full);
   white-space: nowrap;
 }
 
@@ -100,7 +100,7 @@
 .ws-course-card__segment {
   flex: 1 0 0;
   height: 100%;
-  background: var(--border-elevated);
+  background: var(--border);
 }
 
 .ws-course-card__segment--filled {

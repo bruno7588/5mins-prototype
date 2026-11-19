@@ -24,7 +24,7 @@ import './LeftSidebar.css'
 const iconSize = 20
 // The tenant's menu colours when a custom theme is set (brandTheme.ts), else the tokens.
 const iconColor = 'var(--brand-nav, var(--text-secondary))'
-const activeIconColor = 'var(--brand-selected, var(--secondary-600))'
+const activeIconColor = 'var(--brand-selected, var(--text-selected))'
 
 const unmappedRolesCount = buildInitialMappings(initialCompanyRoles, fiveMinsRoles)
   .filter(m => m.status !== 'mapped').length
@@ -35,13 +35,20 @@ function LeftSidebar() {
   const activePage = location.pathname
 
   const isPeopleSection = activePage === '/people' || activePage === '/user-fields' || activePage === '/roles'
+  const isContentSection = activePage === '/programs' || activePage === '/content-library' || activePage === '/your-courses'
+  const isRecordsSection = activePage.startsWith('/learning-records')
 
   const [peopleOpen, setPeopleOpen] = useState(isPeopleSection)
   const [contentOpen, setContentOpen] = useState(true)
-  const [recordsOpen, setRecordsOpen] = useState(activePage.startsWith('/learning-records'))
+  const [recordsOpen, setRecordsOpen] = useState(isRecordsSection)
   const menuOpen = useAdminMenuOpen()
   // Picking a page closes the slide-in menu.
   useEffect(() => setAdminMenuOpen(false), [activePage])
+  // An open group whose child is the current page: Bold label and Bold icon, both
+  // --text-secondary, no row fill (Figma 10372:4045).
+  const peopleParent = peopleOpen && isPeopleSection
+  const contentParent = contentOpen && isContentSection
+  const recordsParent = recordsOpen && isRecordsSection
 
   return (
     <>
@@ -56,9 +63,9 @@ function LeftSidebar() {
         </button>
 
         {/* People & Teams (expandable) */}
-        <button className="sidebar-item" onClick={() => setPeopleOpen(!peopleOpen)}>
+        <button className={`sidebar-item${peopleParent ? ' sidebar-item--parent' : ''}`} onClick={() => setPeopleOpen(!peopleOpen)}>
           <span className="sidebar-item-icon">
-            <Profile2User size={iconSize} color={iconColor} variant="Linear" />
+            <Profile2User size={iconSize} color={iconColor} variant={peopleParent ? 'Bold' : 'Linear'} />
           </span>
           <span className="sidebar-item-label">
             People &amp; Teams
@@ -71,9 +78,9 @@ function LeftSidebar() {
           </span>
           <span className="sidebar-item-chevron">
             {peopleOpen ? (
-              <ArrowUp2 size={16} color="var(--text-tertiary)" />
+              <ArrowUp2 size={14} color="var(--text-tertiary)" />
             ) : (
-              <ArrowDown2 size={16} color="var(--text-tertiary)" />
+              <ArrowDown2 size={14} color="var(--text-tertiary)" />
             )}
           </span>
         </button>
@@ -111,16 +118,16 @@ function LeftSidebar() {
         </Collapse>
 
         {/* Content (expandable) */}
-        <button className="sidebar-item" onClick={() => setContentOpen(!contentOpen)}>
+        <button className={`sidebar-item${contentParent ? ' sidebar-item--parent' : ''}`} onClick={() => setContentOpen(!contentOpen)}>
           <span className="sidebar-item-icon">
-            <Book1 size={iconSize} color={iconColor} variant="Linear" />
+            <Book1 size={iconSize} color={iconColor} variant={contentParent ? 'Bold' : 'Linear'} />
           </span>
           <span className="sidebar-item-label">Content</span>
           <span className="sidebar-item-chevron">
             {contentOpen ? (
-              <ArrowUp2 size={16} color="var(--text-tertiary)" />
+              <ArrowUp2 size={14} color="var(--text-tertiary)" />
             ) : (
-              <ArrowDown2 size={16} color="var(--text-tertiary)" />
+              <ArrowDown2 size={14} color="var(--text-tertiary)" />
             )}
           </span>
         </button>
@@ -180,16 +187,16 @@ function LeftSidebar() {
         </button>
 
         {/* Learning Records (expandable) */}
-        <button className="sidebar-item" onClick={() => setRecordsOpen(!recordsOpen)}>
+        <button className={`sidebar-item${recordsParent ? ' sidebar-item--parent' : ''}`} onClick={() => setRecordsOpen(!recordsOpen)}>
           <span className="sidebar-item-icon">
-            <DocumentText size={iconSize} color={iconColor} variant="Linear" />
+            <DocumentText size={iconSize} color={iconColor} variant={recordsParent ? 'Bold' : 'Linear'} />
           </span>
           <span className="sidebar-item-label">Learning Records</span>
           <span className="sidebar-item-chevron">
             {recordsOpen ? (
-              <ArrowUp2 size={16} color="var(--text-tertiary)" />
+              <ArrowUp2 size={14} color="var(--text-tertiary)" />
             ) : (
-              <ArrowDown2 size={16} color="var(--text-tertiary)" />
+              <ArrowDown2 size={14} color="var(--text-tertiary)" />
             )}
           </span>
         </button>
