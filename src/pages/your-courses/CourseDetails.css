@@ -240,6 +240,53 @@
   cursor: default;
 }
 
+/* Download certificates dialog: 4px between an option's title and its count
+   (the shared radio card, also used on People, keeps 2px). */
+.cd-cert-card-text {
+  gap: var(--space-xs);
+}
+
+/* Selected option uses the mode-aware selected colour, not a semantic status colour. */
+.cd-cert-card--selected,
+.cd-cert-card--selected:hover {
+  border-color: var(--selected);
+  background: var(--selected-tint);
+}
+
+.cd-cert-card--selected .confirm-modal-radio-custom {
+  border-color: var(--selected);
+}
+
+.cd-cert-card--selected .confirm-modal-radio-custom::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--selected);
+}
+
+.cd-cert-cards {
+  gap: var(--space-m);
+}
+
+.cd-cert-card-desc {
+  color: var(--text-secondary);
+}
+
+/* Intro line is Paragraph M regular here (the shared dialog body is Paragraph L). */
+.cd-cert-body {
+  font-size: var(--font-size-md);
+}
+
+/* Option title is Paragraph M semibold here (the shared card uses H4 bold). */
+.cd-cert-card-title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+}
+
 /* Repeat ("Every 12 months") may wrap to a second line instead of clipping. */
 .cd-cell--wrap {
   white-space: normal;
@@ -322,13 +369,6 @@
 .cd-status--not-started {
   background: var(--input-background);
   color: var(--text-secondary);
-}
-
-.cd-learner-name-row {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-s);
-  max-width: 100%;
 }
 
 .cd-learner-name {

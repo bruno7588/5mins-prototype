@@ -27,7 +27,6 @@ import Search from '../../components/Search/Search'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import Alert from '../../components/Alert/Alert'
-import Badge from '../../components/Badge/Badge'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Button from '../../components/Button/Button'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
@@ -78,8 +77,6 @@ interface Learner {
   completionDate: string | null
   repeat: string
   completion?: ManualCompletion
-  /** Account deactivated in People; the enrolment and its certificate are kept. */
-  deactivated?: boolean
 }
 
 const ROLE_LABELS: Record<UserRole, string> = { admin: 'Admin', manager: 'Team Manager', learner: 'Learner' }
@@ -131,19 +128,16 @@ const learners: Learner[] = [
   { id: 8, name: 'Isabella Lewis', email: 'isabella.lewis@email.com', startDate: 'Jun 18, 2024', dueDate: 'Sep 15, 2025', progress: 100, score: 96, status: 'completed', attemptNo: 1, completionDate: 'Sep 12, 2025', repeat: 'Never' },
   { id: 9, name: 'James Walker', email: 'james.walker@email.com', startDate: 'Aug 27, 2024', dueDate: 'Oct 25, 2025', progress: 100, score: 96, status: 'completed', attemptNo: 1, completionDate: 'Aug 30, 2025', repeat: 'Every 12 months' },
   { id: 10, name: 'Mia Robinson', email: 'mia.robinson@email.com', startDate: 'Aug 27, 2024', dueDate: 'Oct 25, 2025', progress: 88, score: 80, status: 'in-progress', attemptNo: 2, completionDate: null, repeat: 'Every 6 months' },
-  { id: 11, name: 'Ethan Clarke', email: 'ethan.clarke@email.com', startDate: 'Jun 18, 2024', dueDate: 'Sep 15, 2025', progress: 100, score: 88, status: 'completed', attemptNo: 1, completionDate: 'Aug 21, 2025', repeat: 'Never', deactivated: true },
-  { id: 12, name: 'Grace Hughes', email: 'grace.hughes@email.com', startDate: 'Aug 27, 2024', dueDate: 'Oct 25, 2025', progress: 100, score: 84, status: 'completed', attemptNo: 2, completionDate: 'Sep 04, 2025', repeat: 'Every 12 months', deactivated: true },
 ]
 
-/* Bulk certificate download: everyone who completed the course. Whether
-   deactivated people are included is the admin's call, made in the menu. */
-const CERTS_ACTIVE = learners.filter((l) => l.status === 'completed' && !l.deactivated).length
-const CERTS_ALL = learners.filter((l) => l.status === 'completed').length
+/* Bulk certificate download: everyone who completed the course. Deactivated
+   people are never listed in Enrolments (completion stats ignore them); they
+   only exist here, as certificates the admin may choose to include. */
+const DEACTIVATED_CERTS = 2
+const CERTS_ACTIVE = learners.filter((l) => l.status === 'completed').length
+const CERTS_ALL = CERTS_ACTIVE + DEACTIVATED_CERTS
 const certCount = (n: number) => `${n} certificate${n === 1 ? '' : 's'}`
-const CERT_MENU: RowMenuItem[] = [
-  { key: 'active', label: 'Active people only', description: certCount(CERTS_ACTIVE) },
-  { key: 'all', label: 'Include deactivated people', description: certCount(CERTS_ALL) },
-]
+type CertScope = 'active' | 'all'
 
 const TABS: { key: Tab; label: string; count?: number }[] = [
   { key: 'content', label: 'Course Content' },
@@ -322,6 +316,12 @@ function CourseDetails() {
   const user = useCurrentUser()
   const canComplete = user.role === 'admin'
   const { toasts, show: showToast } = useToast()
+  const [certOpen, setCertOpen] = useState(false)
+  const [certScope, setCertScope] = useState<CertScope>('active')
+  const closeCert = () => {
+    setCertOpen(false)
+    setCertScope('active')
+  }
 
   /* Enrolment filters: the user profile's Course progress set, minus Course (this page
      is one course). Rows are mapped to its FilterRow shape: status as the label the
@@ -444,9 +444,9 @@ function CourseDetails() {
   /* Download Report: the enrolments as a CSV (the whole course, not the search). */
   const downloadReport = () => {
     const cell = (v: string | number | null | undefined) => `"${String(v ?? '').replace(/"/g, '""')}"`
-    const header = ['Name', 'Email', 'Start date', 'Due date', 'Progress', 'Score', 'Status', 'Attempt', 'Completion date', 'Repeat', 'Deactivated']
+    const header = ['Name', 'Email', 'Start date', 'Due date', 'Progress', 'Score', 'Status', 'Attempt', 'Completion date', 'Repeat']
     const lines = learners.map((l) =>
-      [l.name, l.email, l.startDate, l.dueDate, `${l.progress}%`, l.score != null ? `${l.score}%` : '', STATUS_LABELS[l.status], l.attemptNo, l.completionDate, l.repeat, l.deactivated ? 'Yes' : 'No']
+      [l.name, l.email, l.startDate, l.dueDate, `${l.progress}%`, l.score != null ? `${l.score}%` : '', STATUS_LABELS[l.status], l.attemptNo, l.completionDate, l.repeat]
         .map(cell)
         .join(','),
     )
@@ -468,10 +468,7 @@ function CourseDetails() {
       width: '1 1 260px',
       render: (row) => (
         <span className="tbl-stack">
-          <span className="cd-learner-name-row">
-            <span className="cd-learner-name">{row.name}</span>
-            {row.deactivated && <Badge type="error" label="Deactivated" />}
-          </span>
+          <span className="cd-learner-name">{row.name}</span>
           <span className="cd-learner-email">{row.email}</span>
         </span>
       ),
@@ -664,24 +661,6 @@ function CourseDetails() {
                 ariaLabel="Search for learners"
                 className="cd-search"
               />
-              <RowActionsMenu
-                ariaLabel="Download Certificates"
-                caret={false}
-                triggerClassName="ds-btn ds-btn--md ds-btn--outlined-2 ds-btn--has-icon ds-btn--has-trailing cd-download-btn"
-                triggerContent={
-                  <>
-                    <span className="ds-btn__icon">
-                      <ImportCurve size={20} color="currentColor" variant="Linear" />
-                    </span>
-                    <span className="ds-btn__label">Download Certificates</span>
-                    <span className="ds-btn__icon">
-                      <ArrowDown2 size={20} color="currentColor" variant="Linear" />
-                    </span>
-                  </>
-                }
-                items={CERT_MENU}
-                onSelect={(key) => showToast('success', `Downloading ${certCount(key === 'all' ? CERTS_ALL : CERTS_ACTIVE)}`)}
-              />
               <Button
                 variant="outlined-2"
                 className="cd-download-btn"
@@ -689,6 +668,14 @@ function CourseDetails() {
                 icon={<CsvIcon size={20} color="currentColor" />}
               >
                 Download Report
+              </Button>
+              <Button
+                variant="outlined"
+                className="cd-download-btn"
+                onClick={() => setCertOpen(true)}
+                icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
+              >
+                Download Certificates
               </Button>
             </div>
 
@@ -813,6 +800,44 @@ function CourseDetails() {
             }}
           />
         )}
+
+        {/* Download Certificates: "Active people only" is selected by default; the
+           admin opts in to deactivated people's certificates. */}
+        <ConfirmModal open={certOpen} onClose={closeCert} ariaLabel="Download certificates">
+          <div className="confirm-modal-header">
+            <h2 className="confirm-modal-title">Download certificates</h2>
+            <p className="confirm-modal-body cd-cert-body">
+              {CERTS_ALL} people completed this course. {DEACTIVATED_CERTS} of them have been deactivated.
+            </p>
+          </div>
+          <div className="confirm-modal-radio-cards cd-cert-cards">
+            {([
+              ['active', 'Active people only', certCount(CERTS_ACTIVE)],
+              ['all', 'Include deactivated people', `${certCount(CERTS_ALL)}, including people who no longer have access`],
+            ] as const).map(([value, title, desc]) => (
+              <label key={value} className={`confirm-modal-radio-card${certScope === value ? ' cd-cert-card--selected' : ''}`}>
+                <input type="radio" name="cd-cert-scope" checked={certScope === value} onChange={() => setCertScope(value)} />
+                <span className="confirm-modal-radio-custom" />
+                <div className="confirm-modal-radio-card-text cd-cert-card-text">
+                  <span className="confirm-modal-radio-card-title cd-cert-card-title">{title}</span>
+                  <span className="confirm-modal-radio-card-desc cd-cert-card-desc">{desc}</span>
+                </div>
+              </label>
+            ))}
+          </div>
+          <div className="confirm-modal-actions">
+            <Button variant="outlined-2" onClick={closeCert}>Cancel</Button>
+            <Button
+              onClick={() => {
+                showToast('success', `Downloading ${certCount(certScope === 'all' ? CERTS_ALL : CERTS_ACTIVE)}`)
+                closeCert()
+              }}
+            >
+              {`Download ${certScope === 'all' ? CERTS_ALL : CERTS_ACTIVE} Certificates`}
+            </Button>
+          </div>
+        </ConfirmModal>
+
         <ToastContainer toasts={toasts} />
       </main>
     </div>
