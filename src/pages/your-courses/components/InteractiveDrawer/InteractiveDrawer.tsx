@@ -5,6 +5,7 @@ import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import QuizIllustration from '@/components/icons/QuizIllustration'
 import DesktopPreview from '@/components/DesktopPreview/DesktopPreview'
+import InputField from '@/components/InputField/InputField'
 import {
   TYPE_CONFIG,
   draftErrors,
@@ -49,9 +50,10 @@ interface Props {
 
 /* Only the authored values matter for the dirty check — row ids are minted per
    mount and would otherwise make a pristine form read as edited. */
-const snapshot = (prompt: string, draft: Draft) =>
+const snapshot = (prompt: string, draft: Draft, explanation: string) =>
   JSON.stringify({
     prompt,
+    explanation,
     draft: JSON.parse(JSON.stringify(draft), (key, value) => (key === 'id' ? undefined : value)),
   })
 
@@ -78,6 +80,7 @@ function InteractiveDrawer({ type, initial = null, onSave, onDirtyChange }: Prop
      one keeps whatever was saved. */
   const [prompt, setPrompt] = useState(initial?.prompt ?? config.promptDefault)
   const [draft, setDraft] = useState<Draft>(() => (initial ? toDraft(initial) : emptyDraft(type)))
+  const [explanation, setExplanation] = useState(initial?.explanation ?? '')
   const [previewing, setPreviewing] = useState(false)
 
   /* The prompt grows with its content; height must reset to auto before reading
@@ -104,14 +107,14 @@ function InteractiveDrawer({ type, initial = null, onSave, onDirtyChange }: Prop
   const canSave = promptFilled && bodyErrors.length === 0
 
   const pristine = useRef<string | null>(null)
-  const current = snapshot(prompt, draft)
+  const current = snapshot(prompt, draft, explanation)
   if (pristine.current === null) pristine.current = current
   const dirty = current !== pristine.current
   useEffect(() => {
     onDirtyChange?.(dirty)
   }, [dirty, onDirtyChange])
 
-  const handleSave = () => onSave(toQuestion(draft, prompt))
+  const handleSave = () => onSave({ ...toQuestion(draft, prompt), explanation: explanation.trim() || undefined })
 
   /* While the preview is up, Escape backs out of the preview. The drawer itself
      ignores Escape. */
@@ -180,6 +183,19 @@ function InteractiveDrawer({ type, initial = null, onSave, onDirtyChange }: Prop
         </div>
 
         <div className="iq-drawer__body-slot">{body}</div>
+
+        {/* Optional, as on every other assessment: explains the correct answer. */}
+        <InputField
+          label={
+            <>
+              Add an explanation for the correct answer{' '}
+              <span className="assessment-modal-label-hint">(optional)</span>
+            </>
+          }
+          placeholder="Write an explanation..."
+          value={explanation}
+          onChange={(e) => setExplanation(e.target.value)}
+        />
       </div>
 
       <DrawerFooter>
