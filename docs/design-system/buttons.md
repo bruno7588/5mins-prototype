@@ -347,36 +347,35 @@ AI buttons use a diagonal **gradient that ends at Blaze `#8158EC`** and *starts*
 
 | State | Light gradient start | Dark gradient start | Extra chrome |
 |-------|---------------------|---------------------|--------------|
-| Enabled | Primary-700 `#008393` | Primary-500 `#00CEE6` | none |
-| Hover | Primary-800 `#005862` | Primary-400 `#33E2F7` | **2px `#00CEE6` ring + glow** `drop-shadow(1px 1px 32px rgba(129,88,236,0.5))` |
-| Pressed | Primary-900 `#002C31` | Primary-600 `#00AFC4` | 1px `#00CEE6` ring |
+| Enabled | Primary-700 `#008393` | Primary-500 `#00CEE6` | 1px AI ring |
+| Hover | Primary-800 `#005862` | Primary-400 `#33E2F7` | **2px AI ring + glow** `drop-shadow(1px 1px 32px rgba(129,88,236,0.5))` |
+| Pressed | Primary-900 `#002C31` | Primary-600 `#00AFC4` | 1px AI ring |
 | Disabled | standard disabled fill + label | standard | none |
 
 **Gradient geometry:** Figma uses a **diamond gradient centred at the button's top-left corner** (its 6 stops are collinear, so only the two endpoint colours matter). The closest CSS equivalent is `radial-gradient(circle at top left, start, end)`; corner samples match within ~4%. A `linear-gradient(120deg, …)` is an acceptable fallback; ~100deg is too flat (the left edge visibly shifts toward purple as it descends).
 
-The fill has no border to colour, so the AI hover's 2px cyan ring is drawn as an inset 2px ring (1px on press); nothing reflows.
+**AI ring** (shared by AI Filled and AI Outlined, Library 2026-11-19): a gradient stroke bound to `Primary-Button-background` (0%), `Flash Poll` (25%), `Primary-Button-background` (69%) and `Blaze quiz` (100%), so it follows the mode. 1px at rest, pressed and focus on every size; 2px on Filled hover. It is the masked `::before` ring described under AI-Outlined, with the width in `--ai-ring-w`; nothing reflows.
 
 ```css
 .btn-ai {
   /* start = the mode-resolved primary filled token, end = Blaze */
   background: radial-gradient(circle at top left, var(--primary-button-background) 0%, var(--blaze-quiz) 100%);
   color: var(--neutral-25);
-  border: none;
+  --ai-ring-w: 1px;                               /* AI ring, see .btn-ai-outlined::before */
 }
 .btn-ai:hover {
   background: radial-gradient(circle at top left, var(--primary-button-background-hover) 0%, var(--blaze-quiz) 100%);
-  box-shadow: inset 0 0 0 2px var(--primary-500);   /* 2px cyan ring, both modes */
+  --ai-ring-w: 2px;
   filter: drop-shadow(1px 1px 32px rgba(129, 88, 236, 0.5));
 }
 .btn-ai:active {
   background: radial-gradient(circle at top left, var(--primary-button-background-pressed) 0%, var(--blaze-quiz) 100%);
-  box-shadow: inset 0 0 0 1px var(--primary-500);   /* 1px cyan ring */
 }
 ```
 
 #### AI-Outlined
 
-**Transparent at rest**; the wash appears only on hover, at 24%. The 1px stroke is **the AI gradient, not a flat cyan**: it sweeps cyan through purple along the edge, on the same per-state ladder as the label it frames. The **label + icon are gradient-filled** via background-clip with that same gradient. The MCP code export flattens this stroke to its first stop and reports `border: 1px solid #00cee6`; that export is wrong. Figma paints a diamond gradient, so CSS uses the `radial-gradient(circle at top left, …)` approximation, exactly as `.btn-ai` does for its fill.
+**Transparent at rest**; the wash appears only on hover, at 24%. The 1px stroke is **the AI gradient, not a flat cyan**: it is the shared AI ring above and stays the same in every state. The **label + icon are gradient-filled** via background-clip with that same gradient. The MCP code export flattens this stroke to its first stop and reports `border: 1px solid #00cee6`; that export is wrong. Figma paints a diamond gradient, so CSS uses the `radial-gradient(circle at top left, …)` approximation, exactly as `.btn-ai` does for its fill.
 
 The ring is drawn as a **masked pseudo-element**, not a border: the button is transparent at rest, so the usual two-background border trick (which needs an opaque inner fill) does not apply, and `border-image` ignores the 12px radius. Keep the transparent `border` in the box model so nothing reflows between states.
 
@@ -385,22 +384,20 @@ The ring is drawn as a **masked pseudo-element**, not a border: the button is tr
   background: transparent;
   border: 1px solid transparent;                   /* holds the box, ring is painted below */
 }
+.btn-ai::before,
 .btn-ai-outlined::before {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: -1px;                                     /* over the 1px transparent border */
   border-radius: inherit;
-  padding: 1px;                                    /* = stroke width */
-  background: radial-gradient(circle at top left, var(--text-button-outlined) 0%, #8158EC 100%);
+  padding: var(--ai-ring-w, 1px);                  /* = stroke width */
+  background: radial-gradient(circle at top left, var(--primary-button-background) 0%, var(--flash-poll) 25%, var(--primary-button-background) 69%, var(--blaze-quiz) 100%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
   pointer-events: none;
 }
-/* the ring follows the same state ladder as the label */
-.btn-ai-outlined:hover::before  { background: radial-gradient(circle at top left, var(--text-button-hover) 0%, #8158EC 100%); }
-.btn-ai-outlined:active::before { background: radial-gradient(circle at top left, var(--primary-button-background-pressed) 0%, #8158EC 100%); }
 .btn-ai-outlined:disabled::before { display: none; }   /* disabled: transparent fill, 1px --text-disabled border and label (Library) */
 .btn-ai-outlined:hover {
   /* wash = the HOVER gradient at 24% opacity, plus a soft glow */
@@ -524,7 +521,7 @@ Everything else is the plain Loading state: disabled background, 20px `currentCo
 | `--button-success-background-hover` | Success-600 `#11763D` | Success-600 `#11763D` |
 | `--button-success-background-pressed` | Success-700 `#0A4423` | Success-700 `#0A4423` |
 
-**AI:** gradient start follows the primary filled tokens; end `var(--blaze-quiz)` (Blaze `#8158EC`); hover ring `var(--primary-500)`.
+**AI:** gradient start follows the primary filled tokens; end `var(--blaze-quiz)` (Blaze `#8158EC`); ring = the AI ring gradient (Primary-Button-background, Flash Poll, Blaze quiz), 1px, 2px on Filled hover.
 
 ## Accessibility
 
