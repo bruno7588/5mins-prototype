@@ -27,10 +27,12 @@ import Search from '../../components/Search/Search'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import Alert from '../../components/Alert/Alert'
+import Badge from '../../components/Badge/Badge'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Button from '../../components/Button/Button'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import MoreIcon from '../../components/icons/MoreIcon'
+import CsvIcon from '@/components/icons/CsvIcon'
 import RowActionsMenu, { type RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'
 import BulkActionBar from '@/components/BulkActionBar/BulkActionBar'
 import SetCompletedModal, { type Completion } from './components/SetCompletedModal/SetCompletedModal'
@@ -76,6 +78,8 @@ interface Learner {
   completionDate: string | null
   repeat: string
   completion?: ManualCompletion
+  /** Account deactivated in People; the enrolment and its certificate are kept. */
+  deactivated?: boolean
 }
 
 const ROLE_LABELS: Record<UserRole, string> = { admin: 'Admin', manager: 'Team Manager', learner: 'Learner' }
@@ -127,6 +131,18 @@ const learners: Learner[] = [
   { id: 8, name: 'Isabella Lewis', email: 'isabella.lewis@email.com', startDate: 'Jun 18, 2024', dueDate: 'Sep 15, 2025', progress: 100, score: 96, status: 'completed', attemptNo: 1, completionDate: 'Sep 12, 2025', repeat: 'Never' },
   { id: 9, name: 'James Walker', email: 'james.walker@email.com', startDate: 'Aug 27, 2024', dueDate: 'Oct 25, 2025', progress: 100, score: 96, status: 'completed', attemptNo: 1, completionDate: 'Aug 30, 2025', repeat: 'Every 12 months' },
   { id: 10, name: 'Mia Robinson', email: 'mia.robinson@email.com', startDate: 'Aug 27, 2024', dueDate: 'Oct 25, 2025', progress: 88, score: 80, status: 'in-progress', attemptNo: 2, completionDate: null, repeat: 'Every 6 months' },
+  { id: 11, name: 'Ethan Clarke', email: 'ethan.clarke@email.com', startDate: 'Jun 18, 2024', dueDate: 'Sep 15, 2025', progress: 100, score: 88, status: 'completed', attemptNo: 1, completionDate: 'Aug 21, 2025', repeat: 'Never', deactivated: true },
+  { id: 12, name: 'Grace Hughes', email: 'grace.hughes@email.com', startDate: 'Aug 27, 2024', dueDate: 'Oct 25, 2025', progress: 100, score: 84, status: 'completed', attemptNo: 2, completionDate: 'Sep 04, 2025', repeat: 'Every 12 months', deactivated: true },
+]
+
+/* Bulk certificate download: everyone who completed the course. Whether
+   deactivated people are included is the admin's call, made in the menu. */
+const CERTS_ACTIVE = learners.filter((l) => l.status === 'completed' && !l.deactivated).length
+const CERTS_ALL = learners.filter((l) => l.status === 'completed').length
+const certCount = (n: number) => `${n} certificate${n === 1 ? '' : 's'}`
+const CERT_MENU: RowMenuItem[] = [
+  { key: 'active', label: 'Active people only', description: certCount(CERTS_ACTIVE) },
+  { key: 'all', label: 'Include deactivated people', description: certCount(CERTS_ALL) },
 ]
 
 const TABS: { key: Tab; label: string; count?: number }[] = [
@@ -425,6 +441,23 @@ function CourseDetails() {
     setResetTarget(null)
   }
 
+  /* Download Report: the enrolments as a CSV (the whole course, not the search). */
+  const downloadReport = () => {
+    const cell = (v: string | number | null | undefined) => `"${String(v ?? '').replace(/"/g, '""')}"`
+    const header = ['Name', 'Email', 'Start date', 'Due date', 'Progress', 'Score', 'Status', 'Attempt', 'Completion date', 'Repeat', 'Deactivated']
+    const lines = learners.map((l) =>
+      [l.name, l.email, l.startDate, l.dueDate, `${l.progress}%`, l.score != null ? `${l.score}%` : '', STATUS_LABELS[l.status], l.attemptNo, l.completionDate, l.repeat, l.deactivated ? 'Yes' : 'No']
+        .map(cell)
+        .join(','),
+    )
+    const url = URL.createObjectURL(new Blob([[header.map(cell).join(','), ...lines].join('\n')], { type: 'text/csv;charset=utf-8' }))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${courseTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}-enrolments.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   /* DS Table (table.md): the shared component owns the row-card structure, the
      horizontal scroll, the select-all checkbox column and the pinned Name
      column. Widths carry over from the old hand-rolled grid. */
@@ -435,7 +468,10 @@ function CourseDetails() {
       width: '1 1 260px',
       render: (row) => (
         <span className="tbl-stack">
-          <span className="cd-learner-name">{row.name}</span>
+          <span className="cd-learner-name-row">
+            <span className="cd-learner-name">{row.name}</span>
+            {row.deactivated && <Badge type="error" label="Deactivated" />}
+          </span>
           <span className="cd-learner-email">{row.email}</span>
         </span>
       ),
@@ -479,18 +515,10 @@ function CourseDetails() {
       header: 'Attempt nº',
       width: '0 0 120px',
       align: 'center',
-      render: (row) =>
-        AUTO_RESET_ON_FAILURE ? (
-          <span className="cd-attempt">
-            {row.attemptNo}
-            <span className="cd-attempt-max">/{MAX_COURSE_ATTEMPTS}</span>
-          </span>
-        ) : (
-          row.attemptNo
-        ),
+      render: (row) => row.attemptNo,
     },
     { key: 'completionDate', header: 'Completion date', width: '0 0 166px', render: (row) => <StackedDate value={row.completionDate} /> },
-    { key: 'repeat', header: 'Repeat', width: '0 0 94px', render: (row) => row.repeat },
+    { key: 'repeat', header: 'Repeat', width: '0 0 94px', cellClassName: 'cd-cell--wrap', render: (row) => row.repeat },
     {
       key: 'actions',
       header: '',
@@ -636,11 +664,29 @@ function CourseDetails() {
                 ariaLabel="Search for learners"
                 className="cd-search"
               />
+              <RowActionsMenu
+                ariaLabel="Download Certificates"
+                caret={false}
+                triggerClassName="ds-btn ds-btn--md ds-btn--outlined-2 ds-btn--has-icon ds-btn--has-trailing cd-download-btn"
+                triggerContent={
+                  <>
+                    <span className="ds-btn__icon">
+                      <ImportCurve size={20} color="currentColor" variant="Linear" />
+                    </span>
+                    <span className="ds-btn__label">Download Certificates</span>
+                    <span className="ds-btn__icon">
+                      <ArrowDown2 size={20} color="currentColor" variant="Linear" />
+                    </span>
+                  </>
+                }
+                items={CERT_MENU}
+                onSelect={(key) => showToast('success', `Downloading ${certCount(key === 'all' ? CERTS_ALL : CERTS_ACTIVE)}`)}
+              />
               <Button
                 variant="outlined-2"
-                className="cd-download-btn ui-disabled"
-                disabled
-                icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
+                className="cd-download-btn"
+                onClick={downloadReport}
+                icon={<CsvIcon size={20} color="currentColor" />}
               >
                 Download Report
               </Button>

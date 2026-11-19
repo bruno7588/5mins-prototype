@@ -240,12 +240,10 @@
   cursor: default;
 }
 
-.cd-attempt {
-  color: var(--text-primary);
-}
-
-.cd-attempt-max {
-  color: var(--text-tertiary);
+/* Repeat ("Every 12 months") may wrap to a second line instead of clipping. */
+.cd-cell--wrap {
+  white-space: normal;
+  line-height: 1.3;
 }
 
 .cd-cell--sortable {
@@ -324,6 +322,13 @@
 .cd-status--not-started {
   background: var(--input-background);
   color: var(--text-secondary);
+}
+
+.cd-learner-name-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-s);
+  max-width: 100%;
 }
 
 .cd-learner-name {
