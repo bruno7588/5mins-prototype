@@ -6,6 +6,7 @@ import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
 import Button from '@/components/Button/Button'
 import Collapse from '@/components/Collapse/Collapse'
+import Badge from '@/components/Badge/Badge'
 import EmailEditorModal, { type EmailEditorTarget } from './email/EmailEditorModal'
 import { REMINDER_STARTER, reminderDefault, type EmailText } from './email/emailContent'
 
@@ -156,7 +157,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
                 return (
                   <div key={r.id} className={rowClass}>
                     <span className="course-reminders-row__text">Send Reminder</span>
-                    <span className="course-reminders-row__badge">{plural(r.days)}</span>
+                    <Badge type="informative" label={plural(r.days)} className="course-reminders-row__badge" />
                     <span className="course-reminders-row__text">
                       before due date
                       {r.custom && <span className="course-reminders-row__edited"> (edited)</span>}
@@ -195,7 +196,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
               {customReminders.map((r) => (
                 <div key={r.id} className="course-reminders-row">
                   <span className="course-reminders-row__text">Send Reminder</span>
-                  <span className="course-reminders-row__badge">{plural(r.days)}</span>
+                  <Badge type="informative" label={plural(r.days)} className="course-reminders-row__badge" />
                   <span className="course-reminders-row__text">before due date</span>
                   <span className="course-reminders-row__actions">
                     <Button

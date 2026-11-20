@@ -49,7 +49,6 @@ function EmailPreviewModal({ open, onClose }: Props) {
           </div>
           <CloseButton onClick={onClose} />
         </div>
-        <div className="email-preview-modal__divider" />
 
         <div className="email-preview">
           <div className="email-preview__message">

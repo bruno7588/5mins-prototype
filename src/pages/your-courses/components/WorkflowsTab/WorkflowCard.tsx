@@ -3,6 +3,7 @@ import Dropdown from '../../../../components/Dropdown/Dropdown'
 import Badge from '../../../../components/Badge/Badge'
 import Tooltip from '../../../../components/Tooltip/Tooltip'
 import Collapse from '@/components/Collapse/Collapse'
+import Button from '@/components/Button/Button'
 
 interface Props {
   enabled: boolean
@@ -51,9 +52,9 @@ function WorkflowCard({
           <h3 className="workflow-card__title">Team progress update</h3>
           <p className="workflow-card__desc">
             Send each manager an email of their team's courses, due in the next 30 days.{' '}
-            <button type="button" className="workflow-card__preview-link" onClick={onPreview}>
-              Preview email template
-            </button>
+            <Button variant="link" onClick={onPreview}>
+              Preview Email Template
+            </Button>
           </p>
         </div>
         <Toggle live checked={enabled} onChange={onToggle} />

@@ -71,20 +71,6 @@
   line-height: 1.5;
 }
 
-.workflow-card__preview-link {
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
-  color: var(--text-secondary);
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.workflow-card__preview-link:hover {
-  color: var(--primary-button-background-hover);
-}
-
 .workflow-card__footer {
   display: flex;
   flex-direction: column;
@@ -151,20 +137,6 @@
 .course-reminders-row__text--grow {
   flex: 1;
   min-width: 0;
-}
-
-.course-reminders-row__badge {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--space-xs) var(--space-s);
-  border-radius: var(--radius-full);
-  background: var(--input-background-elevated);
-  font-family: 'Poppins', sans-serif;
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-secondary);
-  white-space: nowrap;
 }
 
 .course-reminders-row__badge--system {
