@@ -256,6 +256,30 @@
   gap: var(--space-sm);
 }
 
+/* Library List items (11158:1833): the box is the bare 16px control. The Checkbox's 32px
+   hit area and halo would add 8px each side, so the gap read about 20px; the whole row
+   is already the click target. */
+.dropdown-option--check > .checkbox {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+}
+
+.dropdown-option--check > .checkbox:hover {
+  background: none;
+}
+
+/* Checkbox + supporting text: 8px to the text, top-aligned, the box centred on the
+   label line (Figma puts it in a 20px frame). */
+.dropdown-option--check:has(> .dropdown-option__text.is-rich) {
+  align-items: flex-start;
+  gap: var(--space-s);
+}
+
+.dropdown-option--check:has(> .dropdown-option__text.is-rich) > .checkbox {
+  margin-top: var(--space-xxs);
+}
+
 /* The box states the selection, so the row keeps its normal fill and weight: the
    amber single-select row (and its bold label) behind a ticked checkbox would say
    the same thing twice. */
@@ -324,6 +348,12 @@
   margin: calc(var(--space-s) * -1) 0 0;
   padding: var(--space-s) 0;
   background: var(--cards-background);
+}
+
+/* listbox.md Search item: the embedded search is 240px, so a menu with short options
+   grows to it instead of cutting the placeholder off. */
+.dropdown-search .search {
+  min-width: 240px;
 }
 
 /* Footer link (proposed, DES-336): one left-aligned link pinned under the options

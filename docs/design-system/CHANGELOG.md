@@ -280,6 +280,7 @@ Add new entries here, not in the docs.
 
 ## [listbox.md](listbox.md)
 
+- 2026-11-20: Dropdown menus now match the Library List items (`11158:1833`). The embedded search is 240px wide (the menu grows to it instead of cutting the placeholder off). Checkbox rows use the bare 16px box: the Checkbox 32px hit area had made the box-to-label gap about 20px (spec 12px). Checkbox + supporting text rows are 8px, top-aligned, box centred on the label line.
 - 2026-11-06: Max height 400px before scrolling (was 320px).
 
 - 2026-10-14: Figma List items get Label, Description, Helper text and Skill icon glyph properties and State=Focus variants (2px inset ring); all on/off axes stay variants. Listbox and List items descriptions rewritten. Figma to code table updated.

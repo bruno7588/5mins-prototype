@@ -139,7 +139,7 @@ All slots are combinable per the Figma variant axes; gaps are the load-bearing d
 | **Helper ("options") text** | Regular 14 `--text-secondary` + chevron, right-aligned cluster (8px internal gap) | **24px** from the label cluster |
 | **Avatar** | 24px circular (see `avatars.md`) | 8px |
 | **Skill icon** | 20px illustration (see skill card) | 8px |
-| **Checkbox** | 16px checkbox box (see `selection-controls.md`) - multi-select lists. No amber fill when selected | **12px** |
+| **Checkbox** | bare 16px checkbox box, no hit-area halo (the row is the click target; see `selection-controls.md`) - multi-select lists. No amber fill when selected. With supporting text the row is top-aligned and the box sits centred on the label line (20px slot) | **12px**; **8px** with supporting text |
 | **Radio** | radio in a 16 x 24 column - single-select lists. No amber fill when selected | 8px |
 | **Integer** | radio + supporting text, then an Input integer stepper (see `input.md`) and a unit ("day" / "days", 14px `--text-secondary`) 8px apart, 8px under the text. Label Medium 500. Figma `12432:11845` (Disabled `12432:13335`: every text `--text-disabled`). Used by the Assign courses timing popover | 8px |
 | **Supporting text** | second line, Regular 14. Both built menus use a **Medium (500)** label over a `--text-tertiary` description (Figma Library spec), **4px** column gap; on an amber selected row the description is `--text-on-selected`. Items top-aligned; in `RowActionsMenu` both lines stay on one row (no wrap), in `Dropdown` the description may wrap. Read-only turns both lines `--text-disabled`. Figma Library List items `10187:2585` | - |
@@ -199,7 +199,7 @@ There is no keyboard-highlight state in Figma or code; arrow-key navigation is n
 .listbox__item {
   display: flex;
   align-items: center;
-  gap: var(--space-s);                  /* 8px; checkbox rows 12px, icon-right 16px */
+  gap: var(--space-s);                  /* 8px; checkbox rows 12px (8px with supporting text), icon-right 16px */
   padding: var(--space-s) var(--space-sm);  /* 8px 12px */
   border-radius: var(--radius-s);       /* 8px */
   font: 400 14px/1.5 'Poppins', sans-serif;
