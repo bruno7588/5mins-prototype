@@ -231,9 +231,10 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   /* Only the pick-one formats give the learner options to choose between; short
      text is answered in their own words and an exercise by uploading a file. */
   const hasOptions = type === 'single-choice' || type === 'poll'
-  /* An explanation explains the correct answer, so only formats with one take it:
-     not the poll (no right answer) or short text and exercise (open responses). */
-  const hasExplanation = type === 'single-choice' || isImageMode
+  /* An explanation explains the *correct* answer, so it needs one to exist —
+     which rules out the poll (no right answer) as well as the two open formats.
+     Image Choice has none either: the marks on the images show why. */
+  const hasExplanation = type === 'single-choice'
 
   /* Everything Save needs apart from the question. */
   const restReady = isImageMode

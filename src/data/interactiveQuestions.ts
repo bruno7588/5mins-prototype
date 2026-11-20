@@ -26,8 +26,6 @@ export interface MatchPairsQuestion {
   prompt: string
   /** INDEX IDENTITY IS THE ANSWER: pairs[i].left belongs with pairs[i].right. */
   pairs: MatchPair[]
-  /** Optional author note on the answer, shown to the learner after they answer. */
-  explanation?: string
 }
 
 /** A sentence segment: a literal string, or a gap carrying its correct answer. */
@@ -40,8 +38,6 @@ export interface FillBlankQuestion {
   segments: FillBlankSegment[]
   /** Word-bank chips: one entry per gap (duplicates kept) plus distractors. */
   bank: string[]
-  /** Optional author note on the answer, shown to the learner after they answer. */
-  explanation?: string
 }
 
 export interface Category {
@@ -59,8 +55,6 @@ export interface CategorizationQuestion {
   prompt: string
   categories: Category[]
   items: CategorizationItem[]
-  /** Optional author note on the answer, shown to the learner after they answer. */
-  explanation?: string
 }
 
 export interface SequencingQuestion {
@@ -68,8 +62,6 @@ export interface SequencingQuestion {
   prompt: string
   /** ARRAY ORDER IS THE ANSWER — the renderer shuffles a copy for the bank. */
   steps: string[]
-  /** Optional author note on the answer, shown to the learner after they answer. */
-  explanation?: string
 }
 
 export type InteractiveQuestion =
