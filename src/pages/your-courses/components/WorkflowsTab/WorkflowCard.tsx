@@ -8,11 +8,11 @@ import Button from '@/components/Button/Button'
 interface Props {
   enabled: boolean
   frequency: string
-  scope: string
+  excluded: string[]
   lastSent?: string
   onToggle: () => void
   onFrequencyChange: (v: string) => void
-  onScopeChange: (v: string) => void
+  onExcludedChange: (ids: string[]) => void
   onPreview: () => void
 }
 
@@ -22,34 +22,40 @@ const FREQUENCY_OPTIONS = [
   { value: 'month', label: 'Month' },
 ]
 
-const SCOPE_OPTIONS = [
-  {
-    value: 'direct',
-    label: 'Direct reports',
-    description: "Each manager's own team",
-  },
-  {
-    value: 'org',
-    label: 'My organisation',
-    description: 'Everyone below each manager, including indirect reports',
-  },
+/* Demo team managers: only managers with at least one team member are listed. Every one
+   gets the update unless the admin ticks them to exclude them; their direct reports are
+   then in nobody's update, which the team count under each name makes visible. */
+const MANAGERS = [
+  { id: 'm1', name: 'Sarah Jones', team: 12 },
+  { id: 'm2', name: 'David Chen', team: 8 },
+  { id: 'm3', name: 'Priya Patel', team: 5 },
+  { id: 'm4', name: 'Tom Walker', team: 3 },
+  { id: 'm5', name: 'Grace Okafor', team: 1 },
 ]
+const MANAGER_OPTIONS = MANAGERS.map((m) => ({
+  value: m.id,
+  label: m.name,
+  description: `${m.team} team ${m.team === 1 ? 'member' : 'members'}`,
+}))
 
 function WorkflowCard({
   enabled,
   frequency,
-  scope,
+  excluded,
   lastSent,
   onToggle,
   onFrequencyChange,
-  onScopeChange,
+  onExcludedChange,
   onPreview,
 }: Props) {
   return (
     <article className="workflow-card">
       <header className="workflow-card__header">
         <div className="workflow-card__headline">
-          <h3 className="workflow-card__title">Team progress update</h3>
+          <div className="workflow-card__title-row">
+            <h3 className="workflow-card__title">Team progress update</h3>
+            <Tooltip text="Only sent to managers who have at least one team member." position="Top" alignment="Center" />
+          </div>
           <p className="workflow-card__desc">
             Send each manager an email of their team's courses, due in the next 30 days.{' '}
             <Button variant="link" onClick={onPreview}>
@@ -74,20 +80,24 @@ function WorkflowCard({
           <span>{frequency === 'month' ? 'on the first Monday' : 'on Monday'} at 9:00 AM UTC</span>
         </li>
         <li className="workflow-card__rule">
-          <span>Include</span>
+          <span>Don't send to</span>
           <Dropdown
             size="md"
-            options={SCOPE_OPTIONS}
-            value={scope}
-            onChange={onScopeChange}
+            multiple
+            searchable
+            searchPlaceholder="Search team managers"
+            options={MANAGER_OPTIONS}
+            values={excluded}
+            onChangeValues={onExcludedChange}
+            triggerText={
+              excluded.length === 0
+                ? 'No one'
+                : excluded.length === 1
+                  ? MANAGERS.find((m) => m.id === excluded[0])?.name
+                  : `${excluded.length} team managers`
+            }
             readOnly={!enabled}
             className="workflow-card__inline-dropdown"
-          />
-          <Tooltip
-            text="Only sent to managers who have at least one team member."
-            position="Top"
-            alignment="Center"
-            iconColor={enabled ? undefined : 'var(--text-disabled)'}
           />
         </li>
       </ul>

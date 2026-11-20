@@ -24,7 +24,7 @@ function WorkflowsTab() {
     showToast(on ? 'success' : 'info', `${name} ${verb} now ${on ? 'active' : 'inactive'}`)
   const [enabled, setEnabled] = useState(false)
   const [frequency, setFrequency] = useState('week')
-  const [scope, setScope] = useState('direct')
+  const [excluded, setExcluded] = useState<string[]>([])
   const [previewOpen, setPreviewOpen] = useState(false)
   const [remindersEnabled, setRemindersEnabled] = useState(true)
   const [reminders, setReminders] = useState<Reminder[]>(SEED_REMINDERS)
@@ -50,14 +50,14 @@ function WorkflowsTab() {
       <WorkflowCard
         enabled={enabled}
         frequency={frequency}
-        scope={scope}
+        excluded={excluded}
         lastSent="Apr 27 to 4 managers"
         onToggle={() => {
           confirmToggle('Team progress update', 'is', !enabled)
           setEnabled(!enabled)
         }}
         onFrequencyChange={setFrequency}
-        onScopeChange={setScope}
+        onExcludedChange={setExcluded}
         onPreview={() => setPreviewOpen(true)}
       />
       <CourseRemindersCard
