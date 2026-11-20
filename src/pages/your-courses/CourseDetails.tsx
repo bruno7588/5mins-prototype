@@ -135,9 +135,9 @@ const learners: Learner[] = [
    people are never listed in Enrolments (completion stats ignore them); they
    only exist here, as certificates the admin may choose to include. */
 const DEACTIVATED_CERTS = 2
-const CERTS_ACTIVE = learners.filter((l) => l.status === 'completed').length
-const CERTS_ALL = CERTS_ACTIVE + DEACTIVATED_CERTS
 const certCount = (n: number) => `${n} certificate${n === 1 ? '' : 's'}`
+/* Stands in for building the ZIP on the server; the real call can fail. */
+const fetchCertificates = () => new Promise<void>((resolve) => setTimeout(resolve, 1500))
 type CertScope = 'active' | 'all'
 
 const TABS: { key: Tab; label: string; count?: number }[] = [
@@ -319,9 +319,28 @@ function CourseDetails() {
   const { toasts, show: showToast } = useToast()
   const [certOpen, setCertOpen] = useState(false)
   const [certScope, setCertScope] = useState<CertScope>('active')
+  const [certBusy, setCertBusy] = useState(false)
+  /* Counted from the live list, so "Mark as completed" adds a certificate. */
+  const certsActive = learnerList.filter((l) => l.status === 'completed').length
+  const certsAll = certsActive + DEACTIVATED_CERTS
+  const certTotal = certScope === 'all' ? certsAll : certsActive
   const closeCert = () => {
     setCertOpen(false)
     setCertScope('active')
+  }
+  /* The modal stays open, closing blocked, until the file is ready; the toast
+     confirms a finished download, never one still running. */
+  const downloadCerts = async (total: number) => {
+    setCertBusy(true)
+    try {
+      await fetchCertificates()
+      showToast('success', `${certCount(total)} downloaded`)
+      closeCert()
+    } catch {
+      showToast('error', "Couldn't download certificates. Try again.")
+    } finally {
+      setCertBusy(false)
+    }
   }
 
   /* Enrolment filters: the user profile's Course progress set, minus Course (this page
@@ -670,14 +689,19 @@ function CourseDetails() {
               >
                 Download Report
               </Button>
-              <Button
-                variant="outlined"
-                className="cd-download-btn"
-                onClick={() => setCertOpen(true)}
-                icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
-              >
-                Download Certificates
-              </Button>
+              <Tooltip text="Nobody has a certificate yet" icon={false} disabled={certsAll > 0}>
+                {/* The modal only asks about deactivated people; with none, download straight away. */}
+                <Button
+                  variant="outlined"
+                  className="cd-download-btn"
+                  disabled={certsAll === 0}
+                  loading={certBusy && !certOpen}
+                  onClick={() => (DEACTIVATED_CERTS > 0 ? setCertOpen(true) : downloadCerts(certsActive))}
+                  icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
+                >
+                  Download Certificates
+                </Button>
+              </Tooltip>
             </div>
 
             {/* Table */}
@@ -805,20 +829,22 @@ function CourseDetails() {
         {/* Download Certificates: a modal (close X, backdrop, Escape), one commit button.
            "Active people only" is selected by default; the admin opts in to
            deactivated people's certificates. */}
-        <ConfirmModal open={certOpen} onClose={closeCert} ariaLabel="Download certificates" closable>
+        <ConfirmModal open={certOpen} onClose={() => !certBusy && closeCert()} ariaLabel="Download certificates" closable>
           <div className="confirm-modal-header">
             <h2 className="confirm-modal-title">Download certificates</h2>
             <p className="confirm-modal-body cd-cert-body">
-              {CERTS_ALL} people completed this course. {DEACTIVATED_CERTS} of them have been deactivated.
+              {certsAll} {certsAll === 1 ? 'person' : 'people'} completed this course, {DEACTIVATED_CERTS} of
+              them now deactivated. This covers everyone, not your table selection or filters. You'll get
+              one PDF per person in a ZIP file.
             </p>
           </div>
           <div className="confirm-modal-radio-cards cd-cert-cards">
             {([
-              ['active', 'Active people only', certCount(CERTS_ACTIVE)],
-              ['all', 'Include deactivated people', `${certCount(CERTS_ALL)}, including people who no longer have access`],
+              ['active', 'Active people only', certCount(certsActive)],
+              ['all', 'Include deactivated people', `${certCount(certsAll)}, including people who no longer have access`],
             ] as const).map(([value, title, desc]) => (
               <label key={value} className={`confirm-modal-radio-card cd-cert-card${certScope === value ? ' cd-cert-card--selected' : ''}`}>
-                <Radio name="cd-cert-scope" checked={certScope === value} onChange={() => setCertScope(value)} />
+                <Radio name="cd-cert-scope" checked={certScope === value} disabled={certBusy} onChange={() => setCertScope(value)} />
                 <div className="confirm-modal-radio-card-text cd-cert-card-text">
                   <span className="confirm-modal-radio-card-title cd-cert-card-title">{title}</span>
                   <span className="confirm-modal-radio-card-desc cd-cert-card-desc">{desc}</span>
@@ -827,13 +853,8 @@ function CourseDetails() {
             ))}
           </div>
           <div className="confirm-modal-actions">
-            <Button
-              onClick={() => {
-                showToast('success', `Downloading ${certCount(certScope === 'all' ? CERTS_ALL : CERTS_ACTIVE)}`)
-                closeCert()
-              }}
-            >
-              {`Download ${certScope === 'all' ? CERTS_ALL : CERTS_ACTIVE} Certificates`}
+            <Button loading={certBusy} disabled={certTotal === 0} onClick={() => downloadCerts(certTotal)}>
+              {`Download ${certTotal} ${certTotal === 1 ? 'Certificate' : 'Certificates'}`}
             </Button>
           </div>
         </ConfirmModal>
