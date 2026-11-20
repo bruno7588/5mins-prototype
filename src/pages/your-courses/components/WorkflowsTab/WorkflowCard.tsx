@@ -54,7 +54,7 @@ function WorkflowCard({
         <div className="workflow-card__headline">
           <div className="workflow-card__title-row">
             <h3 className="workflow-card__title">Team progress update</h3>
-            <Tooltip text="Only sent to managers who have at least one team member." position="Top" alignment="Center" />
+            <Tooltip text="Only sent to managers who have at least one team member." position="Top" alignment="Center" iconSize={20} />
           </div>
           <p className="workflow-card__desc">
             Send each manager an email of their team's courses, due in the next 30 days.{' '}
@@ -86,13 +86,14 @@ function WorkflowCard({
             multiple
             searchable
             searchPlaceholder="Search team managers"
+            // Managers without a team are left out on purpose; say so, or a missing name reads as a bug.
+            emptyText={(q) => `No team managers match “${q}”. Only managers with at least one team member are listed.`}
             options={MANAGER_OPTIONS}
             values={excluded}
             onChangeValues={onExcludedChange}
-            placeholder="Select team managers"
             triggerText={
               excluded.length === 0
-                ? undefined
+                ? 'No exclusions'
                 : excluded.length === 1
                   ? MANAGERS.find((m) => m.id === excluded[0])?.name
                   : `${excluded.length} team managers`
