@@ -5,6 +5,7 @@ import Chip from '@/components/Chip/Chip'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import FileUploader from '@/components/FileUploader/FileUploader'
 import SideDrawer from '@/components/SideDrawer/SideDrawer'
+import Tabs, { type TabItem } from '@/components/Tabs/Tabs'
 import Table, { type Column } from '@/components/Table/Table'
 import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import { CellError } from '@/pages/people/components/BulkUploadModal/BulkUploadModal'
@@ -292,12 +293,12 @@ function BulkUploadRecordsDrawer({ open, onClose, onAdded }: Props) {
     { key: 'score', header: 'Score', width: '0 0 80px', render: (r) => (r.score == null ? '–' : `${r.score}%`) },
   ]
 
-  const tabs: { key: Tab; label: string; count: number; color: string }[] = [
+  const tabs: TabItem[] = [
     hasErrors
-      ? { key: 'error', label: 'Errors', count: errorRows.length, color: 'error' }
-      : { key: 'all', label: 'All Records', count: rows.filter((r) => r.status !== 'skipped').length, color: 'neutral' },
-    { key: 'ready', label: 'Ready to Add', count: count('ready'), color: 'success' },
-    { key: 'exists', label: 'Already in 5Mins', count: count('exists'), color: 'neutral' },
+      ? { key: 'error', label: 'Errors', counter: errorRows.length }
+      : { key: 'all', label: 'All Records', counter: rows.filter((r) => r.status !== 'skipped').length },
+    { key: 'ready', label: 'Ready to Add', counter: count('ready') },
+    { key: 'exists', label: 'Already in 5Mins', counter: count('exists') },
   ]
 
   const blocked = hasErrors || needsMatching || ready.length === 0
@@ -354,21 +355,7 @@ function BulkUploadRecordsDrawer({ open, onClose, onAdded }: Props) {
                 />
               )}
 
-              <div className="bulk-preview-tabs" role="tablist" aria-label="Filter records">
-                {tabs.map((t) => (
-                  <button
-                    key={t.key}
-                    type="button"
-                    role="tab"
-                    aria-selected={tab === t.key}
-                    className={`bulk-preview-tab${tab === t.key ? ' bulk-preview-tab--active' : ''}`}
-                    onClick={() => selectTab(t.key)}
-                  >
-                    {t.label}
-                    <span className={`bulk-preview-tab-counter bulk-preview-tab-counter--${t.color}`}>{t.count}</span>
-                  </button>
-                ))}
-              </div>
+              <Tabs items={tabs} activeKey={tab} onChange={(k) => selectTab(k as Tab)} ariaLabel="Filter records" />
 
               {tab === 'error' && hasErrors && (
                 <div className="bulk-preview-error-chips">
