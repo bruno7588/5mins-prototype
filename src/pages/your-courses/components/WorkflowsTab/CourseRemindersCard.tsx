@@ -144,7 +144,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
             Send automatic reminders to learners by email, Slack, Microsoft Teams and phone notification before a course's due date. Sent at 10:00 in each learner's local time on the scheduled day.
           </p>
         </div>
-        <Toggle live checked={enabled} onChange={onToggle} />
+        <Toggle checked={enabled} onChange={onToggle} />
       </header>
 
       <ul className={rulesClass}>
@@ -173,7 +173,6 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
                         Edit
                       </Button>
                       <Toggle
-                        live
                         checked={enabled && !isPaused}
                         disabled={!enabled}
                         onChange={() => togglePause(r.id)}

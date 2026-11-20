@@ -63,7 +63,7 @@ function WorkflowCard({
             </Button>
           </p>
         </div>
-        <Toggle live checked={enabled} onChange={onToggle} />
+        <Toggle checked={enabled} onChange={onToggle} />
       </header>
 
       <ul className={`workflow-card__rules${enabled ? '' : ' workflow-card__rules--disabled'}`}>
@@ -89,9 +89,10 @@ function WorkflowCard({
             options={MANAGER_OPTIONS}
             values={excluded}
             onChangeValues={onExcludedChange}
+            placeholder="Select team managers"
             triggerText={
               excluded.length === 0
-                ? 'No one'
+                ? undefined
                 : excluded.length === 1
                   ? MANAGERS.find((m) => m.id === excluded[0])?.name
                   : `${excluded.length} team managers`

@@ -19,9 +19,9 @@ const SEED_REMINDERS: Reminder[] = [
 function WorkflowsTab() {
   const user = useCurrentUser()
   const { toasts, show: showToast } = useToast()
-  // Turning a workflow on confirms with a success toast, off with an informative one.
+  // Turning a workflow on or off confirms with a success toast.
   const confirmToggle = (name: string, verb: 'is' | 'are', on: boolean) =>
-    showToast(on ? 'success' : 'info', `${name} ${verb} now ${on ? 'active' : 'inactive'}`)
+    showToast('success', `${name} ${verb} now ${on ? 'active' : 'inactive'}`)
   const [enabled, setEnabled] = useState(false)
   const [frequency, setFrequency] = useState('week')
   const [excluded, setExcluded] = useState<string[]>([])

@@ -54,6 +54,7 @@ export {
 export type { RoleOption, RoleSource, TriggerFilter } from './triggerCriteria'
 import './Automations.css'
 import Button from '@/components/Button/Button'
+import Toggle from '@/components/Toggle/Toggle'
 
 type Tab = 'manage' | 'activity' | 'workflows'
 type SortDirection = 'asc' | 'desc'
@@ -932,15 +933,7 @@ function Automations() {
       cellClassName: 'automations-table-cell--toggle',
       render: (row) => (
         <>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={row.active}
-            className={`automations-toggle${row.active ? ' automations-toggle--on' : ''}`}
-            onClick={() => toggleActive(row.id)}
-          >
-            <span className="automations-toggle-thumb" />
-          </button>
+          <Toggle checked={row.active} onChange={() => toggleActive(row.id)} aria-label={`${row.name} active`} />
           <span className="automations-toggle-label">{row.active ? 'Active' : 'Inactive'}</span>
         </>
       ),

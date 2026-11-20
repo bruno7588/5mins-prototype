@@ -354,6 +354,7 @@ Add new entries here, not in the docs.
 
 ## [selection-controls.md](selection-controls.md)
 
+- 2026-11-20: Toggle `live` removed: every toggle is the shared component and on is `--selected` (amber), automations, workflows and course reminders included (were Success-500 green). The Automations Manage table's hand-built switch now uses the shared Toggle.
 - 2026-11-20: Radio re-synced from the Library (`6322:1838`): ring 16px with a 1px stroke (was 15px, 1.5px), dot 8px (was 7px); every hover state uses `--page-background-hover`, like Checkbox (the Library selected Hover variant was bound to `Input-background-hover`; rebound to `Page-background-hover` the same day); focus is a 2px `--focus-ring` circle inset on the 24px halo (was a 2px outline, 2px offset, on the ring); disabled + selected keeps an outlined ring with a dot (code had filled the whole ring).
 - 2026-11-11: Toggle gained a `Size` property in the Library (`8160:364`): Medium (36 × 20, the existing variants) and Small (compact, 28 × 16 track, 12px thumb, 36 × 24 focus ring). Small maps to the code's `size="sm"`, which already existed code only; no code change.
 - 2026-10-14: Checkbox gained its `:focus-visible` ring (2px `--primary-button-background`, 2px outside the box).
