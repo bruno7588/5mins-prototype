@@ -17,10 +17,10 @@
 }
 
 .radio__ring {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  border: 1.5px solid var(--text-primary);
+  border: 1px solid var(--text-primary);
   background: transparent;
   display: flex;
   align-items: center;
@@ -34,8 +34,8 @@
 
 .radio--selected .radio__ring::after {
   content: '';
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--selected);
 }
@@ -48,9 +48,11 @@
   border-color: var(--text-disabled);
 }
 
-.radio--disabled.radio--selected .radio__ring,
-.radio--disabled.radio--selected .radio__ring::after {
+.radio--disabled.radio--selected .radio__ring {
   border-color: var(--text-disabled);
+}
+
+.radio--disabled.radio--selected .radio__ring::after {
   background: var(--text-disabled);
 }
 
@@ -62,9 +64,9 @@
   cursor: inherit;
 }
 
-.radio__input:focus-visible + .radio__ring {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
+/* Figma Focus: a 2px Primary-500 ring around the 24px halo, not an offset outline. */
+.radio:has(.radio__input:focus-visible) {
+  box-shadow: inset 0 0 0 2px var(--focus-ring);
 }
 
 .radio-row {

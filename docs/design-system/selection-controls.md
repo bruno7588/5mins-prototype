@@ -9,7 +9,7 @@ Checkbox, Radio and Toggle: the controls that pick options or switch a setting o
 
 **Code:** `import Checkbox from '@/components/Checkbox/Checkbox'`, `import Radio from '@/components/Radio/Radio'`, `import Toggle from '@/components/Toggle/Toggle'`
 **Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Checkbox `6339:10484`; Radio `5001:18926`; Toggle `8160:364`
-**Last verified:** 2026-10-21
+**Last verified:** 2026-11-20 (Radio re-synced from Library `6322:1838`)
 
 Colours are semantic tokens resolving per mode (see `colors.md`); hexes below are light-mode values unless a dark value is given. Cross-reference: `5mins-colors` (colors.md) for the raw palette and semantic surface tokens, `5mins-typography` for label typography, `5mins-iconography` for icon sizing conventions.
 
@@ -88,7 +88,7 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 - Don't re-implement radios with `div`s.
 - Don't ship a lone radio; with one option use a checkbox or toggle.
 
-**Canonical spec:** 24 × 24px hit area with a fully round (30px) hover halo in `--page-background-hover`; 15 × 15px ring, 1.5px `--text-primary` (unchanged on hover; hover only adds the halo); selected ring and 7px dot `--selected`; disabled `--text-disabled`; focus-visible 2px `--focus-ring` outline. Row gap `var(--space-s)` (8px), option text 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5001:18926`.
+**Canonical spec:** 24 × 24px hit area with a fully round (30px) hover halo in `--page-background-hover`; 16 × 16px ring, 1px `--text-primary` (unchanged on hover; hover only adds the halo); selected ring and 8px dot `--selected`; disabled `--text-disabled` ring and dot; focus-visible a 2px `--focus-ring` circle inset on the halo. Row gap `var(--space-s)` (8px), option text 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5001:18926`.
 
 ### Toggle
 
@@ -135,7 +135,7 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
 | Selected | true / false | `checked` | `true` / `false` | native radio prop |
-| State | Enabled / Hover / Focus | n/a | CSS `:hover`, `:focus-visible` | hovering the labelled row also shows the halo; Focus rings the 15px ring |
+| State | Enabled / Hover / Focus | n/a | CSS `:hover`, `:focus-visible` | hovering the labelled row also shows the halo; Focus is a 2px `--focus-ring` circle around the 24px halo |
 | State | n/a | n/a | n/a | only used with Disabled=true |
 | Disabled | false / true | `disabled` | `true` / `false` | native radio prop |
 
@@ -191,9 +191,10 @@ Single-select indicator. Sits inside a labelled row; the label itself should als
 | Property | Value |
 |---|---|
 | Interactive target (hover halo) | 24 × 24 px |
-| Visible ring / dot | 15 × 15 px |
+| Visible ring | 16 × 16 px |
+| Selected dot | 8 × 8 px |
 | Halo border-radius | 30 px (fully round) |
-| Ring stroke width | 1.5 px |
+| Ring stroke width | 1 px (inside) |
 
 ### Toggle
 
@@ -245,8 +246,8 @@ The thumb sits 2px inside the track in both sizes. Use Small where a 20px track 
 | Hover, unselected | no | `--text-primary` ring (unchanged) | 24 × 24 px `--page-background-hover` (`#EFF0F2`) circle |
 | Hover, selected | yes | `--selected` ring + dot (unchanged) | 24 × 24 px `--page-background-hover` circle |
 | Disabled, unselected | no | `--text-disabled` (`#9EA4B3`) ring | none |
-| Disabled, selected | yes | `--text-disabled` ring + dot | none |
-| Focus-visible | either | unchanged | 2px `--focus-ring` outline, 2px offset, on the ring |
+| Disabled, selected | yes | `--text-disabled` ring + dot (ring stays outlined) | none |
+| Focus-visible | either | unchanged | 2px `--focus-ring` (Primary-500) circle, inset on the 24 × 24 halo |
 
 ```css
 /* src/components/Radio/Radio.css */
@@ -269,10 +270,10 @@ The thumb sits 2px inside the track in both sizes. Use Small where a 20px track 
 }
 
 .radio__ring {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  border: 1.5px solid var(--text-primary);
+  border: 1px solid var(--text-primary);
   background: transparent;
   display: flex;
   align-items: center;
@@ -286,8 +287,8 @@ The thumb sits 2px inside the track in both sizes. Use Small where a 20px track 
 
 .radio--selected .radio__ring::after {
   content: '';
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--selected);
 }
@@ -300,9 +301,11 @@ The thumb sits 2px inside the track in both sizes. Use Small where a 20px track 
   border-color: var(--text-disabled);
 }
 
-.radio--disabled.radio--selected .radio__ring,
-.radio--disabled.radio--selected .radio__ring::after {
+.radio--disabled.radio--selected .radio__ring {
   border-color: var(--text-disabled);
+}
+
+.radio--disabled.radio--selected .radio__ring::after {
   background: var(--text-disabled);
 }
 
@@ -314,9 +317,9 @@ The thumb sits 2px inside the track in both sizes. Use Small where a 20px track 
   cursor: inherit;
 }
 
-.radio__input:focus-visible + .radio__ring {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
+/* Figma Focus: a 2px Primary-500 ring around the 24px halo, not an offset outline. */
+.radio:has(.radio__input:focus-visible) {
+  box-shadow: inset 0 0 0 2px var(--focus-ring);
 }
 
 .radio-row {
@@ -333,7 +336,7 @@ The thumb sits 2px inside the track in both sizes. Use Small where a 20px track 
 
 .radio-row__label {
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -418,7 +421,7 @@ All three controls pull from the same token set. Selected/on state colour differ
 | Selected colour (radio, checkbox) | `--selected` | `#EDA30D` | `#FFBB38` | Ring + dot, box fill; mode-aware |
 | On colour (toggle track) | `--selected` | `#EDA30D` | `#FFBB38` | Mode-aware, brighter amber in dark mode |
 | Hover halo background | `--page-background-hover` | `#EFF0F2` | `#2D313D` | Circular halo around radio and checkbox on hover |
-| Default stroke colour | `--text-primary` | `#20222A` | `#F9F9FA` | Unselected radio ring (1.5px); unchecked checkbox border (1px) |
+| Default stroke colour | `--text-primary` | `#20222A` | `#F9F9FA` | Unselected radio ring (1px); unchecked checkbox border (1px) |
 | Disabled colour | `--text-disabled` | `#9EA4B3` | `#656B7C` | Rings, borders, off-track when disabled |
 | Thumb colour (toggle) | `--neutral-25` | `#F9F9FA` | `#F9F9FA` | Toggle knob |
 
