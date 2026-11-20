@@ -3,11 +3,6 @@
 .ds-tabs {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-m);
-}
-
-/* Mobile app: 24px between tabs (16px only when the tabs would not fit the screen). */
-.m-phone .ds-tabs {
   gap: var(--space-l);
 }
 
@@ -49,6 +44,7 @@
 .ds-tab:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
+  border-radius: var(--radius-xs);
 }
 
 .ds-tab__label {

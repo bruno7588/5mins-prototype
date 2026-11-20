@@ -134,6 +134,7 @@ Add new entries here, not in the docs.
 
 ## [chips-switcher-tabs.md](chips-switcher-tabs.md)
 
+- 2026-11-20: Tabs gap is 24px (`--space-l`) on web too, matching the Library Tabs component (was 16px on web since the 2026-09-29 ruling, 24px in the mobile app only). Focus ring gains the Library 4px radius (`--radius-xs`).
 - 2026-11-17: Tabs in the mobile app sit `var(--space-l)` (24px) apart whenever they fit the screen width, 16px only when they would not; web stays at 16px.
 - 2026-11-10: Shared `Tabs` component (`src/components/Tabs`) built from the spec and every page tab bar migrated to it (about 25 bars). Indicator is `--selected` everywhere (several bars used raw secondary-500/600); label-to-indicator gap 4px; counters `--text-tertiary`; arrow-key navigation; not-built tabs use `.ui-disabled`. Not migrated: bulk upload review filter tabs (status-coloured counts).
 - 2026-11-05: `ContentSwitcher` items gain `trailingIcon` (16px, after the label), matching Library Content=Trailing icon; the trailing icon is no longer Figma only.
