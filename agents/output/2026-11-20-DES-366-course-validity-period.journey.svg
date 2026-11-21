@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1010" viewBox="0 0 1200 1010" role="img" aria-label="DES-366 user journey">
+<defs><marker id="h" orient="auto" markerWidth="8" markerHeight="8" refX="6" refY="4"><path d="M0 0 L8 4 L0 8 Z" fill="#9EA4B3"/></marker></defs>
+<rect width="1200" height="1010" fill="#F9F9FA"/>
+<text x="40" y="50" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#0F1014">DES-366 · Admin proves training is in date</text>
+<text x="40" y="80" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">When an inspector or auditor asks for proof of training, an Admin wants to see and export when each person's course completion stops being valid, so</text>
+<text x="40" y="97" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">they can show their staff are in date without working out renewal dates by hand.</text>
+<rect x="40" y="110" width="260" height="250" rx="12" fill="#FFFFFF" stroke="#DFE1E6" stroke-width="1"/>
+<text x="56" y="138" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#008393">1 · TRIGGER</text>
+<text x="56" y="164" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#0F1014">Inspection is coming</text>
+<text x="56" y="186" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#008393">Off-platform</text>
+<text x="56" y="211" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">An EHO inspection is announced,</text>
+<text x="56" y="230" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">or the course must be redone</text>
+<text x="56" y="249" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">every 3 years.</text>
+<text x="56" y="276" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0F1014" font-style="italic">“Can I prove everyone is in</text>
+<text x="56" y="295" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0F1014" font-style="italic">date?”</text>
+<line x1="300" y1="235" x2="327" y2="235" stroke="#9EA4B3" stroke-width="2" marker-end="url(#h)"/>
+<rect x="330" y="110" width="260" height="250" rx="12" fill="#FFFFFF" stroke="#DFE1E6" stroke-width="1"/>
+<text x="346" y="138" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#008393">2 · ACT, ONE-OFF SET-UP</text>
+<text x="346" y="164" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#0F1014">Set the validity period</text>
+<text x="346" y="186" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#008393">Course details › Settings ›</text>
+<text x="346" y="203" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#008393">Course completion</text>
+<text x="346" y="228" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">Turns on Completion validity,</text>
+<text x="346" y="247" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">enters 3, picks Years, presses</text>
+<text x="346" y="266" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">Save, sees the toast.</text>
+<text x="346" y="293" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0F1014" font-style="italic">“Does this change people who</text>
+<text x="346" y="312" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0F1014" font-style="italic">already completed?”</text>
+<line x1="590" y1="235" x2="617" y2="235" stroke="#9EA4B3" stroke-width="2" marker-end="url(#h)"/>
+<line x1="460" y1="360" x2="460" y2="380" stroke="#BFC2CC" stroke-width="2" stroke-dasharray="4 4"/>
+<rect x="330" y="380" width="260" height="130" rx="12" fill="#EFF0F2" stroke="#BFC2CC" stroke-dasharray="5 4"/>
+<text x="346" y="404" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#0F1014">SIDE PATHS</text>
+<text x="346" y="424" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">• 0, blank or over the limit shows</text>
+<text x="346" y="441" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">an error</text>
+<text x="346" y="460" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">• Months to Years re-checks the</text>
+<text x="346" y="477" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">number</text>
+<text x="346" y="496" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">• Certificate off: helper drops</text>
+<text x="346" y="513" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">the certificate line</text>
+<rect x="620" y="110" width="260" height="250" rx="12" fill="#FFFFFF" stroke="#DFE1E6" stroke-width="1"/>
+<text x="636" y="138" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#008393">3 · ORIENT</text>
+<text x="636" y="164" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#0F1014">Read Valid until</text>
+<text x="636" y="186" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#008393">Learning Records › 5Mins Courses</text>
+<text x="636" y="211" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">Filters by course or team,</text>
+<text x="636" y="230" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">includes deactivated users,</text>
+<text x="636" y="249" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">reads Valid until.</text>
+<text x="636" y="276" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0F1014" font-style="italic">“Who is in date on inspection</text>
+<text x="636" y="295" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0F1014" font-style="italic">day?”</text>
+<line x1="880" y1="235" x2="907" y2="235" stroke="#9EA4B3" stroke-width="2" marker-end="url(#h)"/>
+<line x1="750" y1="360" x2="750" y2="380" stroke="#BFC2CC" stroke-width="2" stroke-dasharray="4 4"/>
+<rect x="620" y="380" width="260" height="130" rx="12" fill="#EFF0F2" stroke="#BFC2CC" stroke-dasharray="5 4"/>
+<text x="636" y="404" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#0F1014">SIDE PATHS</text>
+<text x="636" y="424" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">• No period: a dash</text>
+<text x="636" y="443" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">• Older completions keep their own</text>
+<text x="636" y="460" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">date</text>
+<text x="636" y="479" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">• Status still reads Completed</text>
+<rect x="910" y="110" width="260" height="250" rx="12" fill="#FFFFFF" stroke="#DFE1E6" stroke-width="1"/>
+<text x="926" y="138" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#008393">4 · DECIDE</text>
+<text x="926" y="164" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#0F1014">Spot who runs out</text>
+<text x="926" y="186" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#008393">Learning Records</text>
+<text x="926" y="211" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">Filters Valid until between</text>
+<text x="926" y="230" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">today and the inspection date.</text>
+<text x="926" y="257" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0F1014" font-style="italic">“Who runs out before the visit?”</text>
+<line x1="1040" y1="360" x2="1040" y2="380" stroke="#BFC2CC" stroke-width="2" stroke-dasharray="4 4"/>
+<rect x="910" y="380" width="260" height="130" rx="12" fill="#EFF0F2" stroke="#BFC2CC" stroke-dasharray="5 4"/>
+<text x="926" y="404" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#0F1014">SIDE PATHS</text>
+<text x="926" y="424" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">• A date range, never a status</text>
+<rect x="40" y="560" width="260" height="250" rx="12" fill="#FFFFFF" stroke="#DFE1E6" stroke-width="1"/>
+<text x="56" y="588" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#008393">5 · ACT, EVIDENCE</text>
+<text x="56" y="614" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#0F1014">Export the evidence</text>
+<text x="56" y="636" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#008393">Learning Records</text>
+<text x="56" y="661" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">Download Report (with Valid</text>
+<text x="56" y="680" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">until), then certificates per</text>
+<text x="56" y="699" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">row or in bulk.</text>
+<text x="56" y="726" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0F1014" font-style="italic">“Can I hand this straight to the</text>
+<text x="56" y="745" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0F1014" font-style="italic">inspector?”</text>
+<line x1="300" y1="685" x2="327" y2="685" stroke="#9EA4B3" stroke-width="2" marker-end="url(#h)"/>
+<line x1="170" y1="810" x2="170" y2="830" stroke="#BFC2CC" stroke-width="2" stroke-dasharray="4 4"/>
+<rect x="40" y="830" width="260" height="130" rx="12" fill="#EFF0F2" stroke="#BFC2CC" stroke-dasharray="5 4"/>
+<text x="56" y="854" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#0F1014">SIDE PATHS</text>
+<text x="56" y="874" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">• Deactivated people reachable</text>
+<text x="56" y="891" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">only here</text>
+<text x="56" y="910" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">• Over 1,000 certificates: button</text>
+<text x="56" y="927" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">disabled</text>
+<text x="56" y="946" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">• Limited Admin sees only their</text>
+<text x="56" y="963" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">scope</text>
+<rect x="330" y="560" width="260" height="250" rx="12" fill="#FFFFFF" stroke="#DFE1E6" stroke-width="1"/>
+<text x="346" y="588" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#008393">6 · ACT, ONE PERSON</text>
+<text x="346" y="614" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#0F1014">Check one person</text>
+<text x="346" y="636" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#008393">People › person › Course</text>
+<text x="346" y="653" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#008393">Progress</text>
+<text x="346" y="678" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">Reads Valid until per course;</text>
+<text x="346" y="697" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">Download certificate row action</text>
+<text x="346" y="716" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">or bulk action.</text>
+<text x="346" y="743" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0F1014" font-style="italic">“Which of their courses are in</text>
+<text x="346" y="762" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0F1014" font-style="italic">date?”</text>
+<line x1="590" y1="685" x2="617" y2="685" stroke="#9EA4B3" stroke-width="2" marker-end="url(#h)"/>
+<line x1="460" y1="810" x2="460" y2="830" stroke="#BFC2CC" stroke-width="2" stroke-dasharray="4 4"/>
+<rect x="330" y="830" width="260" height="130" rx="12" fill="#EFF0F2" stroke="#BFC2CC" stroke-dasharray="5 4"/>
+<text x="346" y="854" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#0F1014">SIDE PATHS</text>
+<text x="346" y="874" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">• Row action disabled, with a</text>
+<text x="346" y="891" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">reason, if not completed or no</text>
+<text x="346" y="908" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">certificate</text>
+<text x="346" y="927" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">• Re-enrolled, In Progress: no</text>
+<text x="346" y="944" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">date</text>
+<rect x="620" y="560" width="260" height="250" rx="12" fill="#FFFFFF" stroke="#18A957" stroke-width="2"/>
+<text x="636" y="588" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#008393">7 · CONFIRM</text>
+<text x="636" y="614" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#0F1014">Evidence in hand</text>
+<text x="636" y="636" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#008393">Toast and certificate PDF</text>
+<text x="636" y="661" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">“Downloading 3 certificates”.</text>
+<text x="636" y="680" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">PDF shows Date of completion and</text>
+<text x="636" y="699" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#454C5E">Valid until.</text>
+<text x="636" y="726" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0F1014" font-style="italic">“Does the paper match the</text>
+<text x="636" y="745" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0F1014" font-style="italic">platform?”</text>
+<line x1="750" y1="810" x2="750" y2="830" stroke="#BFC2CC" stroke-width="2" stroke-dasharray="4 4"/>
+<rect x="620" y="830" width="260" height="130" rx="12" fill="#EFF0F2" stroke="#BFC2CC" stroke-dasharray="5 4"/>
+<text x="636" y="854" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#0F1014">RISK</text>
+<text x="636" y="874" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">• A PDF downloaded before a period</text>
+<text x="636" y="891" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">change can disagree with the</text>
+<text x="636" y="908" font-family="Poppins, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#454C5E">platform</text>
+<polyline points="1170,235 1185,235 1185,535 170,535 170,557" fill="none" stroke="#9EA4B3" stroke-width="2" marker-end="url(#h)"/>
+</svg>
