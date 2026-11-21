@@ -48,7 +48,7 @@ const TEMPLATE_ROWS: CsvRow[] = [
   { line: 3, name: 'NEBOSH General Certificate', providers: ['NEBOSH'], duration: 10, unit: 'days', retraining: null },
 ]
 const TEMPLATE =
-  'Course name,Providers,Duration,Duration unit,Expires after (months)\n' +
+  'Course name,Providers,Duration,Duration unit,Valid for (months)\n' +
   TEMPLATE_ROWS.map((r) => `${r.name},${r.providers.join(';')},${r.duration},${r.unit},${r.retraining ?? ''}`).join('\n') +
   '\n'
 
@@ -72,7 +72,7 @@ const templateColumns: Column<CsvRow>[] = [
   { key: 'providers', header: 'Providers', width: '1 0 160px', render: (r) => r.providers.join(';') },
   { key: 'duration', header: 'Duration', width: '0 0 88px', render: (r) => r.duration },
   { key: 'unit', header: 'Duration unit', width: '0 0 120px', render: (r) => r.unit },
-  { key: 'retraining', header: 'Expires after', width: '0 0 136px', render: (r) => r.retraining ?? '' },
+  { key: 'retraining', header: 'Valid for', width: '0 0 136px', render: (r) => r.retraining ?? '' },
 ]
 
 interface Props {
@@ -155,7 +155,7 @@ function BulkUploadCoursesDrawer({ open, onClose, onAdded }: Props) {
         ),
     },
     { key: 'duration', header: 'Duration', width: '0 0 88px', render: (r) => (r.duration ? durationLabel({ value: r.duration, unit: r.unit }) : '–') },
-    { key: 'retraining', header: 'Expiry', width: '0 0 136px', render: (r) => retrainingLabel(r.retraining) },
+    { key: 'retraining', header: 'Valid for', width: '0 0 136px', render: (r) => retrainingLabel(r.retraining) },
   ]
 
   const ctaLabel = !fileName ? 'Add Courses' : ready.length === 1 ? 'Add 1 Course' : `Add ${ready.length} Courses`
@@ -206,7 +206,7 @@ function BulkUploadCoursesDrawer({ open, onClose, onAdded }: Props) {
             <h3 className="aet-step__title">Fill in the information</h3>
             <p className="aet-text">
               Use one row for each course and put each detail in its own cell. Separate several providers with
-              ";". Leave Expires after blank for courses that don't expire.
+              ";". Leave Valid for blank for courses with no expiry.
             </p>
           </div>
         </li>

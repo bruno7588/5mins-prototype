@@ -48,6 +48,7 @@ import SkillsTab from './components/SkillsTab/SkillsTab'
 import Chip from '@/components/Chip/Chip'
 import type { Panel } from '@/pages/my-progress/MyProgress'
 import { SIGNED_IN_LEARNER_ID } from '@/data/externalTraining'
+import { getCourseRule, useCourseRules, validUntil } from '@/data/courseValidity'
 
 /* ─── Header lookup ─── Mirrors the active People rows (src/pages/people/People.tsx)
    so a profile resolves from its route id. Kept minimal on purpose — a prototype
@@ -190,6 +191,7 @@ const ROW_MENU_ITEMS: RowMenuItem[] = [
   { key: 'view-progress', label: 'View progress', icon: <TaskSquare size={20} color="currentColor" variant="Linear" /> },
   /* Reminders are automated per course (see Workflows); this is the manual nudge
      for the exceptional case, so it stays single-row — never a bulk action. */
+  { key: 'download-certificate', label: 'Download certificate', icon: <ImportCurve size={20} color="currentColor" variant="Linear" /> },
   { key: 'send-reminder', label: 'Send reminder', icon: <NotificationBing size={20} color="currentColor" variant="Linear" /> },
   { key: 'extend-due-date', label: 'Extend due date', icon: <CalendarAdd size={20} color="currentColor" variant="Linear" /> },
   { key: 'edit-start-date', label: 'Edit start date', icon: <CalendarEdit size={20} color="currentColor" variant="Linear" /> },
@@ -205,6 +207,7 @@ const ROW_MENU_ITEMS: RowMenuItem[] = [
    whole selection. Derived from ROW_MENU_ITEMS so the glyphs and wording can never
    drift between the two menus. No divider before Unenrol here. */
 const BULK_ACTION_KEYS = new Set([
+  'download-certificate',
   'extend-due-date',
   'edit-start-date',
   'give-another-attempt',
@@ -212,7 +215,8 @@ const BULK_ACTION_KEYS = new Set([
   'unenrol',
 ])
 const BULK_MENU_ITEMS: RowMenuItem[] = ROW_MENU_ITEMS.filter((item) => BULK_ACTION_KEYS.has(item.key)).map(
-  ({ dividerBefore: _divider, ...item }) => item,
+  ({ dividerBefore: _divider, ...item }) =>
+    item.key === 'download-certificate' ? { ...item, label: 'Download certificates' } : item,
 )
 
 /* Which statuses an action can act on. The test is whether the action still has
@@ -221,6 +225,10 @@ const BULK_MENU_ITEMS: RowMenuItem[] = ROW_MENU_ITEMS.filter((item) => BULK_ACTI
    here — view progress, edit repeat rules, unenrol — are always valid, being
    read-only or configuration that is independent of progress. */
 const ACTION_RULES: Record<string, { statuses: Status[]; reason: string }> = {
+  'download-certificate': {
+    statuses: ['Completed'],
+    reason: 'Only for completed courses with a certificate',
+  },
   'edit-start-date': {
     statuses: ['Scheduled'],
     reason: 'Only before the enrolment begins',
@@ -243,9 +251,11 @@ const ACTION_RULES: Record<string, { statuses: Status[]; reason: string }> = {
   },
 }
 
-const allows = (key: string, status: Status) => {
+const allows = (key: string, course: CourseProgress) => {
+  // A certificate also needs the course to award one (DES-366).
+  if (key === 'download-certificate' && !getCourseRule(course.course).certificate) return false
   const rule = ACTION_RULES[key]
-  return !rule || rule.statuses.includes(status)
+  return !rule || rule.statuses.includes(course.status)
 }
 
 /* Short by default; only grows when part of the selection was left out, so the
@@ -346,6 +356,7 @@ function UserProfile() {
   const [assignOpen, setAssignOpen] = useState(false)
   // Due dates are editable via the bulk actions, so the list is state, not the const.
   const [courses, setCourses] = useState<CourseProgress[]>(COURSES)
+  const courseRules = useCourseRules()
   const [view, setView] = useState<CourseView>('all')
   /* Courses assigned from this profile join Course Progress as new enrolments: Not
      Started when they start today, Scheduled when they start later. Re-assigning a
@@ -421,6 +432,11 @@ function UserProfile() {
       setAttemptTarget(row)
       return
     }
+    if (key === 'download-certificate') {
+      downloadCourseCertificate(row)
+      showToast('success', 'Downloading certificate')
+      return
+    }
     if (key === 'send-reminder') {
       showToast('success', `Reminder sent to ${person.name} for “${row.course}”`)
       return
@@ -435,7 +451,7 @@ function UserProfile() {
   /* Rows in the selection an action can actually touch. A mixed selection runs
      on the eligible subset rather than blocking outright — with 40 rows picked,
      a greyed-out button never says which row poisoned it. */
-  const eligible = (key: string) => courses.filter((c) => selected.has(c.id) && allows(key, c.status))
+  const eligible = (key: string) => courses.filter((c) => selected.has(c.id) && allows(key, c))
 
   const handleBulkAction = (key: string) => {
     const n = selected.size
@@ -453,6 +469,14 @@ function UserProfile() {
     }
     if (key === 'unenrol') {
       setUnenrolTarget('bulk')
+      return
+    }
+    if (key === 'download-certificate') {
+      // One zip of the selected courses' certificates; a toast stands in for the file.
+      const applied = eligible(key).length
+      const skipped = n - applied
+      showToast('success', `Downloading ${applied} certificate${applied === 1 ? '' : 's'}${skipped ? ` · ${skipped} skipped` : ''}`)
+      setSelected(new Set())
       return
     }
     showToast('info', `${ROW_ACTION_LABEL[key] ?? 'Action'} - ${n} selected - coming soon`)
@@ -662,17 +686,15 @@ function UserProfile() {
       render: (row) => <DateCell value={row.completionDate} />,
     },
     {
-      key: 'certificate',
-      header: 'Certificate',
-      width: '0 0 120px',
-      render: (row) =>
-        row.status === 'Completed' ? (
-          <Button size="sm" variant="outlined" onClick={() => downloadCourseCertificate(row)}>
-            Download
-          </Button>
-        ) : (
-          <span className="up-muted">–</span>
-        ),
+      key: 'validUntil',
+      header: 'Valid until',
+      width: '0 0 108px',
+      // Completed rows only; a re-enrolled course in progress shows a dash (DES-366).
+      render: (row) => (
+        <DateCell
+          value={row.status === 'Completed' ? validUntil(row.completionDate, courseRules[row.course]?.validityMonths ?? null) : null}
+        />
+      ),
     },
     // Enrolment actions are for managers and admins; the person's own page is view only.
     ...(isOwn ? [] : [{
@@ -683,7 +705,7 @@ function UserProfile() {
       render: (row) => (
         <RowActionsMenu
           items={ROW_MENU_ITEMS.map((item) =>
-            allows(item.key, row.status) ? item : { ...item, disabled: true },
+            allows(item.key, row) ? item : { ...item, disabled: true },
           )}
           onSelect={(key) => handleRowAction(key, row)}
           ariaLabel={`Actions for ${row.course}`}
@@ -773,24 +795,6 @@ function UserProfile() {
             {/* Admin only, and a Course Progress action, so it lives in this tab: the
                 Assign Courses flow with this person already chosen (Courses → Review). */}
             <div className="up-view-ctas">
-              {/* Bulk download (Divjot, 2026-11-12): the certificates of the completed
-                  courses in view, as one ZIP; a toast stands in for the file. */}
-              {/* For managers and admins; the learner already has their own certificates. */}
-              {externalViewer !== 'learner' && (() => {
-                const n = rows.filter((r) => r.status === 'Completed').length
-                return (
-                  <Tooltip text="No certificates to download" icon={false} disabled={n > 0}>
-                    <Button
-                      variant={externalViewer === 'admin' ? 'outlined-2' : 'outlined'}
-                      icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
-                      disabled={!n}
-                      onClick={() => showToast('success', `Downloading ${n} certificate${n === 1 ? '' : 's'}`)}
-                    >
-                      Download Certificates
-                    </Button>
-                  </Tooltip>
-                )
-              })()}
               {!isLearnerView && (
                 <Button variant="outlined" onClick={() => setAssignOpen(true)}>
                   Assign Courses

@@ -5,6 +5,7 @@ import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
 import { getCourseDetail } from '@/pages/courses/mockCourse'
 import { SIGN_OFF_LEARNER, useSignOff } from '@/data/trainerSignOff'
 import { CERTIFICATE_COMPANY, FittedCourseCertificate } from '@/pages/courses/components/CourseCertificate/CourseCertificate'
+import { getCourseRule, validUntil } from '@/data/courseValidity'
 import './CertificateScreen.css'
 
 interface CertificateScreenProps {
@@ -44,6 +45,7 @@ function CertificateScreen({ courseId, onClose, onDownload }: CertificateScreenP
             learnerName={SIGN_OFF_LEARNER.name}
             courseTitle={course.title}
             issuedOn={signOff?.signedAt ?? new Date().toISOString()}
+            validUntil={validUntil((signOff?.signedAt ?? new Date().toISOString()).slice(0, 10), getCourseRule(course.title).validityMonths)}
             signOff={signOff}
           />
         </div>

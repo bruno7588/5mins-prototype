@@ -176,3 +176,26 @@
   color: var(--text-error);
   font-weight: 500;
 }
+
+/* Completion validity (DES-366): "Completion valid for" [number] [Months/Years] on one
+   row, as External Training's duration + unit (.aet-row). */
+.cs-validity-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+.cs-validity-int {
+  width: auto;
+}
+
+.cs-validity-unit {
+  width: 160px;
+}
+
+.cs-validity-error {
+  margin-top: calc(-1 * var(--space-s));
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-error);
+}

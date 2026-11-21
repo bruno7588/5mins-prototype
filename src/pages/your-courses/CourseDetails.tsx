@@ -726,7 +726,7 @@ function CourseDetails() {
         ) : activeTab === 'signoff' ? (
           <SignOffTab />
         ) : activeTab === 'settings' ? (
-          <CourseSettings />
+          <CourseSettings courseTitle={courseTitle} />
         ) : (
           <section className="cd-placeholder">This tab isn’t part of this prototype yet.</section>
         )}

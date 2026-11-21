@@ -6,6 +6,8 @@ import Checkbox from '../../../../components/Checkbox/Checkbox'
 import Toggle from '../../../../components/Toggle/Toggle'
 import InputInteger from '../../../../components/InputInteger/InputInteger'
 import Collapse from '../../../../components/Collapse/Collapse'
+import Dropdown from '@/components/Dropdown/Dropdown'
+import { formatValidity, getCourseRule, setCourseRule } from '@/data/courseValidity'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
 import { SETTINGS_TAB_COURSE_ID } from '@/pages/account/data/mockAudit'
 import './CourseSettings.css'
@@ -19,6 +21,7 @@ type SettingKey =
   | 'accessAfterDue'
   | 'rewards'
   | 'certificate'
+  | 'completionValidity'
   | 'autoReset'
   | 'lessonsInOrder'
   | 'fastForward'
@@ -46,6 +49,7 @@ const INITIAL_VALUES: Record<SettingKey, boolean> = {
   accessAfterDue: false,
   rewards: false,
   certificate: false,
+  completionValidity: false,
   autoReset: false,
   lessonsInOrder: false,
   fastForward: false,
@@ -57,15 +61,39 @@ const INITIAL_QUIZ_ATTEMPTS = 2
 const INITIAL_MAX_ATTEMPTS = 3
 const INITIAL_DUE_DAYS = 5
 
-function CourseSettings() {
-  const [values, setValues] = useState<Record<SettingKey, boolean>>(INITIAL_VALUES)
+type ValidityUnit = 'months' | 'years'
+const UNIT_OPTIONS = [
+  { value: 'months', label: 'Months' },
+  { value: 'years', label: 'Years' },
+]
+/* Up to 20 years either way (DES-366), matching External Training's 240 months. */
+const VALIDITY_MAX: Record<ValidityUnit, number> = { months: 240, years: 20 }
+
+/** The saved period as the field shows it: whole years when it divides, else months. */
+function validityFields(months: number | null): { amount: number; unit: ValidityUnit } {
+  if (months == null) return { amount: 3, unit: 'years' }
+  return months % 12 === 0 ? { amount: months / 12, unit: 'years' } : { amount: months, unit: 'months' }
+}
+
+function CourseSettings({ courseTitle }: { courseTitle: string }) {
+  const rule = getCourseRule(courseTitle)
+  const initialValues: Record<SettingKey, boolean> = {
+    ...INITIAL_VALUES,
+    certificate: rule.certificate,
+    completionValidity: rule.validityMonths != null,
+  }
+  const initialValidity = validityFields(rule.validityMonths)
+  const [values, setValues] = useState<Record<SettingKey, boolean>>(initialValues)
+  const [validityAmount, setValidityAmount] = useState(initialValidity.amount)
+  const [validityUnit, setValidityUnit] = useState<ValidityUnit>(initialValidity.unit)
+  const [savedValidity, setSavedValidity] = useState(initialValidity)
   const [passScore, setPassScore] = useState(INITIAL_PASS_SCORE)
   const [quizAttempts, setQuizAttempts] = useState(INITIAL_QUIZ_ATTEMPTS)
   const [maxAttempts, setMaxAttempts] = useState(INITIAL_MAX_ATTEMPTS)
   const [newAttemptDueDays, setNewAttemptDueDays] = useState(INITIAL_DUE_DAYS)
 
   // Last-saved snapshot — a section's Update button is enabled only while it has unsaved changes.
-  const [savedValues, setSavedValues] = useState<Record<SettingKey, boolean>>(INITIAL_VALUES)
+  const [savedValues, setSavedValues] = useState<Record<SettingKey, boolean>>(initialValues)
   const [savedPassScore, setSavedPassScore] = useState(INITIAL_PASS_SCORE)
   const [savedQuizAttempts, setSavedQuizAttempts] = useState(INITIAL_QUIZ_ATTEMPTS)
   const [savedMaxAttempts, setSavedMaxAttempts] = useState(INITIAL_MAX_ATTEMPTS)
@@ -85,6 +113,17 @@ function CourseSettings() {
       if (key === 'enablePassScore' && !next.enablePassScore) next.autoReset = false
       return next
     })
+
+  // A period outside 1 to 20 years (or 240 months), e.g. 35 left in the field after
+  // switching Months to Years, blocks Save until it is fixed.
+  const validityInvalid =
+    values.completionValidity && (validityAmount < 1 || validityAmount > VALIDITY_MAX[validityUnit])
+  const validityMonths = values.completionValidity
+    ? validityAmount * (validityUnit === 'years' ? 12 : 1)
+    : null
+  const savedValidityMonths = savedValues.completionValidity
+    ? savedValidity.amount * (savedValidity.unit === 'years' ? 12 : 1)
+    : null
 
   const sections: SettingSection[] = [
     {
@@ -201,6 +240,41 @@ function CourseSettings() {
             </>
           ),
         },
+        {
+          key: 'completionValidity',
+          title: 'Completion validity',
+          description: 'Set how long a completion counts for, from its completion date. Off = No expiry.',
+          expand: (
+            <div className="cs-card-expand">
+              <div className="cs-validity-row">
+                <InputInteger
+                  className="input-integer--inline cs-validity-int"
+                  label="Completion valid for"
+                  value={validityAmount}
+                  onChange={setValidityAmount}
+                  min={1}
+                  max={VALIDITY_MAX[validityUnit]}
+                  validation={validityInvalid ? 'error' : 'none'}
+                />
+                <Dropdown
+                  options={UNIT_OPTIONS}
+                  value={validityUnit}
+                  onChange={(v) => setValidityUnit(v as ValidityUnit)}
+                  className="cs-validity-unit"
+                />
+              </div>
+              {validityInvalid && (
+                <p className="cs-validity-error" role="alert">
+                  Enter a whole number from 1 to {VALIDITY_MAX[validityUnit]}
+                </p>
+              )}
+              <p className="cs-card-desc">
+                Applies to past and new completions. Valid until shows in Learning Records
+                {values.certificate ? ', on Course Progress and on certificates.' : ' and on Course Progress.'}
+              </p>
+            </div>
+          ),
+        },
       ],
     },
     {
@@ -278,7 +352,9 @@ function CourseSettings() {
         passScore !== savedPassScore ||
         (values.allowReattempts && quizAttempts !== savedQuizAttempts) ||
         (values.autoReset && (maxAttempts !== savedMaxAttempts || newAttemptDueDays !== savedDueDays)))
-    return boolChanged || nestedChanged
+    const hasValidity = section.items.some((item) => item.key === 'completionValidity')
+    const validityChanged = hasValidity && validityMonths !== savedValidityMonths
+    return boolChanged || nestedChanged || validityChanged
   }
 
   function saveSection(section: SettingSection) {
@@ -304,6 +380,17 @@ function CourseSettings() {
       setSavedQuizAttempts(quizAttempts)
       setSavedMaxAttempts(maxAttempts)
       setSavedDueDays(newAttemptDueDays)
+    }
+
+    if (section.items.some((item) => item.key === 'completionValidity')) {
+      setSavedValidity({ amount: validityAmount, unit: validityUnit })
+      setCourseRule(courseTitle, { validityMonths, certificate: values.certificate })
+      if (validityMonths !== savedValidityMonths) {
+        toast.show(
+          'success',
+          validityMonths == null ? 'Completion validity removed' : `Completion validity set to ${formatValidity(validityMonths)}`,
+        )
+      }
     }
 
     if (autoResetChanged) {
@@ -345,7 +432,10 @@ function CourseSettings() {
             ))}
             <div className="cs-cta">
               <Button
-                disabled={!sectionDirty(section)}
+                disabled={
+                  !sectionDirty(section) ||
+                  (validityInvalid && section.items.some((item) => item.key === 'completionValidity'))
+                }
                 onClick={() => saveSection(section)}
               >
                 Save

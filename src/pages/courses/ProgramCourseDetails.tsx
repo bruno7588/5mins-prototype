@@ -46,6 +46,7 @@ import CertificateReady from './components/CertificateReady/CertificateReady'
 import SignOffCard from './components/SignOffCard/SignOffCard'
 import SignOffModal from './components/SignOffModal/SignOffModal'
 import { CERTIFICATE_COMPANY, FittedCourseCertificate } from './components/CourseCertificate/CourseCertificate'
+import { getCourseRule, validUntil } from '@/data/courseValidity'
 import {
   SIGN_OFF_LEARNER,
   courseProgressWithSignOff,
@@ -428,6 +429,7 @@ function ProgramCourseDetails() {
           learnerName={SIGN_OFF_LEARNER.name}
           courseTitle={course.title}
           issuedOn={signOff?.signedAt ?? new Date().toISOString()}
+          validUntil={validUntil((signOff?.signedAt ?? new Date().toISOString()).slice(0, 10), getCourseRule(course.title).validityMonths)}
           signOff={signOff}
         />
         <Button

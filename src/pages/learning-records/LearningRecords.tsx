@@ -7,7 +7,9 @@ import ExternalTraining from '@/pages/account/components/ExternalTraining/Extern
 import { isFullAdmin } from '@/data/externalTraining'
 import Button from '@/components/Button/Button'
 import Table, { type Column } from '@/components/Table/Table'
-import { Calendar, Note1 } from 'iconsax-react'
+import { Calendar, ImportCurve, Note1 } from 'iconsax-react'
+import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
+import { useCourseRules, validUntil } from '@/data/courseValidity'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import CsvIcon from '../../components/icons/CsvIcon'
 import Dropdown from '../../components/Dropdown/Dropdown'
@@ -64,6 +66,8 @@ interface CourseRecord {
   duration: string
   progress: number
   status: Status
+  // False when the learner completed below the course pass score: no certificate (DEV-5171).
+  passed?: boolean
   // Present only on records belonging to a deactivated user; hidden by default.
   deactivation?: { type: DeactivationType; on: string }
 }
@@ -71,7 +75,7 @@ interface CourseRecord {
 const courseData: CourseRecord[] = [
   { id: '1', name: 'Michael Thompson', email: 'michael.t@company.com', team: 'People & Performance', region: 'Southeast Asia', course: 'HBR Guide to Communication Success', category: 'Performance', enrolment: 'Current', startDate: '2026-04-20', dueDate: '2026-05-17', completionDate: '2026-06-18', daysLate: 32, duration: '20 mins', progress: 100, status: 'Completed' },
   { id: '2', name: 'Jessica Hart', email: 'jessica.h@company.com', team: 'People & Performance', region: 'Southeast Asia', course: 'HBR Guide to Communication Success', category: 'Performance', enrolment: 'Current', startDate: '2026-04-20', dueDate: '2026-05-17', completionDate: '2026-06-12', daysLate: 26, duration: '20 mins', progress: 100, status: 'Completed' },
-  { id: '3', name: 'David Johnson', email: 'david.j@company.com', team: 'People & Performance', region: 'Southeast Asia', course: 'HBR Guide to Communication Success', category: 'Performance', enrolment: 'Current', startDate: '2026-04-20', dueDate: '2026-05-17', completionDate: '2026-05-29', daysLate: 12, duration: '20 mins', progress: 100, status: 'Completed' },
+  { id: '3', name: 'David Johnson', email: 'david.j@company.com', team: 'People & Performance', region: 'Southeast Asia', course: 'HBR Guide to Communication Success', category: 'Performance', enrolment: 'Current', startDate: '2026-04-20', dueDate: '2026-05-17', completionDate: '2026-05-29', daysLate: 12, duration: '20 mins', progress: 100, status: 'Completed', passed: false },
   { id: '4', name: 'Noah Williams', email: 'noah.w@company.com', team: 'Operations', region: 'Europe', course: 'Food Safety Essentials', category: 'Safety', enrolment: 'Current', startDate: '2026-04-20', dueDate: '2026-05-17', completionDate: null, daysLate: null, duration: '20 mins', progress: 0, status: 'Not Started' },
   { id: '5', name: 'Mei Tanaka', email: 'mei.t@company.com', team: 'Operations', region: 'Asia Pacific', course: 'Harassment Prevention', category: 'Compliance', enrolment: 'Current', startDate: '2026-04-20', dueDate: '2026-05-17', completionDate: null, daysLate: null, duration: '20 mins', progress: 0, status: 'Not Started' },
   { id: '6', name: 'Ethan Brooks', email: 'ethan.b@company.com', team: 'Food & Beverage', region: 'Europe', course: 'Allergen Awareness', category: 'Safety', enrolment: 'Current', startDate: '2026-04-20', dueDate: '2026-05-17', completionDate: null, daysLate: null, duration: '20 mins', progress: 45, status: 'In Progress' },
@@ -174,6 +178,14 @@ function LearningRecords() {
   const headerAddRef = useRef<HTMLDivElement>(null)
   const bottomAddRef = useRef<HTMLDivElement>(null)
   const { toasts, show: showToast } = useToast()
+  const courseRules = useCourseRules()
+
+  /* DES-366: each completion's own Valid until, from its course's current period. */
+  const recordValidUntil = (r: CourseRecord) =>
+    r.status === 'Completed' ? validUntil(r.completionDate, courseRules[r.course]?.validityMonths ?? null) : null
+  /* DEV-5171: completed, met the pass score, on a course with certificates. */
+  const hasCertificate = (r: CourseRecord) =>
+    r.status === 'Completed' && r.passed !== false && !!courseRules[r.course]?.certificate
 
   const toggleExpanded = useCallback(() => {
     setFiltersExpanded((e) => !e)
@@ -322,8 +334,8 @@ function LearningRecords() {
       } else if (ctrl.kind === 'date') {
         const cv = controlValues[id] as { from: string; to: string } | undefined
         const field = DATE_FILTER_FIELD[id]
-        if (!cv || !field || (!cv.from && !cv.to)) continue
-        const val = row[field] as string | null
+        if (!cv || (!field && id !== 'valid-until') || (!cv.from && !cv.to)) continue
+        const val = id === 'valid-until' ? recordValidUntil(row) : (row[field!] as string | null)
         if (!val) return false
         if (cv.from && val < cv.from) return false
         if (cv.to && val > cv.to) return false
@@ -524,6 +536,7 @@ function LearningRecords() {
     { key: 'startDate', header: 'Start date', width: '0 0 94px', render: (row) => <DateCell value={row.startDate} /> },
     { key: 'dueDate', header: 'Due date', width: '0 0 94px', render: (row) => <DateCell value={row.dueDate} /> },
     { key: 'completionDate', header: 'Completion date', width: '0 0 94px', render: (row) => <DateCell value={row.completionDate} /> },
+    { key: 'validUntil', header: 'Valid until', width: '0 0 94px', render: (row) => <DateCell value={recordValidUntil(row)} /> },
     {
       key: 'daysLate',
       header: 'Days late',
@@ -538,7 +551,27 @@ function LearningRecords() {
       width: '0 0 128px',
       render: (row) => <span className={`lrp-badge ${STATUS_BADGE[row.status]}`}>{row.status}</span>,
     },
+    /* Records with no certificate show no download (DEV-5171). */
+    {
+      key: 'actions',
+      header: '',
+      width: '0 0 52px',
+      align: 'center',
+      render: (row) =>
+        hasCertificate(row) ? (
+          <RowActionsMenu
+            items={[{ key: 'download-certificate', label: 'Download certificate', icon: <ImportCurve size={20} color="currentColor" variant="Linear" /> }]}
+            onSelect={() => showToast('success', 'Downloading certificate')}
+            ariaLabel={`Actions for ${row.name}, ${row.course}`}
+          />
+        ) : null,
+    },
   ]
+
+  /* DEV-5170: one certificate per person per course (their latest passing completion)
+     across the records in view; the zip is prepared in the background and emailed. */
+  const certificateCount = new Set(displayedCourseRows.filter(hasCertificate).map((r) => `${r.email}|${r.course}`)).size
+  const CERTIFICATE_LIMIT = 1000
 
 
   return (
@@ -609,7 +642,7 @@ function LearningRecords() {
                 <label htmlFor="lrp-show-archived" className="lrp-also-text">Archived enrolments</label>
                 <Tooltip
                   position="Top"
-                  text="Include past enrolments from before a learner was re-enrolled. Off by default."
+                  text="Include past enrolments from before a learner was re-enrolled. Each keeps its own Valid until date. Off by default."
                 />
               </div>
               <div className="lrp-also-item">
@@ -651,6 +684,30 @@ function LearningRecords() {
               <Button variant="outlined-2" icon={<CsvIcon size={20} color="currentColor" />} onClick={downloadCurrentView}>
                 Download Report
               </Button>
+              <Tooltip
+                icon={false}
+                position="Bottom"
+                disabled={certificateCount > 0 && certificateCount <= CERTIFICATE_LIMIT}
+                text={
+                  certificateCount > CERTIFICATE_LIMIT
+                    ? 'Over 1,000 certificates. Narrow your filters to download them.'
+                    : 'No certificates in these records.'
+                }
+              >
+                <Button
+                  variant="outlined-2"
+                  icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
+                  disabled={certificateCount === 0 || certificateCount > CERTIFICATE_LIMIT}
+                  onClick={() =>
+                    showToast(
+                      'success',
+                      `Preparing ${certificateCount} certificate${certificateCount === 1 ? '' : 's'}. We'll email you a link.`,
+                    )
+                  }
+                >
+                  Download Certificates ({certificateCount})
+                </Button>
+              </Tooltip>
               {/* Saved reports — opens the list side drawer; disabled until one exists */}
               <Tooltip
                 icon={false}

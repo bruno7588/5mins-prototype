@@ -166,7 +166,7 @@ function ExternalTraining() {
       render: (c) => c.providerIds.map(providerName).filter(Boolean).join(', ') || '–',
     },
     { key: 'duration', header: 'Duration', width: '0 0 112px', render: (c) => durationLabel(c.duration) },
-    { key: 'retraining', header: 'Expiry', width: '0 0 200px', render: (c) => retrainingLabel(c.retrainingMonths) },
+    { key: 'retraining', header: 'Valid for', width: '0 0 200px', render: (c) => retrainingLabel(c.retrainingMonths) },
     { key: 'records', header: recordsHeader('course'), width: '0 0 184px', align: 'center', render: (c) => courseRecords(c.id) },
     {
       key: 'actions',

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ComponentType, type RefObjec
 import { type DropdownOption } from '../../../../components/Dropdown/Dropdown'
 import {
   Calendar,
+  Calendar1,
   CalendarAdd,
   CalendarTick,
   Category,
@@ -64,6 +65,7 @@ const FILTER_GROUPS: FilterGroup[] = [
       { id: 'start-date', title: 'Start Date', description: 'When the learner was enrolled', Icon: CalendarAdd },
       { id: 'due-date', title: 'Due Date', description: 'When the learner was due to complete the course', Icon: Calendar },
       { id: 'completion-date', title: 'Completion Date', description: 'When the learner finished the course', Icon: CalendarTick },
+      { id: 'valid-until', title: 'Valid Until', description: 'When the completion stops counting, from the course validity period', Icon: Calendar1 },
       { id: 'days-late', title: 'Days Late', description: 'No of days learner was late to complete or is overdue', Icon: Danger },
     ],
   },
@@ -204,6 +206,7 @@ const CONTROL_BY_ID: Record<string, FilterControl> = {
   'start-date': { kind: 'date' },
   'due-date': { kind: 'date' },
   'completion-date': { kind: 'date' },
+  'valid-until': { kind: 'date' },
   'original-hire-date': { kind: 'date' },
 }
 

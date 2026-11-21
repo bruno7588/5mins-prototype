@@ -19,8 +19,10 @@ interface CourseCertificateProps {
   companyName: string
   learnerName: string
   courseTitle: string
-  /** ISO date of issue. */
+  /** ISO date of completion. */
   issuedOn: string
+  /** DES-366: ISO Valid until date, only when the course has a validity period. Never "Expired". */
+  validUntil?: string | null
   /** DES-335: the licence holder row, shown when the course needs sign-off. */
   signOff?: SignOffRecord
 }
@@ -40,7 +42,7 @@ function Field({ label, value, muted }: { label: string; value: string; muted?: 
  * inside a 24px warning-100 frame (948 x 645 overall). It is paper, so it reads the
  * same in light and dark mode: raw palette tokens only.
  */
-function CourseCertificate({ companyName, learnerName, courseTitle, issuedOn, signOff }: CourseCertificateProps) {
+function CourseCertificate({ companyName, learnerName, courseTitle, issuedOn, validUntil, signOff }: CourseCertificateProps) {
   return (
     <article className="ccert" aria-label={`Certificate of completion for ${learnerName}`}>
       <img className="ccert__medallion" src={medallion} alt="" width={374.632} height={426.81} />
@@ -66,7 +68,8 @@ function CourseCertificate({ companyName, learnerName, courseTitle, issuedOn, si
             <Field label="Signed by personal licence holder" value={signOff.holderName} />
             <Field label="Licence number" value={signOff.licenceNumber} />
             <Field label="Issuing licensing board" value={signOff.issuingBoard} />
-            <Field label="Date of issue" value={formatSignOffDate(issuedOn)} />
+            <Field label="Date of completion" value={formatSignOffDate(issuedOn)} />
+            {validUntil ? <Field label="Valid until" value={formatSignOffDate(validUntil)} /> : null}
           </dl>
         ) : null}
       </div>
@@ -74,7 +77,8 @@ function CourseCertificate({ companyName, learnerName, courseTitle, issuedOn, si
       <footer className="ccert__footer">
         <dl className="ccert__fields">
           {/* With a sign-off the date sits in its row (issued when signed); otherwise here. */}
-          {signOff ? null : <Field label="Date of issue" value={formatSignOffDate(issuedOn)} />}
+          {signOff ? null : <Field label="Date of completion" value={formatSignOffDate(issuedOn)} />}
+          {signOff || !validUntil ? null : <Field label="Valid until" value={formatSignOffDate(validUntil)} />}
           <Field label="Certificate ID" value={CERTIFICATE_ID} muted />
         </dl>
         <div className="ccert__logos">
