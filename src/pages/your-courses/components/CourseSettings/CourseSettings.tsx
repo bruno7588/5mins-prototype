@@ -269,7 +269,7 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
                 </p>
               )}
               <p className="cs-card-desc">
-                Applies to past and new completions. Valid until shows in Learning Records
+                Applies to past and new completions. Expiry date shows in Learning Records
                 {values.certificate ? ', on Course Progress and on certificates.' : ' and on Course Progress.'}
               </p>
             </div>

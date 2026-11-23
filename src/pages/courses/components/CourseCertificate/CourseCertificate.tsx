@@ -69,7 +69,7 @@ function CourseCertificate({ companyName, learnerName, courseTitle, issuedOn, va
             <Field label="Licence number" value={signOff.licenceNumber} />
             <Field label="Issuing licensing board" value={signOff.issuingBoard} />
             <Field label="Date of completion" value={formatSignOffDate(issuedOn)} />
-            {validUntil ? <Field label="Valid until" value={formatSignOffDate(validUntil)} /> : null}
+            {validUntil ? <Field label="Expiry date" value={formatSignOffDate(validUntil)} /> : null}
           </dl>
         ) : null}
       </div>
@@ -78,7 +78,7 @@ function CourseCertificate({ companyName, learnerName, courseTitle, issuedOn, va
         <dl className="ccert__fields">
           {/* With a sign-off the date sits in its row (issued when signed); otherwise here. */}
           {signOff ? null : <Field label="Date of completion" value={formatSignOffDate(issuedOn)} />}
-          {signOff || !validUntil ? null : <Field label="Valid until" value={formatSignOffDate(validUntil)} />}
+          {signOff || !validUntil ? null : <Field label="Expiry date" value={formatSignOffDate(validUntil)} />}
           <Field label="Certificate ID" value={CERTIFICATE_ID} muted />
         </dl>
         <div className="ccert__logos">

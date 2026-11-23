@@ -376,7 +376,7 @@ const EXTERNAL_META: FilterMeta = {
   learner: { title: 'Learner', description: 'Filter by the person the training belongs to', Icon: Profile },
   course: { title: 'Course', description: 'Filter by approved course', Icon: Book1 },
   provider: { title: 'Provider', description: 'Filter by training provider', Icon: Buildings2 },
-  retraining: { title: 'Valid until', description: 'Overdue, due soon, valid or no expiry', Icon: Calendar },
+  retraining: { title: 'Expiry date', description: 'Overdue, due soon, valid or no expiry', Icon: Calendar },
   result: { title: 'Result', description: 'Passed or not passed', Icon: TickCircle },
 }
 const EXTERNAL_GROUPS: FilterGroup[] = [

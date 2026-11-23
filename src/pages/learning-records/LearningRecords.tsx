@@ -536,7 +536,7 @@ function LearningRecords() {
     { key: 'startDate', header: 'Start date', width: '0 0 94px', render: (row) => <DateCell value={row.startDate} /> },
     { key: 'dueDate', header: 'Due date', width: '0 0 94px', render: (row) => <DateCell value={row.dueDate} /> },
     { key: 'completionDate', header: 'Completion date', width: '0 0 94px', render: (row) => <DateCell value={row.completionDate} /> },
-    { key: 'validUntil', header: 'Valid until', width: '0 0 94px', render: (row) => <DateCell value={recordValidUntil(row)} /> },
+    { key: 'validUntil', header: 'Expiry date', width: '0 0 94px', render: (row) => <DateCell value={recordValidUntil(row)} /> },
     {
       key: 'daysLate',
       header: 'Days late',
@@ -567,11 +567,6 @@ function LearningRecords() {
         ) : null,
     },
   ]
-
-  /* DEV-5170: one certificate per person per course (their latest passing completion)
-     across the records in view; the zip is prepared in the background and emailed. */
-  const certificateCount = new Set(displayedCourseRows.filter(hasCertificate).map((r) => `${r.email}|${r.course}`)).size
-  const CERTIFICATE_LIMIT = 1000
 
 
   return (
@@ -642,7 +637,7 @@ function LearningRecords() {
                 <label htmlFor="lrp-show-archived" className="lrp-also-text">Archived enrolments</label>
                 <Tooltip
                   position="Top"
-                  text="Include past enrolments from before a learner was re-enrolled. Each keeps its own Valid until date. Off by default."
+                  text="Include past enrolments from before a learner was re-enrolled. Each keeps its own expiry date. Off by default."
                 />
               </div>
               <div className="lrp-also-item">
@@ -684,30 +679,6 @@ function LearningRecords() {
               <Button variant="outlined-2" icon={<CsvIcon size={20} color="currentColor" />} onClick={downloadCurrentView}>
                 Download Report
               </Button>
-              <Tooltip
-                icon={false}
-                position="Bottom"
-                disabled={certificateCount > 0 && certificateCount <= CERTIFICATE_LIMIT}
-                text={
-                  certificateCount > CERTIFICATE_LIMIT
-                    ? 'Over 1,000 certificates. Narrow your filters to download them.'
-                    : 'No certificates in these records.'
-                }
-              >
-                <Button
-                  variant="outlined-2"
-                  icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
-                  disabled={certificateCount === 0 || certificateCount > CERTIFICATE_LIMIT}
-                  onClick={() =>
-                    showToast(
-                      'success',
-                      `Preparing ${certificateCount} certificate${certificateCount === 1 ? '' : 's'}. We'll email you a link.`,
-                    )
-                  }
-                >
-                  Download Certificates ({certificateCount})
-                </Button>
-              </Tooltip>
               {/* Saved reports — opens the list side drawer; disabled until one exists */}
               <Tooltip
                 icon={false}

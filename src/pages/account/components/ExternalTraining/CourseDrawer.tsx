@@ -96,7 +96,7 @@ function CourseDrawer({ open, course, initialName = '', onClose, onSaved }: Prop
         title={course ? 'Edit course' : 'Add course'}
         subtitle={
           course && recordCount > 0
-            ? `Changes apply to new records only. The ${recordCount} existing record${recordCount === 1 ? '' : 's'} keep their Valid until dates.`
+            ? `Changes apply to new records only. The ${recordCount} existing record${recordCount === 1 ? '' : 's'} keep their expiry dates.`
             : "Courses on the approved list can be recorded on people's profiles and in uploads."
         }
         footer={<Button onClick={save}>{course ? 'Save Changes' : 'Save Course'}</Button>}

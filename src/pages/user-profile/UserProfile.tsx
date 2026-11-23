@@ -687,7 +687,7 @@ function UserProfile() {
     },
     {
       key: 'validUntil',
-      header: 'Valid until',
+      header: 'Expiry date',
       width: '0 0 108px',
       // Completed rows only; a re-enrolled course in progress shows a dash (DES-366).
       render: (row) => (
@@ -990,8 +990,8 @@ function UserProfile() {
             {/* Mobile web only: the Progress tab holds My Team and My Learning. */}
             {onMyLearning && (
               <div className="mt-mobile-chips">
-                <Chip label="My Team" onClick={() => navigate('/my-team')} />
                 <Chip label="My Learning" selected />
+                <Chip label="My Team" onClick={() => navigate('/my-team')} />
               </div>
             )}
             {page}

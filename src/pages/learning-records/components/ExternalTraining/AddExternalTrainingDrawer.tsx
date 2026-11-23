@@ -764,12 +764,12 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
                 {course &&
                   (result === 'Not Passed' ? (
                     <div className="aet-field">
-                      <span className="aet-label">Valid until</span>
-                      <span className="aetd-value">Training that wasn't passed has no Valid until date.</span>
+                      <span className="aet-label">Expiry date</span>
+                      <span className="aetd-value">Training that wasn't passed has no expiry date.</span>
                     </div>
                   ) : (
                     <div className="aet-field">
-                      <span className="aet-label">Valid until</span>
+                      <span className="aet-label">Expiry date</span>
                       {/* The rule as plain text; its months as the read-only Duration shows
                           "3 Days": a number field and a unit field. */}
                       <div className="aet-row aet-row--center aetd-readonly-row">
