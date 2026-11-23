@@ -45,7 +45,7 @@ The rules every learner mobile app screen shares. Component specs stay in their 
 | Screens > Type | Mobile App | `PhoneFrame` + `TopNav` + `TabNav` | No shared screen component; each screen in `src/pages/mobile/` |
 | Screens > Body (slot) | content | screen body | 16px padding, 16px gap |
 | Top nav/ App > Page | Home / Search / Progress / Feed / Profile / Detail page / Skill / Lesson feed | `TopNav` `variant` | 'home' / 'search' / 'chips' / 'title' / 'profile' / 'detail' / 'skill' / 'lesson-feed' |
-| Tab nav > Page | Enabled / Home / Search / Progress / Feed / Profile | `TabNav` `active` | undefined / 'home' / 'search' / 'progress' / 'feed' / 'profile' |
+| Tab nav > Page | Enabled / Home / Search / My Learning / My Team / Feed | `TabNav` `active` | undefined / 'home' / 'search' / 'learning' / 'team' / 'feed' |
 | Device (on shared components) | Mobile | `device="mobile"` | EmptyState, StatTile |
 
 - **Figma only:** the iOS status bar (the prototype draws a lightweight equivalent).

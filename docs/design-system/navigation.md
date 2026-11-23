@@ -180,7 +180,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
-| Tab nav · Page | Enabled / Home / Search / Progress / Feed / Profile | `active` | `undefined` / `home` / `search` / `team` / `learning` / `feed` | Enabled = no tab selected. Code has Home, Search, My Team, My Learning, Feed (DES-369); the Library set still shows Progress and Profile until it is updated |
+| Tab nav · Page | Enabled / Home / Search / My Learning / My Team / Feed | `active` | `undefined` / `home` / `search` / `learning` / `team` / `feed` | Enabled = no tab selected. Order Home, Search, My Learning, My Team, Feed (Library synced 2026-11-23). Markup: `nav` (aria-label "Main") > `ul` > `li` > `button` with `aria-current="page"` on the active tab; icons `aria-hidden` |
 | Top nav/ App · Page | Home / Search / Progress / Feed / Profile / Detail page / Skill / Lesson feed / Mobile web | `variant` | `home` / `search` / `chips` / `title` / `profile` / `detail` / `skill` / `lesson-feed` / n/a | Progress uses the `chips` variant, Feed the `title` variant |
 
 - **Figma only:** `Page=Mobile web` (browser-chrome mock, reference only, not built).

@@ -244,8 +244,8 @@ export const learnerSideItems: { label: string; icon: typeof Home2; path?: strin
   { label: 'Your Workspace', icon: Profile2User, path: '/workspace' },
   { label: 'Knowledge Hub', icon: MonitorMobbile },
   { label: 'Search', icon: SearchNormal1 },
-  { label: 'My Team', icon: Award, path: '/my-team' },
   { label: 'My Learning', icon: Medal, path: '/my-learning' },
+  { label: 'My Team', icon: Award, path: '/my-team' },
   { label: 'Feed', icon: Messages2 },
 ]
 
@@ -617,8 +617,8 @@ function MyTeam() {
         <section className="mt-body">
           {/* Mobile web only: the Progress tab holds My Team and My Learning. */}
           <div className="mt-mobile-chips">
-            <Chip label="My Team" selected />
             <Chip label="My Learning" onClick={() => navigate('/my-learning')} />
+            <Chip label="My Team" selected />
           </div>
           <header className="mt-pageheader">
             <div className="mt-pageheader__row">
