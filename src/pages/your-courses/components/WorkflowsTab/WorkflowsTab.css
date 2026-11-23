@@ -280,6 +280,27 @@
   color: var(--text-disabled);
 }
 
+/* Excluded managers as badges, on their own line under "Don't send to" */
+.workflow-card__rule:has(.workflow-card__excluded) {
+  row-gap: 0; /* the badge row carries its own top space, so a collapsed row leaves no gap */
+}
+
+.workflow-card__excluded {
+  flex-basis: 100%;
+}
+
+.workflow-card__excluded-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  padding-top: var(--space-s);
+}
+
+/* The badges sit on a card, so they take the elevated input fill */
+.workflow-card__excluded-list .badge--informative {
+  background: var(--input-background-elevated);
+}
+
 /* Compact inline dropdown — overrides default 100% width */
 .dropdown-field.workflow-card__inline-dropdown {
   width: auto;

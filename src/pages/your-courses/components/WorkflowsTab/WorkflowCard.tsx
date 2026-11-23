@@ -4,6 +4,7 @@ import Badge from '../../../../components/Badge/Badge'
 import Tooltip from '../../../../components/Tooltip/Tooltip'
 import Collapse from '@/components/Collapse/Collapse'
 import Button from '@/components/Button/Button'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 
 interface Props {
   enabled: boolean
@@ -48,6 +49,7 @@ function WorkflowCard({
   onExcludedChange,
   onPreview,
 }: Props) {
+  const reduceMotion = useReducedMotion()
   return (
     <article className="workflow-card">
       <header className="workflow-card__header">
@@ -101,6 +103,35 @@ function WorkflowCard({
             readOnly={!enabled}
             className="workflow-card__inline-dropdown"
           />
+          {/* Excluded managers at a glance; each × removes one, as unticking it in the menu does. */}
+          <div className="workflow-card__excluded">
+            <Collapse open={excluded.length > 0}>
+              <div className="workflow-card__excluded-list">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  {excluded.map((id) => {
+                    const name = MANAGERS.find((m) => m.id === id)?.name ?? id
+                    return (
+                      <motion.span
+                        key={id}
+                        layout
+                        initial={{ opacity: 0, scale: reduceMotion ? 1 : 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: reduceMotion ? 1 : 0.9 }}
+                        transition={reduceMotion ? { duration: 0 } : { duration: 0.2, ease: [0.42, 0, 0.58, 1] }}
+                      >
+                        <Badge
+                          type="informative"
+                          label={name}
+                          onDismiss={enabled ? () => onExcludedChange(excluded.filter((e) => e !== id)) : undefined}
+                          dismissLabel={`Remove ${name} from exclusions`}
+                        />
+                      </motion.span>
+                    )
+                  })}
+                </AnimatePresence>
+              </div>
+            </Collapse>
+          </div>
         </li>
       </ul>
 
