@@ -20,6 +20,7 @@ type SettingKey =
   | 'allowReattempts'
   | 'accessAfterDue'
   | 'rewards'
+  | 'electronicSignature'
   | 'certificate'
   | 'completionValidity'
   | 'autoReset'
@@ -48,6 +49,7 @@ const INITIAL_VALUES: Record<SettingKey, boolean> = {
   allowReattempts: true,
   accessAfterDue: false,
   rewards: false,
+  electronicSignature: false,
   certificate: false,
   completionValidity: false,
   autoReset: false,
@@ -60,6 +62,14 @@ const INITIAL_PASS_SCORE = 80
 const INITIAL_QUIZ_ATTEMPTS = 2
 const INITIAL_MAX_ATTEMPTS = 3
 const INITIAL_DUE_DAYS = 5
+
+/* Demo workspace categories, edited under Account & Settings > Categories. */
+const CATEGORY_OPTIONS = [
+  { value: 'compliance', label: 'Compliance' },
+  { value: 'marketing', label: 'Marketing' },
+  { value: 'co-pilot', label: 'Co-Pilot Mastery' },
+  { value: 'onboarding', label: 'Onboarding' },
+]
 
 type ValidityUnit = 'months' | 'years'
 const UNIT_OPTIONS = [
@@ -91,6 +101,8 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
   const [quizAttempts, setQuizAttempts] = useState(INITIAL_QUIZ_ATTEMPTS)
   const [maxAttempts, setMaxAttempts] = useState(INITIAL_MAX_ATTEMPTS)
   const [newAttemptDueDays, setNewAttemptDueDays] = useState(INITIAL_DUE_DAYS)
+  const [categories, setCategories] = useState<string[]>([])
+  const [savedCategories, setSavedCategories] = useState<string[]>([])
 
   // Last-saved snapshot — a section's Update button is enabled only while it has unsaved changes.
   const [savedValues, setSavedValues] = useState<Record<SettingKey, boolean>>(initialValues)
@@ -125,7 +137,63 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
     ? savedValidity.amount * (savedValidity.unit === 'years' ? 12 : 1)
     : null
 
+  // Section order and content follow the production app.
   const sections: SettingSection[] = [
+    {
+      heading: 'Data privacy',
+      items: [
+        {
+          key: 'managersSeeAll',
+          title: 'Allow Managers / Experts to see all enrolments',
+          description:
+            'Managers and Experts can view all course enrolments in Knowledge Hub page. When unchecked, they only see their team members and learners they assigned. This setting controls privacy for this course only.',
+        },
+      ],
+    },
+    {
+      heading: 'Course organisation',
+      items: [
+        {
+          key: 'complianceCourse',
+          title: 'Compliance course',
+          description:
+            'When selected, this course will be treated as a compliance course and included in Reports as well as Learning records.',
+        },
+        {
+          key: 'addToCategory',
+          title: 'Add to category',
+          description: (
+            <>
+              Add this course to a relevant category (e.g., Compliance, Marketing). These courses would show up in
+              the &ldquo;Your Workspace&rdquo; page. You can edit these categories from{' '}
+              <a
+                className="cs-link"
+                href="https://app.5mins.ai/admin/account-settings?tab=5"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Account &amp; Settings
+              </a>{' '}
+              page.
+            </>
+          ),
+          expand: (
+            <div className="cs-card-expand">
+              <Dropdown
+                multiple
+                label="Category"
+                placeholder="Select a category"
+                summaryLabel="Categories"
+                options={CATEGORY_OPTIONS}
+                values={categories}
+                onChangeValues={setCategories}
+                className="cs-category"
+              />
+            </div>
+          ),
+        },
+      ],
+    },
     {
       heading: 'Course completion',
       items: [
@@ -153,7 +221,6 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
           expand: (
             <div className="cs-card-expand cs-passscore-group">
               <InputInteger
-                className="input-integer--inline"
                 label="Pass score is"
                 value={passScore}
                 onChange={setPassScore}
@@ -228,6 +295,11 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
           description: 'Award jewels when course is completed (max of 500 jewels).',
         },
         {
+          key: 'electronicSignature',
+          title: 'Electronic Signature',
+          description: 'An Electronic Signature is required to complete the course.',
+        },
+        {
           key: 'certificate',
           title: 'Certificate',
           description: (
@@ -242,13 +314,16 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
         },
         {
           key: 'completionValidity',
-          title: 'Completion validity',
-          description: 'Set how long a completion counts for, from its completion date. Off = No expiry.',
+          title: 'Expiry date',
+          // The where-it-shows note sits in the description, so it reads before the setting is on.
+          description: `Set how long a completion counts for, from its completion date. Off = No expiry. Applies to past and new completions. Expiry date shows in Learning Records${
+            values.certificate ? ', on Course Progress and on certificates.' : ' and on Course Progress.'
+          }`,
           expand: (
             <div className="cs-card-expand">
               <div className="cs-validity-row">
                 <InputInteger
-                  className="input-integer--inline cs-validity-int"
+                  className="cs-validity-int"
                   label="Completion valid for"
                   value={validityAmount}
                   onChange={setValidityAmount}
@@ -268,41 +343,7 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
                   Enter a whole number from 1 to {VALIDITY_MAX[validityUnit]}
                 </p>
               )}
-              <p className="cs-card-desc">
-                Applies to past and new completions. Expiry date shows in Learning Records
-                {values.certificate ? ', on Course Progress and on certificates.' : ' and on Course Progress.'}
-              </p>
             </div>
-          ),
-        },
-      ],
-    },
-    {
-      heading: 'Course organisation',
-      items: [
-        {
-          key: 'complianceCourse',
-          title: 'Compliance course',
-          description:
-            'When selected, this course will be treated as a compliance course and included in Reports as well as Learning records.',
-        },
-        {
-          key: 'addToCategory',
-          title: 'Add to category',
-          description: (
-            <>
-              Add this course to a relevant category (e.g., Compliance, Marketing). These courses would show up in
-              the &ldquo;Your Workspace&rdquo; page. You can edit these categories from{' '}
-              <a
-                className="cs-link"
-                href="https://app.5mins.ai/admin/account-settings?tab=5"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Account &amp; Settings
-              </a>{' '}
-              page.
-            </>
           ),
         },
       ],
@@ -327,17 +368,6 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
         },
       ],
     },
-    {
-      heading: 'Data privacy',
-      items: [
-        {
-          key: 'managersSeeAll',
-          title: 'Allow Managers / Experts to see all enrolments',
-          description:
-            'Managers and Experts can view all course enrolments in Knowledge Hub page. When unchecked, they only see their team members and learners they assigned. This setting controls privacy for this course only.',
-        },
-      ],
-    },
   ]
 
   function sectionDirty(section: SettingSection) {
@@ -357,7 +387,8 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
     return boolChanged || nestedChanged || validityChanged
   }
 
-  function saveSection(section: SettingSection) {
+  /** Saves one section; returns true when it showed its own toast. */
+  function saveSection(section: SettingSection): boolean {
     const hasPassScore = section.items.some((item) => item.key === 'enablePassScore')
     const autoResetChanged =
       hasPassScore &&
@@ -401,47 +432,57 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
       } else {
         toast.show('success', 'Auto-reset disabled')
       }
+      return true
     }
+    return validityMonths !== savedValidityMonths && section.items.some((item) => item.key === 'completionValidity')
+  }
+
+  // One Update Settings for the whole page (as production): enabled while anything is unsaved.
+  const categoriesChanged = categories.join() !== savedCategories.join()
+  const dirty = sections.some(sectionDirty) || categoriesChanged
+
+  function saveAll() {
+    // A section's own toast (validity, auto-reset) says more; otherwise a plain confirmation.
+    const toasted = sections.filter(sectionDirty).map(saveSection).some(Boolean)
+    setSavedCategories(categories)
+    if (!toasted) toast.show('success', 'Course settings updated')
   }
 
   return (
     <section className="cs">
+      {/* Sticky: stays at the top of the page while the settings scroll under it. */}
       <div className="cs-header">
         <div className="cs-header-row">
-          <h2 className="cs-title">Course Settings</h2>
-          <button type="button" className="cs-history" onClick={openSettingsHistory}>
-            <Clock size={20} color="currentColor" variant="Linear" />
-            Settings History
-          </button>
+          <h2 className="cs-title">Course settings</h2>
+          <div className="cs-header-actions">
+            <Button disabled={!dirty || validityInvalid} onClick={saveAll}>
+              Update Settings
+            </Button>
+            <Button
+              variant="outlined-2"
+              icon={<Clock size={20} color="currentColor" variant="Linear" />}
+              onClick={openSettingsHistory}
+            >
+              Settings History
+            </Button>
+          </div>
         </div>
         <div className="cs-header-divider" />
       </div>
       {sections.map((section) => (
         <div className="cs-section" key={section.heading}>
           <h3 className="cs-section-heading">{section.heading}</h3>
-          <div className="cs-card">
-            {section.items.map((item) => (
-              <div className="cs-setting" key={item.key}>
-                <Checkbox checked={values[item.key]} onChange={() => toggle(item.key)} />
-                <div className="cs-card-body">
-                  <span className="cs-card-title">{item.title}</span>
-                  <p className="cs-card-desc">{item.description}</p>
-                  {item.expand && <Collapse open={values[item.key]}>{item.expand}</Collapse>}
-                </div>
+          {/* One card per setting, as production */}
+          {section.items.map((item) => (
+            <div className="cs-card cs-setting" key={item.key}>
+              <Checkbox checked={values[item.key]} onChange={() => toggle(item.key)} />
+              <div className="cs-card-body">
+                <span className="cs-card-title">{item.title}</span>
+                <p className="cs-card-desc">{item.description}</p>
+                {item.expand && <Collapse open={values[item.key]}>{item.expand}</Collapse>}
               </div>
-            ))}
-            <div className="cs-cta">
-              <Button
-                disabled={
-                  !sectionDirty(section) ||
-                  (validityInvalid && section.items.some((item) => item.key === 'completionValidity'))
-                }
-                onClick={() => saveSection(section)}
-              >
-                Save
-              </Button>
             </div>
-          </div>
+          ))}
         </div>
       ))}
       <ToastContainer toasts={toast.toasts} />

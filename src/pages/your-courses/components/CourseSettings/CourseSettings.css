@@ -14,10 +14,25 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-m); /* 16px */
+  /* Sticky, as production: pins under the fixed 70px top nav while the settings
+     scroll beneath it. It bleeds over .cs padding so the page fill hides them. */
+  position: sticky;
+  top: calc(70px + var(--imp-bar-h, 0px));
+  z-index: 2;
+  margin: calc(-1 * var(--space-m)) calc(-1 * var(--space-m)) 0;
+  padding: var(--space-m) var(--space-m) 0;
+  background: var(--page-background);
+}
+
+.cs-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
 }
 
 .cs-header-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-m);
@@ -36,32 +51,6 @@
   border-radius: var(--radius-xs); /* 4px */
 }
 
-/* Outlined-2 (neutral tertiary) button per buttons.md */
-.cs-history {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-s); /* 8px — buttons.md gap for a 20px leading icon */
-  height: 41px;
-  padding: var(--space-ssm) var(--space-ml) var(--space-ssm) var(--space-m); /* medium, leading icon — icon-side 4px tighter */
-  border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-sm); /* 12px */
-  background: transparent;
-  color: var(--text-primary);
-  font: 700 14px/1.5 'Poppins', sans-serif;
-  cursor: pointer;
-  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
-}
-
-.cs-history:hover {
-  background: var(--button-outline-fill-hover);
-  border-color: var(--primary-button-background-hover);
-  color: var(--text-button-hover);
-}
-
-.cs-history:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-}
 
 /* Section */
 .cs-section {
@@ -77,12 +66,9 @@
   line-height: 1.5;
 }
 
-/* Section card — holds all of a section's settings + one Save at the bottom */
+/* Setting card: one per setting (production) */
 .cs-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-m);
-  padding: var(--space-m);
+  padding: var(--space-l);
   border-radius: var(--radius-sm);
   background: var(--cards-background);
   box-shadow: var(--shadow-card);
@@ -96,11 +82,6 @@
   width: 100%;
 }
 
-/* Save CTA — indented to align with the body text (past the 24px checkbox + 8px gap) */
-.cs-cta {
-  display: flex;
-  padding-left: var(--space-xl);
-}
 
 .cs-card-body {
   display: flex;
@@ -115,7 +96,7 @@
 }
 
 .cs-card-title {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-h4);
   font-weight: 500;
   color: var(--text-primary);
   line-height: 1.5;
@@ -181,7 +162,7 @@
    row, as External Training's duration + unit (.aet-row). */
 .cs-validity-row {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: var(--space-m);
 }
 
@@ -198,4 +179,15 @@
   font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-error);
+}
+
+/* Category picker under "Add to category" */
+.cs-category {
+  max-width: 400px;
+}
+
+/* The window scrolls this page; .cd-main's overflow would trap the sticky header,
+   so the Settings tab lets it overflow normally. */
+.cd-main:has(> .cs) {
+  overflow-y: visible;
 }
