@@ -1,0 +1,88 @@
+/* Situational test brief card (Course feed Figma 17024:82020 web, 17024:75382 mobile).
+   Shared by the admin preview, the web course feed and the mobile app. */
+
+.st-brief {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  padding: var(--space-m);
+  background: var(--cards-background);
+  border-radius: var(--radius-m);
+  /* The same lift the outline's cards take: in light mode the card and the page it
+     sits on are one step apart, in dark they already separate. */
+  box-shadow: var(--shadow-card);
+}
+
+.st-brief__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.st-brief__label,
+.st-brief__title {
+  margin: 0;
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.st-brief__divider {
+  height: 1px;
+  background: var(--border);
+  border-radius: var(--radius-xs);
+}
+
+.st-brief__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.st-brief__text {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.st-brief__note {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+/* Full-bleed inside the card, like every primary action on a phone. */
+.st-brief--preview .ds-btn,
+.st-brief--mobile .ds-btn {
+  width: 100%;
+}
+
+/* Web feed: a 720px card with roomier padding; the action sizes to its label. */
+.st-brief--web {
+  width: 100%;
+  max-width: 720px;
+  gap: var(--space-l);
+  padding: var(--space-xl);
+}
+
+.st-brief--web .ds-btn {
+  align-self: flex-start;
+}
+
+/* Mobile app: compact type and the 12px card radius. */
+.st-brief--mobile {
+  border-radius: var(--radius-sm);
+}
+
+.st-brief--mobile .st-brief__label,
+.st-brief--mobile .st-brief__title {
+  font-size: var(--font-size-h4);
+}
+
+.st-brief--mobile .st-brief__text {
+  font-size: var(--font-size-md);
+}

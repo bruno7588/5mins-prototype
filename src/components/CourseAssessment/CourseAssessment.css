@@ -1,0 +1,60 @@
+/* Course assessments in the feed (Course feed Figma, web from 17024:80504, mobile from
+   17024:75667). Prefixed .cfa- (globally bundled CSS); the screens are the quiz's. */
+
+/* Once sent, the question steps back and what was written reads as a record. */
+.cfa-submitted .ql-stem__q {
+  color: var(--text-tertiary);
+}
+
+.cfa-submitted .cfa-answer {
+  color: var(--text-tertiary);
+}
+
+.cfa-submitted .cfa-answer:hover {
+  border-color: var(--border-elevated);
+  background: transparent;
+}
+
+/* A sent poll: the pick keeps its fill, the rest fall back (17024:76611). */
+.cfa-submitted .ql-token:not(.ql-token--selected) .ql-choice__label {
+  color: var(--text-disabled);
+}
+
+/* ---- Mobile confirm sheet (17024:76750) ---- */
+.cfa-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+}
+
+.cfa-sheet__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.cfa-sheet__title {
+  margin: 0;
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.cfa-sheet__body {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.cfa-sheet__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+.cfa-sheet__actions .ds-btn {
+  width: 100%;
+  justify-content: center;
+}

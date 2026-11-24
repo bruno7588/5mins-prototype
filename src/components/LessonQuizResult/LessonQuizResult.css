@@ -1,0 +1,110 @@
+/* End of a lesson quiz (Course feed Figma 17024:79770 web, 17024:84272 mobile).
+   Prefixed .lqr (globally bundled CSS). */
+
+.lqr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xl);
+  width: 496px;
+  max-width: 100%;
+}
+
+.lqr__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-m);
+  text-align: center;
+}
+
+.lqr__points {
+  margin: 0;
+  font-size: var(--font-size-h1);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.lqr__points--none {
+  color: var(--text-disabled);
+}
+
+.lqr__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.lqr__title {
+  margin: 0;
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.lqr__copy {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.lqr__good {
+  color: var(--text-success);
+}
+
+.lqr__bad {
+  color: var(--text-error);
+}
+
+.lqr__attempts {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-m) 0;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+.lqr__hearts {
+  display: inline-flex;
+  gap: var(--space-xs);
+}
+
+.lqr__actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-m);
+}
+
+.lqr--web .lqr__actions .ds-btn {
+  min-width: 134px;
+  justify-content: center;
+}
+
+/* Mobile: the result centred in the screen, the actions stacked at its foot. */
+.lqr--mobile {
+  flex: 1 1 0;
+  width: auto;
+  justify-content: space-between;
+  padding: var(--space-m);
+  gap: var(--space-l);
+}
+
+.lqr--mobile .lqr__body {
+  flex: 1 1 0;
+  justify-content: center;
+}
+
+.lqr--mobile .lqr__actions {
+  flex-direction: column;
+  width: 100%;
+}
+
+.lqr--mobile .lqr__actions .ds-btn {
+  width: 100%;
+  justify-content: center;
+}

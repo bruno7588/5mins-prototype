@@ -251,6 +251,15 @@
   gap: var(--space-sm);
 }
 
+/* Situational test row: the section title is a heading here, not a toggle. */
+.pcd-sit__heading {
+  margin: 0;
+}
+
+.pcd-sit__art {
+  flex-shrink: 0;
+}
+
 /* ---- Lesson card ---- */
 .pcd-lesson {
   position: relative;

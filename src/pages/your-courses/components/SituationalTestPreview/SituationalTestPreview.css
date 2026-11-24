@@ -30,64 +30,6 @@
   overflow-y: auto;
 }
 
-.st-preview__brief-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-m);
-  padding: var(--space-m);
-  background: var(--cards-background);
-  border-radius: var(--radius-m);
-  /* The same lift the outline's cards take: in light mode the card and the page it
-     sits on are one step apart, in dark they already separate. */
-  box-shadow: var(--shadow-card);
-}
-
-.st-preview__brief-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-}
-
-.st-preview__brief-label {
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.st-preview__brief-divider {
-  height: 1px;
-  background: var(--border);
-  border-radius: var(--radius-xs);
-}
-
-.st-preview__brief-body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
-}
-
-.st-preview__brief-title {
-  margin: 0;
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.st-preview__brief-text {
-  margin: 0;
-  font-size: var(--font-size-lg);
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-/* Full-bleed inside the card, like every primary action on a phone. */
-.st-preview__brief-card .ds-btn {
-  width: 100%;
-}
-
 /* The note for the formats a learner answers in their own words. */
 .st-preview__brief {
   margin: 0;
@@ -95,4 +37,36 @@
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
+}
+
+/* ===== "View Brief" sheet inside the preview frame (DES-371) ===== */
+
+/* The sheet fills its nearest positioned ancestor: the frame, not the page. */
+.st-preview__stage .desktop-preview__frame {
+  position: relative;
+}
+
+.st-preview__sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+.st-preview__sheet-title {
+  margin: 0;
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.st-preview__sheet-text {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.st-preview__stage .ql-qhead__label {
+  gap: var(--space-sm);
 }

@@ -16,25 +16,14 @@ import { getLearningsIllustration } from '../../../assets/learnings-illustration
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import { getLevelIllustration } from '../../../assets/level-illustrations'
 import type { FeedEpisode, FeedLesson } from '../feedItems'
+import { ExpandIcon, MoreIcon } from '@/components/icons/PlayerIcons'
 import './LessonFeed.css'
 
-/* Player controls, from Figma Course feed 17024:79675 (ai/AiOutlineExpand) and
-   17024:79678 (ri/RiMoreLine). Filled glyphs, so they take currentColor as fill. */
-const ExpandIcon = () => (
-  <svg width="21" height="21" viewBox="0 0 21.1765 21.1765" fill="currentColor" aria-hidden="true">
-    <path d="M7.0726 1.81984H2.4816C2.11556 1.81984 1.81984 2.11556 1.81984 2.4816V7.11396C1.81984 7.29594 1.96874 7.44484 2.15072 7.44484H3.14337C3.32535 7.44484 3.47425 7.29594 3.47425 7.11396V3.47425H7.0726C7.25458 3.47425 7.40348 3.32535 7.40348 3.14337V2.15072C7.40348 1.96874 7.25458 1.81984 7.0726 1.81984ZM19.0257 13.7316H18.0331C17.8511 13.7316 17.7022 13.8805 17.7022 14.0625V17.7022H14.1038C13.9219 17.7022 13.773 17.8511 13.773 18.0331V19.0257C13.773 19.2077 13.9219 19.3566 14.1038 19.3566H18.6948C19.0609 19.3566 19.3566 19.0609 19.3566 18.6948V14.0625C19.3566 13.8805 19.2077 13.7316 19.0257 13.7316ZM7.0726 17.7022H3.47425V14.0625C3.47425 13.8805 3.32535 13.7316 3.14337 13.7316H2.15072C1.96874 13.7316 1.81984 13.8805 1.81984 14.0625V18.6948C1.81984 19.0609 2.11556 19.3566 2.4816 19.3566H7.0726C7.25458 19.3566 7.40348 19.2077 7.40348 19.0257V18.0331C7.40348 17.8511 7.25458 17.7022 7.0726 17.7022ZM18.6948 1.81984H14.1038C13.9219 1.81984 13.773 1.96874 13.773 2.15072V3.14337C13.773 3.32535 13.9219 3.47425 14.1038 3.47425H17.7022V7.11396C17.7022 7.29594 17.8511 7.44484 18.0331 7.44484H19.0257C19.2077 7.44484 19.3566 7.29594 19.3566 7.11396V2.4816C19.3566 2.11556 19.0609 1.81984 18.6948 1.81984Z" />
-  </svg>
-)
-
-const MoreIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
-    <path d="M6 14C4.9 14 4 14.9 4 16C4 17.1 4.9 18 6 18C7.1 18 8 17.1 8 16C8 14.9 7.1 14 6 14ZM26 14C24.9 14 24 14.9 24 16C24 17.1 24.9 18 26 18C27.1 18 28 17.1 28 16C28 14.9 27.1 14 26 14ZM16 14C14.9 14 14 14.9 14 16C14 17.1 14.9 18 16 18C17.1 18 18 17.1 18 16C18 14.9 17.1 14 16 14Z" />
-  </svg>
-)
+export { ExpandIcon, MoreIcon }
 
 type BarTone = 'primary' | 'success' | 'elevated'
 
-function Bar({ progress, tone, height }: { progress: number; tone: BarTone; height: number }) {
+export function Bar({ progress, tone, height }: { progress: number; tone: BarTone; height: number }) {
   const color =
     tone === 'success' ? 'var(--success-500)' : tone === 'elevated' ? 'var(--border)' : 'var(--primary-600)'
   return (

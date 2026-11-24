@@ -24,6 +24,16 @@ export const QuizFooterLayoutContext = createContext<'fill' | 'hug'>('fill')
  */
 export const QuizAdvanceContext = createContext<(() => void) | null>(null)
 
+/**
+ * Tells the host how a graded question went, as the learner moves on from it.
+ *
+ * A format grades itself and has no one to tell. A host that keeps score (the course
+ * feed's situational test and assessments) listens here, for the same reason the two
+ * contexts above exist: the formats in between have no stake in it. Questions with
+ * nothing to mark (a poll, an open answer) never report.
+ */
+export const QuizResultContext = createContext<((correct: boolean) => void) | null>(null)
+
 interface FeedbackFooterProps {
   status: FeedbackStatus
   /** Show the Check button in the idle state (false for instant formats). */
@@ -55,6 +65,7 @@ function FeedbackFooter({
 }: FeedbackFooterProps) {
   const layout = useContext(QuizFooterLayoutContext)
   const advance = useContext(QuizAdvanceContext)
+  const report = useContext(QuizResultContext)
   const footerClass = `ql-footer${layout === 'hug' ? ' ql-footer--hug' : ''}`
   const size = layout === 'hug' ? 'md' : 'lg'
 
@@ -74,7 +85,11 @@ function FeedbackFooter({
   return (
     <div className={`${footerClass} ql-footer--graded${withResult ? ' ql-footer--with-result' : ''}`}>
       {withResult && result}
-      <Button semantic={correct ? 'success' : 'danger'} size={size} onClick={advance ?? onContinue}>
+      <Button semantic={correct ? 'success' : 'danger'} size={size} onClick={() => {
+          report?.(correct)
+          ;(advance ?? onContinue)()
+        }}
+      >
         {continueLabel ?? (correct ? 'Continue' : 'Got It')}
       </Button>
     </div>

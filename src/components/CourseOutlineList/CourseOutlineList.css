@@ -1,0 +1,112 @@
+/* Course outline, flat list (Course feed Figma 17024:83094 web, 17024:75136 mobile).
+   Prefixed .cfo- (globally bundled CSS). */
+
+.cfo-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cfo-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.cfo-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  width: 100%;
+  padding: var(--space-sm);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.cfo-row:disabled {
+  cursor: default;
+}
+
+.cfo-row:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .cfo-row:not(:disabled):hover {
+    background: var(--page-background-hover);
+  }
+}
+
+/* Sits on the title's first line. */
+.cfo-row__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: var(--space-xxs) 0;
+}
+
+.cfo-row__info {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.cfo-row__title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+.cfo-row__meta {
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  color: var(--text-disabled);
+}
+
+/* Done, or open to visit: one step brighter than what is still locked. */
+.cfo-item--done .cfo-row__title,
+.cfo-item--open .cfo-row__title {
+  color: var(--text-secondary);
+}
+
+.cfo-item--done .cfo-row__meta,
+.cfo-item--open .cfo-row__meta,
+.cfo-item--here .cfo-row__meta {
+  color: var(--text-tertiary);
+}
+
+/* You're here. */
+.cfo-item--here .cfo-row {
+  background: var(--input-background);
+}
+
+.cfo-row__here {
+  font-size: var(--font-size-h5);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--primary-600);
+}
+
+.cfo-item--here .cfo-row__title {
+  color: var(--text-primary);
+}
+
+.cfo-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

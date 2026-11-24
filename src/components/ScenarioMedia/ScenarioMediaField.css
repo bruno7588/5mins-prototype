@@ -1,0 +1,77 @@
+/* Scenario media field (DES-371). Prefixed .scfield (globally bundled CSS). */
+
+.scfield__filled {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.scfield__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.scfield__file {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-s);
+  min-width: 0;
+}
+
+.scfield__name {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scfield__size {
+  flex-shrink: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
+.scfield__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  flex-shrink: 0;
+}
+
+/* Icon-only: a circular hover, and the destructive icon turns to the error colour. */
+.scfield__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.scfield__remove:hover {
+  background: var(--page-background-hover);
+  color: var(--text-error);
+}
+
+.scfield__remove:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.scfield__error {
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  color: var(--text-error);
+}

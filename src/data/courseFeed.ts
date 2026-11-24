@@ -1,0 +1,231 @@
+import type {
+  SituationalQuestion,
+  SituationalTestData,
+} from '@/pages/your-courses/components/SituationalTestDrawer/SituationalTestDrawer'
+import { getCourseDetail } from '@/pages/courses/mockCourse'
+import type { ScenarioMediaData } from './scenarioMedia'
+import { feedLessons } from '@/pages/for-you/feedItems'
+
+/**
+ * Course feed mock data: what a learner plays inside a course, beyond its lessons.
+ *
+ * First slice: one situational test, shared by every course the way `mockCourse.ts`
+ * shares one outline. It is the same shape the course builder saves
+ * (`SituationalTestData`), so anything the builder adds to a test reaches the feed
+ * without a second model.
+ */
+/* Placeholder scenario media (public/scenario-media): stand-ins until a real acted clip
+   is dropped in. The feed shows the video; add ?media=audio, ?media=image or
+   ?media=none to the URL to see the other cases. */
+const scenarioMedia: Record<string, ScenarioMediaData> = {
+  video: { kind: 'video', src: '/scenario-media/scenario-placeholder.mp4', name: 'Scenario video' },
+  audio: { kind: 'audio', src: '/scenario-media/scenario-placeholder.m4a', name: 'Scenario audio' },
+  image: { kind: 'image', src: '/scenario-media/scenario-placeholder.png', name: 'Scenario image' },
+}
+
+const situationalTest: SituationalTestData = {
+  id: 1,
+  title: 'A guest reports an allergic reaction',
+  brief:
+    'You are the duty manager on a busy Friday evening. A guest at table 12 tells a server that their lips are tingling after the starter. They told the team about a nut allergy when they ordered. The kitchen is at full stretch and the server who took the order has gone on a break. Decide what you do, in what order, and what you record afterwards.',
+  questions: [
+    {
+      id: 'cf-st-1',
+      text: 'The guest says their lips are tingling. What do you do first?',
+      options: [
+        'Ask the kitchen to check the ticket before doing anything else',
+        'Stay with the guest, ask about their symptoms and whether they carry medication',
+        'Offer to replace the starter with a nut-free dish',
+        'Find the server who took the order',
+      ],
+      correctIndex: 1,
+      explanation: 'The guest comes first. Symptoms can worsen in minutes, so stay with them and find out what help they need.',
+    },
+    {
+      id: 'cf-st-2',
+      text: 'The guest starts to struggle with their breathing. What is the right call?',
+      options: [
+        'Call 999 and say "anaphylaxis", then help them use their auto-injector if they have one',
+        'Give them water and wait five minutes to see if it passes',
+        'Ask another guest whether anyone is a doctor',
+        'Walk them outside for fresh air',
+      ],
+      correctIndex: 0,
+      explanation: 'Breathing difficulty after eating an allergen is an emergency. Call 999 straight away and say "anaphylaxis".',
+    },
+    {
+      id: 'cf-st-3',
+      text: 'While you wait for the ambulance, what should the kitchen do with the dish?',
+      options: [
+        'Throw it away so no one else is served it',
+        'Remake it to check whether nuts were used',
+        'Keep the dish and its ingredients aside, labelled, for the investigation',
+        'Carry on with service and deal with it at close',
+      ],
+      correctIndex: 2,
+      explanation: 'The dish and its ingredients are evidence. Keep them aside and labelled so the cause can be traced.',
+    },
+    {
+      id: 'cf-st-4',
+      text: 'The guest has left with the paramedics. What do you record?',
+      options: [
+        'Nothing until the guest makes a complaint',
+        'A note in the shift handover for the next manager',
+        'Only the cost of the meal, so it can be refunded',
+        'An incident report with the time, what was ordered, what was said about the allergy and what the team did',
+      ],
+      correctIndex: 3,
+      explanation: 'A full incident report, written while it is fresh, protects the guest and the team and is what an investigation will ask for.',
+    },
+  ],
+}
+
+/** The situational test a course opens with, if it has one. */
+export function getCourseSituationalTest(_courseId: string | undefined): SituationalTestData {
+  const demo = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('media')
+  return { ...situationalTest, media: demo === 'none' ? undefined : scenarioMedia[demo ?? 'video'] ?? scenarioMedia.video }
+}
+
+/** A course assessment as the feed asks it. Only multiple choice is marked. */
+export type FeedAssessment =
+  | { type: 'multiple-choice'; prompt: string; options: string[]; correctIndex: number; explanation?: string }
+  | { type: 'short-text'; prompt: string }
+  | { type: 'exercise'; prompt: string }
+  | { type: 'poll'; prompt: string; options: string[] }
+
+export const ASSESSMENT_TYPE_LABEL: Record<FeedAssessment['type'], string> = {
+  'multiple-choice': 'Multiple choice',
+  'short-text': 'Short text',
+  exercise: 'Exercise',
+  poll: 'Poll',
+}
+
+const courseAssessments: FeedAssessment[] = [
+  {
+    type: 'multiple-choice',
+    prompt: 'Which of these is one of the 14 allergens that must be declared on a UK menu?',
+    options: ['Rice', 'Celery', 'Potato', 'Chicken'],
+    correctIndex: 1,
+    explanation: 'Celery is one of the 14 named allergens, along with nuts, milk, eggs, fish and others.',
+  },
+  { type: 'short-text', prompt: 'How would you tell a guest that a dish cannot be made safe for their allergy?' },
+  { type: 'exercise', prompt: "Upload your allergen matrix for this week's menu" },
+  { type: 'poll', prompt: 'Was this course useful for you?', options: ['Very useful', 'Somewhat useful', 'Not useful'] },
+]
+
+/* The first lesson's quiz ("Lesson Quiz (1/2)", Figma 17024:80291). */
+const lessonQuiz: SituationalQuestion[] = [
+  {
+    id: 'cf-lq-1',
+    text: 'What is the first thing a leader can do to encourage new ideas in a team?',
+    options: [
+      'Ask for ideas only from senior people',
+      'Make it safe to speak up, including when an idea fails',
+      'Reward only the ideas that work',
+      'Set a target for ideas per month',
+    ],
+    correctIndex: 1,
+    explanation: 'People share ideas when they know a failed one will not count against them.',
+  },
+  {
+    id: 'cf-lq-2',
+    text: 'A team member suggests a change you think will not work. What helps innovation most?',
+    options: [
+      'Explain why it will fail and move on',
+      'Ignore it until they raise it again',
+      'Ask what problem it solves and try a small test',
+      'Pass it to another team',
+    ],
+    correctIndex: 2,
+    explanation: 'A small test costs little and tells you more than an opinion, yours included.',
+  },
+]
+
+/** One thing the learner plays in the course feed, in course order. */
+export type CourseFeedItem =
+  | { kind: 'situational-test'; id: string; title: string; test: SituationalTestData }
+  | {
+      kind: 'assessment'
+      id: string
+      title: string
+      assessment: FeedAssessment
+      /** "Question 2/4": its place among the course's assessments. */
+      position: number
+      count: number
+    }
+  | {
+      kind: 'lesson'
+      id: string
+      title: string
+      /** "Lesson · Dr. Amara Okafor · 6 min", as course details shows it. */
+      meta: string
+      /** Stands in for the lesson video until the player lands. */
+      media: string
+      duration: string
+      /** Watched fraction, 0-1. */
+      progress: number
+      /** The lesson quiz that follows the lesson, when it has one. */
+      quiz?: SituationalQuestion[]
+      /** Points the quiz is worth. */
+      quizPoints?: number
+    }
+
+/**
+ * A course's feed: its situational test, its lessons, then its assessments. Events and
+ * the end-of-course steps join as their feed phases are built.
+ */
+export function getCourseFeed(courseId: string | undefined): CourseFeedItem[] {
+  const test = getCourseSituationalTest(courseId)
+  const lessons = getCourseDetail(courseId)
+    .sections.flatMap((section) => section.lessons)
+    .filter((lesson) => !lesson.meta.startsWith('Assessment'))
+  return [
+    { kind: 'situational-test', id: 'situational-test', title: test.title, test },
+    ...lessons.map((lesson, i): CourseFeedItem => {
+      const stand = feedLessons[i % feedLessons.length]
+      return {
+        kind: 'lesson',
+        id: lesson.id,
+        title: lesson.title,
+        meta: lesson.meta,
+        media: stand.media,
+        duration: stand.duration,
+        progress: (lesson.progress ?? 0) / 100,
+        ...(i === 0 ? { quiz: lessonQuiz, quizPoints: stand.quizPoints } : {}),
+      }
+    }),
+    ...courseAssessments.map(
+      (assessment, i): CourseFeedItem => ({
+        kind: 'assessment',
+        id: `assessment-${i}`,
+        title: assessment.prompt,
+        assessment,
+        position: i + 1,
+        count: courseAssessments.length,
+      }),
+    ),
+  ]
+}
+
+/**
+ * Whether the learner can open item `i`: anything they have reached, plus the one after
+ * it once the item they are furthest on is complete. A lesson has no player yet, so it
+ * counts as complete on view unless it has a quiz; a quiz, a situational test and an
+ * assessment have to be answered through.
+ */
+export function isFeedItemUnlocked(items: CourseFeedItem[], i: number, reached: number, done: Set<string>): boolean {
+  if (i <= reached) return true
+  const frontier = items[reached]
+  return i === reached + 1 && ((frontier.kind === 'lesson' && !frontier.quiz) || done.has(frontier.id))
+}
+
+/** Why the next item is locked, as the feed's tooltip says it (Figma 17024:82817). */
+export const lockedReason = (item: CourseFeedItem) =>
+  item.kind === 'lesson'
+    ? 'Complete this lesson first to see next lessons'
+    : item.kind === 'assessment'
+      ? 'Complete this assessment first to continue'
+      : 'Complete Situational Test first to see next lessons'
+
+/** Attempts a learner gets at a test in the feed. */
+export const FEED_ATTEMPTS = 3

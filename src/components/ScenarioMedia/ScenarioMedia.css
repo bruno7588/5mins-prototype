@@ -1,0 +1,227 @@
+/* Scenario media (DES-371). Prefixed .scmedia (globally bundled CSS). The slot has a
+   fixed maximum height; the media is fitted inside it and never cropped. */
+
+.scmedia {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.scmedia--video,
+.scmedia--image {
+  /* The letterbox behind a clip or picture narrower than the slot. */
+  background: var(--neutral-900);
+}
+
+.scmedia__video,
+.scmedia__image {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+}
+
+.scmedia__audio {
+  display: block;
+  width: 100%;
+}
+
+.scmedia__imagebtn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: zoom-in;
+}
+
+.scmedia__imagebtn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+
+/* Full screen: the picture takes the screen, still fitted. */
+.scmedia:fullscreen .scmedia__image {
+  max-height: 100vh;
+  height: 100vh;
+}
+
+.scmedia:fullscreen .scmedia__imagebtn {
+  cursor: zoom-out;
+}
+
+.scmedia__loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-s);
+  background: var(--cards-background);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+/* Audio has no picture to wait for; its loading line sits under the control. */
+.scmedia--audio {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-s);
+  overflow: visible;
+}
+
+.scmedia--audio .scmedia__loading {
+  position: static;
+  justify-content: flex-start;
+  background: none;
+}
+
+.scmedia--problem {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-s);
+  padding: var(--space-m);
+  border: 1px solid var(--border-elevated);
+  background: transparent;
+}
+
+.scmedia__message {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* ---- Video: the 5Mins player's controls over the picture ---- */
+
+.scmedia__video {
+  cursor: pointer;
+}
+
+/* Darkens the foot of the picture so the bar reads on any footage. */
+.scmedia__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--neutral-900) 0%, transparent) 60%,
+    color-mix(in srgb, var(--neutral-900) 64%, transparent) 100%
+  );
+  pointer-events: none;
+}
+
+/* Back 10, play or pause, forward 10: centred, white on the picture. */
+.scmedia__centre {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-l);
+  transition: opacity 150ms ease-out;
+}
+
+/* While it plays they step back; pointing at the player or tabbing into it brings them
+   back, and a tap pauses, which shows them again. */
+.scmedia--playing .scmedia__centre {
+  opacity: 0;
+}
+
+.scmedia--playing:hover .scmedia__centre,
+.scmedia--playing:focus-within .scmedia__centre {
+  opacity: 1;
+}
+
+.scmedia__ctrl {
+  display: inline-flex;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: none;
+  color: var(--neutral-0);
+  cursor: pointer;
+}
+
+.scmedia__ctrl:focus-visible,
+.scmedia__round:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Progress, time remaining, then full screen and more. */
+.scmedia__bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-sm) var(--space-m);
+}
+
+/* Progress bar (Figma 17024:90676): 2px, white at 16% for the track, Primary-600 for
+   what has played. Not interactive. */
+.scmedia__progress {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 2px;
+  border-radius: var(--radius-ml);
+  background: color-mix(in srgb, var(--neutral-0) 16%, transparent);
+  overflow: hidden;
+}
+
+.scmedia__progressfill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-ml);
+  background: var(--primary-600);
+}
+
+.scmedia__time {
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--neutral-25);
+  white-space: nowrap;
+}
+
+.scmedia__round {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--neutral-900) 64%, transparent);
+  color: var(--neutral-0);
+  cursor: pointer;
+}
+
+.scmedia__close {
+  position: absolute;
+  top: var(--space-l);
+  left: var(--space-l);
+  z-index: 1;
+}
+
+/* Full screen: the picture takes the screen, still fitted. */
+.scmedia--video:fullscreen .scmedia__video {
+  max-height: 100vh;
+  height: 100vh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scmedia__centre {
+    transition: none;
+  }
+}

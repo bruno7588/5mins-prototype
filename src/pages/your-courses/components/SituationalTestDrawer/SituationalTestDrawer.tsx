@@ -14,6 +14,8 @@ import { DrawerFooter, DrawerHeader } from '../ContentDrawer/DrawerSlots'
 import SituationalTestPreview from '../SituationalTestPreview/SituationalTestPreview'
 import { type GeneratableType } from '@/data/aiAssessmentGeneration'
 import { type InteractiveQuestion } from '@/data/interactiveQuestions'
+import type { ScenarioMediaData } from '@/data/scenarioMedia'
+import ScenarioMediaField from '@/components/ScenarioMedia/ScenarioMediaField'
 import './SituationalTestDrawer.css'
 
 /* The DS Callout (alerts-toast.md) with a chevron, so the guidance can be folded away
@@ -71,6 +73,8 @@ export interface SituationalTestData {
   title: string
   brief: string
   questions: SituationalQuestion[]
+  /** One image, audio clip or video that shows the scenario (DES-371). */
+  media?: ScenarioMediaData
 }
 
 let nextQuestionId = 0
@@ -104,10 +108,20 @@ const questionIsComplete = (q: SituationalQuestion) => {
 
 /* Only the authored values matter for the dirty check — question ids are generated per
    mount and would otherwise make a pristine form look edited. */
-const snapshot = (title: string, brief: string, questions: SituationalQuestion[]) =>
+const snapshot = (
+  title: string,
+  brief: string,
+  questions: SituationalQuestion[],
+  media: ScenarioMediaData | undefined,
+  uploading: boolean,
+) =>
   JSON.stringify({
     title,
     brief,
+    /* Adding, changing or removing the scenario media is an edit, and so is a file
+       still on its way up: closing mid-upload asks before discarding it. */
+    media: media ? `${media.name}:${media.size ?? ''}:${media.src}` : '',
+    uploading,
     questions: questions.map((q) => ({
       t: q.text,
       o: q.options,
@@ -119,9 +133,9 @@ const snapshot = (title: string, brief: string, questions: SituationalQuestion[]
 interface Props {
   /** Prefilled when reopened from the course outline (FR-4); null when creating. */
   initial?: SituationalTestData | null
-  onSave: (title: string, brief: string, questions: SituationalQuestion[]) => void
+  onSave: (title: string, brief: string, questions: SituationalQuestion[], media?: ScenarioMediaData) => void
   /** Create path only: step 1's commit adds the card to the outline before step 2. */
-  onCreate?: (title: string, brief: string) => void
+  onCreate?: (title: string, brief: string, media?: ScenarioMediaData) => void
   /** Lets the page guard the close paths while there is unsaved work. */
   onDirtyChange?: (dirty: boolean) => void
   /**
@@ -151,6 +165,9 @@ function SituationalTestDrawerContent({
   const [titleBlurred, setTitleBlurred] = useState(false)
   const [brief, setBrief] = useState(initial?.brief ?? '')
   const [briefBlurred, setBriefBlurred] = useState(false)
+  /* Scenario media (DES-371): one image, audio clip or video on the brief. */
+  const [media, setMedia] = useState<ScenarioMediaData | undefined>(initial?.media)
+  const [uploading, setUploading] = useState(false)
   const [questions, setQuestions] = useState<SituationalQuestion[]>(
     () => initial?.questions ?? [makeQuestion()],
   )
@@ -180,7 +197,7 @@ function SituationalTestDrawerContent({
      seeds one blank question, so a baseline built from `initial` alone reads as edited
      before the admin has typed anything. */
   const pristine = useRef<string | null>(null)
-  const current = snapshot(title, brief, questions)
+  const current = snapshot(title, brief, questions, media, uploading)
   if (pristine.current === null) pristine.current = current
   const dirty = current !== pristine.current
   useEffect(() => {
@@ -240,7 +257,9 @@ function SituationalTestDrawerContent({
   const showBrief = twoPane ? pane === 'brief' : step === 1
   const showQuestions = twoPane ? pane === 'questions' : step === 2
 
-  const canContinue = titleFilled && briefFilled
+  /* Held while a file is uploading, so a test is never saved without the media the
+     admin just chose. */
+  const canContinue = titleFilled && briefFilled && !uploading
   const canSave = questions.length > 0 && questions.every(questionIsComplete)
   /* The edit form commits every field at once, so it has to check both halves. On create
      this is reached from step 2, where step 1 already gated the title and brief. */
@@ -252,7 +271,7 @@ function SituationalTestDrawerContent({
       setBriefBlurred(true)
       return
     }
-    onCreate?.(title.trim(), brief.trim())
+    onCreate?.(title.trim(), brief.trim(), media)
     /* The title and brief are saved now, so only what step 2 adds counts as unsaved. */
     pristine.current = current
     setStep(2)
@@ -276,6 +295,7 @@ function SituationalTestDrawerContent({
           explanation: q.explanation?.trim() || undefined,
         }
       }),
+      media,
     )
   }
 
@@ -343,6 +363,7 @@ function SituationalTestDrawerContent({
                   'Situation: the context, tied to the skill being tested',
                   'Complication: the specific thing they have to respond to',
                   'Question and goal: what to decide, and what a good answer achieves',
+                  'The brief should describe the situation even without the media',
                 ]}
               />
             )}
@@ -406,6 +427,17 @@ function SituationalTestDrawerContent({
                   Enter a brief
                 </span>
               )}
+            </div>
+
+            <div className="st-drawer__field">
+              <span className="st-drawer__label">
+                Scenario media <span className="st-drawer__label-optional">(optional)</span>
+              </span>
+              <span className="st-drawer__helper">
+                An image, audio or video clip that shows the situation. Learners can return to it from every
+                question. Write the brief so it works on its own if the clip can't play.
+              </span>
+              <ScenarioMediaField media={media} onChange={setMedia} onUploadingChange={setUploading} />
             </div>
           </>
         ) : null}
@@ -529,16 +561,29 @@ function SituationalTestDrawerContent({
               </Button>
             )}
           </div>
-          {/* Create only. A counter implies a sequence you finish, and on the edit path
-              either surface commits, so there is nothing to count down to. */}
-          {!twoPane && <span className="st-drawer__step-indicator">Step {step} of 2</span>}
-          {/* Opposite the commit actions: the two on the left decide the draft's fate,
-              this one only looks at it. */}
-          {review && (
-            <Button variant="outlined-2" onClick={() => setPreviewing(true)}>
-              Preview
-            </Button>
-          )}
+          <div className="st-drawer__footer-actions">
+            {/* Create only. A counter implies a sequence you finish, and on the edit path
+                either surface commits, so there is nothing to count down to. */}
+            {!twoPane && <span className="st-drawer__step-indicator">Step {step} of 2</span>}
+            {/* Opposite the commit actions: those decide the test's fate, this one only
+                looks at it. On every path once there are questions to walk through
+                (DES-371): the admin sees what learners get before saving, media included.
+                Held until the test is complete, as a half-written question has no learner
+                view; the tooltip sits on its wrapper so it fires over the disabled button. */}
+            {(twoPane || step === 2) && (
+              <Tooltip
+                text="Complete the title, brief and every question to preview"
+                position="Top"
+                alignment="End"
+                icon={false}
+                disabled={canSubmit}
+              >
+                <Button variant="outlined-2" onClick={() => setPreviewing(true)} disabled={!canSubmit}>
+                  Preview
+                </Button>
+              </Tooltip>
+            )}
+          </div>
         </div>
       </DrawerFooter>
 
@@ -546,6 +591,7 @@ function SituationalTestDrawerContent({
         <SituationalTestPreview
           title={title}
           brief={brief}
+          media={media}
           questions={questions}
           onClose={() => setPreviewing(false)}
         />

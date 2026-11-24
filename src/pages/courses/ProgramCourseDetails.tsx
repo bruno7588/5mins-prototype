@@ -23,6 +23,8 @@ import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import '../my-team/MyTeam.css'
 import '../workspace/Workspace.css'
 import './ProgramCourseDetails.css'
+import { getCourseSituationalTest } from '@/data/courseFeed'
+import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import { getCourseDetail, findProgramForCourse, type CourseLesson, type CourseResourceItem } from './mockCourse'
 import PhoneFrame from '../../components/mobile/PhoneFrame/PhoneFrame'
 import QuizHeader from '../quiz-lab/components/QuizHeader'
@@ -319,6 +321,43 @@ function ProgramCourseDetails() {
             {/* Course outline */}
             {tab === 'course' ? (
               <div className="pcd-outline">
+                {/* The course opens with its situational test (Course feed Figma
+                    17024:78110); the row opens the feed. Not in the builder's preview,
+                    which has no saved course to play. */}
+                {!preview ? (
+                  <>
+                    <div className="pcd-section">
+                      <h3 className="pcd-section__name pcd-sit__heading">Situational test</h3>
+                      <article
+                        className="pcd-lesson pcd-lesson--openable"
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => navigate(`/courses/${id}/feed`)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            navigate(`/courses/${id}/feed`)
+                          }
+                        }}
+                      >
+                        <img
+                          className="pcd-sit__art"
+                          src={getAssessmentIllustration('situational-test', 'desktop')}
+                          width={56}
+                          height={56}
+                          alt=""
+                        />
+                        <div className="pcd-lesson__info">
+                          <h4 className="pcd-lesson__title">{getCourseSituationalTest(id).title}</h4>
+                          {/* Supporting text under the title; not the meta row, whose last
+                              child is pushed to the far right for the progress track. */}
+                          <span className="pcd-lesson__metatext">Situational test</span>
+                        </div>
+                      </article>
+                    </div>
+                    <div className="pcd-divider" />
+                  </>
+                ) : null}
                 {course.sections.map((section, idx) => (
                   <Fragment key={section.id}>
                     <div className="pcd-section">

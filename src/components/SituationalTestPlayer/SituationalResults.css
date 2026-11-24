@@ -1,0 +1,273 @@
+/* Situational test results and review (Course feed Figma 17024:79480 / 17024:75451,
+   17024:80030 / 17024:76047). Prefixed .st-res and .st-review (globally bundled CSS). */
+
+/* ---- Results card ---- */
+.st-res__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  width: 440px;
+  max-width: 100%;
+  padding: var(--space-xl);
+  background: var(--cards-background);
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-card);
+}
+
+.st-res__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.st-res__title {
+  margin: 0;
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.st-res__scoreblock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-l);
+}
+
+/* ---- Score ring: 160px, a 5px arc with a glow, a tinted disc behind ---- */
+.st-res__ring {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160px;
+  height: 160px;
+}
+
+.st-res__ring--success {
+  --st-res-tone: var(--success-500);
+  --st-res-text: var(--text-success);
+}
+
+.st-res__ring--warning {
+  --st-res-tone: var(--warning-500);
+  --st-res-text: var(--text-warning);
+}
+
+.st-res__ring--danger {
+  --st-res-tone: var(--danger-500);
+  --st-res-text: var(--text-error);
+}
+
+.st-res__disc {
+  position: absolute;
+  width: 138px;
+  height: 138px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--st-res-tone) 16%, transparent), transparent);
+}
+
+.st-res__ring svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+  overflow: visible;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--st-res-tone) 50%, transparent));
+}
+
+.st-res__arc {
+  fill: none;
+  stroke: var(--st-res-tone);
+  stroke-linecap: round;
+}
+
+.st-res__score {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--st-res-text);
+}
+
+.st-res__scorelabel {
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+}
+
+.st-res__scorevalue {
+  font-size: var(--font-size-h1);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.st-res__review {
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-s);
+  background: none;
+  font-family: inherit;
+  font-size: var(--font-size-h5);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+@media (hover: hover) {
+  .st-res__review:hover {
+    color: var(--text-button-hover);
+  }
+}
+
+.st-res__review:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.st-res__attempts {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.st-res__hearts {
+  display: inline-flex;
+  gap: var(--space-xs);
+}
+
+.st-res__actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-m);
+}
+
+.st-res--web .st-res__actions .ds-btn {
+  min-width: 132px;
+  justify-content: center;
+}
+
+/* Mobile: a compact card, the actions stacked full width at the foot of the screen. */
+.st-res--mobile {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.st-res--mobile .st-res__card {
+  width: auto;
+  gap: var(--space-l);
+  margin: var(--space-l) var(--space-m);
+  padding: var(--space-l);
+  border-radius: var(--radius-sm);
+}
+
+.st-res--mobile .st-res__title,
+.st-res--mobile .st-res__review {
+  font-size: var(--font-size-h4);
+}
+
+.st-res--mobile .st-res__actions {
+  flex-direction: column;
+  padding: var(--space-m);
+}
+
+.st-res--mobile .st-res__actions .ds-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ---- Review answers ---- */
+.st-review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+}
+
+.st-review__insights {
+  display: flex;
+  gap: var(--space-l);
+}
+
+.st-review__insight {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  padding: var(--space-sm) var(--space-l);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.st-review__insightlabel {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.st-review__insightvalue {
+  margin: 0;
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.st-review__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.st-review__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-m);
+  padding: var(--space-m);
+  background: var(--cards-background);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+}
+
+.st-review__rowtext {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.st-review__count {
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
+.st-review__question {
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.st-review__mark {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.st-review--mobile .st-review__rowtext {
+  gap: var(--space-s);
+}
+
+.st-review--mobile .st-review__question {
+  font-size: var(--font-size-h5);
+}

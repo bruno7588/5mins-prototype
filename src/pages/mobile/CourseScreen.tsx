@@ -8,6 +8,7 @@ import ResourceCard from '@/components/ResourceCard/ResourceCard'
 import Button from '@/components/Button/Button'
 import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
 import { getCourseDetail } from '@/pages/courses/mockCourse'
+import { getCourseSituationalTest } from '@/data/courseFeed'
 import {
   courseProgressWithSignOff,
   signOffState,
@@ -31,6 +32,8 @@ interface CourseScreenProps {
   onStartSignOff: () => void
   /** Opens the certificate view once the course is complete. */
   onGetCertificate: () => void
+  /** Opens the course's situational test in the feed. */
+  onOpenSituationalTest: () => void
 }
 
 /**
@@ -38,7 +41,7 @@ interface CourseScreenProps {
  * its two-tone progress bar has no DS component, so it is built here from the
  * Figma with tokens (D13); the rest uses the mobile DS cards. Dark mode only.
  */
-function CourseScreen({ courseId, onBack, onStartSignOff, onGetCertificate }: CourseScreenProps) {
+function CourseScreen({ courseId, onBack, onStartSignOff, onGetCertificate, onOpenSituationalTest }: CourseScreenProps) {
   const reduce = useReducedMotion()
   const course = getCourseDetail(courseId)
   const signOff = useSignOff(course.id)
@@ -140,6 +143,17 @@ function CourseScreen({ courseId, onBack, onStartSignOff, onGetCertificate }: Co
 
       {tab === 'course' ? (
         <div className="m-course__body">
+          {/* The course opens with its situational test (Course feed Figma 17024:73953). */}
+          <section className="m-course__section">
+            <h2 className="m-course__sectiontitle">Warm-up</h2>
+            <MobileAssessmentCard
+              title={getCourseSituationalTest(courseId).title}
+              assessmentType="Situational test"
+              illustrationType="situational-test"
+              onClick={onOpenSituationalTest}
+            />
+          </section>
+
           <section className="m-course__section">
             <h2 className="m-course__sectiontitle">Lessons</h2>
             {lessons.map((l) => {

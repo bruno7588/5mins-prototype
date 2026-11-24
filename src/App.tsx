@@ -35,6 +35,7 @@ import ProgramDetails from './pages/programs/ProgramDetails'
 import ProgramsAdmin from './pages/programs/ProgramsAdmin'
 import ProgramAdminDetails from './pages/programs/ProgramAdminDetails'
 import ProgramBuilder from './pages/programs/ProgramBuilder'
+import CourseFeed from './pages/course-feed/CourseFeed'
 import ProgramCourseDetails from './pages/courses/ProgramCourseDetails'
 import Events from './pages/events/Events'
 import LearningRecords from './pages/learning-records/LearningRecords'
@@ -121,6 +122,7 @@ function App() {
       />
       <Route path="/programs/:id" element={<ProgramDetails />} />
       <Route path="/courses/:id" element={<ProgramCourseDetails />} />
+      <Route path="/courses/:id/feed" element={<CourseFeed />} />
       <Route path="/events" element={<Events />} />
 
       {/* All other pages — with TopNav */}

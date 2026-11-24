@@ -20,6 +20,7 @@ import LessonSheet from './LessonSheet'
 import WebViewScreen from './WebViewScreen'
 import CourseScreen from './CourseScreen'
 import SignOffScreen from './SignOffScreen'
+import CourseFeedScreen from './CourseFeedScreen'
 import CertificateScreen from './CertificateScreen'
 import SavedScreen, { type SavedTab, type SavedView } from './SavedScreen'
 import AccountSettingsScreen from './AccountSettingsScreen'
@@ -53,6 +54,8 @@ function MobileApp() {
   const [openCourseId, setOpenCourseId] = useState<string | null>(searchParams.get('course'))
   /** The trainer sign-off, pushed full screen over the course. */
   const [signOffOpen, setSignOffOpen] = useState(false)
+  /* The course feed, opened from the course screen. */
+  const [courseFeedOpen, setCourseFeedOpen] = useState(false)
   /** After the sign-off: the "Congratulations" screen, then the certificate view. */
   const [certReadyOpen, setCertReadyOpen] = useState(false)
   const [certificateOpen, setCertificateOpen] = useState(false)
@@ -77,6 +80,7 @@ function MobileApp() {
     setOpenProgramId(null)
     setOpenCourseId(null)
     setSignOffOpen(false)
+    setCourseFeedOpen(false)
     setCertReadyOpen(false)
     setCertificateOpen(false)
     setFeedIndex(null)
@@ -258,13 +262,17 @@ function MobileApp() {
           onIndexChange={setFeedIndex}
         />
       ) : null}
-      {feedIndex === null && openCourseId ? (
+      {feedIndex === null && openCourseId && courseFeedOpen ? (
+        <CourseFeedScreen courseId={openCourseId} onExit={() => setCourseFeedOpen(false)} />
+      ) : null}
+      {feedIndex === null && openCourseId && !courseFeedOpen ? (
         <CourseScreen
           key={openCourseId}
           courseId={openCourseId}
           onBack={() => setOpenCourseId(null)}
           onStartSignOff={() => setSignOffOpen(true)}
           onGetCertificate={() => setCertificateOpen(true)}
+          onOpenSituationalTest={() => setCourseFeedOpen(true)}
         />
       ) : null}
       {feedIndex === null && openProgram && !openCourseId ? (

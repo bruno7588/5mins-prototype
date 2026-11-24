@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import type { ScenarioMediaData } from '@/data/scenarioMedia'
 import { useNavigate } from 'react-router-dom'
 import { Danger } from 'iconsax-react'
 import Button from '@/components/Button/Button'
@@ -549,10 +550,11 @@ function CreateCourse() {
     title: string,
     brief: string,
     questions: SituationalQuestion[],
+    media?: ScenarioMediaData,
   ) => {
     const existingId = editingSituationalId ?? createdSituationalId.current
     const id = existingId ?? nextSituationalTestId++
-    setSituationalTests((prev) => ({ ...prev, [id]: { id, title, brief, questions } }))
+    setSituationalTests((prev) => ({ ...prev, [id]: { id, title, brief, questions, media } }))
 
     const card: ContentItem = {
       id,
@@ -573,16 +575,17 @@ function CreateCourse() {
 
   /* Step 1 of a new test: the card exists from here, with no questions yet, while the
      drawer moves on to step 2. */
-  const handleCreateSituationalTest = (title: string, brief: string) => {
-    createdSituationalId.current = upsertSituationalTest(title, brief, [])
+  const handleCreateSituationalTest = (title: string, brief: string, media?: ScenarioMediaData) => {
+    createdSituationalId.current = upsertSituationalTest(title, brief, [], media)
   }
 
   const handleSaveSituationalTest = (
     title: string,
     brief: string,
     questions: SituationalQuestion[],
+    media?: ScenarioMediaData,
   ) => {
-    upsertSituationalTest(title, brief, questions)
+    upsertSituationalTest(title, brief, questions, media)
     if (editingSituationalId !== null) showToast('success', 'Situational test updated')
     closeDrawer()
   }

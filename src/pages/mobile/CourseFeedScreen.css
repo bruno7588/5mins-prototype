@@ -1,0 +1,216 @@
+/* Course feed in the app (Figma "Course Feed V2" mobile: 17024:75378 brief, 17024:75116
+   lesson, 17024:75125 outline sheet). Prefixed .m-cfeed (globally bundled CSS). Dark only. */
+
+.m-cfeed {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--page-background);
+}
+
+.m-cfeed__screen {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* Lessons fill the screen; the header floats over the video. */
+.m-cfeed__screen--lessons {
+  overflow: hidden;
+}
+
+.m-cfeed__top {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.m-cfeed__top--overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  border-bottom: none;
+}
+
+.m-cfeed__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-m);
+}
+
+.m-cfeed__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-s);
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  cursor: pointer;
+}
+
+/* "Course outline" pill (17024:75379 Title): Neutral-900 at 24%. */
+.m-cfeed__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-s) var(--space-xs) var(--space-sm);
+  border: none;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--neutral-900) 24%, transparent);
+  font-family: inherit;
+  font-size: var(--font-size-h5);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.m-cfeed__back:focus-visible,
+.m-cfeed__pill:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Balances the back button so the pill sits centred. */
+.m-cfeed__slot {
+  width: 40px;
+}
+
+.m-cfeed__body {
+  padding: var(--space-l) var(--space-m);
+}
+
+/* ---- Outline sheet (17024:75136) ---- */
+.m-cfeed-sheet__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+.m-cfeed-sheet__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.m-cfeed-sheet__title {
+  margin: 0;
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.m-cfeed-sheet__meta {
+  display: flex;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
+.m-cfeed-sheet__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.m-cfeed-sheet__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.m-cfeed-sheet__track {
+  flex: 1 1 0;
+  display: flex;
+  height: 8px;
+  border-radius: var(--radius-ml);
+  background: var(--border);
+  overflow: hidden;
+}
+
+.m-cfeed-sheet__seg {
+  flex: 1 1 0;
+}
+
+.m-cfeed-sheet__seg--filled {
+  background: var(--primary-600);
+}
+
+.m-cfeed-sheet__pct {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-secondary);
+}
+
+/* ---- Review answers (17024:76047): a full screen over the tab bar ---- */
+.m-cfeed-review {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  background: var(--page-background);
+}
+
+.m-cfeed-review__header {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.m-cfeed-review__title {
+  margin: 0;
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.m-cfeed-review__body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-l);
+}
+
+/* ---- Course assessment (17024:75667): the quiz under the feed header ---- */
+.m-cfeed__screen--quiz {
+  overflow: hidden;
+}
+
+.m-cfeed__quiz {
+  flex: 1 1 0;
+  min-height: 0;
+  height: auto;
+}
+
+.m-cfeed__quiz .ql-qhead {
+  padding-top: var(--space-m);
+}
+
+.m-cfeed__quiz .ql-qhead__title {
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+}
+
+/* Lesson quiz result (17024:84272): a full screen with its close top right. */
+.m-cfeed-quizresult__close {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--space-m) var(--space-m) 0;
+}
+
+/* 12px between the options in the feed (Course feed Figma 17024:75369). */
+.m-cfeed__quiz .ql-choice__options,
+.m-sittest__quiz .ql-choice__options {
+  gap: var(--space-sm);
+}

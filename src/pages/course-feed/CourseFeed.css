@@ -1,0 +1,301 @@
+/* Web course feed (Figma "Course Feed V2" 17024:73838). Prefixed .cf- (globally
+   bundled CSS). */
+
+.cf {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--page-background);
+}
+
+/* ---- Top bar (17024:82008): back, course title, course progress ---- */
+.cf-topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  flex-shrink: 0;
+  height: 72px;
+  padding: 0 var(--space-xl);
+  border-bottom: 1px solid var(--border);
+  background: var(--page-background);
+}
+
+.cf-topbar__title {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cf-topbar__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  flex-shrink: 0;
+}
+
+.cf-topbar__progresslabel {
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  color: var(--text-secondary);
+}
+
+.cf-ring {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.cf-ring svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.cf-ring__track,
+.cf-ring__value {
+  fill: none;
+}
+
+.cf-ring__track {
+  stroke: var(--border);
+}
+
+.cf-ring__value {
+  stroke: var(--secondary-400);
+  stroke-linecap: round;
+}
+
+.cf-ring__label {
+  position: relative;
+  /* stylelint-disable-next-line -- Figma 17024:82016 draws the ring's value at 10px, below the type scale; 12px does not fit "100%" inside the 40px ring */
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* ---- Body: the feed, then the details panel ---- */
+.cf-body {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+.cf-main {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cf-stage {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The rail's lane on the right: 16px edge + 40px rail + 24px gap (17024:83174). */
+.cf-main {
+  --cf-rail-lane: calc(var(--space-m) + var(--space-xxl) + var(--space-l));
+}
+
+/* ---- Action rail (17024:83182) ---- */
+.cf-rail {
+  position: absolute;
+  top: var(--space-m);
+  right: var(--space-m);
+  bottom: var(--space-m);
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  /* Only its buttons take clicks; the lane under it belongs to the stage. */
+  pointer-events: none;
+}
+
+.cf-rail > * {
+  pointer-events: auto;
+}
+
+.cf-rail__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs);
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.cf-rail__toggle:hover {
+  background: var(--page-background-hover);
+}
+
+.cf-rail__toggle:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* ---- Lesson (17024:83176): the 9:16 video, full height of the feed ---- */
+.cf-lesson {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  padding: var(--space-m) var(--cf-rail-lane) var(--space-m) var(--space-xl);
+}
+
+/* The brief card, centred with 64px above it (17024:82019); 80px = feed padding 16 + 64. */
+.cf-brief {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: calc(var(--space-m) + var(--space-xl) * 2) var(--cf-rail-lane) var(--space-xl) var(--space-xl);
+}
+
+/* The results card, centred, 160px below the top of the feed (17024:79480). */
+.cf-results {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: calc(var(--space-xxl) * 4) var(--cf-rail-lane) var(--space-xl) var(--space-xl);
+}
+
+/* ---- Questions (17024:81656): a 900px column; the footer bar runs the full width
+   with its action on the column's right edge. The gutter never goes under the rail. ---- */
+.cf-quiz {
+  --cf-gutter: max(var(--cf-rail-lane), calc((100% - 900px) / 2));
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.cf-quiz .ql-qhead,
+.cf-quiz .ql-screen__body,
+.cf-quiz .ql-footer {
+  padding-left: var(--cf-gutter);
+  padding-right: var(--cf-gutter);
+}
+
+.cf-quiz .ql-footer {
+  padding-top: var(--space-m);
+  padding-bottom: var(--space-m);
+}
+
+/* "Question 1/20" (17024:81659): Paragraph S, tertiary. */
+.cf-quiz .ql-qhead__title {
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+}
+
+/* ---- Details panel (17024:82048): 480px, a hairline on its left ---- */
+.cf-panel {
+  flex-shrink: 0;
+  width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+  padding-bottom: var(--space-xl);
+  border-left: 1px solid var(--border);
+  overflow-y: auto;
+}
+
+.cf-panel__outline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-shrink: 0;
+  width: 100%;
+  padding: var(--space-m) var(--space-xl) var(--space-m) var(--space-l);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cf-panel__outline:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+
+/* The chevron turns as the outline opens (production: 200ms). */
+.cf-panel__chevron {
+  display: inline-flex;
+  transition: transform 200ms ease-in-out;
+}
+
+.cf-panel__chevron--open {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-panel__chevron {
+    transition: none;
+  }
+}
+
+/* The outline's rows carry 12px of their own padding, so 12 + 12 lines their text up
+   with the 24px the details use. */
+.cf-panel__list {
+  padding: 0 var(--space-sm);
+}
+
+.cf-panel__outlinetitle {
+  font-size: var(--font-size-h5);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.cf-panel__details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  padding: 0 var(--space-l);
+}
+
+.cf-panel__details--brief {
+  gap: var(--space-m);
+}
+
+.cf-panel__title {
+  margin: 0;
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.cf-panel__text {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* 12px between the options in the feed (Course feed Figma 17024:81695); the quiz's own
+   16px stays everywhere else. */
+.cf-quiz .ql-choice__options {
+  gap: var(--space-sm);
+}

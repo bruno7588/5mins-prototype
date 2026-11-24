@@ -1,29 +1,28 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
+import BottomSheet from '@/components/BottomSheet/BottomSheet'
 import Button from '@/components/Button/Button'
+import ScenarioMedia from '@/components/ScenarioMedia/ScenarioMedia'
 import DesktopPreview from '@/components/DesktopPreview/DesktopPreview'
 import QuizHeader from '@/pages/quiz-lab/components/QuizHeader'
 import { QuizAdvanceContext } from '@/pages/quiz-lab/components/FeedbackFooter'
-import MatchPairsPartial from '@/pages/quiz-lab/formats/MatchPairsPartial'
-import FillBlank from '@/pages/quiz-lab/formats/FillBlank'
-import Categorization from '@/pages/quiz-lab/formats/Categorization'
-import SequencingDnd from '@/pages/quiz-lab/formats/SequencingDnd'
-import SingleChoice from '@/pages/quiz-lab/formats/SingleChoice'
-import FreeText from '@/pages/quiz-lab/formats/FreeText'
+import {
+  SituationalBrief,
+  SituationalQuestionScreen as QuestionScreen,
+} from '@/components/SituationalTestPlayer/SituationalTestPlayer'
 import '@/pages/quiz-lab/quiz-lab.css'
-import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
 import type { SituationalQuestion } from '../SituationalTestDrawer/SituationalTestDrawer'
+import type { ScenarioMediaData } from '@/data/scenarioMedia'
 import './SituationalTestPreview.css'
-
-/* The situational test's own artwork, heading its brief. */
-const briefIllustration = getAssessmentIllustration('situational-test', 'desktop')
 
 interface Props {
   title: string
   brief: string
   questions: SituationalQuestion[]
+  /** The scenario's image, audio clip or video, shown on the brief card (DES-371). */
+  media?: ScenarioMediaData
   onClose: () => void
 }
 
@@ -42,11 +41,16 @@ interface Props {
  * scrim, focus trap and Escape, and it is portalled to the body because the drawer's
  * z-index makes a stacking context the overlay couldn't paint over.
  */
-function SituationalTestPreview({ title, brief, questions, onClose }: Props) {
+function SituationalTestPreview({ title, brief, questions, media, onClose }: Props) {
   const [screen, setScreen] = useState(0)
   const onBrief = screen === 0
   const question = onBrief ? null : questions[screen - 1]
   const last = screen === questions.length
+  /* The frame has no details panel, so the scenario stays within reach the way it does
+     in the app: "View Brief" beside the counter opens it in a sheet (DES-371). The
+     media picks up where it was left on the brief card. */
+  const [briefOpen, setBriefOpen] = useState(false)
+  const mediaPosition = useRef(0)
 
   return createPortal(
     <ConfirmModal
@@ -70,22 +74,13 @@ function SituationalTestPreview({ title, brief, questions, onClose }: Props) {
               <>
                 <QuizHeader showHearts={false} showAttempts={false} onClose={onClose} />
                 <div className="st-preview__brief-screen">
-                  <div className="st-preview__brief-card">
-                    <div className="st-preview__brief-head">
-                      <img src={briefIllustration} width={40} height={40} alt="" />
-                      <span className="st-preview__brief-label">Brief</span>
-                    </div>
-                    <div className="st-preview__brief-divider" />
-                    <div className="st-preview__brief-body">
-                      <p className="st-preview__brief-title">
-                        {title || 'Untitled situational test'}
-                      </p>
-                      <p className="st-preview__brief-text">{brief}</p>
-                    </div>
-                    <Button size="lg" onClick={() => setScreen(1)}>
-                      Start Situational Test
-                    </Button>
-                  </div>
+                  <SituationalBrief
+                    title={title}
+                    brief={brief}
+                    media={media}
+                    mediaPosition={mediaPosition}
+                    onStart={() => setScreen(1)}
+                  />
                 </div>
               </>
             ) : (
@@ -99,6 +94,11 @@ function SituationalTestPreview({ title, brief, questions, onClose }: Props) {
                   used={screen}
                   total={questions.length}
                   showHearts={false}
+                  action={
+                    <Button variant="text" size="sm" onClick={() => setBriefOpen(true)}>
+                      View Brief
+                    </Button>
+                  }
                   onClose={onClose}
                 />
                 {/* Continue is the learner's way on, so in a walkthrough it goes to the
@@ -112,6 +112,15 @@ function SituationalTestPreview({ title, brief, questions, onClose }: Props) {
               </>
             )}
           </div>
+          {briefOpen ? (
+            <BottomSheet ariaLabel="Brief" onClose={() => setBriefOpen(false)}>
+              <div className="bottom-sheet__content st-preview__sheet">
+                <h2 className="st-preview__sheet-title">{title || 'Untitled situational test'}</h2>
+                {media ? <ScenarioMedia media={media} position={mediaPosition} /> : null}
+                <p className="st-preview__sheet-text">{brief}</p>
+              </div>
+            </BottomSheet>
+          ) : null}
         </DesktopPreview>
       </div>
 
@@ -149,38 +158,6 @@ export function QuestionPreview({ question, onClose }: { question: SituationalQu
     </ConfirmModal>,
     document.body,
   )
-}
-
-/** The real renderer for the four interactive formats; the options for the rest. */
-function QuestionScreen({ question }: { question: SituationalQuestion }) {
-  const payload = question.interactive
-
-  if (payload?.type === 'match-pairs') return <MatchPairsPartial question={payload} />
-  if (payload?.type === 'fill-blank') return <FillBlank question={payload} formatKey="fill-blank" />
-  if (payload?.type === 'categorization')
-    return <Categorization question={payload} formatKey="categorization" />
-  if (payload?.type === 'sequencing') return <SequencingDnd question={payload} />
-
-  /* The rest are option or open-answer questions, played by the same two renderers the
-     lab uses. A poll carries correctIndex -1, so SingleChoice asks without marking. */
-  const options = question.options.filter((option) => option.trim())
-  if (options.length > 0) {
-    return (
-      <SingleChoice
-        question={{
-          type: 'single-choice',
-          prompt: question.text,
-          options,
-          correctIndex: question.format === 'poll' ? -1 : question.correctIndex,
-          /* What the admin wrote in the drawer's explanation field, shown under the
-             result — the preview is where they find out whether it reads well. */
-          explanation: question.explanation,
-        }}
-      />
-    )
-  }
-
-  return <FreeText question={{ type: 'free-text', prompt: question.text }} />
 }
 
 export default SituationalTestPreview

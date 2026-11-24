@@ -1,0 +1,101 @@
+/* Situational test in the mobile course feed questions (Figma 17024:75290). Prefixed .m-sittest (globally bundled CSS). Dark mode only. */
+
+.m-sittest {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background: var(--page-background);
+}
+
+/* The questions cover the whole phone screen, tab bar included. */
+.m-sittest--overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  min-height: 0;
+}
+
+.m-sittest__quiz {
+  flex: 1 1 0;
+  min-height: 0;
+  height: auto;
+}
+
+/* 16px above the progress row (17024:75307); "Question 1/10" is Paragraph S. */
+.m-sittest__quiz .ql-qhead {
+  padding-top: var(--space-m);
+}
+
+.m-sittest__quiz .ql-qhead__title {
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+}
+
+/* "Don't give up!" sheet (17024:76172): artwork, copy, then Exit over Resume. */
+.m-sittest__leave {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-m);
+  text-align: center;
+}
+
+.m-sittest__leavetext {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.m-sittest__leavetitle {
+  margin: 0;
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.m-sittest__leavebody {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.m-sittest__leaveactions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+.m-sittest__leaveactions .ds-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* "View Brief" sheet (DES-371): the title, the media, then the brief. */
+.m-sittest__brief {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+.m-sittest__brieftitle {
+  margin: 0;
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.m-sittest__brieftext {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* The header's label group makes room for View Brief beside the counter. */
+.m-sittest__quiz .ql-qhead__label {
+  gap: var(--space-sm);
+}
