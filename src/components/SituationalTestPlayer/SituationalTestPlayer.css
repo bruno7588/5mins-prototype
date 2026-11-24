@@ -35,9 +35,11 @@
   line-height: 1.5;
 }
 
+/* On a card, so the elevated border: plain --border matches the card fill in dark
+   mode and the line disappears. */
 .st-brief__divider {
   height: 1px;
-  background: var(--border);
+  background: var(--border-elevated);
   border-radius: var(--radius-xs);
 }
 

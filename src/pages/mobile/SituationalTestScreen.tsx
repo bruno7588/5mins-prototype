@@ -77,7 +77,7 @@ export function MobileSituationalQuestions({
             heartCount
             action={
               brief ? (
-                <Button variant="text" size="sm" onClick={() => setBriefOpen(true)}>
+                <Button variant="text" size="md" onClick={() => setBriefOpen(true)}>
                   View Brief
                 </Button>
               ) : undefined

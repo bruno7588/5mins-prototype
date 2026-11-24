@@ -132,11 +132,15 @@
    back, and a tap pauses, which shows them again. */
 .scmedia--playing .scmedia__centre {
   opacity: 0;
+  /* Hidden controls must not catch a tap: a tap anywhere on the picture pauses, and
+     the next one plays (Bruno, 2026-11-24). */
+  pointer-events: none;
 }
 
 .scmedia--playing:hover .scmedia__centre,
 .scmedia--playing:focus-within .scmedia__centre {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .scmedia__ctrl {
@@ -165,6 +169,12 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-sm) var(--space-m);
+  /* The strip itself lets taps through to the picture; only its button takes them. */
+  pointer-events: none;
+}
+
+.scmedia__bar .scmedia__round {
+  pointer-events: auto;
 }
 
 /* Progress bar (Figma 17024:90676): 2px, white at 16% for the track, Primary-600 for
