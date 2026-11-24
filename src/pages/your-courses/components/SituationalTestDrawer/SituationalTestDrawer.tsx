@@ -113,15 +113,12 @@ const snapshot = (
   brief: string,
   questions: SituationalQuestion[],
   media: ScenarioMediaData | undefined,
-  uploading: boolean,
 ) =>
   JSON.stringify({
     title,
     brief,
-    /* Adding, changing or removing the scenario media is an edit, and so is a file
-       still on its way up: closing mid-upload asks before discarding it. */
+    /* Adding, changing or removing the scenario media is an edit. */
     media: media ? `${media.name}:${media.size ?? ''}:${media.src}` : '',
-    uploading,
     questions: questions.map((q) => ({
       t: q.text,
       o: q.options,
@@ -167,7 +164,6 @@ function SituationalTestDrawerContent({
   const [briefBlurred, setBriefBlurred] = useState(false)
   /* Scenario media (DES-371): one image, audio clip or video on the brief. */
   const [media, setMedia] = useState<ScenarioMediaData | undefined>(initial?.media)
-  const [uploading, setUploading] = useState(false)
   const [questions, setQuestions] = useState<SituationalQuestion[]>(
     () => initial?.questions ?? [makeQuestion()],
   )
@@ -197,7 +193,7 @@ function SituationalTestDrawerContent({
      seeds one blank question, so a baseline built from `initial` alone reads as edited
      before the admin has typed anything. */
   const pristine = useRef<string | null>(null)
-  const current = snapshot(title, brief, questions, media, uploading)
+  const current = snapshot(title, brief, questions, media)
   if (pristine.current === null) pristine.current = current
   const dirty = current !== pristine.current
   useEffect(() => {
@@ -257,9 +253,7 @@ function SituationalTestDrawerContent({
   const showBrief = twoPane ? pane === 'brief' : step === 1
   const showQuestions = twoPane ? pane === 'questions' : step === 2
 
-  /* Held while a file is uploading, so a test is never saved without the media the
-     admin just chose. */
-  const canContinue = titleFilled && briefFilled && !uploading
+  const canContinue = titleFilled && briefFilled
   const canSave = questions.length > 0 && questions.every(questionIsComplete)
   /* The edit form commits every field at once, so it has to check both halves. On create
      this is reached from step 2, where step 1 already gated the title and brief. */
@@ -434,10 +428,10 @@ function SituationalTestDrawerContent({
                 Scenario media <span className="st-drawer__label-optional">(optional)</span>
               </span>
               <span className="st-drawer__helper">
-                An image, audio or video clip that shows the situation. Learners can return to it from every
+                A video, image or audio clip that shows the situation. Learners can return to it from every
                 question. Write the brief so it works on its own if the clip can't play.
               </span>
-              <ScenarioMediaField media={media} onChange={setMedia} onUploadingChange={setUploading} />
+              <ScenarioMediaField media={media} onChange={setMedia} />
             </div>
           </>
         ) : null}

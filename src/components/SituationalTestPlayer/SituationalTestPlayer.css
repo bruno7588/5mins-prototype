@@ -28,6 +28,13 @@
   color: var(--text-primary);
 }
 
+/* The test's title is H4, a step under the card's "Brief" label (Bruno, 2026-11-24). */
+.st-brief__title {
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
 .st-brief__divider {
   height: 1px;
   background: var(--border);
@@ -42,17 +49,10 @@
 
 .st-brief__text {
   margin: 0;
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
-}
-
-.st-brief__note {
-  margin: 0;
-  font-size: var(--font-size-md);
-  line-height: 1.5;
-  color: var(--text-tertiary);
 }
 
 /* Full-bleed inside the card, like every primary action on a phone. */
@@ -61,12 +61,18 @@
   width: 100%;
 }
 
-/* Web feed: a 720px card with roomier padding; the action sizes to its label. */
+/* Web feed: a 720px card with 24px padding and 20px gaps (Bruno, 2026-11-24; the Figma
+   frame 17024:82020 draws 32px and 24px); the action sizes to its label. */
 .st-brief--web {
   width: 100%;
   max-width: 720px;
-  gap: var(--space-l);
-  padding: var(--space-xl);
+  gap: var(--space-ml);
+  padding: var(--space-l);
+}
+
+/* 16px between the title, the media and the brief text (Bruno, 2026-11-24). */
+.st-brief--web .st-brief__body {
+  gap: var(--space-m);
 }
 
 .st-brief--web .ds-btn {

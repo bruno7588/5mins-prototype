@@ -1,15 +1,22 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { Trash } from 'iconsax-react'
+import { Add, Gallery, Trash, Video, VolumeHigh } from 'iconsax-react'
 import Button from '@/components/Button/Button'
+import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
+import InputField from '@/components/InputField/InputField'
+import RowActionsMenu, { type RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'
+import Tabs from '@/components/Tabs/Tabs'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import { FileUploader } from '@/components/FileUploader/FileUploader'
+import AddImageModal from '@/pages/add-content/components/AddImageModal/AddImageModal'
+import SectionHeader from '@/pages/your-courses/components/SectionHeader/SectionHeader'
 import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
 import {
-  SCENARIO_MEDIA_ACCEPT,
+  isMediaLink,
+  SCENARIO_MEDIA_RULES,
   scenarioMediaError,
-  scenarioMediaKind,
   type ScenarioMediaData,
+  type ScenarioMediaKind,
 } from '@/data/scenarioMedia'
 import ScenarioMedia from './ScenarioMedia'
 import './ScenarioMediaField.css'
@@ -17,73 +24,204 @@ import './ScenarioMediaField.css'
 interface Props {
   media?: ScenarioMediaData
   onChange: (media: ScenarioMediaData | undefined) => void
-  /** True while a file is on its way up: the form holds its commit until it lands. */
-  onUploadingChange?: (uploading: boolean) => void
 }
 
 const UPLOAD_FAILED = 'Upload failed. Check your connection and try again.'
 /* The prototype has no server, so the upload is acted out. */
 const UPLOAD_MS = 1600
 
+const acceptOf = (kind: ScenarioMediaKind) => SCENARIO_MEDIA_RULES[kind].extensions.map((ext) => `.${ext}`).join(',')
+
 const formatSize = (bytes: number) =>
   bytes >= 1024 * 1024 ? `${(bytes / (1024 * 1024)).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`
 
+const MENU: RowMenuItem[] = [
+  {
+    key: 'video',
+    label: 'Video',
+    description: 'Upload a video or paste a link',
+    icon: <Video size={20} color="var(--text-primary)" variant="Linear" />,
+  },
+  {
+    key: 'image',
+    label: 'Image',
+    description: 'Upload, generate with AI or pick stock footage',
+    icon: <Gallery size={20} color="var(--text-primary)" variant="Linear" />,
+  },
+  {
+    key: 'audio',
+    label: 'Audio',
+    description: 'Upload an audio file',
+    icon: <VolumeHigh size={20} color="var(--text-primary)" variant="Linear" />,
+  },
+]
+
 /**
- * Scenario media field (DES-371): the one image, audio clip or video a situational test
- * carries on its brief. Empty, it is the DS file uploader; the type comes from the
- * file. Filled, the zone gives way to the media itself, playable in place, with Change
- * File and Remove. A file that can't be used says why in the zone; a failed change
- * keeps the media already there.
+ * A file picked in the Add video or Add audio modal: checked against the type's limits,
+ * then "uploaded" with a progress ring, the way the Your Content uploaders show it.
  */
-function ScenarioMediaField({ media, onChange, onUploadingChange }: Props) {
-  const reduce = useReducedMotion()
-  const [upload, setUpload] = useState<{ file: File; progress: number } | null>(null)
+function useUpload(kind: 'video' | 'audio') {
+  const [file, setFile] = useState<File | null>(null)
+  const [progress, setProgress] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
   const timer = useRef<number | null>(null)
 
-  useEffect(() => {
-    onUploadingChange?.(upload !== null)
-  }, [upload, onUploadingChange])
+  const stop = () => {
+    if (timer.current !== null) window.clearInterval(timer.current)
+    timer.current = null
+  }
+  useEffect(() => stop, [])
 
-  useEffect(
-    () => () => {
-      if (timer.current !== null) window.clearInterval(timer.current)
-    },
-    [],
-  )
+  const reset = () => {
+    stop()
+    setFile(null)
+    setProgress(null)
+    setError(null)
+  }
 
-  const start = (file: File) => {
-    const problem = scenarioMediaError(file)
+  const pick = (next: File) => {
+    const problem = scenarioMediaError(next, kind)
     if (problem) {
       setError(problem)
       return
     }
     setError(null)
-    setUpload({ file, progress: 0 })
+    setFile(next)
+    setProgress(0)
     const began = performance.now()
+    stop()
     timer.current = window.setInterval(() => {
-      const progress = Math.min(100, Math.round(((performance.now() - began) / UPLOAD_MS) * 100))
-      if (progress < 100) {
-        setUpload({ file, progress })
+      const pct = Math.min(100, Math.round(((performance.now() - began) / UPLOAD_MS) * 100))
+      if (pct < 100) {
+        setProgress(pct)
         return
       }
-      if (timer.current !== null) window.clearInterval(timer.current)
-      timer.current = null
-      setUpload(null)
-      const kind = scenarioMediaKind(file.name)
-      if (!kind) {
-        setError(UPLOAD_FAILED)
-        return
-      }
-      onChange({ kind, src: URL.createObjectURL(file), name: file.name, size: file.size })
+      stop()
+      setProgress(null)
     }, 80)
   }
+
+  return { file, uploading: progress !== null, progress: progress ?? 0, error, pick, reset, ready: !!file && progress === null }
+}
+
+/** Add video (upload or link) and Add audio (upload), in the DS modal. */
+function MediaModal({
+  kind,
+  onClose,
+  onSave,
+}: {
+  kind: 'video' | 'audio' | null
+  onClose: () => void
+  onSave: (media: ScenarioMediaData) => void
+}) {
+  const shown = kind ?? 'video'
+  const upload = useUpload(shown)
+  const [tab, setTab] = useState<'upload' | 'link'>('upload')
+  const [link, setLink] = useState('')
+  const [linkBlurred, setLinkBlurred] = useState(false)
+  const noun = shown === 'video' ? 'video' : 'audio'
+  const onLink = shown === 'video' && tab === 'link'
+  const linkOk = isMediaLink(link)
+  const canSave = onLink ? linkOk : upload.ready
+
+  const close = () => {
+    upload.reset()
+    setTab('upload')
+    setLink('')
+    setLinkBlurred(false)
+    onClose()
+  }
+
+  const save = () => {
+    if (onLink) onSave({ kind: 'video', src: link.trim(), name: link.trim(), embed: true })
+    else if (upload.file) {
+      onSave({ kind: shown, src: URL.createObjectURL(upload.file), name: upload.file.name, size: upload.file.size })
+    } else return
+    close()
+  }
+
+  return (
+    <ConfirmModal open={kind !== null} onClose={close} ariaLabel={`Add ${noun}`} className="scfield-modal" closable>
+      <SectionHeader title={shown === 'video' ? 'Add video' : 'Add audio'} divider={shown !== 'video'} />
+      {shown === 'video' ? (
+        <Tabs
+          ariaLabel="Add video"
+          items={[
+            { key: 'upload', label: 'Upload video' },
+            { key: 'link', label: 'Paste a link' },
+          ]}
+          activeKey={tab}
+          onChange={(key) => setTab(key as 'upload' | 'link')}
+        />
+      ) : null}
+      <div className="scfield-modal__body">
+        {onLink ? (
+          <>
+            <InputField
+              label="Embed a link"
+              placeholder="Paste a link here..."
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+              onBlur={() => setLinkBlurred(true)}
+            />
+            {linkBlurred && link.trim() && !linkOk ? (
+              <span className="scfield__error" role="alert">
+                Enter a full link, starting with https://
+              </span>
+            ) : (
+              <span className="scfield-modal__hint">
+                Add a video from YouTube, Loom, Vimeo or Synthesia. It plays in that provider's own player.
+              </span>
+            )}
+          </>
+        ) : (
+          <FileUploader
+            size="L"
+            state={upload.uploading ? 'Uploading' : upload.error ? 'Error' : upload.file ? 'Filled' : undefined}
+            progress={upload.progress}
+            fileName={upload.file?.name}
+            errorMessage={upload.error ?? UPLOAD_FAILED}
+            accept={acceptOf(shown)}
+            onFileSelect={upload.pick}
+            onChangeFile={upload.reset}
+            helpText={
+              shown === 'video'
+                ? 'Drag and drop a video here or click to upload (MP4 up to 500MB)'
+                : 'Drag and drop an audio file here or click to upload (MP3, M4A or WAV up to 50MB)'
+            }
+          />
+        )}
+      </div>
+      <div className="confirm-modal-actions">
+        <Button variant="outlined-2" onClick={close}>
+          Cancel
+        </Button>
+        <Button onClick={save} disabled={!canSave}>
+          {shown === 'video' ? 'Add Video' : 'Add Audio'}
+        </Button>
+      </div>
+    </ConfirmModal>
+  )
+}
+
+/**
+ * Scenario media field (DES-371): the one video, image or audio clip a situational test
+ * carries on its brief.
+ *
+ * Empty, it is the Attach Media button the questions used; it opens a list of the three
+ * kinds, and each opens the Your Content pattern for it: Add video (upload, or a link
+ * that plays in its provider's player), Add image (upload, generate with AI, stock
+ * footage) and Add audio (upload). Filled, the media shows in place with Change Media
+ * and Remove.
+ */
+function ScenarioMediaField({ media, onChange }: Props) {
+  const reduce = useReducedMotion()
+  const [adding, setAdding] = useState<ScenarioMediaKind | null>(null)
 
   return (
     <div className="scfield">
       <AnimatePresence mode="wait" initial={false}>
-        {media && !upload ? (
+        {media ? (
           <motion.div
             key="filled"
             className="scfield__filled"
@@ -98,62 +236,59 @@ function ScenarioMediaField({ media, onChange, onUploadingChange }: Props) {
                 {media.size ? <span className="scfield__size">{formatSize(media.size)}</span> : null}
               </span>
               <span className="scfield__actions">
-                <Button variant="text" size="sm" onClick={() => inputRef.current?.click()}>
-                  Change File
-                </Button>
+                <RowActionsMenu
+                  items={MENU}
+                  onSelect={(key) => setAdding(key as ScenarioMediaKind)}
+                  triggerClassName="ds-btn ds-btn--sm ds-btn--text"
+                  triggerContent={<span className="ds-btn__label">Change Media</span>}
+                  ariaLabel="Change media"
+                />
                 <Tooltip text="Remove media" position="Top" icon={false}>
-                  <button
-                    type="button"
-                    className="scfield__remove"
-                    aria-label="Remove media"
-                    onClick={() => {
-                      setError(null)
-                      onChange(undefined)
-                    }}
-                  >
+                  <button type="button" className="scfield__remove" aria-label="Remove media" onClick={() => onChange(undefined)}>
                     <Trash size={20} color="currentColor" variant="Linear" />
                   </button>
                 </Tooltip>
               </span>
             </div>
-            {/* A change that can't be used keeps the media already there. */}
-            {error ? (
-              <span className="scfield__error" role="alert">
-                {error}
-              </span>
-            ) : null}
-            <input
-              ref={inputRef}
-              type="file"
-              hidden
-              accept={SCENARIO_MEDIA_ACCEPT}
-              onChange={(e) => {
-                const file = e.target.files?.[0]
-                e.target.value = ''
-                if (file) start(file)
-              }}
-            />
           </motion.div>
         ) : (
-          <motion.div
-            key="empty"
-            {...ARRIVE(reduce)}
-            exit={{ opacity: 0 }}
-            transition={arriveTransition(reduce)}
-          >
-            <FileUploader
-              size="L"
-              state={upload ? 'Uploading' : error ? 'Error' : undefined}
-              progress={upload?.progress}
-              fileName={upload?.file.name}
-              errorMessage={error ?? undefined}
-              accept={SCENARIO_MEDIA_ACCEPT}
-              onFileSelect={start}
-              helpText="Drag and drop an image, audio or video file, or click to upload (image up to 10MB • audio up to 50MB • MP4 video up to 500MB)"
+          <motion.div key="empty" {...ARRIVE(reduce)} exit={{ opacity: 0 }} transition={arriveTransition(reduce)}>
+            <RowActionsMenu
+              items={MENU}
+              onSelect={(key) => setAdding(key as ScenarioMediaKind)}
+              triggerClassName="scfield__add"
+              triggerContent={
+                <>
+                  <Add size={20} color="currentColor" variant="Linear" />
+                  <span className="scfield__addlabel">Attach Media</span>
+                  <span className="scfield__addhint">(Video, Image or Audio)</span>
+                </>
+              }
+              ariaLabel="Attach media"
             />
           </motion.div>
         )}
       </AnimatePresence>
+
+      <MediaModal
+        kind={adding === 'video' || adding === 'audio' ? adding : null}
+        onClose={() => setAdding(null)}
+        onSave={onChange}
+      />
+      <AddImageModal
+        open={adding === 'image'}
+        onClose={() => setAdding(null)}
+        title="Add image"
+        showSuggest={false}
+        upload={{
+          accept: acceptOf('image'),
+          validate: async (file) => scenarioMediaError(file, 'image'),
+        }}
+        onSelect={(src) => {
+          onChange({ kind: 'image', src, name: 'Scenario image' })
+          setAdding(null)
+        }}
+      />
     </div>
   )
 }

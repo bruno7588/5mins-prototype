@@ -4,6 +4,7 @@ import type {
 } from '@/pages/your-courses/components/SituationalTestDrawer/SituationalTestDrawer'
 import { getCourseDetail } from '@/pages/courses/mockCourse'
 import type { ScenarioMediaData } from './scenarioMedia'
+import scenarioVideo from '@/assets/gemini_generated_video_e0ecc952.mp4'
 import { feedLessons } from '@/pages/for-you/feedItems'
 
 /**
@@ -14,11 +15,11 @@ import { feedLessons } from '@/pages/for-you/feedItems'
  * (`SituationalTestData`), so anything the builder adds to a test reaches the feed
  * without a second model.
  */
-/* Placeholder scenario media (public/scenario-media): stand-ins until a real acted clip
-   is dropped in. The feed shows the video; add ?media=audio, ?media=image or
-   ?media=none to the URL to see the other cases. */
+/* Placeholder scenario media: a generated scenario clip (src/assets), plus an audio and
+   an image stand-in (public/scenario-media). The feed shows the video; add
+   ?media=audio, ?media=image or ?media=none to the URL to see the other cases. */
 const scenarioMedia: Record<string, ScenarioMediaData> = {
-  video: { kind: 'video', src: '/scenario-media/scenario-placeholder.mp4', name: 'Scenario video' },
+  video: { kind: 'video', src: scenarioVideo, name: 'Scenario video' },
   audio: { kind: 'audio', src: '/scenario-media/scenario-placeholder.m4a', name: 'Scenario audio' },
   image: { kind: 'image', src: '/scenario-media/scenario-placeholder.png', name: 'Scenario image' },
 }

@@ -34,7 +34,7 @@ interface BriefProps {
  * and the mobile app, so the three never drift.
  */
 export function SituationalBrief({ title, brief, onStart, variant = 'preview', media, mediaPosition }: BriefProps) {
-  const art = variant === 'mobile' ? 32 : 40
+  const art = variant === 'preview' ? 40 : 32
   return (
     <div className={`st-brief st-brief--${variant}`}>
       <div className="st-brief__head">
@@ -46,10 +46,9 @@ export function SituationalBrief({ title, brief, onStart, variant = 'preview', m
         <p className="st-brief__title">{title || 'Untitled situational test'}</p>
         {media ? <ScenarioMedia media={media} position={mediaPosition} /> : null}
         <p className="st-brief__text">{brief}</p>
-        {/* Start is never held back, so the card says the brief stays within reach. */}
-        <p className="st-brief__note">You can come back to this from any question.</p>
       </div>
-      <Button size="lg" onClick={onStart}>
+      {/* Medium on the web feed; large where the card runs at phone width. */}
+      <Button size={variant === 'web' ? 'md' : 'lg'} onClick={onStart}>
         Start Situational Test
       </Button>
     </div>

@@ -4,7 +4,7 @@ import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import { ExitFullScreenIcon, FullScreenIcon } from '@/components/icons/PlayerIcons'
 import { ToastSpinner } from '@/components/Toast/Toast'
-import type { ScenarioMediaData } from '@/data/scenarioMedia'
+import { toEmbedUrl, type ScenarioMediaData } from '@/data/scenarioMedia'
 import './ScenarioMedia.css'
 
 interface Props {
@@ -117,6 +117,22 @@ function ScenarioMedia({ media, position }: Props) {
       /* 4 = MEDIA_ERR_SRC_NOT_SUPPORTED: the format, not the connection. */
       setState(playerRef.current?.error?.code === 4 ? 'unsupported' : 'failed')
     },
+  }
+
+  /* A pasted link plays in its provider's own player (YouTube, Loom, Vimeo): none of the
+     5Mins controls, and no remembered position, apply to it. */
+  if (media.kind === 'video' && media.embed) {
+    return (
+      <div className="scmedia scmedia--embed">
+        <iframe
+          className="scmedia__embed"
+          src={toEmbedUrl(media.src)}
+          title="Scenario video"
+          allow="fullscreen; picture-in-picture; encrypted-media"
+          allowFullScreen
+        />
+      </div>
+    )
   }
 
   if (state === 'failed' || state === 'unsupported') {
