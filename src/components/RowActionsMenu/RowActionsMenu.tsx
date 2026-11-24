@@ -40,6 +40,9 @@ interface RowActionsMenuProps {
   caret?: boolean
   /** Extra class on the menu surface (it is portaled, so it can't be reached from the page). */
   menuClassName?: string
+  /** Where the menu sits under its trigger: hanging from the trigger's right edge
+   *  (default, for a kebab), or centred under it (a wide trigger such as Attach Media). */
+  align?: 'end' | 'center'
 }
 
 /**
@@ -57,6 +60,7 @@ function RowActionsMenu({
   triggerContent,
   caret = true,
   menuClassName,
+  align = 'end',
 }: RowActionsMenuProps) {
   const [open, setOpen] = useState(false)
   const btnRef = useRef<HTMLButtonElement>(null)
@@ -69,6 +73,8 @@ function RowActionsMenu({
   /* The menu hangs left from the trigger's right edge; near the left edge of the
      window there is no room for that, so it hangs right from the left edge instead. */
   const [startAligned, setStartAligned] = useState(false)
+  /* Measured, to centre the menu under its trigger when `align` asks for it. */
+  const [menuWidth, setMenuWidth] = useState(0)
 
   useLayoutEffect(() => {
     if (!open) return
@@ -90,6 +96,7 @@ function RowActionsMenu({
     const roomBelow = window.innerHeight - rect.bottom
     setFlipped((menu?.height ?? 0) + 16 > roomBelow && rect.top > roomBelow)
     setStartAligned((menu?.width ?? 0) + 8 > rect.right)
+    setMenuWidth(menu?.width ?? 0)
   }, [open, rect, items])
 
   useEffect(() => {
@@ -137,7 +144,17 @@ function RowActionsMenu({
             className={`ram-menu${menuClassName ? ` ${menuClassName}` : ''}`}
             style={{
               position: 'fixed',
-              ...(startAligned ? { left: rect.left } : { right: Math.max(8, window.innerWidth - rect.right) }),
+              ...(align === 'center'
+                ? {
+                    /* Kept inside the window with an 8px margin. */
+                    left: Math.min(
+                      Math.max(8, rect.left + rect.width / 2 - menuWidth / 2),
+                      Math.max(8, window.innerWidth - menuWidth - 8),
+                    ),
+                  }
+                : startAligned
+                  ? { left: rect.left }
+                  : { right: Math.max(8, window.innerWidth - rect.right) }),
               zIndex: 2000,
               ...(placement === 'top' || flipped
                 ? { bottom: window.innerHeight - rect.top + 8 }

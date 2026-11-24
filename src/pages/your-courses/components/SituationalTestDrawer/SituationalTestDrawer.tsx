@@ -424,13 +424,12 @@ function SituationalTestDrawerContent({
             </div>
 
             <div className="st-drawer__field">
-              <span className="st-drawer__label">
-                Scenario media <span className="st-drawer__label-optional">(optional)</span>
-              </span>
-              <span className="st-drawer__helper">
-                A video, image or audio clip that shows the situation. Learners can return to it from every
-                question. Write the brief so it works on its own if the clip can't play.
-              </span>
+              <div className="st-drawer__labelgroup">
+                <span className="st-drawer__label">
+                  Scenario media <span className="st-drawer__label-optional">(optional)</span>
+                </span>
+                <span className="st-drawer__helper">A video, image or audio clip that shows the situation</span>
+              </div>
               <ScenarioMediaField media={media} onChange={setMedia} />
             </div>
           </>

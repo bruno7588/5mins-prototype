@@ -22,9 +22,9 @@
 
 .scfield__name {
   font-size: var(--font-size-md);
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.5;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -116,11 +116,32 @@
   color: var(--text-tertiary);
 }
 
-/* Add video / Add audio modal: the DS modal with its content stacked. */
+/* Add video / Add audio: the DS Modal (overlays.md "Modal"): 720px wide, its blocks
+   the full width, and a content area of fixed height. The shell supplies the padding, radius,
+   surface, shadow and close. */
+.confirm-modal.scfield-modal {
+  width: 720px;
+  align-items: stretch;
+}
+
+.scfield-modal__header {
+  /* Clears the close in the top-right corner. */
+  padding-right: var(--space-xl);
+}
+
 .scfield-modal__body {
   display: flex;
   flex-direction: column;
   gap: var(--space-s);
+  /* One fixed height for every state (Bruno, 2026-11-24), so the modal never jumps
+     between the drop zone, the link field and the preview: the 320px media slot, the
+     8px gap and the 40px file row under it. */
+  height: calc(320px + var(--space-s) + var(--space-xxl));
+}
+
+/* The drop zone fills that height. */
+.scfield-modal__body .file-uploader {
+  flex: 1 1 0;
 }
 
 .scfield-modal__hint {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Add, Gallery, Trash, Video, VolumeHigh } from 'iconsax-react'
 import Button from '@/components/Button/Button'
@@ -101,10 +101,14 @@ function useUpload(kind: 'video' | 'audio') {
     }, 80)
   }
 
-  return { file, uploading: progress !== null, progress: progress ?? 0, error, pick, reset, ready: !!file && progress === null }
+  const ready = !!file && progress === null
+  /* Where the uploaded file plays from, for the preview and for what gets saved. */
+  const src = useMemo(() => (file && ready ? URL.createObjectURL(file) : null), [file, ready])
+
+  return { file, src, uploading: progress !== null, progress: progress ?? 0, error, pick, reset, ready }
 }
 
-/** Add video (upload or link) and Add audio (upload), in the DS modal. */
+/** Add video (upload or link) and Add audio (upload), in the DS Modal (overlays.md). */
 function MediaModal({
   kind,
   onClose,
@@ -134,15 +138,20 @@ function MediaModal({
 
   const save = () => {
     if (onLink) onSave({ kind: 'video', src: link.trim(), name: link.trim(), embed: true })
-    else if (upload.file) {
-      onSave({ kind: shown, src: URL.createObjectURL(upload.file), name: upload.file.name, size: upload.file.size })
+    else if (upload.file && upload.src) {
+      onSave({ kind: shown, src: upload.src, name: upload.file.name, size: upload.file.size })
     } else return
     close()
   }
 
   return (
     <ConfirmModal open={kind !== null} onClose={close} ariaLabel={`Add ${noun}`} className="scfield-modal" closable>
-      <SectionHeader title={shown === 'video' ? 'Add video' : 'Add audio'} divider={shown !== 'video'} />
+      {/* DS Modal (overlays.md): 720px, a section header with title and divider, a
+          content area, then a centred Cancel and primary pair. No supporting text: the
+          tabs and the drop zone already say what to do (Bruno, 2026-11-24). */}
+      <div className="scfield-modal__header">
+        <SectionHeader title={shown === 'video' ? 'Add video' : 'Add audio'} />
+      </div>
       {shown === 'video' ? (
         <Tabs
           ariaLabel="Add video"
@@ -170,10 +179,24 @@ function MediaModal({
               </span>
             ) : (
               <span className="scfield-modal__hint">
-                Add a video from YouTube, Loom, Vimeo or Synthesia. It plays in that provider's own player.
+                Add a video from YouTube, Loom, Vimeo or Synthesia.
               </span>
             )}
           </>
+        ) : upload.ready && upload.file && upload.src ? (
+          /* Uploaded: the clip itself, playable with the learner's controls, so the admin
+             can check it is the right one before adding it. */
+          <div className="scfield__filled">
+            <ScenarioMedia media={{ kind: shown, src: upload.src, name: upload.file.name }} />
+            <div className="scfield__row">
+              <span className="scfield__file">
+                <span className="scfield__name">{upload.file.name}</span>
+              </span>
+              <Button variant="text" size="md" onClick={upload.reset}>
+                Change File
+              </Button>
+            </div>
+          </div>
         ) : (
           <FileUploader
             size="L"
@@ -192,7 +215,7 @@ function MediaModal({
           />
         )}
       </div>
-      <div className="confirm-modal-actions">
+      <div className="confirm-modal-actions confirm-modal-actions--center">
         <Button variant="outlined-2" onClick={close}>
           Cancel
         </Button>
@@ -242,6 +265,7 @@ function ScenarioMediaField({ media, onChange }: Props) {
                   triggerClassName="ds-btn ds-btn--sm ds-btn--text"
                   triggerContent={<span className="ds-btn__label">Change Media</span>}
                   ariaLabel="Change media"
+                  caret={false}
                 />
                 <Tooltip text="Remove media" position="Top" icon={false}>
                   <button type="button" className="scfield__remove" aria-label="Remove media" onClick={() => onChange(undefined)}>
@@ -265,6 +289,8 @@ function ScenarioMediaField({ media, onChange }: Props) {
                 </>
               }
               ariaLabel="Attach media"
+              caret={false}
+              align="center"
             />
           </motion.div>
         )}

@@ -156,6 +156,13 @@
 
 /* ===== Helper + word count ===== */
 
+/* A label with its description under it: 4px apart, then the field's own 8px gap. */
+.st-drawer__labelgroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
 .st-drawer__helper {
   font-size: var(--font-size-md);
   font-weight: 400;

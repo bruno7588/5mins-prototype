@@ -35,8 +35,6 @@
   width: 100%;
   height: 480px;
   overflow-y: auto;
-  padding-inline: var(--space-m);
-  margin-inline: calc(-1 * var(--space-m));
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
