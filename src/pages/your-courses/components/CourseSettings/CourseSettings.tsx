@@ -166,14 +166,9 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
             <>
               Add this course to a relevant category (e.g., Compliance, Marketing). These courses would show up in
               the &ldquo;Your Workspace&rdquo; page. You can edit these categories from{' '}
-              <a
-                className="cs-link"
-                href="https://app.5mins.ai/admin/account-settings?tab=5"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <Button variant="link" onClick={() => window.open('https://app.5mins.ai/admin/account-settings?tab=5', '_blank', 'noreferrer')}>
                 Account &amp; Settings
-              </a>{' '}
+              </Button>{' '}
               page.
             </>
           ),
@@ -205,14 +200,9 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
               Set the minimum quiz score required to pass the course. The quiz score is the average of all lesson
               quizzes and assessments in the course. We recommend not changing the pass score once it has been set.
               Read more about it{' '}
-              <a
-                className="cs-link"
-                href="https://5mins.featurebase.app/en/help/articles/6973225-pass-score-for-courses"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <Button variant="link" onClick={() => window.open('https://5mins.featurebase.app/en/help/articles/6973225-pass-score-for-courses', '_blank', 'noreferrer')}>
                 here
-              </a>
+              </Button>
               .
             </>
           ),
@@ -285,39 +275,11 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
           ),
         },
         {
-          key: 'accessAfterDue',
-          title: 'Allow course access after Due Date',
-          description: 'Users can continue viewing lessons and assessments after the due date has passed.',
-        },
-        {
-          key: 'rewards',
-          title: 'Rewards',
-          description: 'Award jewels when course is completed (max of 500 jewels).',
-        },
-        {
-          key: 'electronicSignature',
-          title: 'Electronic Signature',
-          description: 'An Electronic Signature is required to complete the course.',
-        },
-        {
-          key: 'certificate',
-          title: 'Certificate',
-          description: (
-            <>
-              Add a certificate for completion.{' '}
-              <span className="cs-link ui-disabled" aria-disabled="true">
-                Read
-              </span>{' '}
-              how certification works.
-            </>
-          ),
-        },
-        {
           key: 'completionValidity',
           title: 'Expiry date',
           // The where-it-shows note sits in the description, so it reads before the setting is on.
-          description: `Set how long a completion counts for, from its completion date. Off = No expiry. Applies to past and new completions. Expiry date shows in Learning Records${
-            values.certificate ? ', on Course Progress and on certificates.' : ' and on Course Progress.'
+          description: `Completions expire after a set time. Applies to past and new completions, and shows in Learning Records${
+            values.certificate ? ', Course Progress, and certificates.' : ' and Course Progress.'
           }`,
           expand: (
             <div className="cs-card-expand">
@@ -344,6 +306,34 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
                 </p>
               )}
             </div>
+          ),
+        },
+        {
+          key: 'accessAfterDue',
+          title: 'Allow course access after Due Date',
+          description: 'Users can continue viewing lessons and assessments after the due date has passed.',
+        },
+        {
+          key: 'rewards',
+          title: 'Rewards',
+          description: 'Award jewels when course is completed (max of 500 jewels).',
+        },
+        {
+          key: 'electronicSignature',
+          title: 'Electronic Signature',
+          description: 'An Electronic Signature is required to complete the course.',
+        },
+        {
+          key: 'certificate',
+          title: 'Certificate',
+          description: (
+            <>
+              Add a certificate for completion.{' '}
+              <Button variant="link" className="ui-disabled" aria-disabled="true">
+                Read
+              </Button>{' '}
+              how certification works.
+            </>
           ),
         },
       ],
@@ -455,15 +445,15 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
         <div className="cs-header-row">
           <h2 className="cs-title">Course settings</h2>
           <div className="cs-header-actions">
-            <Button disabled={!dirty || validityInvalid} onClick={saveAll}>
-              Update Settings
-            </Button>
             <Button
               variant="outlined-2"
               icon={<Clock size={20} color="currentColor" variant="Linear" />}
               onClick={openSettingsHistory}
             >
               Settings History
+            </Button>
+            <Button disabled={!dirty || validityInvalid} onClick={saveAll}>
+              Update Settings
             </Button>
           </div>
         </div>

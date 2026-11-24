@@ -68,7 +68,7 @@
 
 /* Setting card: one per setting (production) */
 .cs-card {
-  padding: var(--space-l);
+  padding: var(--space-m);
   border-radius: var(--radius-sm);
   background: var(--cards-background);
   box-shadow: var(--shadow-card);
@@ -108,16 +108,6 @@
   line-height: 1.5;
 }
 
-.cs-link {
-  color: inherit;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.cs-link:hover {
-  color: var(--text-button-hover);
-}
-
 /* Revealed content (e.g. max attempts when auto-reset is on).
    Spacing lives here (inside the animated Collapse) so it tweens with the height. */
 .cs-card-expand {
@@ -137,9 +127,6 @@
 /* A grouped sub-setting panel (toggle + body) nested under Pass Score. */
 .cs-panel {
   gap: var(--space-sm);
-  padding: var(--space-sm);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
 }
 
 /* Align the small toggle with the panel title's cap height. */
@@ -170,8 +157,15 @@
   width: auto;
 }
 
+/* The label is wider than the stepper; let it overhang so the 16px row gap
+   sits between the stepper and the unit dropdown, not after the label. */
+.cs-validity-int .input-integer__label {
+  width: 0;
+  white-space: nowrap;
+}
+
 .cs-validity-unit {
-  width: 160px;
+  width: auto;
 }
 
 .cs-validity-error {
