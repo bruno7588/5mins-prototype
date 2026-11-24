@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from 'react'
+import { useMemo, useRef, useState, type ReactNode } from 'react'
 import { ArrowDown2, DocumentText, Eye, GalleryAdd, Video, VolumeHigh } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
@@ -8,6 +8,7 @@ import FileUploader from '@/components/FileUploader/FileUploader'
 import InputField from '@/components/InputField/InputField'
 import LessonResourcesTab from '@/components/LessonResourcesTab/LessonResourcesTab'
 import QuizTab from '@/components/QuizTab/QuizTab'
+import VideoPreview from '@/components/VideoPreview/VideoPreview'
 import SparkleIcon from '@/components/icons/SparkleIcon'
 import type { CourseResource } from '@/components/ResourceCard/resources'
 import { nextLessonResourceId } from '@/data/lessonResources'
@@ -116,6 +117,8 @@ function NewLessonModal({ kind, onClose, onPublish }: NewLessonModalProps) {
   const [tab, setTab] = useState<Tab>('quiz')
   const [resources, setResources] = useState<CourseResource[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
+  /* An uploaded video plays in the drop zone, so the admin can check it is the right one. */
+  const videoSrc = useMemo(() => (kind === 'video' && file ? URL.createObjectURL(file) : null), [kind, file])
 
   const isLink = kind === 'link'
   const fileKind = isLink ? null : FILE_KINDS[kind]
@@ -221,6 +224,9 @@ function NewLessonModal({ kind, onClose, onPublish }: NewLessonModalProps) {
               className="new-lesson-uploader"
               state={file ? 'Filled' : 'Enabled'}
               fileName={file?.name}
+              filledPreview={
+                videoSrc && file ? <VideoPreview src={videoSrc} name={file.name} /> : undefined
+              }
               accept={fileKind.accept}
               icon={fileKind.icon}
               onFileSelect={setFile}

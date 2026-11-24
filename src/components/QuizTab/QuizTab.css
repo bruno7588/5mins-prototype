@@ -74,9 +74,12 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
+  /* As wide as its text, so the gradient runs teal to purple across the words instead
+     of across the whole row (where the text only ever showed the teal end). */
+  width: fit-content;
   font-size: var(--font-size-h4);
   font-weight: 700;
-  /* Canonical AI text chrome (Button.css .ds-btn--ai-outlined label) */
+  /* The AI buttons' text gradient (Button.css .ds-btn--ai-outlined label). */
   background: radial-gradient(circle at top left, var(--text-button-outlined) 0%, var(--blaze-quiz) 100%);
   background-clip: text;
   -webkit-background-clip: text;

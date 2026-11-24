@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { Add, Gallery, Trash, Video, VolumeHigh } from 'iconsax-react'
+import { Add, Gallery, Video, VolumeHigh } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import InputField from '@/components/InputField/InputField'
@@ -10,7 +10,6 @@ import Tooltip from '@/components/Tooltip/Tooltip'
 import { FileUploader } from '@/components/FileUploader/FileUploader'
 import AddImageModal from '@/pages/add-content/components/AddImageModal/AddImageModal'
 import SectionHeader from '@/pages/your-courses/components/SectionHeader/SectionHeader'
-import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
 import {
   isMediaLink,
   SCENARIO_MEDIA_RULES,
@@ -19,6 +18,8 @@ import {
   type ScenarioMediaKind,
 } from '@/data/scenarioMedia'
 import ScenarioMedia from './ScenarioMedia'
+import AttachedAudioPlayer from './AttachedAudioPlayer'
+import VideoPreview from '@/components/VideoPreview/VideoPreview'
 import './ScenarioMediaField.css'
 
 interface Props {
@@ -32,8 +33,15 @@ const UPLOAD_MS = 1600
 
 const acceptOf = (kind: ScenarioMediaKind) => SCENARIO_MEDIA_RULES[kind].extensions.map((ext) => `.${ext}`).join(',')
 
-const formatSize = (bytes: number) =>
-  bytes >= 1024 * 1024 ? `${(bytes / (1024 * 1024)).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`
+/* The attached media and the Attach Media button swap in place inside one field, so
+   this is standard UI motion, not a screen swap (motion.md): the old one fades out in
+   120ms ease-in, the new one fades in over 200ms ease-out, 320ms in all. It was the
+   420ms AI arrival each way (840ms), which read as slow. Opacity only: nothing travels. */
+const swap = (reduce: boolean | null) => ({
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: reduce ? 0 : 0.2, ease: 'easeOut' as const } },
+  exit: { opacity: 0, transition: { duration: reduce ? 0 : 0.12, ease: 'easeIn' as const } },
+})
 
 const MENU: RowMenuItem[] = [
   {
@@ -57,10 +65,10 @@ const MENU: RowMenuItem[] = [
 ]
 
 /**
- * A file picked in the Add video or Add audio modal: checked against the type's limits,
+ * A file picked in the Add video modal: checked against the video limits,
  * then "uploaded" with a progress ring, the way the Your Content uploaders show it.
  */
-function useUpload(kind: 'video' | 'audio') {
+function useUpload() {
   const [file, setFile] = useState<File | null>(null)
   const [progress, setProgress] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -80,7 +88,7 @@ function useUpload(kind: 'video' | 'audio') {
   }
 
   const pick = (next: File) => {
-    const problem = scenarioMediaError(next, kind)
+    const problem = scenarioMediaError(next, 'video')
     if (problem) {
       setError(problem)
       return
@@ -108,23 +116,22 @@ function useUpload(kind: 'video' | 'audio') {
   return { file, src, uploading: progress !== null, progress: progress ?? 0, error, pick, reset, ready }
 }
 
-/** Add video (upload or link) and Add audio (upload), in the DS Modal (overlays.md). */
+/** Add video (upload or link), in the DS Modal (overlays.md). Audio skips it: its menu
+ *  item opens the computer's file picker straight away. */
 function MediaModal({
-  kind,
+  open,
   onClose,
   onSave,
 }: {
-  kind: 'video' | 'audio' | null
+  open: boolean
   onClose: () => void
   onSave: (media: ScenarioMediaData) => void
 }) {
-  const shown = kind ?? 'video'
-  const upload = useUpload(shown)
+  const upload = useUpload()
   const [tab, setTab] = useState<'upload' | 'link'>('upload')
   const [link, setLink] = useState('')
   const [linkBlurred, setLinkBlurred] = useState(false)
-  const noun = shown === 'video' ? 'video' : 'audio'
-  const onLink = shown === 'video' && tab === 'link'
+  const onLink = tab === 'link'
   const linkOk = isMediaLink(link)
   const canSave = onLink ? linkOk : upload.ready
 
@@ -139,30 +146,28 @@ function MediaModal({
   const save = () => {
     if (onLink) onSave({ kind: 'video', src: link.trim(), name: link.trim(), embed: true })
     else if (upload.file && upload.src) {
-      onSave({ kind: shown, src: upload.src, name: upload.file.name, size: upload.file.size })
+      onSave({ kind: 'video', src: upload.src, name: upload.file.name, size: upload.file.size })
     } else return
     close()
   }
 
   return (
-    <ConfirmModal open={kind !== null} onClose={close} ariaLabel={`Add ${noun}`} className="scfield-modal" closable>
+    <ConfirmModal open={open} onClose={close} ariaLabel="Add video" className="scfield-modal" closable>
       {/* DS Modal (overlays.md): 720px, a section header with title and divider, a
           content area, then a centred Cancel and primary pair. No supporting text: the
           tabs and the drop zone already say what to do (Bruno, 2026-11-24). */}
       <div className="scfield-modal__header">
-        <SectionHeader title={shown === 'video' ? 'Add video' : 'Add audio'} />
+        <SectionHeader title="Add video" />
       </div>
-      {shown === 'video' ? (
-        <Tabs
-          ariaLabel="Add video"
-          items={[
-            { key: 'upload', label: 'Upload video' },
-            { key: 'link', label: 'Paste a link' },
-          ]}
-          activeKey={tab}
-          onChange={(key) => setTab(key as 'upload' | 'link')}
-        />
-      ) : null}
+      <Tabs
+        ariaLabel="Add video"
+        items={[
+          { key: 'upload', label: 'Upload video' },
+          { key: 'link', label: 'Paste a link' },
+        ]}
+        activeKey={tab}
+        onChange={(key) => setTab(key as 'upload' | 'link')}
+      />
       <div className="scfield-modal__body">
         {onLink ? (
           <>
@@ -187,15 +192,7 @@ function MediaModal({
           /* Uploaded: the clip itself, playable with the learner's controls, so the admin
              can check it is the right one before adding it. */
           <div className="scfield__filled">
-            <ScenarioMedia media={{ kind: shown, src: upload.src, name: upload.file.name }} />
-            <div className="scfield__row">
-              <span className="scfield__file">
-                <span className="scfield__name">{upload.file.name}</span>
-              </span>
-              <Button variant="text" size="md" onClick={upload.reset}>
-                Change File
-              </Button>
-            </div>
+            <ScenarioMedia media={{ kind: 'video', src: upload.src, name: upload.file.name }} />
           </div>
         ) : (
           <FileUploader
@@ -204,14 +201,10 @@ function MediaModal({
             progress={upload.progress}
             fileName={upload.file?.name}
             errorMessage={upload.error ?? UPLOAD_FAILED}
-            accept={acceptOf(shown)}
+            accept={acceptOf('video')}
             onFileSelect={upload.pick}
             onChangeFile={upload.reset}
-            helpText={
-              shown === 'video'
-                ? 'Drag and drop a video here or click to upload (MP4 up to 500MB)'
-                : 'Drag and drop an audio file here or click to upload (MP3, M4A or WAV up to 50MB)'
-            }
+            helpText="Drag and drop a video here or click to upload (MP4 up to 500MB)"
           />
         )}
       </div>
@@ -220,7 +213,7 @@ function MediaModal({
           Cancel
         </Button>
         <Button onClick={save} disabled={!canSave}>
-          {shown === 'video' ? 'Add Video' : 'Add Audio'}
+          Add Video
         </Button>
       </div>
     </ConfirmModal>
@@ -234,12 +227,33 @@ function MediaModal({
  * Empty, it is the Attach Media button the questions used; it opens a list of the three
  * kinds, and each opens the Your Content pattern for it: Add video (upload, or a link
  * that plays in its provider's player), Add image (upload, generate with AI, stock
- * footage) and Add audio (upload). Filled, the media shows in place with Change Media
- * and Remove.
+ * footage) and Add audio (upload). Filled, an uploaded video plays in the
+ * 200 x 292 preview, an image or a video link shows as a thumbnail and audio as a pill
+ * player, each with Remove.
  */
 function ScenarioMediaField({ media, onChange }: Props) {
   const reduce = useReducedMotion()
-  const [adding, setAdding] = useState<ScenarioMediaKind | null>(null)
+  const [adding, setAdding] = useState<'video' | 'image' | null>(null)
+  /* Audio has one way in (a file), so its menu item opens the computer's file picker
+     directly instead of a modal with a single drop zone (Bruno, 2026-11-24). */
+  const audioInput = useRef<HTMLInputElement>(null)
+  const [audioError, setAudioError] = useState<string | null>(null)
+
+  const choose = (key: string) => {
+    setAudioError(null)
+    if (key === 'audio') audioInput.current?.click()
+    else setAdding(key as 'video' | 'image')
+  }
+
+  const pickAudio = (file: File) => {
+    const problem = scenarioMediaError(file, 'audio')
+    if (problem) {
+      setAudioError(problem)
+      return
+    }
+    setAudioError(null)
+    onChange({ kind: 'audio', src: URL.createObjectURL(file), name: file.name, size: file.size })
+  }
 
   return (
     <div className="scfield">
@@ -248,38 +262,69 @@ function ScenarioMediaField({ media, onChange }: Props) {
           <motion.div
             key="filled"
             className="scfield__filled"
-            {...ARRIVE(reduce)}
-            exit={{ opacity: 0 }}
-            transition={arriveTransition(reduce)}
+            {...swap(reduce)}
           >
-            <ScenarioMedia media={media} />
-            <div className="scfield__row">
-              <span className="scfield__file">
-                <span className="scfield__name">{media.name}</span>
-                {media.size ? <span className="scfield__size">{formatSize(media.size)}</span> : null}
-              </span>
-              <span className="scfield__actions">
+            {/* Whatever is attached, Change File sits under it (Bruno, 2026-11-24): the
+                audio pill, or the video or image preview (one size for both, the remove
+                X on it). No file name: the preview already says which file it is. */}
+            <div className="scfield__attached">
+              {media.kind === 'audio' ? (
+                <AttachedAudioPlayer src={media.src} onRemove={() => onChange(undefined)} />
+              ) : media.kind === 'video' && !media.embed ? (
+                  <div className="scfield-video">
+                    <VideoPreview src={media.src} name={media.name} fullScreen />
+                  <Tooltip icon={false} text="Remove media" className="scfield-thumb__remove-tooltip">
+                    <button type="button" className="scfield-thumb__remove" aria-label="Remove media" onClick={() => onChange(undefined)}>
+                      <Add size={20} color="var(--neutral-0)" style={{ transform: 'rotate(45deg)' }} />
+                    </button>
+                  </Tooltip>
+                  </div>
+                ) : (
+                  <div className={`scfield-thumb${media.kind === 'image' ? '' : ' scfield-thumb--icon'}`}>
+                    {media.kind === 'image' ? (
+                      /* The image is the way to its full screen view: a zoom-in cursor,
+                         click to open, click again (or Escape) to come back. */
+                      <button
+                        type="button"
+                        className="scfield-thumb__zoom"
+                        aria-label="View image full screen"
+                        onClick={(e) => {
+                          if (document.fullscreenElement) void document.exitFullscreen()
+                          else void e.currentTarget.requestFullscreen?.()
+                        }}
+                      >
+                        <img src={media.src} alt={media.name} />
+                      </button>
+                    ) : (
+                      <span className="scfield-thumb__icon">
+                        <Video size={24} color="var(--text-secondary)" variant="Linear" />
+                      </span>
+                    )}
+                  <Tooltip icon={false} text="Remove media" className="scfield-thumb__remove-tooltip">
+                    <button type="button" className="scfield-thumb__remove" aria-label="Remove media" onClick={() => onChange(undefined)}>
+                      <Add size={20} color="var(--neutral-0)" style={{ transform: 'rotate(45deg)' }} />
+                    </button>
+                  </Tooltip>
+                  </div>
+                )}
+                {/* Opens the same list of media types as Attach Media, so the admin can
+                    swap the file or switch to another kind. */}
                 <RowActionsMenu
                   items={MENU}
-                  onSelect={(key) => setAdding(key as ScenarioMediaKind)}
-                  triggerClassName="ds-btn ds-btn--sm ds-btn--text"
-                  triggerContent={<span className="ds-btn__label">Change Media</span>}
-                  ariaLabel="Change media"
+                  onSelect={choose}
+                  triggerClassName="ds-btn ds-btn--md ds-btn--outlined-2"
+                  triggerContent={<span className="ds-btn__label">Change File</span>}
+                  ariaLabel="Change file"
                   caret={false}
+                  align="start"
                 />
-                <Tooltip text="Remove media" position="Top" icon={false}>
-                  <button type="button" className="scfield__remove" aria-label="Remove media" onClick={() => onChange(undefined)}>
-                    <Trash size={20} color="currentColor" variant="Linear" />
-                  </button>
-                </Tooltip>
-              </span>
-            </div>
+              </div>
           </motion.div>
         ) : (
-          <motion.div key="empty" {...ARRIVE(reduce)} exit={{ opacity: 0 }} transition={arriveTransition(reduce)}>
+          <motion.div key="empty" {...swap(reduce)}>
             <RowActionsMenu
               items={MENU}
-              onSelect={(key) => setAdding(key as ScenarioMediaKind)}
+              onSelect={choose}
               triggerClassName="scfield__add"
               triggerContent={
                 <>
@@ -296,11 +341,24 @@ function ScenarioMediaField({ media, onChange }: Props) {
         )}
       </AnimatePresence>
 
-      <MediaModal
-        kind={adding === 'video' || adding === 'audio' ? adding : null}
-        onClose={() => setAdding(null)}
-        onSave={onChange}
+      {audioError ? (
+        <span className="scfield__error" role="alert">
+          {audioError}
+        </span>
+      ) : null}
+      <input
+        ref={audioInput}
+        type="file"
+        hidden
+        accept={acceptOf('audio')}
+        onChange={(e) => {
+          const file = e.target.files?.[0]
+          if (file) pickAudio(file)
+          e.target.value = ''
+        }}
       />
+
+      <MediaModal open={adding === 'video'} onClose={() => setAdding(null)} onSave={onChange} />
       <AddImageModal
         open={adding === 'image'}
         onClose={() => setAdding(null)}

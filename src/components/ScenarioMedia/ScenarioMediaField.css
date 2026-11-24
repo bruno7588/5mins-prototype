@@ -6,70 +6,6 @@
   gap: var(--space-s);
 }
 
-.scfield__row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-m);
-}
-
-.scfield__file {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-s);
-  min-width: 0;
-}
-
-.scfield__name {
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.scfield__size {
-  flex-shrink: 0;
-  font-size: var(--font-size-sm);
-  line-height: 1.2;
-  color: var(--text-tertiary);
-}
-
-.scfield__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  flex-shrink: 0;
-}
-
-/* Icon-only: a circular hover, and the destructive icon turns to the error colour. */
-.scfield__remove {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border: none;
-  border-radius: var(--radius-full);
-  background: transparent;
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: background 150ms ease, color 150ms ease;
-}
-
-.scfield__remove:hover {
-  background: var(--page-background-hover);
-  color: var(--text-error);
-}
-
-.scfield__remove:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-}
-
 .scfield__error {
   font-size: var(--font-size-sm);
   line-height: 1.2;
@@ -84,18 +20,21 @@
   gap: var(--space-xs);
   width: 100%;
   padding: var(--space-s) var(--space-m);
-  background: var(--input-background);
-  border: 1px dashed var(--border);
+  /* Rest and hover follow the File uploader (file-uploader.md): transparent with a dashed
+     --border-elevated, then --border-hover and the field tint. */
+  background: transparent;
+  border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-family: inherit;
   white-space: nowrap;
   cursor: pointer;
-  transition: border-color 150ms ease;
+  transition: border-color 150ms, background 150ms;
 }
 
 .scfield__add:hover {
   border-color: var(--border-hover);
+  background: var(--input-background);
 }
 
 .scfield__add:focus-visible {
@@ -134,9 +73,8 @@
   flex-direction: column;
   gap: var(--space-s);
   /* One fixed height for every state (Bruno, 2026-11-24), so the modal never jumps
-     between the drop zone, the link field and the preview: the 320px media slot, the
-     8px gap and the 40px file row under it. */
-  height: calc(320px + var(--space-s) + var(--space-xxl));
+     between the drop zone, the link field and the preview: the 320px media slot. */
+  height: 320px;
 }
 
 /* The drop zone fills that height. */
@@ -148,4 +86,255 @@
   font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
+}
+
+/* ===== Attached media (the per-question Attach Media's uploaded state, Bruno 2026-11-24):
+   a 218px thumbnail with a remove X for an image or video, a pill player for audio. ===== */
+/* An image sits in a fixed landscape box, 320 x 180 (the landscape video's size), the
+   way the learner's brief card shows it: the whole picture, on black where its shape
+   differs (Bruno, 2026-11-24). A square or portrait image is letterboxed, not cropped. */
+.scfield-thumb {
+  position: relative;
+  width: 320px;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--neutral-900);
+}
+
+.scfield-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* The image opens full screen: zoom-in to open, zoom-out to come back. Full screen is
+   always on black, so a mode-invariant palette token. */
+.scfield-thumb__zoom {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: zoom-in;
+}
+
+.scfield-thumb__zoom:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+
+.scfield-thumb__zoom:fullscreen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--neutral-900);
+  cursor: zoom-out;
+}
+
+.scfield-thumb__zoom:fullscreen img {
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+/* A pasted link has no picture: the same box, on the field tint. */
+.scfield-thumb--icon {
+  background: none;
+}
+
+.scfield-thumb__remove-tooltip {
+  position: absolute;
+  top: var(--space-s);
+  left: var(--space-s);
+}
+
+.scfield-thumb__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs);
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--scrim);
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.scfield-thumb__remove:hover {
+  /* stylelint-disable-next-line -- darker scrim chip over any image, both modes */
+  background: color-mix(in srgb, var(--neutral-900) 72%, transparent);
+}
+
+.scfield-thumb__remove:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.scfield-iconbtn {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xxs);
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+/* These sit on the audio pill, itself --input-background: the hover circle is the
+   elevated step of that tint, so it shows against the pill. */
+.scfield-iconbtn:hover:not(:disabled) {
+  background: var(--input-background-elevated);
+}
+
+.scfield-iconbtn--remove:hover {
+  color: var(--text-error);
+}
+
+.scfield-iconbtn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.scfield-iconbtn:disabled {
+  cursor: default;
+}
+
+.scfield-iconbtn:disabled svg {
+  color: var(--text-disabled);
+}
+
+.scfield-iconbtn:disabled svg path {
+  stroke: var(--text-disabled);
+}
+
+/* ===== Audio player ===== */
+.scfield-audio {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-s) var(--space-m);
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  box-sizing: border-box;
+}
+
+.scfield-audio__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+.scfield-audio__track {
+  flex: 1;
+  min-width: 0;
+}
+
+.scfield-audio__duration {
+  flex-shrink: 0;
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+
+/* A pasted link has no frame to show: the type icon on the field tint instead. */
+.scfield-thumb__icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--input-background);
+}
+
+/* An uploaded video: the shared preview with the remove X on its corner. Here the box
+   hugs the picture (Bruno, 2026-11-24): up to 320px wide and 240px tall, no black bands,
+   so a landscape clip is 320 x 180 and a 9:16 one 135 x 240. Change File sits under the
+   preview, for a video or an image alike. */
+.scfield__attached {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.scfield-video {
+  position: relative;
+  flex-shrink: 0;
+  width: fit-content;
+}
+
+.scfield-video .vpreview {
+  width: auto;
+  min-height: 0;
+}
+
+.scfield-video .vpreview__video {
+  width: auto;
+  max-width: 320px;
+  max-height: 240px;
+}
+
+/* Back to the full display once it is opened full screen. */
+.scfield-video .vpreview:fullscreen .vpreview__video {
+  width: 100vw;
+  max-width: none;
+  max-height: none;
+}
+
+
+
+/* The scrub bar now sits on the picture, so it gets a shade to stay readable. */
+.scfield-video .vpreview__bar {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--neutral-900) 0%, transparent),
+    color-mix(in srgb, var(--neutral-900) 64%, transparent)
+  );
+}
+
+/* Stopped, the controls and the bar show. While it plays they step back and return
+   on hover, on keyboard focus and in full screen (Bruno, 2026-11-24). The centre
+   controls already do this in VideoPreview.css; this adds the bar. */
+.scfield-video .vpreview__bar {
+  transition: opacity 150ms ease-out;
+}
+
+.scfield-video .vpreview--playing .vpreview__bar {
+  opacity: 0;
+}
+
+.scfield-video:hover .vpreview--playing .vpreview__bar,
+.scfield-video .vpreview--playing:focus-within .vpreview__bar,
+.scfield-video .vpreview--playing:fullscreen .vpreview__bar {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scfield-video .vpreview__bar {
+    transition: none;
+  }
+}
+
+/* The field stacks its content and, when an audio file is refused, the reason under it. */
+.scfield {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+/* The audio pill runs the full width of the field; the button under it stays left. */
+.scfield__attached .scfield-audio {
+  align-self: stretch;
 }

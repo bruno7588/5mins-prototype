@@ -41,8 +41,9 @@ interface RowActionsMenuProps {
   /** Extra class on the menu surface (it is portaled, so it can't be reached from the page). */
   menuClassName?: string
   /** Where the menu sits under its trigger: hanging from the trigger's right edge
-   *  (default, for a kebab), or centred under it (a wide trigger such as Attach Media). */
-  align?: 'end' | 'center'
+   *  (default, for a kebab), centred under it (a wide trigger such as Attach Media), or
+   *  from its left edge (a button at the start of a row, such as Change File). */
+  align?: 'end' | 'center' | 'start'
 }
 
 /**
@@ -152,7 +153,7 @@ function RowActionsMenu({
                       Math.max(8, window.innerWidth - menuWidth - 8),
                     ),
                   }
-                : startAligned
+                : startAligned || align === 'start'
                   ? { left: rect.left }
                   : { right: Math.max(8, window.innerWidth - rect.right) }),
               zIndex: 2000,

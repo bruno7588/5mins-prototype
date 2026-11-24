@@ -137,3 +137,9 @@
   line-height: 1.5;
   color: var(--text-secondary);
 }
+
+/* With the video in it the drop zone is the player: no padding or border, still 200 x 292. */
+.new-lesson-uploader.file-uploader--preview {
+  padding: 0;
+  border: none;
+}

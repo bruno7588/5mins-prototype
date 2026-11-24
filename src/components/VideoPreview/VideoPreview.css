@@ -1,0 +1,135 @@
+/* The uploaded video, playing in the drop zone. It fills the 200 x 292 tile: the picture
+   in the middle with its controls over it, the scrub bar and elapsed time along the bottom.
+   Always on black, so the control colours are mode-invariant palette tokens. */
+.vpreview {
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  min-height: 292px;
+  display: flex;
+  flex-direction: column;
+  /* The picture sits in the middle of the tile, letterboxed above and below. */
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--neutral-900);
+}
+
+.vpreview__stage {
+  position: relative;
+  display: flex;
+}
+
+.vpreview__video {
+  display: block;
+  width: 100%;
+  max-height: 292px;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+.vpreview__controls {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  transition: opacity 150ms ease-out;
+}
+
+/* While it plays the controls step back; hovering or tabbing in brings them back. */
+.vpreview__controls--playing {
+  opacity: 0;
+}
+
+.vpreview:hover .vpreview__controls--playing,
+.vpreview__controls--playing:focus-within {
+  opacity: 1;
+}
+
+.vpreview__btn {
+  display: inline-flex;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: none;
+  color: var(--neutral-0);
+  cursor: pointer;
+}
+
+.vpreview__btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.vpreview__bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: 0 var(--space-sm);
+}
+
+/* Production's small slider (MUI Slider size="small"): a 2px line and a 12px thumb, where
+   the Library Slider is 4px and 20px. */
+.vpreview__track.ds-slider {
+  --slider-thumb: 12px;
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+}
+
+.vpreview__track .ds-slider__rail,
+.vpreview__track .ds-slider__track {
+  height: 2px;
+}
+
+.vpreview__track .ds-slider__input:hover:not(:disabled) ~ .ds-slider__thumb {
+  box-shadow: 0 0 0 6px var(--selected-tint);
+}
+
+.vpreview__time {
+  flex-shrink: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  color: var(--neutral-0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vpreview__controls {
+    transition: none;
+  }
+}
+
+/* The unplayed part of the line: white at 50% over the black tile (Bruno, 2026-11-24). */
+.vpreview__track .ds-slider__rail {
+  background: color-mix(in srgb, var(--neutral-0) 50%, transparent);
+}
+
+/* Full screen (optional): the Library icon at 16px in the bar; in full screen the picture
+   fills the display and the bar gets room. */
+.vpreview__full svg {
+  width: 16px;
+  height: 16px;
+}
+
+.vpreview:fullscreen {
+  width: 100vw;
+  border-radius: 0;
+}
+
+.vpreview:fullscreen .vpreview__video {
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  max-height: none;
+}
+
+.vpreview:fullscreen .vpreview__bar {
+  padding: var(--space-m) var(--space-l);
+}
