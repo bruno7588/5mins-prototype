@@ -37,7 +37,7 @@ Seed the discussion with what the ticket leaves unsaid, for example:
 - A success metric implied in the context paragraph but never quantified.
 - A referenced design or prototype that may or may not be binding on the spec.
 
-It ends with the Thinking Partner summary (problem, job, decisions, rejected options, still open) confirmed by the user. Pass that summary verbatim into the agent's brief: decisions are ones it must follow, and anything not settled stays an open question in the PRD.
+It ends with the Thinking Partner summary (problem, job, decisions, rejected options, still open). Once the user has answered the questions, start research straight away; no separate sign-off on the summary. Pass that summary verbatim into the agent's brief: decisions are ones it must follow, and anything not settled stays an open question in the PRD.
 
 ## 3. Spawn the research agent
 

@@ -29,7 +29,7 @@ This runs **in the main session**, never as a subagent: a subagent cannot talk t
 
 ## Close the discussion
 
-End with a short summary for Bruno to confirm:
+End with a short summary:
 
 - **The problem worth solving**: one or two sentences.
 - **The job**: "When ___, [persona] wants to ___ so they can ___ without ___."
@@ -37,7 +37,7 @@ End with a short summary for Bruno to confirm:
 - **Rejected options**: one line each, with why.
 - **Still open**: what was not settled.
 
-Ask him to confirm or correct it. When run inside `/jira-prd`, this confirmed summary is passed verbatim into the research brief.
+He can correct it, but no separate sign-off is needed. When run inside `/jira-prd`, research starts once his questions are answered, and this summary is passed verbatim into the research brief.
 
 ## Language
 
