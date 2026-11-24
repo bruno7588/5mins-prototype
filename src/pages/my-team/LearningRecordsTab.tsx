@@ -22,6 +22,7 @@ import {
   useExternalTraining,
   type ExternalRecord,
 } from '@/data/externalTraining'
+import { getCourseRule, validUntil } from '@/data/courseValidity'
 import { teamProfiles } from './MyTeam'
 import './LearningRecordsTab.css'
 
@@ -257,6 +258,17 @@ const recordColumns: Column<LearningRecord>[] = [
   { key: 'startDate', header: 'Start date', width: '0 0 104px', render: (row) => <DateCell value={row.startDate} /> },
   { key: 'dueDate', header: 'Due date', width: '0 0 104px', render: (row) => <DateCell value={row.dueDate} /> },
   { key: 'completionDate', header: 'Completion date', width: '0 0 144px', render: (row) => <DateCell value={row.completionDate} /> },
+  /* Same rule as the admin Learning Records: completion date + the course's validity period. */
+  {
+    key: 'validUntil',
+    header: 'Expiry date',
+    width: '0 0 104px',
+    render: (row) => (
+      <DateCell
+        value={row.status === 'Completed' ? validUntil(row.completionDate, getCourseRule(row.course).validityMonths) : null}
+      />
+    ),
+  },
   { key: 'duration', header: 'Duration', width: '0 0 84px', render: (row) => row.duration },
   { key: 'progress', header: 'Progress', width: '0 0 88px', render: (row) => `${row.progress}%` },
   {
