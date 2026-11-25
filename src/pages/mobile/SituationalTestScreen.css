@@ -95,7 +95,7 @@
   color: var(--text-secondary);
 }
 
-/* The header's label group makes room for View Brief beside the counter. */
-.m-sittest__quiz .ql-qhead__label {
-  gap: var(--space-sm);
+/* The scenario card sits 16px under the question header, on the 16px gutter. */
+.m-sittest__quiz .scbrief {
+  margin: var(--space-m) var(--space-m) 0;
 }

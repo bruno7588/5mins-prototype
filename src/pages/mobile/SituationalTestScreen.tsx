@@ -5,6 +5,7 @@ import QuizHeader from '@/pages/quiz-lab/components/QuizHeader'
 import { QuizAdvanceContext, QuizResultContext } from '@/pages/quiz-lab/components/FeedbackFooter'
 import BottomSheet from '@/components/BottomSheet/BottomSheet'
 import ScenarioMedia from '@/components/ScenarioMedia/ScenarioMedia'
+import ScenarioBriefCard from '@/components/SituationalTestPlayer/ScenarioBriefCard'
 import type { ScenarioMediaData } from '@/data/scenarioMedia'
 import Button from '@/components/Button/Button'
 import { LEAVE_BODY, LEAVE_TITLE, leaveIllustration } from '@/components/SituationalTestPlayer/SituationalResults'
@@ -34,8 +35,8 @@ export function MobileSituationalQuestions({
   /** The header's counter, e.g. "Question 1/4" or "Lesson Quiz (1/2)". */
   label: (n: number, total: number) => string
   ariaLabel?: string
-  /** The scenario to keep within reach: "View Brief" in the header opens it in a sheet
-   *  with the media where it was left (DES-371). Omit for a lesson quiz. */
+  /** The scenario to keep within reach: the card at the top of each question opens it
+   *  in a sheet with the media where it was left (DES-371). Omit for a lesson quiz. */
   brief?: { title: string; text: string; media?: ScenarioMediaData; mediaPosition: MutableRefObject<number> }
   /** Attempts already spent; the heart counts what is left. */
   attemptsUsed: number
@@ -75,15 +76,9 @@ export function MobileSituationalQuestions({
             total={FEED_ATTEMPTS}
             showAttempts={false}
             heartCount
-            action={
-              brief ? (
-                <Button variant="text" size="md" onClick={() => setBriefOpen(true)}>
-                  View Brief
-                </Button>
-              ) : undefined
-            }
             onClose={() => setLeaveOpen(true)}
           />
+          {brief ? <ScenarioBriefCard media={brief.media} title={brief.title} onOpen={() => setBriefOpen(true)} /> : null}
           <QuizAdvanceContext.Provider value={next}>
             <QuizResultContext.Provider value={(correct) => onResult(index, correct)}>
               <SituationalQuestionScreen question={questions[index]} />

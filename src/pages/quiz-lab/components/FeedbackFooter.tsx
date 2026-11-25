@@ -67,7 +67,8 @@ function FeedbackFooter({
   const advance = useContext(QuizAdvanceContext)
   const report = useContext(QuizResultContext)
   const footerClass = `ql-footer${layout === 'hug' ? ' ql-footer--hug' : ''}`
-  const size = layout === 'hug' ? 'md' : 'lg'
+  /* Large everywhere, hugging or full width (Bruno, 2026-11-25). */
+  const size = 'lg'
 
   if (status === 'idle') {
     if (!showCheck) return null

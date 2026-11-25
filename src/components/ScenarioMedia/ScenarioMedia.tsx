@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState, type MutableRefObject } from 'react'
+import { createPortal } from 'react-dom'
 import { Backward10Seconds, Forward10Seconds, PauseCircle, PlayCircle } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import { ExitFullScreenIcon, FullScreenIcon } from '@/components/icons/PlayerIcons'
 import { ToastSpinner } from '@/components/Toast/Toast'
 import { toEmbedUrl, type ScenarioMediaData } from '@/data/scenarioMedia'
+import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import AttachedAudioPlayer from './AttachedAudioPlayer'
 import './ScenarioMedia.css'
 /* The audio player's styles live with the admin field it was built for. */
@@ -52,6 +54,10 @@ function ScenarioMedia({ media, position }: Props) {
   const [fullscreen, setFullscreen] = useState(false)
   const playerRef = useRef<HTMLVideoElement & HTMLAudioElement>(null)
   const frameRef = useRef<HTMLDivElement>(null)
+  /* The image opens in an overlay on the scrim, not browser full screen. */
+  const [zoomed, setZoomed] = useState(false)
+  const zoomRef = useRef<HTMLDivElement>(null)
+  useOverlayA11y(zoomRef, zoomed, { onEscape: () => setZoomed(false) })
 
   useEffect(() => {
     const onChange = () => setFullscreen(!!frameRef.current && document.fullscreenElement === frameRef.current)
@@ -231,7 +237,7 @@ function ScenarioMedia({ media, position }: Props) {
           </div>
         </>
       ) : (
-        <button type="button" className="scmedia__imagebtn" aria-label="View image full screen" onClick={toggleFullscreen}>
+        <button type="button" className="scmedia__imagebtn" aria-label="View image full screen" onClick={() => setZoomed(true)}>
           <img
             className="scmedia__image"
             src={media.src}
@@ -241,6 +247,31 @@ function ScenarioMedia({ media, position }: Props) {
           />
         </button>
       )}
+      {zoomed
+        ? createPortal(
+            /* Over the phone screen in the mobile app, over the page on web. */
+            <div
+              ref={zoomRef}
+              className="scmedia-zoom"
+              role="dialog"
+              aria-modal="true"
+              aria-label={media.name}
+              tabIndex={-1}
+              onMouseDown={(e) => {
+                if (e.target === e.currentTarget) setZoomed(false)
+              }}
+            >
+              <CloseButton
+                variant="fullscreen"
+                className="scmedia-zoom__close"
+                ariaLabel="Close image"
+                onClick={() => setZoomed(false)}
+              />
+              <img className="scmedia-zoom__image" src={media.src} alt={media.name} />
+            </div>,
+            frameRef.current?.closest('.m-phone__screen') ?? document.body,
+          )
+        : null}
       {state === 'loading' ? (
         <div className="scmedia__loading" role="status">
           <ToastSpinner size={24} />

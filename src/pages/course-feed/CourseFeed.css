@@ -196,6 +196,16 @@
   padding-right: var(--cf-gutter);
 }
 
+/* The scenario card (DES-371), on the question column, while the details panel is
+   closed. Collapse animates it in and out. */
+.cf-quiz__brief {
+  flex-shrink: 0;
+}
+
+.cf-quiz__brief .scbrief {
+  margin: var(--space-m) var(--cf-gutter) 0;
+}
+
 .cf-quiz .ql-footer {
   padding-top: var(--space-m);
   padding-bottom: var(--space-m);

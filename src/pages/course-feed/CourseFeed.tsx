@@ -32,6 +32,7 @@ import CourseOutlineList from '@/components/CourseOutlineList/CourseOutlineList'
 import Collapse from '@/components/Collapse/Collapse'
 import CourseAssessment from '@/components/CourseAssessment/CourseAssessment'
 import ScenarioMedia from '@/components/ScenarioMedia/ScenarioMedia'
+import ScenarioBriefCard from '@/components/SituationalTestPlayer/ScenarioBriefCard'
 import LessonQuizResult from '@/components/LessonQuizResult/LessonQuizResult'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import {
@@ -296,6 +297,20 @@ function CourseFeed() {
                           total={FEED_ATTEMPTS}
                           showAttempts={false}
                         />
+                        {/* The scenario at the top of the question while the details panel,
+                            which holds the brief, is closed (DES-371). */}
+                        {item.kind === 'situational-test' ? (
+                          <Collapse open={!panelOpen} className="cf-quiz__brief">
+                            <ScenarioBriefCard
+                              media={item.test.media}
+                              title={item.test.title}
+                              onOpen={() => {
+                                setOutlineOpen(false)
+                                setPanelOpen(true)
+                              }}
+                            />
+                          </Collapse>
+                        ) : null}
                         <SituationalQuestionScreen question={question} />
                       </div>
                     </QuizResultContext.Provider>
@@ -410,10 +425,12 @@ function CourseFeed() {
             <motion.aside
               className="cf-panel"
               aria-label="Details"
-              initial={reduce ? { opacity: 0 } : { opacity: 0, x: 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={reduce ? { opacity: 0 } : { opacity: 0, x: 16 }}
-              transition={{ duration: reduce ? 0 : 0.3, ease: 'easeOut' }}
+              /* Slides in and out by its own 480px width, so the stage beside it widens
+                 and narrows with it rather than jumping when the panel mounts. */
+              initial={reduce ? { opacity: 0 } : { marginRight: -480 }}
+              animate={reduce ? { opacity: 1 } : { marginRight: 0 }}
+              exit={reduce ? { opacity: 0 } : { marginRight: -480 }}
+              transition={{ duration: reduce ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
             >
               <button
                 type="button"

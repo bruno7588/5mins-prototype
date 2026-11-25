@@ -118,7 +118,7 @@ function ShortText({ prompt, variant, onSubmitted }: { prompt: string; variant: 
             <Button variant="outlined-2" onClick={() => setConfirming(false)}>
               Edit
             </Button>
-            <Button onClick={submit}>Submit Answer</Button>
+            <Button size="lg" onClick={submit}>Submit Answer</Button>
           </div>
         </ConfirmModal>
       ) : confirming ? (
