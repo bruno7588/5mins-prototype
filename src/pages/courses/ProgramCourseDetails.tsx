@@ -328,19 +328,19 @@ function ProgramCourseDetails() {
                   <>
                     <div className="pcd-section">
                       <h3 className="pcd-section__name pcd-sit__heading">Situational tests</h3>
-                      {/* One row per test (video, audio, image); each opens the feed, which
-                          plays them in order. */}
-                      {getCourseSituationalTests(id).map((test) => (
+                      {/* One row per test (video, audio, image); each opens the feed at
+                          that test. */}
+                      {getCourseSituationalTests(id).map((test, n) => (
                         <article
                           key={test.id}
                           className="pcd-lesson pcd-lesson--openable"
                           role="button"
                           tabIndex={0}
-                          onClick={() => navigate(`/courses/${id}/feed`)}
+                          onClick={() => navigate(`/courses/${id}/feed?test=${n + 1}`)}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' || e.key === ' ') {
                               e.preventDefault()
-                              navigate(`/courses/${id}/feed`)
+                              navigate(`/courses/${id}/feed?test=${n + 1}`)
                             }
                           }}
                         >

@@ -32,13 +32,14 @@ const SEGMENTS = 8
  * situational test, then its lessons, swiped vertically. The header's "Course outline"
  * pill opens the outline in a bottom sheet (17024:75125), whose rows jump to an item.
  */
-function CourseFeedScreen({ courseId, onExit }: { courseId: string; onExit: () => void }) {
+function CourseFeedScreen({ courseId, startIndex = 0, onExit }: { courseId: string; startIndex?: number; onExit: () => void }) {
   const reduce = useReducedMotion()
   const course = getCourseDetail(courseId)
   const items = getCourseFeed(courseId)
 
-  const [index, setIndex] = useState(0)
-  const [reached, setReached] = useState(0)
+  /* Opens at the test the learner tapped on the course page. */
+  const [index, setIndex] = useState(startIndex)
+  const [reached, setReached] = useState(startIndex)
   const [done, setDone] = useState<Set<string>>(new Set())
   const [inQuestions, setInQuestions] = useState(false)
   /* The situational test: how the attempt in progress went, the attempts spent, and

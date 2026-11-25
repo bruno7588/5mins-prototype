@@ -56,6 +56,8 @@ function MobileApp() {
   const [signOffOpen, setSignOffOpen] = useState(false)
   /* The course feed, opened from the course screen. */
   const [courseFeedOpen, setCourseFeedOpen] = useState(false)
+  /* Which situational test the feed opens at. */
+  const [courseFeedStart, setCourseFeedStart] = useState(0)
   /** After the sign-off: the "Congratulations" screen, then the certificate view. */
   const [certReadyOpen, setCertReadyOpen] = useState(false)
   const [certificateOpen, setCertificateOpen] = useState(false)
@@ -263,7 +265,7 @@ function MobileApp() {
         />
       ) : null}
       {feedIndex === null && openCourseId && courseFeedOpen ? (
-        <CourseFeedScreen courseId={openCourseId} onExit={() => setCourseFeedOpen(false)} />
+        <CourseFeedScreen courseId={openCourseId} startIndex={courseFeedStart} onExit={() => setCourseFeedOpen(false)} />
       ) : null}
       {feedIndex === null && openCourseId && !courseFeedOpen ? (
         <CourseScreen
@@ -272,7 +274,10 @@ function MobileApp() {
           onBack={() => setOpenCourseId(null)}
           onStartSignOff={() => setSignOffOpen(true)}
           onGetCertificate={() => setCertificateOpen(true)}
-          onOpenSituationalTest={() => setCourseFeedOpen(true)}
+          onOpenSituationalTest={(testIndex) => {
+            setCourseFeedStart(testIndex)
+            setCourseFeedOpen(true)
+          }}
         />
       ) : null}
       {feedIndex === null && openProgram && !openCourseId ? (

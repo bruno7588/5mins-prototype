@@ -1,5 +1,5 @@
 import { useRef, useState, type MutableRefObject } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowDown2, ArrowUp2, SidebarLeft, SidebarRight } from 'iconsax-react'
 import CloseButton from '@/components/CloseButton/CloseButton'
@@ -124,10 +124,14 @@ function CourseFeed() {
   const navigate = useNavigate()
   const reduce = useReducedMotion()
   const { id } = useParams<{ id: string }>()
+  /* ?test=2 opens the course's second situational test straight away: each row on the
+     course page opens its own test. The ones before it are left as they are. */
+  const [search] = useSearchParams()
+  const startAt = Math.max(0, Number(search.get('test') ?? 1) - 1)
   const course = getCourseDetail(id)
   const items = getCourseFeed(id)
 
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState(startAt)
   /* Inside a situational test: 0 is the brief, 1..n the questions, n + 1 the results. */
   const [screen, setScreen] = useState(0)
   /* How each question went on the attempt in progress, and the attempts spent. */
@@ -145,7 +149,7 @@ function CourseFeed() {
   const [done, setDone] = useState<Set<string>>(new Set())
   const [panelOpen, setPanelOpen] = useState(true)
   /* The furthest item the learner has got to; it decides what the outline unlocks. */
-  const [reached, setReached] = useState(0)
+  const [reached, setReached] = useState(startAt)
   const [outlineOpen, setOutlineOpen] = useState(false)
 
   const item = items[index]

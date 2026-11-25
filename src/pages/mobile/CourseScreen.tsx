@@ -33,7 +33,7 @@ interface CourseScreenProps {
   /** Opens the certificate view once the course is complete. */
   onGetCertificate: () => void
   /** Opens the course's situational test in the feed. */
-  onOpenSituationalTest: () => void
+  onOpenSituationalTest: (testIndex: number) => void
 }
 
 /**
@@ -146,15 +146,14 @@ function CourseScreen({ courseId, onBack, onStartSignOff, onGetCertificate, onOp
           {/* The course opens with its situational test (Course feed Figma 17024:73953). */}
           <section className="m-course__section">
             <h2 className="m-course__sectiontitle">Warm-up</h2>
-            {/* One card per test (video, audio, image); each opens the feed, which plays
-                them in order. */}
-            {getCourseSituationalTests(courseId).map((test) => (
+            {/* One card per test (video, audio, image); each opens the feed at that test. */}
+            {getCourseSituationalTests(courseId).map((test, n) => (
               <MobileAssessmentCard
                 key={test.id}
                 title={test.title}
                 assessmentType="Situational test"
                 illustrationType="situational-test"
-                onClick={onOpenSituationalTest}
+                onClick={() => onOpenSituationalTest(n)}
               />
             ))}
           </section>
