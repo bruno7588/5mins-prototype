@@ -225,7 +225,7 @@ export default function AttachedAudioPlayer({ src, onRemove }: { src: string; on
         </button>
       </div>
       {/* Progress is the waveform itself (Bruno, 2026-11-24): the bars up to the playhead
-          are the primary text colour, the rest are white at 64%, and while it plays they
+          are the primary text colour, the rest are the primary text colour at 16%, and while it plays they
           move with the sound. A range input lies over it, so it is still dragged,
           clicked and keyed like a slider. */}
       <div ref={waveRef} className={`scfield-audio__wave${playing ? ' scfield-audio__wave--playing' : ''}`}>

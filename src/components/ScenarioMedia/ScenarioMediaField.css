@@ -258,8 +258,9 @@
   min-height: 4px;
   /* Fully rounded ends, consistent with the rest of 5Mins (Bruno, 2026-11-24). */
   border-radius: var(--radius-full);
-  /* Not yet played: white at 64% (Bruno, 2026-11-24). */
-  background: color-mix(in srgb, var(--neutral-0) 64%, transparent);
+  /* Not yet played: the primary text colour at 16% (Bruno, 2026-11-24). One player, so
+     the admin field and the learner brief match. */
+  background: color-mix(in srgb, var(--text-primary) 16%, transparent);
   transform-origin: center;
 }
 
@@ -403,6 +404,35 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
+  /* The audio player lays itself out by the width it is given (below). */
+  container-type: inline-size;
+}
+
+/* Narrow (under 400px: a phone, or a squeezed brief card), the player takes two rows so
+   the waveform never runs out of room (Bruno, 2026-11-24): the controls (and the remove
+   X) on top, the waveform with the length beside it underneath. The pill becomes a
+   rounded card. */
+@container (max-width: 400px) {
+  .scfield-audio {
+    flex-wrap: wrap;
+    column-gap: var(--space-s);
+    row-gap: var(--space-s);
+    border-radius: var(--radius-l);
+  }
+
+  /* The controls fill the top row, pushing the remove X to its end. */
+  .scfield-audio__controls {
+    flex: 1 0 auto;
+  }
+
+  .scfield-audio__wave {
+    order: 1;
+    flex: 1 1 60%;
+  }
+
+  .scfield-audio__duration {
+    order: 2;
+  }
 }
 
 .scfield__audioname {

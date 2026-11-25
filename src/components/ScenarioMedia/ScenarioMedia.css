@@ -77,6 +77,8 @@
   align-items: stretch;
   gap: var(--space-s);
   overflow: visible;
+  /* The audio player lays itself out by the width it is given (ScenarioMediaField.css). */
+  container-type: inline-size;
 }
 
 .scmedia--audio .scmedia__loading {
