@@ -5,7 +5,10 @@ import CloseButton from '@/components/CloseButton/CloseButton'
 import { ExitFullScreenIcon, FullScreenIcon } from '@/components/icons/PlayerIcons'
 import { ToastSpinner } from '@/components/Toast/Toast'
 import { toEmbedUrl, type ScenarioMediaData } from '@/data/scenarioMedia'
+import AttachedAudioPlayer from './AttachedAudioPlayer'
 import './ScenarioMedia.css'
+/* The audio player's styles live with the admin field it was built for. */
+import './ScenarioMediaField.css'
 
 interface Props {
   media: ScenarioMediaData
@@ -32,7 +35,9 @@ const clock = (seconds: number) => {
  *
  * Video carries the 5Mins player's controls: back 10 seconds, play or pause, forward 10
  * seconds over the picture; under it a progress bar (no scrubbing) with the time
- * remaining and full screen; in full screen, a close. Audio uses the browser's own controls.
+ * remaining and full screen; in full screen, a close. Audio is the same player the admin
+ * sees in the Scenario media field (AttachedAudioPlayer): the Mint pill with the live
+ * waveform, without the remove control.
  * Nothing autoplays. The media is fitted inside a slot of fixed maximum height and
  * never cropped. When it can't load or play, the slot says so and points to the brief;
  * nothing around it is blocked.
@@ -117,6 +122,16 @@ function ScenarioMedia({ media, position }: Props) {
       /* 4 = MEDIA_ERR_SRC_NOT_SUPPORTED: the format, not the connection. */
       setState(playerRef.current?.error?.code === 4 ? 'unsupported' : 'failed')
     },
+  }
+
+  /* Audio: the admin's player, so author and learner hear it the same way (Bruno,
+     2026-11-24). */
+  if (media.kind === 'audio') {
+    return (
+      <div className="scmedia scmedia--audio">
+        <AttachedAudioPlayer src={media.src} />
+      </div>
+    )
   }
 
   /* A pasted link plays in its provider's own player (YouTube, Loom, Vimeo): none of the
@@ -215,8 +230,6 @@ function ScenarioMedia({ media, position }: Props) {
             </button>
           </div>
         </>
-      ) : media.kind === 'audio' ? (
-        <audio className="scmedia__audio" controls {...playerProps} />
       ) : (
         <button type="button" className="scmedia__imagebtn" aria-label="View image full screen" onClick={toggleFullscreen}>
           <img

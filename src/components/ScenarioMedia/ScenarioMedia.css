@@ -11,9 +11,17 @@
   overflow: hidden;
 }
 
-.scmedia--video,
+/* The letterbox behind a clip or picture narrower than the slot: black for video, the
+   field tint for an image (Bruno, 2026-11-24). Full screen stays black for both. */
+.scmedia--video {
+  background: var(--neutral-900);
+}
+
 .scmedia--image {
-  /* The letterbox behind a clip or picture narrower than the slot. */
+  background: var(--input-background);
+}
+
+.scmedia--image:fullscreen {
   background: var(--neutral-900);
 }
 
@@ -23,11 +31,6 @@
   width: 100%;
   max-height: 320px;
   object-fit: contain;
-}
-
-.scmedia__audio {
-  display: block;
-  width: 100%;
 }
 
 .scmedia__imagebtn {
