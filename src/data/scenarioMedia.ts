@@ -18,11 +18,13 @@ export interface ScenarioMediaData {
 
 const MB = 1024 * 1024
 
-/** Common limits (Bruno, 2026-11-24): image 10MB, audio 50MB, MP4 video 500MB. */
+/** Common limits (Bruno, 2026-11-24): image 10MB, audio 50MB, video 500MB. Formats widened
+ *  (Bruno, 2026-11-25); production converts MOV, M4V and HEIC on upload so every browser can
+ *  play or show them. */
 export const SCENARIO_MEDIA_RULES: Record<ScenarioMediaKind, { extensions: string[]; maxBytes: number; label: string }> = {
-  image: { extensions: ['jpg', 'jpeg', 'png', 'webp'], maxBytes: 10 * MB, label: '10MB' },
-  audio: { extensions: ['mp3', 'm4a', 'wav'], maxBytes: 50 * MB, label: '50MB' },
-  video: { extensions: ['mp4'], maxBytes: 500 * MB, label: '500MB' },
+  image: { extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'heic'], maxBytes: 10 * MB, label: '10MB' },
+  audio: { extensions: ['mp3', 'm4a', 'wav', 'aac', 'ogg'], maxBytes: 50 * MB, label: '50MB' },
+  video: { extensions: ['mp4', 'mov', 'webm', 'm4v'], maxBytes: 500 * MB, label: '500MB' },
 }
 
 export const SCENARIO_MEDIA_ACCEPT = Object.values(SCENARIO_MEDIA_RULES)
@@ -37,9 +39,9 @@ export function scenarioMediaKind(fileName: string): ScenarioMediaKind | null {
 }
 
 const TYPE_LIST: Record<ScenarioMediaKind, string> = {
-  image: 'JPG, PNG or WebP',
-  audio: 'MP3, M4A or WAV',
-  video: 'MP4',
+  image: 'JPG, PNG, WebP, GIF or HEIC',
+  audio: 'MP3, M4A, WAV, AAC or OGG',
+  video: 'MP4, MOV, WebM or M4V',
 }
 
 /** A pasted link we can take: a full web address. */
@@ -64,7 +66,7 @@ export function toEmbedUrl(link: string): string {
 export function scenarioMediaError(file: { name: string; size: number }, expected?: ScenarioMediaKind): string | null {
   const kind = scenarioMediaKind(file.name)
   if (expected && kind !== expected) return `This file type isn't supported. Use ${TYPE_LIST[expected]}.`
-  if (!kind) return "This file type isn't supported. Use JPG, PNG, WebP, MP3, M4A, WAV or MP4."
+  if (!kind) return "This file type isn't supported. Use an image, audio or video file."
   const rule = SCENARIO_MEDIA_RULES[kind]
   if (file.size > rule.maxBytes) {
     const noun = kind === 'image' ? 'image' : kind === 'audio' ? 'audio file' : 'video'

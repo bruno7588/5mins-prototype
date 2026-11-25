@@ -204,7 +204,7 @@ function MediaModal({
             accept={acceptOf('video')}
             onFileSelect={upload.pick}
             onChangeFile={upload.reset}
-            helpText="Drag and drop a video here or click to upload (MP4 up to 500MB)"
+            helpText="Drag and drop a video here or click to upload (MP4, MOV, WebM or M4V up to 500MB)"
           />
         )}
       </div>
