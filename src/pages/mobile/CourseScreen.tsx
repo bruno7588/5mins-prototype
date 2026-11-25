@@ -8,7 +8,7 @@ import ResourceCard from '@/components/ResourceCard/ResourceCard'
 import Button from '@/components/Button/Button'
 import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
 import { getCourseDetail } from '@/pages/courses/mockCourse'
-import { getCourseSituationalTest } from '@/data/courseFeed'
+import { getCourseSituationalTests } from '@/data/courseFeed'
 import {
   courseProgressWithSignOff,
   signOffState,
@@ -146,12 +146,17 @@ function CourseScreen({ courseId, onBack, onStartSignOff, onGetCertificate, onOp
           {/* The course opens with its situational test (Course feed Figma 17024:73953). */}
           <section className="m-course__section">
             <h2 className="m-course__sectiontitle">Warm-up</h2>
-            <MobileAssessmentCard
-              title={getCourseSituationalTest(courseId).title}
-              assessmentType="Situational test"
-              illustrationType="situational-test"
-              onClick={onOpenSituationalTest}
-            />
+            {/* One card per test (video, audio, image); each opens the feed, which plays
+                them in order. */}
+            {getCourseSituationalTests(courseId).map((test) => (
+              <MobileAssessmentCard
+                key={test.id}
+                title={test.title}
+                assessmentType="Situational test"
+                illustrationType="situational-test"
+                onClick={onOpenSituationalTest}
+              />
+            ))}
           </section>
 
           <section className="m-course__section">

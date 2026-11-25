@@ -169,6 +169,11 @@ export function getCourseSituationalTest(_courseId: string | undefined): Situati
   return { ...situationalTest, media: demo === 'none' ? undefined : scenarioMedia[demo ?? 'video'] ?? scenarioMedia.video }
 }
 
+/** All the situational tests a course opens with, in order: video, audio, image. */
+export function getCourseSituationalTests(courseId: string | undefined): SituationalTestData[] {
+  return [getCourseSituationalTest(courseId), audioTest, imageTest]
+}
+
 /** A course assessment as the feed asks it. Only multiple choice is marked. */
 export type FeedAssessment =
   | { type: 'multiple-choice'; prompt: string; options: string[]; correctIndex: number; explanation?: string }
@@ -259,7 +264,7 @@ export type CourseFeedItem =
  * the end-of-course steps join as their feed phases are built.
  */
 export function getCourseFeed(courseId: string | undefined): CourseFeedItem[] {
-  const tests = [getCourseSituationalTest(courseId), audioTest, imageTest]
+  const tests = getCourseSituationalTests(courseId)
   const lessons = getCourseDetail(courseId)
     .sections.flatMap((section) => section.lessons)
     .filter((lesson) => !lesson.meta.startsWith('Assessment'))

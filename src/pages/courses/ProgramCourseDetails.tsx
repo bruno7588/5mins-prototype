@@ -23,7 +23,7 @@ import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import '../my-team/MyTeam.css'
 import '../workspace/Workspace.css'
 import './ProgramCourseDetails.css'
-import { getCourseSituationalTest } from '@/data/courseFeed'
+import { getCourseSituationalTests } from '@/data/courseFeed'
 import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import { getCourseDetail, findProgramForCourse, type CourseLesson, type CourseResourceItem } from './mockCourse'
 import PhoneFrame from '../../components/mobile/PhoneFrame/PhoneFrame'
@@ -327,33 +327,38 @@ function ProgramCourseDetails() {
                 {!preview ? (
                   <>
                     <div className="pcd-section">
-                      <h3 className="pcd-section__name pcd-sit__heading">Situational test</h3>
-                      <article
-                        className="pcd-lesson pcd-lesson--openable"
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => navigate(`/courses/${id}/feed`)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault()
-                            navigate(`/courses/${id}/feed`)
-                          }
-                        }}
-                      >
-                        <img
-                          className="pcd-sit__art"
-                          src={getAssessmentIllustration('situational-test', 'desktop')}
-                          width={56}
-                          height={56}
-                          alt=""
-                        />
-                        <div className="pcd-lesson__info">
-                          <h4 className="pcd-lesson__title">{getCourseSituationalTest(id).title}</h4>
-                          {/* Supporting text under the title; not the meta row, whose last
-                              child is pushed to the far right for the progress track. */}
-                          <span className="pcd-lesson__metatext">Situational test</span>
-                        </div>
-                      </article>
+                      <h3 className="pcd-section__name pcd-sit__heading">Situational tests</h3>
+                      {/* One row per test (video, audio, image); each opens the feed, which
+                          plays them in order. */}
+                      {getCourseSituationalTests(id).map((test) => (
+                        <article
+                          key={test.id}
+                          className="pcd-lesson pcd-lesson--openable"
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => navigate(`/courses/${id}/feed`)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              navigate(`/courses/${id}/feed`)
+                            }
+                          }}
+                        >
+                          <img
+                            className="pcd-sit__art"
+                            src={getAssessmentIllustration('situational-test', 'desktop')}
+                            width={56}
+                            height={56}
+                            alt=""
+                          />
+                          <div className="pcd-lesson__info">
+                            <h4 className="pcd-lesson__title">{test.title}</h4>
+                            {/* Supporting text under the title; not the meta row, whose last
+                                child is pushed to the far right for the progress track. */}
+                            <span className="pcd-lesson__metatext">Situational test</span>
+                          </div>
+                        </article>
+                      ))}
                     </div>
                     <div className="pcd-divider" />
                   </>
