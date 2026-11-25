@@ -317,8 +317,8 @@ function ScenarioMediaField({ media, onChange }: Props) {
                   items={MENU}
                   onSelect={choose}
                   triggerClassName="ds-btn ds-btn--md ds-btn--outlined-2"
-                  triggerContent={<span className="ds-btn__label">Change File</span>}
-                  ariaLabel="Change file"
+                  triggerContent={<span className="ds-btn__label">Change Media</span>}
+                  ariaLabel="Change media"
                   caret={false}
                   align="start"
                 />
@@ -333,11 +333,10 @@ function ScenarioMediaField({ media, onChange }: Props) {
               triggerContent={
                 <>
                   <Add size={20} color="currentColor" variant="Linear" />
-                  <span className="scfield__addlabel">Attach Media</span>
-                  <span className="scfield__addhint">(Video, Image or Audio)</span>
+                  <span className="scfield__addlabel">Add Media</span>
                 </>
               }
-              ariaLabel="Attach media"
+              ariaLabel="Add media"
               caret={false}
               align="center"
             />
