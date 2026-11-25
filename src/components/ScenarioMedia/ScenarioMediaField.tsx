@@ -269,7 +269,11 @@ function ScenarioMediaField({ media, onChange }: Props) {
                 X on it). No file name: the preview already says which file it is. */}
             <div className="scfield__attached">
               {media.kind === 'audio' ? (
-                <AttachedAudioPlayer src={media.src} onRemove={() => onChange(undefined)} />
+                /* Audio has no picture, so its file name is what says which clip this is. */
+                <div className="scfield__audio">
+                  <AttachedAudioPlayer src={media.src} onRemove={() => onChange(undefined)} />
+                  <span className="scfield__audioname">{media.name}</span>
+                </div>
               ) : media.kind === 'video' && !media.embed ? (
                   <div className="scfield-video">
                     <VideoPreview src={media.src} name={media.name} fullScreen />

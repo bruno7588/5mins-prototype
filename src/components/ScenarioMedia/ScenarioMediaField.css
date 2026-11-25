@@ -214,7 +214,13 @@
 }
 
 /* ===== Audio player ===== */
+/* The pill carries the audio artwork from Figma (Your Content 3494:51537, the "Mint"
+   theme Bruno picked 2026-11-24): its gradient at 24% as the fill. Artwork colours, not
+   interface colours, so they are not design tokens. */
 .scfield-audio {
+  /* stylelint-disable -- Figma audio artwork gradient (3494:51537); no tokens exist for artwork colours */
+  --audio-art-tint: linear-gradient(158.58deg, rgba(255, 226, 168, 0.24) 9.1562%, rgba(134, 199, 255, 0.24) 37.04%, rgba(126, 221, 187, 0.24) 63.353%, rgba(125, 200, 205, 0.24) 90.844%);
+  /* stylelint-enable */
   display: flex;
   align-items: center;
   gap: var(--space-m);
@@ -222,7 +228,7 @@
   min-width: 0;
   padding: var(--space-s) var(--space-m);
   border-radius: var(--radius-full);
-  background: var(--input-background);
+  background: var(--audio-art-tint);
   box-sizing: border-box;
 }
 
@@ -233,16 +239,71 @@
   flex-shrink: 0;
 }
 
-.scfield-audio__track {
+/* The waveform track: progress and scrubber in one. */
+.scfield-audio__wave {
+  position: relative;
   flex: 1;
   min-width: 0;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  /* ElevenLabs UI AudioScrubber geometry: 3px bars, 1px apart. */
+  gap: 1px;
+  border-radius: var(--radius-xs);
+}
+
+.scfield-audio__bar {
+  flex: 0 0 3px;
+  /* Never shorter than 4px, so a quiet passage is a short bar, not a dot. */
+  min-height: 4px;
+  /* Fully rounded ends, consistent with the rest of 5Mins (Bruno, 2026-11-24). */
+  border-radius: var(--radius-full);
+  /* Not yet played: white at 64% (Bruno, 2026-11-24). */
+  background: color-mix(in srgb, var(--neutral-0) 64%, transparent);
+  transform-origin: center;
+}
+
+/* Played: the primary text colour (Bruno, 2026-11-24), so progress reads clearly on
+   the pale artwork in both modes. */
+.scfield-audio__bar--played {
+  background: var(--text-primary);
+}
+
+/* While it plays the bars are sized every frame from the sound itself
+   (AttachedAudioPlayer), so there is no CSS loop. When it stops they settle back to the
+   clip's shape, and a new shape (once the file is decoded) eases in. */
+.scfield-audio__wave:not(.scfield-audio__wave--playing) .scfield-audio__bar {
+  transition: transform 200ms ease-out, height 200ms ease-out;
+}
+
+.scfield-audio__seek {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* The ring shows only when the scrubber is reached with the keyboard, never on a click
+   or a drag: :focus-visible on the range input, read from the track that draws it. */
+.scfield-audio__wave:has(.scfield-audio__seek:focus-visible) {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scfield-audio__wave:not(.scfield-audio__wave--playing) .scfield-audio__bar {
+    transition: none;
+  }
 }
 
 .scfield-audio__duration {
   flex-shrink: 0;
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-sm);
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.2;
   color: var(--text-primary);
   white-space: nowrap;
 }
@@ -334,7 +395,22 @@
   gap: var(--space-s);
 }
 
-/* The audio pill runs the full width of the field; the button under it stays left. */
-.scfield__attached .scfield-audio {
+/* The audio pill runs the full width of the field, with its file name under it; the
+   button under that stays left. */
+.scfield__audio {
   align-self: stretch;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.scfield__audioname {
+  padding-inline: var(--space-m);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
