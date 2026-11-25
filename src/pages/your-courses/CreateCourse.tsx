@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { ScenarioMediaData } from '@/data/scenarioMedia'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Danger } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
@@ -169,11 +169,15 @@ const toContentItem = (draft: GeneratedAssessment, id: number): ContentItem => (
 
 function CreateCourse() {
   const navigate = useNavigate()
+  /* Opened from a course's Edit (Your Courses or course details): the same builder,
+     headed Edit Course, with Update Course returning to where it was opened. */
+  const edit = (useLocation().state as { editCourse?: { title: string }; from?: string } | null) ?? null
+  const editing = !!edit?.editCourse
   /* The builder opens on Details — a course starts with its title, and the
      outline is the second step. */
   const [activeTab, setActiveTab] = useState('Details')
   const [details, setDetails] = useState<CourseDetailsDraft>({
-    title: '',
+    title: edit?.editCourse?.title ?? '',
     description: '',
     /* A course starts with artwork rather than an empty box. The copy always
        promised an automatic thumbnail — this is it, present from the start instead
@@ -960,6 +964,15 @@ function CreateCourse() {
   return (
     <>
       <PageHeader
+        {...(editing
+          ? {
+              title: 'Edit Course',
+              primaryLabel: 'Update Course',
+              hideSecondary: true,
+              /* Closing without updating goes back to where Edit was chosen. */
+              onClose: () => navigate(edit?.from ?? '/your-courses/list', { state: { courseTitle: edit?.editCourse?.title } }),
+            }
+          : {})}
         activeTab={activeTab}
         onTabChange={setActiveTab}
         tabs={[
@@ -971,7 +984,13 @@ function CreateCourse() {
         secondaryDisabled={!canCreate}
         onSecondary={() => commit('draft')}
         primaryDisabled={!canCreate}
-        onPrimary={() => commit('published')}
+        onPrimary={() =>
+          editing
+            ? navigate(edit?.from ?? '/your-courses/list', {
+                state: { courseTitle: details.title.trim(), toast: 'Course updated' },
+              })
+            : commit('published')
+        }
         /* No Preview action while the course is being created: there is nothing to
            preview until it exists. Preview belongs on the course once created. */
       />

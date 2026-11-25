@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   ArrowDown2,
@@ -34,6 +34,7 @@ import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import MoreIcon from '../../components/icons/MoreIcon'
 import CsvIcon from '@/components/icons/CsvIcon'
 import RowActionsMenu, { type RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'
+import { COURSE_MENU_ITEMS, DeleteCourseDialog, duplicateCourse, editCourseState } from './components/CourseActions/CourseActions'
 import BulkActionBar from '@/components/BulkActionBar/BulkActionBar'
 import SetCompletedModal, { type Completion } from './components/SetCompletedModal/SetCompletedModal'
 import { useCurrentUser, type UserRole } from '@/hooks/useCurrentUser'
@@ -317,6 +318,15 @@ function CourseDetails() {
   const user = useCurrentUser()
   const canComplete = user.role === 'admin'
   const { toasts, show: showToast } = useToast()
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  /* Back from Edit Course with Update: confirm it, once. */
+  const updatedToast = useRef(false)
+  useEffect(() => {
+    if (updatedToast.current || !(location.state as { toast?: string } | null)?.toast) return
+    updatedToast.current = true
+    showToast('success', (location.state as { toast: string }).toast)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const [certOpen, setCertOpen] = useState(false)
   const [certScope, setCertScope] = useState<CertScope>('active')
   const [certBusy, setCertBusy] = useState(false)
@@ -589,9 +599,23 @@ function CourseDetails() {
               <button className="cd-icon-btn ui-disabled" aria-label="Copy course link (coming soon)" disabled>
                 <Link2 size={20} color="var(--text-secondary)" variant="Linear" className="cd-link-icon" />
               </button>
-              <button className="cd-icon-btn ui-disabled" aria-label="More options (coming soon)" disabled>
-                <MoreIcon size={20} color="var(--text-secondary)" />
-              </button>
+              <RowActionsMenu
+                items={COURSE_MENU_ITEMS}
+                ariaLabel="More options"
+                triggerClassName="cd-icon-btn"
+                triggerContent={<MoreIcon size={20} color="var(--text-secondary)" />}
+                onSelect={(key) => {
+                  if (key === 'edit')
+                    navigate('/create-course', {
+                      state: editCourseState(courseTitle, `/your-courses/course${location.search}`),
+                    })
+                  if (key === 'duplicate') {
+                    duplicateCourse(courseTitle, 17)
+                    showToast('success', 'Course duplicated')
+                  }
+                  if (key === 'delete') setDeleteOpen(true)
+                }}
+              />
               <Button onClick={() => setEnrolOpen(true)}>Enrol People</Button>
             </div>
           </div>
@@ -859,6 +883,11 @@ function CourseDetails() {
           </div>
         </ConfirmModal>
 
+        <DeleteCourseDialog
+          title={deleteOpen ? courseTitle : null}
+          onCancel={() => setDeleteOpen(false)}
+          onConfirm={() => navigate('/your-courses/list', { state: { toast: 'Course deleted' } })}
+        />
         <ToastContainer toasts={toasts} />
       </main>
     </div>

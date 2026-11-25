@@ -6,10 +6,11 @@ import Search from '../../components/Search/Search'
 import Badge from '../../components/Badge/Badge'
 import Button from '../../components/Button/Button'
 import Dropdown from '../../components/Dropdown/Dropdown'
-import MoreIcon from '../../components/icons/MoreIcon'
+import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import CourseCreatedModal from './components/CourseCreatedModal/CourseCreatedModal'
 import { formatCourseDate, loadCourses } from './courseStore'
+import { COURSE_MENU_ITEMS, DeleteCourseDialog, duplicateCourse, editCourseState } from './components/CourseActions/CourseActions'
 import AssignCoursesWizard from './components/AssignCoursesWizard/AssignCoursesWizard'
 import './YourCoursesList.css'
 
@@ -55,7 +56,10 @@ function YourCoursesList() {
 
   /* Read once on mount: the builder writes to the store before navigating here,
      and nothing else mutates it while this page is open. */
-  const [stored] = useState(() => loadCourses())
+  const [stored, setStored] = useState(() => loadCourses())
+  /* Rows deleted from the three-dot menu, hidden for the rest of the visit. */
+  const [deleted, setDeleted] = useState<Set<number>>(new Set())
+  const [toDelete, setToDelete] = useState<{ id: number; title: string } | null>(null)
 
   /* The builder hands over the id it just created; that course gets the
      confirmation modal over this page, so closing it lands on the folder. */
@@ -99,11 +103,12 @@ function YourCoursesList() {
 
   const rows = useMemo(() => {
     return allRows.filter((row) => {
+      if (deleted.has(row.id)) return false
       const matchesStatus = statusFilter === 'all' || row.status === statusFilter
       const matchesSearch = row.title.toLowerCase().includes(search.trim().toLowerCase())
       return matchesStatus && matchesSearch
     })
-  }, [allRows, statusFilter, search])
+  }, [allRows, statusFilter, search, deleted])
 
   return (
     <div className="courses-list-layout">
@@ -210,9 +215,19 @@ function YourCoursesList() {
                   </div>
                 </div>
                 <div className="courses-list-cell courses-list-cell--actions">
-                  <button className="courses-list-action-btn" aria-label="More options">
-                    <MoreIcon size={20} color="var(--text-tertiary)" />
-                  </button>
+                  <RowActionsMenu
+                    items={COURSE_MENU_ITEMS}
+                    ariaLabel={`Actions for ${row.title}`}
+                    onSelect={(key) => {
+                      if (key === 'edit') navigate('/create-course', { state: editCourseState(row.title, '/your-courses/list') })
+                      if (key === 'duplicate') {
+                        duplicateCourse(row.title, row.lessons)
+                        setStored(loadCourses())
+                        show('success', 'Course duplicated')
+                      }
+                      if (key === 'delete') setToDelete({ id: row.id, title: row.title })
+                    }}
+                  />
                 </div>
               </div>
             )
@@ -237,6 +252,15 @@ function YourCoursesList() {
         </div>
       </main>
 
+      <DeleteCourseDialog
+        title={toDelete?.title ?? null}
+        onCancel={() => setToDelete(null)}
+        onConfirm={() => {
+          if (toDelete) setDeleted((prev) => new Set(prev).add(toDelete.id))
+          setToDelete(null)
+          show('success', 'Course deleted')
+        }}
+      />
       <ToastContainer toasts={toasts} />
 
       <CourseCreatedModal

@@ -225,24 +225,6 @@
   color: var(--text-tertiary);
 }
 
-/* Row actions */
-.courses-list-action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-full);
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-.courses-list-action-btn:hover {
-  background: var(--page-background-hover);
-}
-
 .courses-list-empty {
   padding: var(--space-xl);
   text-align: center;
