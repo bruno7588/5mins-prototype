@@ -14,6 +14,7 @@ import {
   isMediaLink,
   SCENARIO_MEDIA_RULES,
   scenarioMediaError,
+  toEmbedUrl,
   type ScenarioMediaData,
   type ScenarioMediaKind,
 } from '@/data/scenarioMedia'
@@ -299,6 +300,16 @@ function ScenarioMediaField({ media, onChange }: Props) {
                       >
                         <img src={media.src} alt={media.name} />
                       </button>
+                    ) : toEmbedUrl(media.src) !== media.src.trim() ? (
+                      /* A known provider link (YouTube, Loom, Vimeo): its own player, so the
+                         tile shows the video's thumbnail and the admin can check it plays. */
+                      <iframe
+                        className="scfield-thumb__embed"
+                        src={toEmbedUrl(media.src)}
+                        title="Scenario video"
+                        allow="fullscreen; picture-in-picture; encrypted-media"
+                        allowFullScreen
+                      />
                     ) : (
                       <span className="scfield-thumb__icon">
                         <Video size={24} color="var(--text-secondary)" variant="Linear" />
