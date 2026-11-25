@@ -11,7 +11,6 @@ import { autoGrow, autoGrowRef } from '../InteractiveDrawer/autoGrow'
 import '../InteractiveDrawer/InteractiveDrawer.css'
 import QuestionCard from '../QuestionCard/QuestionCard'
 import { DrawerFooter, DrawerHeader } from '../ContentDrawer/DrawerSlots'
-import SituationalTestPreview from '../SituationalTestPreview/SituationalTestPreview'
 import { type GeneratableType } from '@/data/aiAssessmentGeneration'
 import { type InteractiveQuestion } from '@/data/interactiveQuestions'
 import type { ScenarioMediaData } from '@/data/scenarioMedia'
@@ -177,7 +176,6 @@ function SituationalTestDrawerContent({
 
   /* The draft as the learner would meet it. Review only — an admin approving prose they
      did not write is the one place where seeing it played back is worth a screen. */
-  const [previewing, setPreviewing] = useState(false)
 
   /* Generate Again replaces the draft outright. That was harmless while the review was
      read-only; now that the questions are editable it can take edits with it, so it asks
@@ -558,37 +556,9 @@ function SituationalTestDrawerContent({
             {/* Create only. A counter implies a sequence you finish, and on the edit path
                 either surface commits, so there is nothing to count down to. */}
             {!twoPane && <span className="st-drawer__step-indicator">Step {step} of 2</span>}
-            {/* Opposite the commit actions: those decide the test's fate, this one only
-                looks at it. On every path once there are questions to walk through
-                (DES-371): the admin sees what learners get before saving, media included.
-                Held until the test is complete, as a half-written question has no learner
-                view; the tooltip sits on its wrapper so it fires over the disabled button. */}
-            {(twoPane || step === 2) && (
-              <Tooltip
-                text="Complete the title, brief and every question to preview"
-                position="Top"
-                alignment="End"
-                icon={false}
-                disabled={canSubmit}
-              >
-                <Button variant="outlined-2" onClick={() => setPreviewing(true)} disabled={!canSubmit}>
-                  Preview
-                </Button>
-              </Tooltip>
-            )}
           </div>
         </div>
       </DrawerFooter>
-
-      {previewing && (
-        <SituationalTestPreview
-          title={title}
-          brief={brief}
-          media={media}
-          questions={questions}
-          onClose={() => setPreviewing(false)}
-        />
-      )}
 
       {review && (
         <ConfirmModal
