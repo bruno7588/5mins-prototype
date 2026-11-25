@@ -278,7 +278,7 @@ function CourseSettings({ courseTitle }: { courseTitle: string }) {
           key: 'completionValidity',
           title: 'Expiry date',
           // The where-it-shows note sits in the description, so it reads before the setting is on.
-          description: `Completions expire after a set time. Applies to past and new completions, and shows in Learning Records${
+          description: `Completions expire a set time after the learner completes the course. Applies to past and new completions, and shows in Learning Records${
             values.certificate ? ', Course Progress, and certificates.' : ' and Course Progress.'
           }`,
           expand: (
