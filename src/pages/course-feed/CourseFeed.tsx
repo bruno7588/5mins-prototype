@@ -168,6 +168,8 @@ function CourseFeed() {
     setReached((r) => Math.max(r, to))
     setDir(to > index ? 1 : -1)
     setScreen(0)
+    /* Each test's media starts from the beginning. */
+    if (to !== index) mediaPosition.current = 0
     setIndex(to)
   }
 

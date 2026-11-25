@@ -44,7 +44,8 @@ function CourseFeedScreen({ courseId, onExit }: { courseId: string; onExit: () =
   /* The situational test: how the attempt in progress went, the attempts spent, and
      whether its results are showing in place of the brief. */
   const [results, setResults] = useState<QuestionResults>([])
-  const [attemptsUsed, setAttemptsUsed] = useState(0)
+  /* Attempts are counted per test: a course can have several. */
+  const [testAttempts, setTestAttempts] = useState<Record<string, number>>({})
   const [showResults, setShowResults] = useState(false)
   const [reviewOpen, setReviewOpen] = useState(false)
   /* A lesson quiz in progress: the lesson it follows, how it is going, and whether its
@@ -61,6 +62,7 @@ function CourseFeedScreen({ courseId, onExit }: { courseId: string; onExit: () =
   const [jump, setJump] = useState(0)
 
   const item = items[index]
+  const attemptsUsed = testAttempts[item.id] ?? 0
   /* The lesson feed plays FeedLesson; the For You lessons stand in for the videos. */
   const lessons: FeedLesson[] = items
     .filter((it) => it.kind === 'lesson')
@@ -68,6 +70,8 @@ function CourseFeedScreen({ courseId, onExit }: { courseId: string; onExit: () =
   const firstLesson = items.findIndex((it) => it.kind === 'lesson')
 
   const open = (to: number) => {
+    /* Each test's media starts from the beginning. */
+    if (to !== index) mediaPosition.current = 0
     setReached((r) => Math.max(r, to))
     setIndex(to)
     setJump((j) => j + 1)
@@ -135,7 +139,7 @@ function CourseFeedScreen({ courseId, onExit }: { courseId: string; onExit: () =
       <AnimatePresence mode="wait" initial={false}>
         {item.kind === 'situational-test' ? (
           <motion.div
-            key={showResults ? `results-${attemptsUsed}` : 'test'}
+            key={showResults ? `${item.id}-results-${attemptsUsed}` : `${item.id}-test`}
             className="m-cfeed__screen"
             {...ARRIVE(reduce)}
             exit={{ opacity: 0 }}
@@ -248,7 +252,7 @@ function CourseFeedScreen({ courseId, onExit }: { courseId: string; onExit: () =
             onClose={() => setInQuestions(false)}
             onComplete={() => {
               setInQuestions(false)
-              setAttemptsUsed((used) => used + 1)
+              setTestAttempts((prev) => ({ ...prev, [item.id]: (prev[item.id] ?? 0) + 1 }))
               setDone((prev) => new Set(prev).add(item.id))
               setShowResults(true)
             }}

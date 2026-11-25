@@ -114,6 +114,7 @@
     color-mix(in srgb, var(--neutral-900) 64%, transparent) 100%
   );
   pointer-events: none;
+  transition: opacity 150ms ease-out;
 }
 
 /* Back 10, play or pause, forward 10: centred, white on the picture. */
@@ -128,18 +129,37 @@
   transition: opacity 150ms ease-out;
 }
 
-/* While it plays they step back; pointing at the player or tabbing into it brings them
-   back, and a tap pauses, which shows them again. */
-.scmedia--playing .scmedia__centre {
+/* While it plays, every control steps back: the centre buttons, the bar along the
+   bottom and the shade behind it, so the picture is clear (Bruno, 2026-11-24). They come
+   back while the pointer is over the video, or when a control is reached with the
+   keyboard. Focus left on a button by a click does not count, or the controls would stay
+   up after pressing Play. A tap pauses, which shows them again. */
+.scmedia--playing .scmedia__centre,
+.scmedia--playing .scmedia__bar,
+.scmedia--playing .scmedia__shade {
   opacity: 0;
-  /* Hidden controls must not catch a tap: a tap anywhere on the picture pauses, and
-     the next one plays (Bruno, 2026-11-24). */
+}
+
+/* Hidden controls must not catch a tap: a tap anywhere on the picture pauses, and the
+   next one plays (Bruno, 2026-11-24). */
+.scmedia--playing .scmedia__centre,
+.scmedia--playing .scmedia__bar .scmedia__round {
   pointer-events: none;
 }
 
 .scmedia--playing:hover .scmedia__centre,
-.scmedia--playing:focus-within .scmedia__centre {
+.scmedia--playing:hover .scmedia__bar,
+.scmedia--playing:hover .scmedia__shade,
+.scmedia--playing:has(:focus-visible) .scmedia__centre,
+.scmedia--playing:has(:focus-visible) .scmedia__bar,
+.scmedia--playing:has(:focus-visible) .scmedia__shade {
   opacity: 1;
+}
+
+.scmedia--playing:hover .scmedia__centre,
+.scmedia--playing:hover .scmedia__bar .scmedia__round,
+.scmedia--playing:has(:focus-visible) .scmedia__centre,
+.scmedia--playing:has(:focus-visible) .scmedia__bar .scmedia__round {
   pointer-events: auto;
 }
 
@@ -171,14 +191,15 @@
   padding: var(--space-sm) var(--space-m);
   /* The strip itself lets taps through to the picture; only its button takes them. */
   pointer-events: none;
+  transition: opacity 150ms ease-out;
 }
 
 .scmedia__bar .scmedia__round {
   pointer-events: auto;
 }
 
-/* Progress bar (Figma 17024:90676): 2px, white at 16% for the track, Primary-600 for
-   what has played. Not interactive. */
+/* Progress bar (Figma 17024:90676): 2px, white at 16% for the track, the selected
+   colour for what has played. Not interactive. */
 .scmedia__progress {
   flex: 1 1 0;
   min-width: 0;
@@ -192,7 +213,8 @@
   display: block;
   height: 100%;
   border-radius: var(--radius-ml);
-  background: var(--primary-600);
+  /* The selected colour (Bruno, 2026-11-24), as the scrub bars elsewhere use. */
+  background: var(--selected);
 }
 
 .scmedia__time {
@@ -231,6 +253,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .scmedia__bar,
+  .scmedia__shade,
   .scmedia__centre {
     transition: none;
   }

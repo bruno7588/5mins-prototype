@@ -81,6 +81,88 @@ const situationalTest: SituationalTestData = {
   ],
 }
 
+/* Two more tests, one per kind of scenario media, so the feed shows each player:
+   an audio call and a still image (Bruno, 2026-11-24). */
+const audioTest: SituationalTestData = {
+  id: 2,
+  title: 'A guest calls about a missed allergy note',
+  brief:
+    'You are the duty manager. A guest phones the morning after their dinner. They say they wrote their sesame allergy on the booking, but nobody mentioned it at the table and their dessert had a sesame crumb. They felt unwell but did not need help. Listen to the call, then decide how you respond and what you check.',
+  media: { kind: 'audio', src: '/scenario-media/scenario-placeholder.m4a', name: 'Guest phone call' },
+  questions: [
+    {
+      id: 'cf-st2-1',
+      text: 'What do you say first on the call?',
+      options: [
+        'Explain that the kitchen is very busy on a Friday',
+        'Thank them for calling, apologise, and ask how they are feeling now',
+        'Ask them to put the complaint in writing',
+        'Offer a free meal before they say anything else',
+      ],
+      correctIndex: 1,
+      explanation: 'Start with the guest: acknowledge it, apologise and check they are well before anything else.',
+    },
+    {
+      id: 'cf-st2-2',
+      text: 'What do you check before calling them back?',
+      options: [
+        'Whether the allergy note on the booking reached the server and the kitchen ticket',
+        'Which server was on shift, so they can be disciplined',
+        'Whether the guest has complained before',
+        'The price of the dessert',
+      ],
+      correctIndex: 0,
+      explanation: 'Trace where the note was lost: booking, server, ticket, kitchen. That is what stops it happening again.',
+    },
+    {
+      id: 'cf-st2-3',
+      text: 'What do you record?',
+      options: [
+        'Nothing, as the guest did not need medical help',
+        'A note in the reservations system only',
+        'An incident report with the booking note, what was served, what the guest said and what you found',
+        'A reminder to be careful next time',
+      ],
+      correctIndex: 2,
+      explanation: 'A reaction is an incident even when it is mild. Record it fully so the gap in the process can be fixed.',
+    },
+  ],
+}
+
+const imageTest: SituationalTestData = {
+  id: 3,
+  title: 'Checking the allergen board before service',
+  brief:
+    'You are opening the restaurant for lunch. Look at the allergen information on display. The menu changed this morning: the soup now has celery and the bread is made with a new flour blend. Decide what has to happen before the first guest is seated.',
+  media: { kind: 'image', src: '/scenario-media/scenario-placeholder.png', name: 'Allergen board' },
+  questions: [
+    {
+      id: 'cf-st3-1',
+      text: 'The board still shows yesterday\'s soup. What do you do?',
+      options: [
+        'Open on time and tell staff to mention it if asked',
+        'Update the allergen information before the first guest is seated',
+        'Remove the soup from the menu for the week',
+        'Wait for the head chef to update it after service',
+      ],
+      correctIndex: 1,
+      explanation: 'Allergen information must match what is served from the first cover. Update it before you open.',
+    },
+    {
+      id: 'cf-st3-2',
+      text: 'Who needs to know about the new flour blend?',
+      options: [
+        'Only the pastry chef',
+        'Only the servers on the lunch shift',
+        'The kitchen and front of house, with the allergens it contains',
+        'No one, if it is gluten free',
+      ],
+      correctIndex: 2,
+      explanation: 'Everyone who prepares or serves the bread needs the allergens of the new blend, whatever it is.',
+    },
+  ],
+}
+
 /** The situational test a course opens with, if it has one. */
 export function getCourseSituationalTest(_courseId: string | undefined): SituationalTestData {
   const demo = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('media')
@@ -172,16 +254,24 @@ export type CourseFeedItem =
     }
 
 /**
- * A course's feed: its situational test, its lessons, then its assessments. Events and
+ * A course's feed: its situational tests (video, audio, image), its lessons, then its
+ * assessments. Events and
  * the end-of-course steps join as their feed phases are built.
  */
 export function getCourseFeed(courseId: string | undefined): CourseFeedItem[] {
-  const test = getCourseSituationalTest(courseId)
+  const tests = [getCourseSituationalTest(courseId), audioTest, imageTest]
   const lessons = getCourseDetail(courseId)
     .sections.flatMap((section) => section.lessons)
     .filter((lesson) => !lesson.meta.startsWith('Assessment'))
   return [
-    { kind: 'situational-test', id: 'situational-test', title: test.title, test },
+    ...tests.map(
+      (test, i): CourseFeedItem => ({
+        kind: 'situational-test',
+        id: i === 0 ? 'situational-test' : `situational-test-${i + 1}`,
+        title: test.title,
+        test,
+      }),
+    ),
     ...lessons.map((lesson, i): CourseFeedItem => {
       const stand = feedLessons[i % feedLessons.length]
       return {
