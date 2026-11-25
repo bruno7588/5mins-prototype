@@ -75,12 +75,6 @@
   flex: 1 1 0;
 }
 
-.scfield-modal__hint {
-  font-size: var(--font-size-sm);
-  line-height: 1.2;
-  color: var(--text-tertiary);
-}
-
 /* ===== Attached media (the per-question Attach Media's uploaded state, Bruno 2026-11-24):
    a 218px thumbnail with a remove X for an image or video, a pill player for audio. ===== */
 /* An image sits in a fixed landscape box, 320 x 180 (the landscape video's size), the
@@ -102,8 +96,7 @@
   object-fit: contain;
 }
 
-/* The image opens full screen: zoom-in to open, zoom-out to come back. Full screen is
-   always on black, so a mode-invariant palette token. */
+/* The image opens in the full size overlay (ImageOverlay): zoom-in to open. */
 .scfield-thumb__zoom {
   display: block;
   width: 100%;
@@ -117,32 +110,6 @@
 .scfield-thumb__zoom:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: -2px;
-}
-
-.scfield-thumb__zoom:fullscreen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--neutral-900);
-  cursor: zoom-out;
-}
-
-.scfield-thumb__zoom:fullscreen img {
-  max-width: 100vw;
-  max-height: 100vh;
-}
-
-/* A pasted link from an unknown site has no picture: the same box, on the field tint. */
-.scfield-thumb--icon {
-  background: none;
-}
-
-/* A YouTube, Loom or Vimeo link shows its own player, with the video's thumbnail. */
-.scfield-thumb__embed {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: 0;
 }
 
 .scfield-thumb__remove-tooltip {
@@ -310,16 +277,6 @@
   white-space: nowrap;
 }
 
-
-/* A pasted link has no frame to show: the type icon on the field tint instead. */
-.scfield-thumb__icon {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--input-background);
-}
 
 /* An uploaded video: the shared preview with the remove X on its corner. Here the box
    hugs the picture (Bruno, 2026-11-24): up to 320px wide and 240px tall, no black bands,

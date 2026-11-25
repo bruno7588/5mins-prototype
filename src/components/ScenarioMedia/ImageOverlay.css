@@ -1,0 +1,79 @@
+/* Scenario image at full size (DES-371), admin and learner. Prefixed .scmedia-zoom. */
+
+.scmedia-zoom {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  /* Top and bottom clear the 44px close above the image; the image takes almost the
+     whole screen. */
+  padding: calc(2 * var(--space-xxl)) calc(2 * var(--space-xxl));
+  background: var(--scrim);
+  animation: scmedia-zoom-in 200ms ease-out;
+}
+
+/* In the mobile app it covers the phone screen, not the browser window. */
+.m-phone__screen .scmedia-zoom {
+  position: absolute;
+  padding: calc(2 * var(--space-xxl)) var(--space-m);
+}
+
+.scmedia-zoom:focus {
+  outline: none;
+}
+
+/* The space the image fills, measured so the image can scale up to it. */
+.scmedia-zoom__stage {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  container-type: size;
+}
+
+/* As wide as the stage, or as tall, whichever comes first: fitted, never cropped,
+   so the 24px corners sit on the picture itself. */
+.scmedia-zoom__frame {
+  position: relative;
+  width: min(100cqw, 100cqh * var(--scmedia-zoom-ratio, 1.7778));
+}
+
+.scmedia-zoom__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-l);
+}
+
+/* On the picture's top right corner, 16px above it. */
+.scmedia-zoom__close {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--space-m));
+}
+
+/* On the scrim in both modes: Neutral-900 at 50% with a Neutral-25 glyph (Bruno,
+   2026-11-25). Hover deepens the fill. */
+.close-btn--fullscreen.scmedia-zoom__close {
+  background: color-mix(in srgb, var(--neutral-900) 50%, transparent);
+  color: var(--neutral-25);
+}
+
+.close-btn--fullscreen.scmedia-zoom__close:hover {
+  background: color-mix(in srgb, var(--neutral-900) 70%, transparent);
+  color: var(--neutral-25);
+}
+
+@keyframes scmedia-zoom-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scmedia-zoom {
+    animation: none;
+  }
+}

@@ -43,58 +43,6 @@
   outline-offset: -2px;
 }
 
-/* The image's full screen view: an overlay on the scrim, the picture fitted large in
-   the middle, the full-screen close top-right (as on full-screen modals). Escape, the
-   close or a click on the scrim closes it. */
-.scmedia-zoom {
-  position: fixed;
-  inset: 0;
-  z-index: 1200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* Top and bottom clear the 44px close. */
-  padding: calc(2 * var(--space-xxl)) var(--space-xxl);
-  background: var(--scrim);
-  animation: scmedia-zoom-in 200ms ease-out;
-}
-
-/* In the mobile app it covers the phone screen, not the browser window. */
-.m-phone__screen .scmedia-zoom {
-  position: absolute;
-  padding: calc(2 * var(--space-xxl)) var(--space-m);
-}
-
-.scmedia-zoom:focus {
-  outline: none;
-}
-
-.scmedia-zoom__close {
-  position: absolute;
-  top: var(--space-ml);
-  right: var(--space-ml);
-}
-
-.scmedia-zoom__image {
-  display: block;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  border-radius: var(--radius-sm);
-}
-
-@keyframes scmedia-zoom-in {
-  from {
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .scmedia-zoom {
-    animation: none;
-  }
-}
-
 .scmedia__loading {
   position: absolute;
   inset: 0;
@@ -312,17 +260,4 @@
   .scmedia__centre {
     transition: none;
   }
-}
-
-/* A linked video: the provider's player, 16:9, inside the same slot. */
-.scmedia--embed {
-  background: var(--neutral-900);
-}
-
-.scmedia__embed {
-  display: block;
-  width: 100%;
-  max-height: 320px;
-  aspect-ratio: 16 / 9;
-  border: none;
 }

@@ -11,9 +11,6 @@ export interface ScenarioMediaData {
   name: string
   /** Bytes, when known. */
   size?: number
-  /** A pasted video link rather than an upload: `src` is the provider's page, and it
-   *  plays in that provider's own player, not the 5Mins one. */
-  embed?: boolean
 }
 
 const MB = 1024 * 1024
@@ -42,21 +39,6 @@ const TYPE_LIST: Record<ScenarioMediaKind, string> = {
   image: 'JPG, PNG, WebP, GIF or HEIC',
   audio: 'MP3, M4A, WAV, AAC or OGG',
   video: 'MP4, MOV, WebM or M4V',
-}
-
-/** A pasted link we can take: a full web address. */
-export const isMediaLink = (value: string) => /^https?:\/\/\S+\.\S+/.test(value.trim())
-
-/** The address a provider's player loads from, for the links we know; the link itself otherwise. */
-export function toEmbedUrl(link: string): string {
-  const url = link.trim()
-  const youtube = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/)
-  if (youtube) return `https://www.youtube.com/embed/${youtube[1]}`
-  const loom = url.match(/loom\.com\/share\/([\w-]+)/)
-  if (loom) return `https://www.loom.com/embed/${loom[1]}`
-  const vimeo = url.match(/vimeo\.com\/(\d+)/)
-  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`
-  return url
 }
 
 /**

@@ -3,22 +3,19 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Add, Gallery, Video, VolumeHigh } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
-import InputField from '@/components/InputField/InputField'
 import RowActionsMenu, { type RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'
-import Tabs from '@/components/Tabs/Tabs'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import { FileUploader } from '@/components/FileUploader/FileUploader'
 import AddImageModal from '@/pages/add-content/components/AddImageModal/AddImageModal'
 import SectionHeader from '@/pages/your-courses/components/SectionHeader/SectionHeader'
 import {
-  isMediaLink,
   SCENARIO_MEDIA_RULES,
   scenarioMediaError,
-  toEmbedUrl,
   type ScenarioMediaData,
   type ScenarioMediaKind,
 } from '@/data/scenarioMedia'
 import ScenarioMedia from './ScenarioMedia'
+import ImageOverlay from './ImageOverlay'
 import AttachedAudioPlayer from './AttachedAudioPlayer'
 import VideoPreview from '@/components/VideoPreview/VideoPreview'
 import './ScenarioMediaField.css'
@@ -48,7 +45,7 @@ const MENU: RowMenuItem[] = [
   {
     key: 'video',
     label: 'Video',
-    description: 'Upload a video or paste a link',
+    description: 'Upload a video file',
     icon: <Video size={20} color="var(--text-primary)" variant="Linear" />,
   },
   {
@@ -117,7 +114,7 @@ function useUpload() {
   return { file, src, uploading: progress !== null, progress: progress ?? 0, error, pick, reset, ready }
 }
 
-/** Add video (upload or link), in the DS Modal (overlays.md). Audio skips it: its menu
+/** Add video (upload), in the DS Modal (overlays.md). Audio skips it: its menu
  *  item opens the computer's file picker straight away. */
 function MediaModal({
   open,
@@ -129,24 +126,15 @@ function MediaModal({
   onSave: (media: ScenarioMediaData) => void
 }) {
   const upload = useUpload()
-  const [tab, setTab] = useState<'upload' | 'link'>('upload')
-  const [link, setLink] = useState('')
-  const [linkBlurred, setLinkBlurred] = useState(false)
-  const onLink = tab === 'link'
-  const linkOk = isMediaLink(link)
-  const canSave = onLink ? linkOk : upload.ready
+  const canSave = upload.ready
 
   const close = () => {
     upload.reset()
-    setTab('upload')
-    setLink('')
-    setLinkBlurred(false)
     onClose()
   }
 
   const save = () => {
-    if (onLink) onSave({ kind: 'video', src: link.trim(), name: link.trim(), embed: true })
-    else if (upload.file && upload.src) {
+    if (upload.file && upload.src) {
       onSave({ kind: 'video', src: upload.src, name: upload.file.name, size: upload.file.size })
     } else return
     close()
@@ -156,40 +144,12 @@ function MediaModal({
     <ConfirmModal open={open} onClose={close} ariaLabel="Add video" className="scfield-modal" closable>
       {/* DS Modal (overlays.md): 720px, a section header with title and divider, a
           content area, then a centred Cancel and primary pair. No supporting text: the
-          tabs and the drop zone already say what to do (Bruno, 2026-11-24). */}
+          drop zone already says what to do (Bruno, 2026-11-24). */}
       <div className="scfield-modal__header">
         <SectionHeader title="Add video" />
       </div>
-      <Tabs
-        ariaLabel="Add video"
-        items={[
-          { key: 'upload', label: 'Upload video' },
-          { key: 'link', label: 'Paste a link' },
-        ]}
-        activeKey={tab}
-        onChange={(key) => setTab(key as 'upload' | 'link')}
-      />
       <div className="scfield-modal__body">
-        {onLink ? (
-          <>
-            <InputField
-              label="Embed a link"
-              placeholder="Paste a link here..."
-              value={link}
-              onChange={(e) => setLink(e.target.value)}
-              onBlur={() => setLinkBlurred(true)}
-            />
-            {linkBlurred && link.trim() && !linkOk ? (
-              <span className="scfield__error" role="alert">
-                Enter a full link, starting with https://
-              </span>
-            ) : (
-              <span className="scfield-modal__hint">
-                Add a video from YouTube, Loom, Vimeo or Synthesia.
-              </span>
-            )}
-          </>
-        ) : upload.ready && upload.file && upload.src ? (
+        {upload.ready && upload.file && upload.src ? (
           /* Uploaded: the clip itself, playable with the learner's controls, so the admin
              can check it is the right one before adding it. */
           <div className="scfield__filled">
@@ -226,10 +186,9 @@ function MediaModal({
  * carries on its brief.
  *
  * Empty, it is the Attach Media button the questions used; it opens a list of the three
- * kinds, and each opens the Your Content pattern for it: Add video (upload, or a link
- * that plays in its provider's player), Add image (upload, generate with AI, stock
+ * kinds, and each opens the Your Content pattern for it: Add video (upload), Add image (upload, generate with AI, stock
  * footage) and Add audio (upload). Filled, an uploaded video plays in the
- * 200 x 292 preview, an image or a video link shows as a thumbnail and audio as a pill
+ * 200 x 292 preview, an image shows as a thumbnail and audio as a pill
  * player, each with Remove.
  */
 function ScenarioMediaField({ media, onChange }: Props) {
@@ -239,6 +198,7 @@ function ScenarioMediaField({ media, onChange }: Props) {
      directly instead of a modal with a single drop zone (Bruno, 2026-11-24). */
   const audioInput = useRef<HTMLInputElement>(null)
   const [audioError, setAudioError] = useState<string | null>(null)
+  const [zoomed, setZoomed] = useState(false)
 
   const choose = (key: string) => {
     setAudioError(null)
@@ -275,7 +235,7 @@ function ScenarioMediaField({ media, onChange }: Props) {
                   <AttachedAudioPlayer src={media.src} onRemove={() => onChange(undefined)} />
                   <span className="scfield__audioname">{media.name}</span>
                 </div>
-              ) : media.kind === 'video' && !media.embed ? (
+              ) : media.kind === 'video' ? (
                   <div className="scfield-video">
                     <VideoPreview src={media.src} name={media.name} fullScreen />
                   <Tooltip icon={false} text="Remove media" className="scfield-thumb__remove-tooltip">
@@ -285,36 +245,17 @@ function ScenarioMediaField({ media, onChange }: Props) {
                   </Tooltip>
                   </div>
                 ) : (
-                  <div className={`scfield-thumb${media.kind === 'image' ? '' : ' scfield-thumb--icon'}`}>
-                    {media.kind === 'image' ? (
-                      /* The image is the way to its full screen view: a zoom-in cursor,
-                         click to open, click again (or Escape) to come back. */
+                  <div className="scfield-thumb">
+                    {/* The image is the way to its full size view: a zoom-in cursor, click
+                        to open it in the overlay learners get. */}
                       <button
                         type="button"
                         className="scfield-thumb__zoom"
                         aria-label="View image full screen"
-                        onClick={(e) => {
-                          if (document.fullscreenElement) void document.exitFullscreen()
-                          else void e.currentTarget.requestFullscreen?.()
-                        }}
+                        onClick={() => setZoomed(true)}
                       >
                         <img src={media.src} alt={media.name} />
                       </button>
-                    ) : toEmbedUrl(media.src) !== media.src.trim() ? (
-                      /* A known provider link (YouTube, Loom, Vimeo): its own player, so the
-                         tile shows the video's thumbnail and the admin can check it plays. */
-                      <iframe
-                        className="scfield-thumb__embed"
-                        src={toEmbedUrl(media.src)}
-                        title="Scenario video"
-                        allow="fullscreen; picture-in-picture; encrypted-media"
-                        allowFullScreen
-                      />
-                    ) : (
-                      <span className="scfield-thumb__icon">
-                        <Video size={24} color="var(--text-secondary)" variant="Linear" />
-                      </span>
-                    )}
                   <Tooltip icon={false} text="Remove media" className="scfield-thumb__remove-tooltip">
                     <button type="button" className="scfield-thumb__remove" aria-label="Remove media" onClick={() => onChange(undefined)}>
                       <Add size={20} color="var(--neutral-0)" style={{ transform: 'rotate(45deg)' }} />
@@ -372,6 +313,9 @@ function ScenarioMediaField({ media, onChange }: Props) {
         }}
       />
 
+      {zoomed && media?.kind === 'image' ? (
+        <ImageOverlay src={media.src} alt={media.name} onClose={() => setZoomed(false)} />
+      ) : null}
       <MediaModal open={adding === 'video'} onClose={() => setAdding(null)} onSave={onChange} />
       <AddImageModal
         open={adding === 'image'}

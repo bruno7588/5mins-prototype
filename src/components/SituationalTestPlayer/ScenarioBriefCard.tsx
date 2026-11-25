@@ -1,5 +1,5 @@
 import { useState, type ReactNode, type SyntheticEvent } from 'react'
-import { DocumentText, Video } from 'iconsax-react'
+import { DocumentText } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import type { ScenarioMediaData } from '@/data/scenarioMedia'
 import audioThumb from '@/assets/scenario-media/audio-thumbnail.png'
@@ -22,7 +22,7 @@ function ScenarioBriefCard({ media, title, onOpen }: { media?: ScenarioMediaData
   let thumb: ReactNode
   if (media?.kind === 'image') {
     thumb = <img className="scbrief__img" src={media.src} alt="" />
-  } else if (media?.kind === 'video' && !media.embed) {
+  } else if (media?.kind === 'video') {
     thumb = <video className="scbrief__img" src={media.src} preload="metadata" muted playsInline onLoadedMetadata={onMeta} />
   } else if (media?.kind === 'audio') {
     thumb = (
@@ -32,8 +32,7 @@ function ScenarioBriefCard({ media, title, onOpen }: { media?: ScenarioMediaData
       </>
     )
   } else {
-    const Icon = media?.kind === 'video' ? Video : DocumentText
-    thumb = <Icon size={24} color="var(--text-secondary)" variant="Linear" />
+    thumb = <DocumentText size={24} color="var(--text-secondary)" variant="Linear" />
   }
 
   return (

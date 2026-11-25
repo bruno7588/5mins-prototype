@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState, type MutableRefObject } from 'react'
-import { createPortal } from 'react-dom'
 import { Backward10Seconds, Forward10Seconds, PauseCircle, PlayCircle } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import { ExitFullScreenIcon, FullScreenIcon } from '@/components/icons/PlayerIcons'
 import { ToastSpinner } from '@/components/Toast/Toast'
-import { toEmbedUrl, type ScenarioMediaData } from '@/data/scenarioMedia'
-import { useOverlayA11y } from '@/hooks/useOverlayA11y'
+import { type ScenarioMediaData } from '@/data/scenarioMedia'
 import AttachedAudioPlayer from './AttachedAudioPlayer'
+import ImageOverlay from './ImageOverlay'
 import './ScenarioMedia.css'
 /* The audio player's styles live with the admin field it was built for. */
 import './ScenarioMediaField.css'
@@ -56,8 +55,6 @@ function ScenarioMedia({ media, position }: Props) {
   const frameRef = useRef<HTMLDivElement>(null)
   /* The image opens in an overlay on the scrim, not browser full screen. */
   const [zoomed, setZoomed] = useState(false)
-  const zoomRef = useRef<HTMLDivElement>(null)
-  useOverlayA11y(zoomRef, zoomed, { onEscape: () => setZoomed(false) })
 
   useEffect(() => {
     const onChange = () => setFullscreen(!!frameRef.current && document.fullscreenElement === frameRef.current)
@@ -136,22 +133,6 @@ function ScenarioMedia({ media, position }: Props) {
     return (
       <div className="scmedia scmedia--audio">
         <AttachedAudioPlayer src={media.src} />
-      </div>
-    )
-  }
-
-  /* A pasted link plays in its provider's own player (YouTube, Loom, Vimeo): none of the
-     5Mins controls, and no remembered position, apply to it. */
-  if (media.kind === 'video' && media.embed) {
-    return (
-      <div className="scmedia scmedia--embed">
-        <iframe
-          className="scmedia__embed"
-          src={toEmbedUrl(media.src)}
-          title="Scenario video"
-          allow="fullscreen; picture-in-picture; encrypted-media"
-          allowFullScreen
-        />
       </div>
     )
   }
@@ -247,31 +228,15 @@ function ScenarioMedia({ media, position }: Props) {
           />
         </button>
       )}
-      {zoomed
-        ? createPortal(
-            /* Over the phone screen in the mobile app, over the page on web. */
-            <div
-              ref={zoomRef}
-              className="scmedia-zoom"
-              role="dialog"
-              aria-modal="true"
-              aria-label={media.name}
-              tabIndex={-1}
-              onMouseDown={(e) => {
-                if (e.target === e.currentTarget) setZoomed(false)
-              }}
-            >
-              <CloseButton
-                variant="fullscreen"
-                className="scmedia-zoom__close"
-                ariaLabel="Close image"
-                onClick={() => setZoomed(false)}
-              />
-              <img className="scmedia-zoom__image" src={media.src} alt={media.name} />
-            </div>,
-            frameRef.current?.closest('.m-phone__screen') ?? document.body,
-          )
-        : null}
+      {zoomed ? (
+        <ImageOverlay
+          src={media.src}
+          alt={media.name}
+          onClose={() => setZoomed(false)}
+          /* Over the phone screen in the mobile app, over the page on web. */
+          container={frameRef.current?.closest('.m-phone__screen')}
+        />
+      ) : null}
       {state === 'loading' ? (
         <div className="scmedia__loading" role="status">
           <ToastSpinner size={24} />
