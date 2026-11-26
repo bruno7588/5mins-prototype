@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Add, Backward10Seconds, Forward10Seconds, PauseCircle, PlayCircle } from 'iconsax-react'
+import { Backward10Seconds, Forward10Seconds, PauseCircle, PlayCircle } from 'iconsax-react'
 import Tooltip from '@/components/Tooltip/Tooltip'
 
 /* The waveform is the clip's own, and it moves to the clip's own sound, the way the
@@ -213,15 +213,15 @@ export default function AttachedAudioPlayer({ src, onRemove }: { src: string; on
         {/* No tooltips here: the three icons are familiar enough on their own (Bruno,
             2026-11-24). Each keeps its aria-label. */}
         <button type="button" className="scfield-iconbtn" aria-label="Rewind 10 seconds" onClick={() => seek(time - 10)}>
-          <Backward10Seconds size={20} color="var(--text-primary)" variant="Bold" />
+          <Backward10Seconds size={24} color="var(--text-primary)" variant="Linear" />
         </button>
         <button type="button" className="scfield-iconbtn" aria-label={playing ? 'Pause' : 'Play'} onClick={toggle}>
           {playing
-            ? <PauseCircle size={32} color="var(--text-primary)" variant="Bold" />
-            : <PlayCircle size={32} color="var(--text-primary)" variant="Bold" />}
+            ? <PauseCircle size={36} color="var(--text-primary)" variant="Bold" />
+            : <PlayCircle size={36} color="var(--text-primary)" variant="Bold" />}
         </button>
         <button type="button" className="scfield-iconbtn" aria-label="Forward 10 seconds" onClick={() => seek(time + 10)}>
-          <Forward10Seconds size={20} color="var(--text-primary)" variant="Bold" />
+          <Forward10Seconds size={24} color="var(--text-primary)" variant="Linear" />
         </button>
       </div>
       {/* Progress is the waveform itself (Bruno, 2026-11-24): the bars up to the playhead
@@ -254,7 +254,10 @@ export default function AttachedAudioPlayer({ src, onRemove }: { src: string; on
       {onRemove && (
         <Tooltip icon={false} text="Remove media" alignment="End">
           <button type="button" className="scfield-iconbtn scfield-iconbtn--remove" aria-label="Remove media" onClick={onRemove}>
-            <Add size={20} color="currentColor" style={{ transform: 'rotate(45deg)' }} />
+            {/* The Library close (IoCloseOutline) at 24px, Figma Create Course 11302:24912. */}
+            <svg width={24} height={24} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M17.25 17.25L6.75 6.75M17.25 6.75L6.75 17.25" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </button>
         </Tooltip>
       )}

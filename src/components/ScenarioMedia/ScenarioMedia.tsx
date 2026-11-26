@@ -239,7 +239,7 @@ function ScenarioMedia({ media, position }: Props) {
       ) : null}
       {state === 'loading' ? (
         <div className="scmedia__loading" role="status">
-          <ToastSpinner size={24} />
+          <ToastSpinner size={20} />
           <span>Loading {noun}...</span>
         </div>
       ) : null}

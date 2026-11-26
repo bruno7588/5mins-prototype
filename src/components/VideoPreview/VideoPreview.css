@@ -89,10 +89,11 @@
   height: 2px;
 }
 
-/* Played part and thumb in Primary 600, as on every video player (Bruno, 2026-11-25). */
+/* Played part and thumb in Primary-button-background, as in Figma (Create Course
+   11301:24887; Bruno, 2026-11-26). */
 .vpreview__track .ds-slider__track,
 .vpreview__track .ds-slider__thumb {
-  background: var(--primary-600);
+  background: var(--primary-button-background);
 }
 
 .vpreview__track .ds-slider__input:hover:not(:disabled) ~ .ds-slider__thumb {

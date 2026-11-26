@@ -186,8 +186,8 @@
    theme Bruno picked 2026-11-24): its gradient at 24% as the fill. Artwork colours, not
    interface colours, so they are not design tokens. */
 .scfield-audio {
-  /* stylelint-disable -- Figma audio artwork gradient (3494:51537); no tokens exist for artwork colours */
-  --audio-art-tint: linear-gradient(158.58deg, rgba(255, 226, 168, 0.24) 9.1562%, rgba(134, 199, 255, 0.24) 37.04%, rgba(126, 221, 187, 0.24) 63.353%, rgba(125, 200, 205, 0.24) 90.844%);
+  /* stylelint-disable -- Figma audio artwork gradient (Create Course 11302:24912); no tokens exist for artwork colours */
+  --audio-art-tint: linear-gradient(168.99deg, rgba(255, 226, 168, 0.24) 18.462%, rgba(134, 199, 255, 0.24) 40%, rgba(126, 221, 187, 0.24) 60%, rgba(125, 200, 205, 0.24) 81.538%);
   /* stylelint-enable */
   display: flex;
   align-items: center;
@@ -205,6 +205,12 @@
   align-items: center;
   gap: var(--space-xs);
   flex-shrink: 0;
+}
+
+/* The player's icons sit edge to edge in Figma (Create Course 11302:24912): 24px skips,
+   a 36px play and a 24px remove X, no padding round them. */
+.scfield-audio .scfield-iconbtn {
+  padding: 0;
 }
 
 /* The waveform track: progress and scrubber in one. */

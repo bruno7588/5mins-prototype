@@ -29,6 +29,11 @@
   object-fit: contain;
 }
 
+/* The video slot is 280px tall (Course feed brief screens, Bruno 2026-11-26). */
+.scmedia__video {
+  max-height: 280px;
+}
+
 .scmedia__imagebtn {
   display: block;
   width: 100%;
@@ -236,7 +241,8 @@
   padding: 0;
   border: none;
   border-radius: var(--radius-full);
-  background: color-mix(in srgb, var(--neutral-900) 64%, transparent);
+  /* The Scrim token, as in Figma (Course feed 17122:47621). */
+  background: var(--scrim);
   color: var(--neutral-0);
   cursor: pointer;
 }
