@@ -1,83 +1,5 @@
-/* Chart lab: assessment results charts, one per page. Every class is prefixed cl-
-   (CSS is globally bundled). Quiet by default: text colours carry the reading,
-   thin bars carry the shares, and colour only ever means one thing: Success-500
-   marks the correct answer. Every other option, picked or not, is the tertiary
-   text grey. */
-
-.cl-lab {
-  min-height: 100vh;
-  background: var(--page-background);
-  color: var(--text-primary);
-}
-
-/* ── Lab chrome ──────────────────────────────────────────────────────────── */
-.cl-lab__bar {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-m);
-  padding: var(--space-l) var(--space-xxl);
-  border-bottom: 1px solid var(--border);
-}
-
-.cl-lab__intro {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.cl-lab__title {
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  line-height: 1.4;
-}
-
-.cl-lab__sub {
-  font-size: var(--font-size-md);
-  color: var(--text-secondary);
-}
-
-.cl-pages {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-s);
-}
-
-/* ── The page ────────────────────────────────────────────────────────────── */
-.cl-page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xl);
-  max-width: 1040px;
-  margin: 0 auto;
-  padding: var(--space-xxl) var(--space-l);
-}
-
-/* The title, then its metadata in one secondary line, as the View Answers header. */
-.cl-page__head {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.cl-page__meta {
-  font-size: var(--font-size-md);
-  color: var(--text-secondary);
-  font-variant-numeric: tabular-nums;
-}
-
-.cl-page__title {
-  font-size: var(--font-size-h2);
-  font-weight: 700;
-  line-height: 1.35;
-  text-wrap: balance;
-}
-
-/* ── A chart ─────────────────────────────────────────────────────────────── */
-.cl-chart {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xl);
-}
+/* Answer charts: assessment results charts (Course details > Assessments, View Answers).
+   Every class is prefixed cl- (CSS is globally bundled). Spec: docs/design-system/answer-charts.md */
 
 /* ── Bars ────────────────────────────────────────────────────────────────────
    One tall bar per answer: the share filled from the left, the label and the %
@@ -228,14 +150,6 @@
 .badge.cl-pct--wrong {
   background: var(--page-background);
   color: var(--text-secondary);
-}
-
-.cl-row__marker {
-  flex: 0 0 var(--space-m);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--text-secondary);
-  font-variant-numeric: tabular-nums;
 }
 
 .cl-row__label {
@@ -651,18 +565,6 @@
   .cl-deck__chev--right {
     right: 0;
   }
-}
-
-/* ── Narrow screens ──────────────────────────────────────────────────────── */
-@media (max-width: 640px) {
-  .cl-lab__bar {
-    padding: var(--space-l) var(--space-m);
-  }
-
-  .cl-page {
-    padding: var(--space-xl) var(--space-m);
-  }
-
 }
 
 @media (prefers-reduced-motion: reduce) {

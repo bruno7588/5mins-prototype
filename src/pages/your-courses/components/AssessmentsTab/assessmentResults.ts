@@ -10,7 +10,7 @@
 import { typeLabel, type GeneratableType } from '@/data/aiAssessmentGeneration'
 import { ORG_USERS } from '@/data/orgUsers'
 import { QUIZ_SAMPLES, type ImageChoiceQuestion } from '@/pages/quiz-lab/quizData'
-import type { CorrectAnswer } from '@/pages/chart-lab/chartLabData'
+import type { CorrectAnswer } from '@/components/AnswerCharts/answerChartTypes'
 
 /** The Quiz Lab's image question, so the results describe the question learners see there. */
 const IMAGE_SAMPLE = QUIZ_SAMPLES['image-choice'] as ImageChoiceQuestion

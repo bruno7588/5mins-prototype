@@ -1,5 +1,5 @@
-/* The chart at the top of the answers page. The charts themselves are the Chart Lab's
-   (cl- classes in chart-lab.css); this file holds the wrapper and the band label the
+/* The chart at the top of the answers page. The charts themselves are the shared AnswerCharts'
+   (cl- classes in AnswerCharts.css); this file holds the wrapper and the band label the
    answers table uses. Prefix `ast-`. */
 
 .ast {
@@ -8,7 +8,7 @@
   gap: var(--space-m);
 }
 
-/* On the answers page the bars sit 12px apart; the Chart Lab and the grid cards keep 8px. */
+/* On the answers page the bars sit 12px apart; the grid cards keep the AnswerCharts default of 8px. */
 .ast :is(.cl-rows, .cl-tiles) {
   gap: var(--space-sm);
 }

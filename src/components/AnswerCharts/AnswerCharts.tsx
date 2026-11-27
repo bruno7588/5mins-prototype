@@ -5,7 +5,7 @@ import {
   type ChartQuestion,
   type CorrectAnswer,
   type OptionRow,
-} from "../chartLabData";
+} from "./answerChartTypes";
 
 /**
  * The bar every chart is made of: a tall track with the share filled from the

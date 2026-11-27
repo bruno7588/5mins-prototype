@@ -1,7 +1,7 @@
 import { useEffect, useState, type KeyboardEvent } from 'react'
 import { ArrowLeft2, ArrowRight2 } from 'iconsax-react'
-import { type MultiAssessment } from '../chartLabData'
-import { OptionBars } from './Charts'
+import { type MultiAssessment } from './answerChartTypes'
+import { OptionBars } from './AnswerCharts'
 
 /**
  * A lesson quiz or situational test on one page, as the flashcard editor shows its

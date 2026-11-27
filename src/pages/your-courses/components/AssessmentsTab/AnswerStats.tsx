@@ -1,8 +1,8 @@
 import { type ComponentProps } from 'react'
-import { BlankSentence, ImageTiles, OpenResponse, OptionBars, OutcomeBars } from '@/pages/chart-lab/components/Charts'
-import MultiChart from '@/pages/chart-lab/components/MultiChart'
-import type { OptionRow } from '@/pages/chart-lab/chartLabData'
-import '@/pages/chart-lab/chart-lab.css'
+import { BlankSentence, ImageTiles, OpenResponse, OptionBars, OutcomeBars } from '@/components/AnswerCharts/AnswerCharts'
+import MultiChart from '@/components/AnswerCharts/MultiChart'
+import type { OptionRow } from '@/components/AnswerCharts/answerChartTypes'
+import '@/components/AnswerCharts/AnswerCharts.css'
 import {
   answeredCount,
   optionTally,
@@ -65,7 +65,7 @@ function Blanks({ a, responded }: { a: MultiAssessment; responded: number }) {
 }
 
 /**
- * The chart at the top of the answers page: the same charts as the Chart Lab, one per
+ * The chart at the top of the answers page: the shared AnswerCharts, one per
  * format. A lesson quiz or situational test is a deck of its questions; a single
  * question is its option bars; match, sequence and categorise are the correct /
  * incorrect split with the right arrangement under it; short text and exercise are the

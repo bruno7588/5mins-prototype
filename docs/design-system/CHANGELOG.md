@@ -6,6 +6,7 @@ Add new entries here, not in the docs.
 
 ## Library-wide
 
+- 2026-11-27: Chart Lab removed from the Playground menu. Its charts moved to `src/components/AnswerCharts` (`AnswerCharts.tsx`, `MultiChart.tsx`, `answerChartTypes.ts`, `AnswerCharts.css`), now documented in `answer-charts.md`; the lab page, its sample data and its page CSS deleted.
 - 2026-11-27: Progress bar Media track is `--neutral-25` at 50% (was 24%), code and Library; the mobile banner track gets lighter.
 - 2026-11-27: Library `Progress bar` Progress steps cut to 0% / 25% / 50% / 75% / 100% (was every eighth); 30 variants. Code unchanged: any percent, nearest of 8 segments.
 - 2026-11-27: New shared `ProgressBar` (`src/components/ProgressBar`) and `progress-bar.md`. 25 hand-built bars replaced: all 8 segments (the 4 continuous bars became segmented), full radius, green at 100% everywhere, `role="progressbar"` with a name on every bar. Empty track by surface (Page `--border`, Card `--border-elevated`, Media `--neutral-25` @ 24%; the desktop banner was 50%). Library `Progress bar` (`7046:25097`) rebuilt to match: Progress 0-100% in eighths x Tone x Surface, Show value, named segments, component description in the house format. `.tbl-progress` removed from Table.css. Not migrated, not content progress: scenario video playback line, AI image loader, onboarding dots, AI generation bars, LessonFeed episode bars.
