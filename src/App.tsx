@@ -24,7 +24,6 @@ import ScormCreateCourse from './pages/scorm-content/ScormCreateCourse'
 import Onboarding from './pages/onboarding/Onboarding'
 import MobileApp from './pages/mobile/MobileApp'
 import QuizLab from './pages/quiz-lab/QuizLab'
-import ChartLab from './pages/chart-lab/ChartLab'
 import CardsLab from './pages/cards-lab/CardsLab'
 import GradientLab from './pages/gradient-lab/GradientLab'
 
@@ -82,7 +81,6 @@ function App() {
       <Route path="/mobile" element={<MobileApp />} />
       {/* Playground labs: on the shared link too. */}
       <Route path="/quiz-lab" element={<QuizLab />} />
-      <Route path="/chart-lab" element={<ChartLab />} />
       <Route path="/cards-lab" element={<CardsLab />} />
       <Route path="/gradient-lab" element={<GradientLab />} />
       <Route path="/my-team" element={<MyTeam />} />
@@ -139,6 +137,7 @@ function App() {
                 <Route path="/content-library" element={<YourContent />} />
                 <Route path="/content-library/add-content" element={<AddContent />} />
                 <Route path="/your-courses" element={<YourCourses />} />
+                <Route path="/enrolments" element={<YourCourses section="enrolments" />} />
                 <Route path="/your-courses/list" element={<YourCoursesList />} />
                 <Route path="/your-courses/course" element={<CourseDetails />} />
                 <Route path="/your-courses/course/assessments/:id" element={<AssessmentAnswers />} />

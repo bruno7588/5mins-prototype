@@ -36,7 +36,7 @@ function LeftSidebar() {
   const activePage = location.pathname
 
   const isPeopleSection = activePage === '/people' || activePage === '/user-fields' || activePage === '/roles'
-  const isContentSection = activePage === '/programs' || activePage === '/content-library' || activePage === '/your-courses'
+  const isContentSection = activePage === '/programs' || activePage === '/content-library' || activePage === '/your-courses' || activePage === '/enrolments'
   const isRecordsSection = activePage.startsWith('/learning-records')
 
   const [peopleOpen, setPeopleOpen] = useState(isPeopleSection)
@@ -152,6 +152,13 @@ function LeftSidebar() {
               onClick={() => navigate('/your-courses')}
             >
               Your Courses
+            </button>
+            {/* Tracking learners across every course: Active Enrolments and Dashboard tabs. */}
+            <button
+              className={`sidebar-sub-item${activePage === '/enrolments' ? ' sidebar-sub-item--active' : ''}`}
+              onClick={() => navigate('/enrolments')}
+            >
+              Enrolments
             </button>
           </div>
         </Collapse>

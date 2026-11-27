@@ -1,25 +1,24 @@
 import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Add, ArrowDown, ArrowLeft2, ArrowRight2, UserAdd } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Button from '../../components/Button/Button'
 import AssignCoursesWizard from './components/AssignCoursesWizard/AssignCoursesWizard'
 import { activeEnrolments, lastEnrolmentLabel } from './activeEnrolments'
-import Tabs from '@/components/Tabs/Tabs'
 import Tooltip from '@/components/Tooltip/Tooltip'
+import Tabs from '@/components/Tabs/Tabs'
 import './YourCourses.css'
 
-type Tab = 'created' | 'enrolments' | 'dashboard'
+/* Your Courses and Enrolments (both under Content) share this page: the courses you
+   made, and the cross-course enrolments table. Dashboard is not built yet. */
+type Section = 'courses' | 'enrolments'
 
 const courseImage = 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=480&h=300&fit=crop'
 
 const enrolThumb = 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=180&h=88&fit=crop'
 
-function YourCourses() {
+function YourCourses({ section = 'courses' }: { section?: Section }) {
   const navigate = useNavigate()
-  // Assign Courses from the list page lands here on Active Enrolments.
-  const initialTab = (useLocation().state as { tab?: Tab } | null)?.tab ?? 'created'
-  const [activeTab, setActiveTab] = useState<Tab>(initialTab)
   const [assignOpen, setAssignOpen] = useState(false)
   // Read on every render, so courses just assigned show up when the wizard closes.
   const enrolmentRows = activeEnrolments()
@@ -30,30 +29,33 @@ function YourCourses() {
       <main className="your-courses-main">
         <div className="your-courses-header">
           <div className="your-courses-headline">
-            <h2 className="your-courses-title">Your Courses</h2>
+            <h2 className="your-courses-title">{section === 'enrolments' ? 'Enrolments' : 'Your Courses'}</h2>
             <div className="your-courses-actions">
-              <Button variant="outlined" onClick={() => setAssignOpen(true)}>
+              <Button variant={section === 'enrolments' ? 'filled' : 'outlined'} onClick={() => setAssignOpen(true)}>
                 Assign Courses
               </Button>
-              <Button icon={<Add size={20} color="currentColor" />} onClick={() => navigate('/create-course')}>
-                Create Course
-              </Button>
+              {section === 'courses' && (
+                <Button icon={<Add size={20} color="currentColor" />} onClick={() => navigate('/create-course')}>
+                  Create Course
+                </Button>
+              )}
             </div>
           </div>
           <div className="page-header-divider" />
-          <Tabs
-            items={[
-              { key: 'created', label: 'Created by You' },
-              { key: 'enrolments', label: 'Active Enrolments' },
-              { key: 'dashboard', label: 'Dashboard' },
-            ]}
-            activeKey={activeTab}
-            onChange={(key) => setActiveTab(key as Tab)}
-            ariaLabel="Your courses sections"
-          />
+          {section === 'enrolments' && (
+            <Tabs
+              items={[
+                { key: 'active', label: 'Active Enrolments' },
+                { key: 'dashboard', label: 'Dashboard', disabled: true },
+              ]}
+              activeKey="active"
+              onChange={() => {}}
+              ariaLabel="Enrolments sections"
+            />
+          )}
         </div>
 
-        {activeTab === 'enrolments' ? (
+        {section === 'enrolments' ? (
           <div className="your-courses-enrol-table">
             <div className="your-courses-enrol-row your-courses-enrol-row--head">
               <div className="your-courses-enrol-cell your-courses-enrol-cell--course">Course</div>
@@ -162,7 +164,7 @@ function YourCourses() {
       </main>
       {assignOpen && <AssignCoursesWizard onClose={() => setAssignOpen(false)} onDone={() => {
         setAssignOpen(false)
-        setActiveTab('enrolments')
+        navigate('/enrolments')
       }} />}
     </div>
   )
