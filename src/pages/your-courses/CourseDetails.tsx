@@ -498,7 +498,13 @@ function CourseDetails() {
       header: 'Name',
       width: '1 1 260px',
       render: (row) => (
-        <span className="tbl-stack">
+        <span
+          className="tbl-stack cd-learner-link"
+          role="link"
+          tabIndex={0}
+          onClick={() => navigate(`/people/${row.id}?tab=course-progress`)}
+          onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/people/${row.id}?tab=course-progress`) }}
+        >
           <span className="cd-learner-name">{row.name}</span>
           <span className="cd-learner-email">{row.email}</span>
         </span>

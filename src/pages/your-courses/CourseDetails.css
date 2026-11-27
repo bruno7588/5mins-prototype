@@ -422,3 +422,24 @@
   border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-sm);
 }
+
+/* Learner name opens their profile (same pattern as People .people-name-info). */
+.cd-learner-link {
+  cursor: pointer;
+  border-radius: var(--radius-xs);
+}
+
+.cd-learner-link .cd-learner-name,
+.cd-learner-link .cd-learner-email {
+  transition: color 150ms ease;
+}
+
+.cd-learner-link:hover .cd-learner-name,
+.cd-learner-link:hover .cd-learner-email {
+  color: var(--text-button-hover);
+}
+
+.cd-learner-link:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
