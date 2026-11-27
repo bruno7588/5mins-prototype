@@ -3,6 +3,7 @@ import { setAdminMenuOpen, useAdminMenuOpen } from '@/components/TopNav/adminMen
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
   Home,
+  TaskSquare,
   Profile2User,
   Book1,
   Flash,
@@ -36,7 +37,7 @@ function LeftSidebar() {
   const activePage = location.pathname
 
   const isPeopleSection = activePage === '/people' || activePage === '/user-fields' || activePage === '/roles'
-  const isContentSection = activePage === '/programs' || activePage === '/content-library' || activePage === '/your-courses' || activePage === '/enrolments'
+  const isContentSection = activePage === '/programs' || activePage === '/content-library' || activePage === '/your-courses'
   const isRecordsSection = activePage.startsWith('/learning-records')
 
   const [peopleOpen, setPeopleOpen] = useState(isPeopleSection)
@@ -153,15 +154,24 @@ function LeftSidebar() {
             >
               Your Courses
             </button>
-            {/* Tracking learners across every course: Active Enrolments and Dashboard tabs. */}
-            <button
-              className={`sidebar-sub-item${activePage === '/enrolments' ? ' sidebar-sub-item--active' : ''}`}
-              onClick={() => navigate('/enrolments')}
-            >
-              Enrolments
-            </button>
           </div>
         </Collapse>
+
+        {/* Enrolments: tracking learners across every course (Active Enrolments and Dashboard
+            tabs), apart from Content so tenants who never author courses still find it. */}
+        <button
+          className={`sidebar-item${activePage === '/enrolments' ? ' sidebar-item--active' : ''}`}
+          onClick={() => navigate('/enrolments')}
+        >
+          <span className="sidebar-item-icon">
+            <TaskSquare
+              size={iconSize}
+              color={activePage === '/enrolments' ? activeIconColor : iconColor}
+              variant={activePage === '/enrolments' ? 'Bold' : 'Linear'}
+            />
+          </span>
+          <span className="sidebar-item-label">Enrolments</span>
+        </button>
 
         {/* Automations */}
         <button
