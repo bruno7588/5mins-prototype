@@ -75,11 +75,9 @@
   color: var(--text-tertiary);
   padding: var(--space-sm) calc(var(--space-l) + var(--space-xs)); /* Figma 12px 28px; 28 has no single token */
   margin-top: var(--space-s);
-}
-
-.left-sidebar-powered span {
-  font-weight: 700;
-  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs); /* navigation.md: "Powered by" + logo at 14px height, 4px gap */
 }
 
 /* Sidebar item */

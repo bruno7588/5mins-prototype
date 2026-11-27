@@ -19,6 +19,7 @@ import {
 import { buildInitialMappings } from '../../pages/roles/data/mockHrisMappings'
 import { initialCompanyRoles, fiveMinsRoles } from '../../pages/roles/data/mockRoles'
 import Collapse from '@/components/Collapse/Collapse'
+import { Logo } from '@/pages/my-team/MyTeam'
 import './LeftSidebar.css'
 
 const iconSize = 20
@@ -255,7 +256,8 @@ function LeftSidebar() {
           <span className="sidebar-item-label">Help</span>
         </button>
         <div className="left-sidebar-powered">
-          Powered by <span>5Mins.ai</span>
+          <span>Powered by</span>
+          <Logo size={14} />
         </div>
       </div>
     </aside>

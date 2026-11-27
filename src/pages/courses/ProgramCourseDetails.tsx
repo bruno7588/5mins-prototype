@@ -8,7 +8,7 @@ import {
   ArrowUp2,
   CalendarAdd,
   Clock,
-  InfoCircle,
+  TickCircle,
   Lock,
   PlayCircle,
   Share,
@@ -57,7 +57,7 @@ import {
   useSignOff,
 } from '@/data/trainerSignOff'
 
-function LessonCard({ lesson, onOpen }: { lesson: CourseLesson; onOpen?: () => void }) {
+function LessonCard({ lesson, started, onOpen }: { lesson: CourseLesson; started?: boolean; onOpen?: () => void }) {
   const isLocked = lesson.state === 'locked'
   const companyImage = useCompanyImage()
   const resourceCount = lesson.resources?.length ?? 0
@@ -80,7 +80,7 @@ function LessonCard({ lesson, onOpen }: { lesson: CourseLesson; onOpen?: () => v
     >
       {lesson.state === 'active' ? (
         <button type="button" className="pcd-tooltip">
-          Start Here!
+          {started ? 'Continue Here!' : 'Start Here!'}
         </button>
       ) : null}
       <div className="pcd-lesson__thumb">
@@ -156,6 +156,8 @@ function ProgramCourseDetails() {
   const signOff = useSignOff(course.id)
   const needsSignOff = !!course.requiresSignOff
   const lessonTotal = course.sections.reduce((n, s) => n + s.lessons.length, 0)
+  // Any lesson done: the next-lesson bubble says Continue rather than Start.
+  const started = course.sections.some((s) => s.lessons.some((l) => l.state === 'done'))
   const progress = needsSignOff
     ? courseProgressWithSignOff(course.progress, lessonTotal, !!signOff)
     : course.progress
@@ -288,8 +290,10 @@ function ProgramCourseDetails() {
                     <span>Certificate of completion</span>
                   </span>
                   <span className="pcd-helper__item">
-                    <InfoCircle size={20} color="var(--text-tertiary)" variant="Linear" />
-                    <span>Pass Score: {course.passScore}%</span>
+                    <TickCircle size={20} color="var(--text-tertiary)" variant="Linear" />
+                    <span>
+                      Pass score <strong className="pcd-helper__value">{course.passScore}%</strong>
+                    </span>
                   </span>
                 </div>
               </div>
@@ -379,6 +383,7 @@ function ProgramCourseDetails() {
                             <LessonCard
                               key={lesson.id}
                               lesson={lesson}
+                              started={started}
                               onOpen={
                                 lesson.questionId !== undefined
                                   ? () => setOpenQuizId(lesson.questionId!)

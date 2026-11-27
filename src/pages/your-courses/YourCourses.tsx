@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, UserAdd } from 'iconsax-react'
+import { Add, ArrowDown, ArrowLeft2, ArrowRight2, UserAdd } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Button from '../../components/Button/Button'
 import AssignCoursesWizard from './components/AssignCoursesWizard/AssignCoursesWizard'
 import { activeEnrolments, lastEnrolmentLabel } from './activeEnrolments'
 import Tabs from '@/components/Tabs/Tabs'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import './YourCourses.css'
 
 type Tab = 'created' | 'enrolments' | 'dashboard'
@@ -56,10 +57,18 @@ function YourCourses() {
           <div className="your-courses-enrol-table">
             <div className="your-courses-enrol-row your-courses-enrol-row--head">
               <div className="your-courses-enrol-cell your-courses-enrol-cell--course">Course</div>
-              <div className="your-courses-enrol-cell your-courses-enrol-cell--pass">Pass score</div>
+              <div className="your-courses-enrol-cell your-courses-enrol-cell--pass">
+                Pass score
+                <Tooltip
+                  text="Learners must score at least this % on every quiz to complete the course."
+                  position="Top"
+                  alignment="Center"
+                  iconSize={16}
+                />
+              </div>
               <div className="your-courses-enrol-cell your-courses-enrol-cell--last your-courses-enrol-cell--sortable">
                 Last enrolment
-                <ArrowDown2 size={16} color="var(--text-secondary)" variant="Linear" />
+                <ArrowDown size={16} color="var(--text-secondary)" variant="Linear" />
               </div>
               <div className="your-courses-enrol-cell your-courses-enrol-cell--users">Enrolled users</div>
             </div>

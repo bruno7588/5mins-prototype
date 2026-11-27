@@ -82,6 +82,12 @@
   white-space: nowrap;
 }
 
+/* The pass score value stands out so a non-standard pass mark isn't missed. */
+.pcd-helper__value {
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
 .pcd-header__actions {
   display: flex;
   align-items: center;

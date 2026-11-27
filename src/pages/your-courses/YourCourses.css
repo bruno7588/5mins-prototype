@@ -259,13 +259,14 @@
 }
 
 .your-courses-enrol-cell--pass {
+  gap: var(--space-xs);
   width: 120px;
   flex-shrink: 0;
   white-space: nowrap;
 }
 
 .your-courses-enrol-unset {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 .your-courses-enrol-cell--last {
