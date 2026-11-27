@@ -28,8 +28,8 @@
 }
 
 .ds-progress--media .ds-progress__seg {
-  /* stylelint-disable-next-line -- no token for a translucent track over imagery; --neutral-25 at 24% */
-  background: color-mix(in srgb, var(--neutral-25) 24%, transparent);
+  /* stylelint-disable-next-line -- no token for a translucent track over imagery; --neutral-25 at 50% */
+  background: color-mix(in srgb, var(--neutral-25) 50%, transparent);
 }
 
 /* Tone: the in-progress fill. Raw palette on purpose: Figma binds Primary-600 in both modes. */

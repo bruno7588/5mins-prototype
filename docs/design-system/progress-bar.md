@@ -31,7 +31,7 @@ A thin 8-segment track showing how much of a lesson, course, program or skill is
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
-| Progress | 0% / 13% / 25% / 38% / 50% / 63% / 75% / 88% / 100% | `value` | `0`-`100` | Figma shows the 9 possible fills (n/8); code takes any percent and rounds to the nearest eighth |
+| Progress | 0% / 25% / 50% / 75% / 100% | `value` | `0`-`100` | Figma shows quarter steps (0, 2, 4, 6, 8 segments); code takes any percent and fills the nearest of 8 segments. Pick the nearest step in Figma |
 | Progress | 100% | `complete` | `true` | defaults to `value >= 100`; every segment success green, whatever the Tone |
 | Tone | Primary / Selected | `tone` | `'primary'` (default) / `'selected'` | Selected is amber, for course progress on course cards only |
 | Surface | Page / Card / Media | `surface` | `'page'` (default) / `'card'` / `'media'` | the empty-track colour, by what the bar sits on |
@@ -70,7 +70,7 @@ A thin 8-segment track showing how much of a lesson, course, program or skill is
 |---|---|---|
 | Page (default) | `--border` | page ground, drawers, modals, table rows, thumbnail edges |
 | Card | `--border-elevated` | inside a card or bottom sheet (`--border` matches the card fill in dark mode) |
-| Media | `--neutral-25` at 24% | over a photo or banner image |
+| Media | `--neutral-25` at 50% | over a photo or banner image |
 
 ## Sizes
 
