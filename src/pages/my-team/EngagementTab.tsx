@@ -3,6 +3,7 @@ import { ArrowDown2, Diagram } from 'iconsax-react'
 import Checkbox from '../../components/Checkbox/Checkbox'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import { LeaderboardCard } from '@/pages/my-progress/MyProgress'
 import { getSkillIllustrationByName } from '../../assets/skill-icons'
 import './EngagementTab.css'
@@ -61,7 +62,6 @@ const yLabels = ['2500', '2000', '1500', '1000', '500', '0']
 function SkillsCompetency() {
   const [skillType, setSkillType] = useState<'hard' | 'soft'>('hard')
   const skills = skillType === 'hard' ? hardSkills : softSkills
-  const totalSegments = 8
 
   return (
     <div className="eng-card">
@@ -92,7 +92,6 @@ function SkillsCompetency() {
         <div className="eng-skills__divider" />
 
         {skills.map((skill) => {
-          const filled = Math.round((skill.level / skill.maxLevel) * totalSegments)
           return (
             <div className="eng-skills__row" key={skill.name}>
               <div className="eng-skills__row-name">
@@ -103,14 +102,7 @@ function SkillsCompetency() {
                 </Tooltip>
               </div>
               <div className="eng-skills__row-level">
-                <div className="eng-skills__bar">
-                  {Array.from({ length: totalSegments }).map((_, i) => (
-                    <span
-                      key={i}
-                      className={`eng-skills__bar-seg${i < filled ? ' eng-skills__bar-seg--filled' : ''}`}
-                    />
-                  ))}
-                </div>
+                <ProgressBar value={(skill.level / skill.maxLevel) * 100} label={`${skill.name} level`} />
                 <span className="eng-skills__score">{skill.level}/{skill.maxLevel}</span>
               </div>
             </div>

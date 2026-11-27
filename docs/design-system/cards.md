@@ -110,7 +110,7 @@ Only the cards below have a shared component. Lesson list rows, Assessment rows,
 - Set `completed` so every segment turns `--success-500`.
 
 **Don't**
-- Don't hand-roll the segmented progress bar; it is 8 equal segments, `--primary-600` filled, `--border` empty.
+- Don't hand-roll the progress bar; use `ProgressBar` ([progress-bar.md](progress-bar.md)).
 
 **Canonical spec:** 170 x 230px; radius `var(--radius-sm)` (12px); `--cards-background`, hover `--cards-background-hover` plus a 1.12x thumbnail zoom (300ms, none under reduced motion); `var(--shadow-card)` (Shadow S); info padding 16px, gap 12px; title Poppins Bold 14px/1.5, 3 lines; instructor Regular 12px/1.2 `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5144:14181`.
 
@@ -314,7 +314,7 @@ Use in grid or library browse layouts. Carries Shadow S (`var(--shadow-card)`, l
 Anatomy, top to bottom:
 
 - **Thumbnail area** fills the top, flexible height. A content-type tag sits flush in the top-left corner: a square tag, `--border` background, 4px padding, a 20px play-circle icon, bottom-right corner rounded 8px. A duration badge sits in the top-right at 6px inset: `rgba(15,16,20,0.5)` background, 6px / 4px padding, radius 4px, white text Poppins Regular 10px (for example `3m 45s`).
-- **Progress bar** sits flush at the bottom of the thumbnail: 2px tall, full width, 8 equal segments, radius 20px on the ends. Filled segments use `--primary-600`; empty use `--border`. A completed lesson uses `--success-500` for all segments.
+- **Progress bar** sits flush at the bottom of the thumbnail: `<ProgressBar height={2} complete={completed} />` ([progress-bar.md](progress-bar.md)), positioned absolute, full width.
 - **Info block** below the thumbnail: 16px padding, 12px gap, column. Title is Poppins Bold 14px, `--text-primary`, clamped to 3 lines (height 63px). Instructor line is Poppins Regular 12px, `--text-secondary`.
 
 ```html
@@ -322,10 +322,7 @@ Anatomy, top to bottom:
   <div class="lesson-grid__thumb" style="background-image:url(...)">
     <span class="content-tag"><!-- 20px play-circle icon --></span>
     <span class="duration-badge">3m 45s</span>
-    <div class="progress-bar progress-bar--8">
-      <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i>
-      <i></i><i></i><i></i><i></i>
-    </div>
+    <!-- <ProgressBar value={50} height={2} className="lesson-grid__progress" /> -->
   </div>
   <div class="lesson-grid__info">
     <h3 class="card-title">The importance of Authentic Stories and How to Tell</h3>
@@ -357,13 +354,7 @@ Anatomy, top to bottom:
   background: rgba(15,16,20,0.5);
   font: 400 10px/1 Poppins; color: #fff;
 }
-.progress-bar {
-  position: absolute; left: 0; bottom: 0;
-  display: flex; width: 100%; height: 2px;
-  border-radius: 20px; overflow: hidden;
-}
-.progress-bar i { flex: 1 0 0; background: var(--border); }
-.progress-bar i.on { background: var(--primary-600); }
+.lesson-grid__progress { position: absolute; left: 0; right: 0; bottom: 0; }   /* places the shared ProgressBar */
 .lesson-grid__info { display: flex; flex-direction: column; gap: 12px; padding: 16px; }
 .card-title {
   margin: 0; font: 700 14px/1.5 Poppins; color: var(--text-primary);
@@ -389,7 +380,7 @@ Use in learner web app lists. Source variant nodes: `11052:9113` (default), `113
 Horizontal row: 16px padding, 16px gap, items centered, radius 12px, card background and shadow.
 
 - **Thumbnail** 80 x 80, radius 8px, corner play-circle tag.
-- **Info** fills the row, 8px gap, column. Title Poppins Bold 16px `--text-primary`, up to 2 lines. Metadata row with 24px gap: the `Lesson - Instructor name - 4min` line in Poppins Regular 14px `--text-secondary`, followed by a 96 x 4px progress bar (same segmented style as the grid tile, radius 20px).
+- **Info** fills the row, 8px gap, column. Title Poppins Bold 16px `--text-primary`, up to 2 lines. Metadata row with 24px gap: the `Lesson - Instructor name - 4min` line in Poppins Regular 14px `--text-secondary`, followed by a 96 x 4px `ProgressBar` (`width={96} height={4}`).
 - A **completed** lesson swaps the progress bar for a 20px success tick icon. A lesson with an attached quiz adds a small-outlined button on the right (12px Bold label, 8px/16px padding, radius 8px): `Take Quiz` - border+text `--button-warning-background` with a 16px danger icon; `Retake Quiz` - border+text `--primary-button-background` (quiz pending) or `--text-disabled` (already passed).
 
 #### Lesson mobile list card (343 x auto)
@@ -405,7 +396,7 @@ Anatomy, top to bottom:
 - **Content row**: 12px padding, 12px gap, items top-aligned.
   - **Thumbnail** 56 x 56, radius 4px. Content-type tag flush top-left: `--border` background, 4px padding, bottom-right corner rounded 8px, **16px** play-circle icon (Bold): the S tag (see Media type tag).
   - **Info column** fills the row, 4px gap. Title Poppins Bold 14px/1.5 `--text-primary`, wraps freely (no clamp in Figma). Metadata Poppins Regular 12px/1.2 `--text-secondary`, single line with ellipsis, format `Lesson · Instructor name · 4min`.
-- **Progress bar** flush at the very bottom of the card: 2px tall, full width, 8 equal segments, radius 20px ends. Filled `--primary-600`, empty `--border`; completed lesson uses `--success-500` for all segments.
+- **Progress bar** flush at the very bottom of the card: `<ProgressBar height={2} complete={completed} />`, full width ([progress-bar.md](progress-bar.md)).
 
 Quiz variants (info column gap grows to 12px: header block keeps its 4px gap, then the button below):
 
@@ -508,7 +499,7 @@ A course or playlist, that is a group of lessons. One desktop card, 300px wide, 
 
 Anatomy, top to bottom:
 
-- **Image area** 300 x 140, top corners rounded 12px. A 2px segmented progress bar sits flush at the bottom of the image (8 segments, radius 20px ends). Course progress fill is `--selected` (gold), not cyan; a completed course fills every segment `--success-500`; empty segments are `--border` (Figma binds Border).
+- **Image area** 300 x 140, top corners rounded 12px. A 2px `ProgressBar` sits flush at the bottom of the image with `tone="selected"`: course progress is gold, not cyan; complete turns it green ([progress-bar.md](progress-bar.md)).
 - **Body** 24px padding, 16px gap, column, bottom corners rounded 12px. Title Poppins Bold 16px `--text-primary`, clamped to 3 lines (height 72px). Below it a duration row, 8px gap: a 16px play-circle icon plus `17 lessons`, then a 16px clock icon plus `20 min`, both in Poppins Regular 14px `--text-secondary`.
 
 ```html
@@ -517,10 +508,7 @@ Anatomy, top to bottom:
     <div class="course-card__picture" style="background-image:url(...)"></div>
     <span class="badge-new">New</span>            <!-- only when New -->
     <span class="badge-due">Due on Aug 20</span>  <!-- only when Due date -->
-    <div class="progress-bar progress-bar--8 progress-bar--course">
-      <i class="on"></i><i class="on"></i><i class="on"></i>
-      <i></i><i></i><i></i><i></i><i></i>
-    </div>
+    <!-- <ProgressBar value={course.progress} tone="selected" height={2} className="course-card__progress" /> -->
   </div>
   <div class="course-card__body">
     <h3 class="card-title card-title--3line">Inside the Product-led Playbook of Winning Brands</h3>
@@ -553,8 +541,7 @@ Anatomy, top to bottom:
   .course-card__picture { transition: none; }
   .course-card:hover .course-card__picture { transform: none; }
 }
-.progress-bar--course i { background: var(--border); }  /* empty segments (Figma: Border) */
-.progress-bar--course i.on { background: var(--selected); }   /* gold, not cyan */
+.course-card__progress { position: absolute; left: 0; right: 0; bottom: 0; }   /* places the shared ProgressBar */
 .badge-new {                                  /* Badge Type=New */
   position: absolute; top: 10px; left: 10px;
   padding: 6px 12px; border-radius: var(--radius-full);

@@ -377,26 +377,6 @@
   padding: var(--space-s) var(--space-sm);
 }
 
-.pad-progress {
-  flex: 0 0 auto;
-  width: 72px;
-  height: 8px;
-  border-radius: 8px;
-  background: var(--border);
-  overflow: hidden;
-}
-
-.pad-progress__fill {
-  display: block;
-  height: 100%;
-  border-radius: 8px;
-  background: var(--primary-600);
-}
-
-.pad-progress__pct {
-  font-size: var(--font-size-md);
-  color: var(--text-primary);
-}
 
 .pad-row__score {
   flex: 0 0 auto;

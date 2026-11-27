@@ -107,36 +107,12 @@
   white-space: nowrap;
 }
 
-/* Two-tone segmented bar (Figma 13760:212226): 8 segments, 8px tall. */
+/* Two-tone progress row (Figma 13760:212226): shared ProgressBar plus the % label. */
 .m-course__progress {
   display: flex;
   align-items: center;
   gap: var(--space-s);
   margin-top: var(--space-xs);
-}
-
-.m-course__track {
-  display: flex;
-  flex: 1 0 0;
-  min-width: 0;
-  height: 8px;
-  border-radius: var(--radius-ml);
-  overflow: hidden;
-  background: var(--border);
-}
-
-.m-course__seg {
-  flex: 1 0 0;
-  min-width: 0;
-  height: 100%;
-}
-
-.m-course__seg--done {
-  background: var(--selected);
-}
-
-.m-course__seg--active {
-  background: var(--primary-600);
 }
 
 .m-course__pct {

@@ -1,10 +1,9 @@
 import { Clock, Lock, PlayCircle } from 'iconsax-react'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import type { CourseStatus, ProgramCourse } from '@/pages/workspace/mockItems'
 import './ProgramCourseCard.css'
-
-const SEGMENTS = 8
 
 /**
  * DS Badge variant + default label per course status. `completed` never renders
@@ -43,10 +42,6 @@ function MobileProgramCourseCard({ course, startMarker = false, onClick }: Mobil
   const locked = course.state === 'locked'
   const passed = course.state === 'review' && course.status === 'completed'
   const metaColor = locked ? 'var(--text-disabled)' : 'var(--text-tertiary)'
-
-  const filled = passed
-    ? SEGMENTS
-    : Math.max(0, Math.min(SEGMENTS, Math.round(((course.progress ?? 0) / 100) * SEGMENTS)))
 
   // The success track is the completion signal, so its badge would be noise.
   const badge = course.status && course.status !== 'completed' ? STATUS_BADGE[course.status] : undefined
@@ -124,23 +119,14 @@ function MobileProgramCourseCard({ course, startMarker = false, onClick }: Mobil
         </div>
 
         {!locked ? (
-          <span
+          <ProgressBar
             className="m-pcourse__track"
-            role="progressbar"
-            aria-label={`${course.title} progress`}
-            aria-valuenow={passed ? 100 : (course.progress ?? 0)}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          >
-            {Array.from({ length: SEGMENTS }).map((_, i) => (
-              <span
-                key={i}
-                className={`m-pcourse__seg${
-                  i < filled ? (passed ? ' m-pcourse__seg--passed' : ' m-pcourse__seg--filled') : ''
-                }`}
-              />
-            ))}
-          </span>
+            value={course.progress ?? 0}
+            complete={passed}
+            surface="card"
+            height={2}
+            label={`${course.title} progress`}
+          />
         ) : null}
       </article>
     </div>

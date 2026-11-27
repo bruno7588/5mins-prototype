@@ -22,7 +22,7 @@ A row of numbered steps across the top of a multi-step wizard. It shows where th
 **Don't use when**
 - The sections can be filled in any order → use Tabs ([doc](chips-switcher-tabs.md))
 - There are only 2 steps → a single form with a Continue button is clearer
-- Showing progress through content (lessons, a course) → use a progress bar ([doc](table.md) progress cell, [doc](gamification.md))
+- Showing progress through content (lessons, a course) → use `ProgressBar` ([doc](progress-bar.md))
 
 **Do**
 - Use `WizardShell` with `layout="top"`; it renders the stepper, sticky footer and success takeover.

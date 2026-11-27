@@ -43,6 +43,7 @@ import { coursesTotal, type CourseStatus } from './memberStatus'
 import { COURSE_STATUS_CARDS, type CourseStatusCard } from '@/data/courseStatusCards'
 import StatTile from '@/components/StatTile/StatTile'
 import Chip from '@/components/Chip/Chip'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import './MyTeam.css'
 import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 
@@ -65,24 +66,6 @@ export function Logo({ size = 22 }: { size?: number }) {
         <clipPath id="clip_myteam_logo"><rect width="102.261" height="22" fill="white"/></clipPath>
       </defs>
     </svg>
-  )
-}
-
-function ProgressBar({ value, muted }: { value: number; muted?: boolean }) {
-  const segments = 8
-  const filled = Math.round((value / 100) * segments)
-  return (
-    <div
-      className={`mt-cp__progress${muted ? ' mt-cp__progress--muted' : ''}${value === 100 ? ' mt-cp__progress--complete' : ''}`}
-      role="progressbar"
-      aria-valuenow={value}
-      aria-valuemin={0}
-      aria-valuemax={100}
-    >
-      {Array.from({ length: segments }).map((_, i) => (
-        <span key={i} className={`mt-cp__progress-seg${i < filled ? ' mt-cp__progress-seg--filled' : ''}`} />
-      ))}
-    </div>
   )
 }
 
@@ -533,7 +516,7 @@ function MyTeam() {
         const progressMuted = r.overdue === 0 && r.atRisk === 0 && r.overallProgress === 0
         return (
           <span className={`mt-cp__progress-cell${progressMuted ? ' mt-cp__table-cell--muted' : ''}`}>
-            <ProgressBar value={r.overallProgress} muted={progressMuted} />
+            <ProgressBar value={r.overallProgress} width={96} label={`${r.name} overall progress`} />
             <span className="mt-cp__progress-pct">{r.overallProgress}%</span>
           </span>
         )

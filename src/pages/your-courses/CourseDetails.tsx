@@ -50,6 +50,7 @@ import EnrolCourseModal from './components/EnrolCourseModal/EnrolCourseModal'
 import '../people/People.css'
 import CourseFilters, { matchesCourse, defaultValueFor, FILTER_DEFS, type FilterId, type FilterRow, type FilterValue } from '@/pages/user-profile/components/CourseFilters/CourseFilters'
 import Tabs from '@/components/Tabs/Tabs'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import './CourseDetails.css'
 
 type Tab = 'content' | 'enrolments' | 'assessments' | 'signoff' | 'settings' | 'overview'
@@ -511,12 +512,7 @@ function CourseDetails() {
       width: '0 0 138px',
       cellClassName: 'cd-cell--progress',
       render: (row) => (
-        <>
-          <div className="cd-progress">
-            <div className="cd-progress-fill" style={{ transform: `translateX(${row.progress - 100}%)` }} />
-          </div>
-          <span className="cd-progress-pct">{row.progress}%</span>
-        </>
+        <ProgressBar value={row.progress} showValue label={`${row.name} progress`} />
       ),
     },
     {

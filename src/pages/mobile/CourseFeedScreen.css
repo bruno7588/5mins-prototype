@@ -128,23 +128,6 @@
   gap: var(--space-s);
 }
 
-.m-cfeed-sheet__track {
-  flex: 1 1 0;
-  display: flex;
-  height: 8px;
-  border-radius: var(--radius-ml);
-  background: var(--border);
-  overflow: hidden;
-}
-
-.m-cfeed-sheet__seg {
-  flex: 1 1 0;
-}
-
-.m-cfeed-sheet__seg--filled {
-  background: var(--primary-600);
-}
-
 .m-cfeed-sheet__pct {
   font-size: var(--font-size-sm);
   font-weight: 600;

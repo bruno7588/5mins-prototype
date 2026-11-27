@@ -406,29 +406,6 @@
   color: var(--text-tertiary);
 }
 
-/* Progress bar */
-.cd-progress {
-  flex: 1;
-  height: 8px;
-  border-radius: var(--radius-s);
-  background: var(--border);
-  overflow: hidden;
-}
-
-.cd-progress-fill {
-  height: 100%;
-  width: 100%;
-  background: var(--primary-600);
-  border-radius: var(--radius-s);
-  transition: transform 200ms ease; /* translateX inline, not width */
-}
-
-.cd-progress-pct {
-  font-size: var(--font-size-md);
-  color: var(--text-primary);
-  width: 33px;
-  flex-shrink: 0;
-}
 
 /* Empty + pagination */
 .cd-empty {

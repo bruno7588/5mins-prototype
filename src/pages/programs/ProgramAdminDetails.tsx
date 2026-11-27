@@ -22,6 +22,7 @@ import Avatar from '@/components/Avatar/Avatar'
 import AvatarGroup from '@/components/AvatarGroup/AvatarGroup'
 import Tabs from '@/components/Tabs/Tabs'
 import StatTile from '@/components/StatTile/StatTile'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 
 const TABS = ['Courses', 'Enrolments', 'Settings']
 const PAGE_SIZE = 10
@@ -98,15 +99,6 @@ function dueText(step: ProgramStep): string {
   if (step.dueDays == null) return 'No due date'
   const unit = step.dueDays === 1 ? 'day' : 'days'
   return `${step.dueDays} ${unit} after start date`
-}
-
-/** Continuous progress bar. */
-function ProgressBar({ value }: { value: number }) {
-  return (
-    <span className="pad-progress" aria-hidden="true">
-      <span className="pad-progress__fill" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} />
-    </span>
-  )
 }
 
 /** Right-aligned "start-end of total" + prev/next; hidden when total ≤ one page. */
@@ -512,8 +504,7 @@ function ProgramAdminDetails() {
                     <span className="pad-date__year">{l.enrolled.year}</span>
                   </div>
                   <div className="pad-row__progress">
-                    <ProgressBar value={l.progress} />
-                    <span className="pad-progress__pct">{l.progress}%</span>
+                    <ProgressBar value={l.progress} width={72} showValue label={`${l.name} progress`} />
                   </div>
                   <div className="pad-row__score">{l.score}%</div>
                   <div className="pad-row__date pad-row__date--completion">

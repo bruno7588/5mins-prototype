@@ -4,13 +4,13 @@ import MobileProgramCourseCard from '@/components/mobile/ProgramCourseCard/Progr
 import ProgramCertificate from '@/pages/programs/components/ProgramCertificate/ProgramCertificate'
 import Avatar from '@/components/Avatar/Avatar'
 import AvatarGroup from '@/components/AvatarGroup/AvatarGroup'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import type { WorkspaceProgram } from '@/pages/workspace/mockItems'
 import avatar1 from '@/assets/programs/avatar-1.png'
 import avatar2 from '@/assets/programs/avatar-2.png'
 import avatar3 from '@/assets/programs/avatar-3.png'
 import './ProgramScreen.css'
 
-const SEGMENTS = 8
 const STACK = [avatar1, avatar2, avatar3]
 
 /**
@@ -29,8 +29,6 @@ function ProgramScreen({
   onOpenCourse?: (courseId: string) => void
 }) {
   const outline = program.outline
-  const filled = Math.max(0, Math.min(SEGMENTS, Math.round((program.progress / 100) * SEGMENTS)))
-  const complete = program.progress >= 100
 
   // Certificate unlocks only when every course is complete AND passed — one
   // failed or still-open course keeps it locked. Same rule as the desktop page.
@@ -75,23 +73,7 @@ function ProgramScreen({
         </div>
 
         <div className="m-prog__progress">
-          <span
-            className="m-prog__track"
-            role="progressbar"
-            aria-label="Program completion"
-            aria-valuenow={program.progress}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          >
-            {Array.from({ length: SEGMENTS }).map((_, i) => (
-              <span
-                key={i}
-                className={`m-prog__seg${
-                  i < filled ? (complete ? ' m-prog__seg--passed' : ' m-prog__seg--filled') : ''
-                }`}
-              />
-            ))}
-          </span>
+          <ProgressBar value={program.progress} surface="card" height={6} label="Program completion" />
           <span className="m-prog__pct">{program.progress}%</span>
         </div>
       </header>

@@ -1,8 +1,7 @@
 import { getSkillIllustrationByName } from '../../assets/skill-icons'
 import { getLevelIllustration } from '../../assets/level-illustrations'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import './SkillCard.css'
-
-const SEGMENTS = 8
 
 /** Bottom slot: an 8-segment progress bar, or a "Certificate pending" row. */
 export type SkillCardBottom =
@@ -34,19 +33,8 @@ function SkillCard({ skillName, level, bottom }: SkillCardProps) {
       </div>
 
       {bottom.kind === 'progress' ? (
-        <div
-          className="skill-card__progress"
-          role="progressbar"
-          aria-valuenow={Math.round((bottom.filled / SEGMENTS) * 100)}
-          aria-valuemin={0}
-          aria-valuemax={100}
-        >
-          {Array.from({ length: SEGMENTS }).map((_, i) => (
-            <span
-              key={i}
-              className={`skill-card__seg${i < bottom.filled ? ' skill-card__seg--filled' : ''}`}
-            />
-          ))}
+        <div className="skill-card__progress">
+          <ProgressBar value={(bottom.filled / 8) * 100} label={`${skillName} progress`} />
         </div>
       ) : (
         <div className="skill-card__pending">

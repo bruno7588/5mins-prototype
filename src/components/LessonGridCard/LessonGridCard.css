@@ -86,25 +86,8 @@
 .lesson-grid-card__progress {
   position: absolute;
   left: 0;
+  right: 0;
   bottom: 0;
-  display: flex;
-  width: 100%;
-  height: 2px;
-}
-
-.lesson-grid-card__seg {
-  flex: 1 0 0;
-  min-width: 1px;
-  height: 100%;
-  background: var(--border);
-}
-
-.lesson-grid-card__seg--filled {
-  background: var(--primary-600);
-}
-
-.lesson-grid-card--complete .lesson-grid-card__seg {
-  background: var(--success-500);
 }
 
 .lesson-grid-card__info {

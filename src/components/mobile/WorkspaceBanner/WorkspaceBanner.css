@@ -157,25 +157,6 @@
   margin-top: auto;
 }
 
-.m-wsb__bar {
-  display: flex;
-  flex: 1 0 0;
-  min-width: 0;
-  height: 6px;
-  border-radius: var(--radius-l);
-  overflow: hidden;
-  background: color-mix(in srgb, var(--neutral-25) 24%, transparent); /* --neutral-25 @ 24% */
-}
-
-.m-wsb__seg {
-  flex: 1 0 0;
-  min-width: 0;
-  height: 100%;
-}
-
-.m-wsb__seg--filled {
-  background: var(--primary-600);
-}
 
 .m-wsb__pct {
   font-size: var(--font-size-md);

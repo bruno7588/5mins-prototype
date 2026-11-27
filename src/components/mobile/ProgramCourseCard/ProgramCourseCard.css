@@ -109,29 +109,11 @@
 }
 
 /* 2px completion track along the bottom edge of a released course. */
-.m-pcourse__track {
-  display: flex;
+/* The card is a column flex box (align-items: flex-start): stop the shared bar
+   growing to fill its height and make it span the card's width. */
+.m-pcourse__card > .m-pcourse__track {
+  flex: 0 0 auto;
   width: 100%;
-  height: 2px;
-  border-radius: var(--radius-ml);
-  overflow: hidden;
-}
-
-.m-pcourse__seg {
-  flex: 1 0 0;
-  min-width: 0;
-  height: 100%;
-  /* --border matches --cards-background in dark mode, so the empty track needs
-     the elevated step to stay visible on the card. */
-  background: var(--border-elevated);
-}
-
-.m-pcourse__seg--filled {
-  background: var(--primary-600);
-}
-
-.m-pcourse__seg--passed {
-  background: var(--success-500);
 }
 
 /* "Start here" marker for the first course of a program not yet begun —

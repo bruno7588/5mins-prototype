@@ -24,8 +24,8 @@ import coursesIcon from '../../assets/programs/courses-icon.svg'
 import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 import Avatar from '@/components/Avatar/Avatar'
 import AvatarGroup from '@/components/AvatarGroup/AvatarGroup'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 
-const SEGMENTS = 8
 
 /** DS Badge variant + default label for each course status. */
 const STATUS_BADGE: Record<CourseStatus, { type: 'success' | 'warning' | 'error' | 'informative'; label: string }> = {
@@ -55,8 +55,6 @@ function ProgramDetails() {
   // failed (or still-incomplete) course keeps it locked.
   const certificateUnlocked =
     outline.length > 0 && outline.every((c) => c.status === 'completed')
-
-  const filled = Math.max(0, Math.min(SEGMENTS, Math.round((program.progress / 100) * SEGMENTS)))
 
   const stackAvatars = [avatar1, avatar2, avatar3].slice(0, Math.max(0, program.learnerCount))
   const stackOverflow = program.learnerCount - stackAvatars.length
@@ -129,17 +127,7 @@ function ProgramDetails() {
             </div>
 
             <div className="pd-progress">
-              <div
-                className="pd-progress__track"
-                role="progressbar"
-                aria-valuenow={program.progress}
-                aria-valuemin={0}
-                aria-valuemax={100}
-              >
-                {Array.from({ length: SEGMENTS }).map((_, i) => (
-                  <span key={i} className={`pd-progress__seg${i < filled ? ' pd-progress__seg--primary' : ''}`} />
-                ))}
-              </div>
+              <ProgressBar value={program.progress} label="Program progress" />
               <span className="pd-progress__pct">{program.progress}%</span>
             </div>
           </header>
@@ -149,10 +137,6 @@ function ProgramDetails() {
             <h2 className="pd-section__title">Program outline</h2>
             <div className="pd-outline">
               {outline.map((course, index) => {
-                const courseFilled = Math.max(
-                  0,
-                  Math.min(SEGMENTS, Math.round(((course.progress ?? 0) / 100) * SEGMENTS)),
-                )
                 const isLocked = course.state === 'locked'
                 const metaIconColor = isLocked ? 'var(--text-disabled)' : 'var(--text-tertiary)'
                 return (
@@ -183,14 +167,12 @@ function ProgramDetails() {
                             <span>{course.durationMinutes} min</span>
                           </span>
                           {course.state === 'continue' ? (
-                            <span className="pd-course__track">
-                              {Array.from({ length: SEGMENTS }).map((_, i) => (
-                                <span
-                                  key={i}
-                                  className={`pd-progress__seg${i < courseFilled ? ' pd-progress__seg--primary' : ''}`}
-                                />
-                              ))}
-                            </span>
+                            <ProgressBar
+                              value={course.progress ?? 0}
+                              height={4}
+                              width={120}
+                              label={`${course.title} progress`}
+                            />
                           ) : null}
                         </div>
                       </div>

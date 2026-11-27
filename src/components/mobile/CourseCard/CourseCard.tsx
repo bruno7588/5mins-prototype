@@ -1,8 +1,7 @@
 import type { KeyboardEvent } from 'react'
 import { Clock, PlayCircle } from 'iconsax-react'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import './CourseCard.css'
-
-const SEGMENTS = 8
 
 export interface MobileCourseCardProps {
   title: string
@@ -29,7 +28,6 @@ function MobileCourseCard({
   dueLabel,
   onClick,
 }: MobileCourseCardProps) {
-  const filledSegments = Math.max(0, Math.min(SEGMENTS, Math.round((progress / 100) * SEGMENTS)))
   const interactive = Boolean(onClick)
 
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
@@ -57,11 +55,13 @@ function MobileCourseCard({
       >
         {isNew ? <span className="m-course-card__newbadge">New</span> : null}
         {dueLabel ? <span className="m-course-card__duepill">{dueLabel}</span> : null}
-        <div className="m-course-card__progress" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
-          {Array.from({ length: SEGMENTS }).map((_, i) => (
-            <span key={i} className={i < filledSegments ? 'm-course-card__segment m-course-card__segment--filled' : 'm-course-card__segment'} />
-          ))}
-        </div>
+        <ProgressBar
+          className="m-course-card__progress"
+          value={progress}
+          tone="selected"
+          height={2}
+          label="Course progress"
+        />
       </div>
       <div className="m-course-card__body">
         <h3 className="m-course-card__title">{title}</h3>

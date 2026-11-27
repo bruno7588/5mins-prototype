@@ -165,26 +165,7 @@
   margin: 0;
 }
 
+/* Bar + % keep their own width so the cell's flex-end alignment still applies. */
 .cd-table__progress {
-  display: flex;
-  width: 72px;
-  height: 8px;
-  border-radius: var(--radius-ml);
-  overflow: hidden;
-  background: var(--border);
-  flex-shrink: 0;
-}
-.cd-table__progress-seg {
-  flex: 1 0 0;
-  height: 100%;
-  background: var(--border);
-}
-.cd-table__progress-seg--filled {
-  background: var(--primary-600);
-}
-.cd-table__progress-pct {
-  font-size: var(--font-size-md);
-  color: var(--text-secondary);
-  min-width: 33px;
-  text-align: left;
+  flex: 0 0 auto;
 }

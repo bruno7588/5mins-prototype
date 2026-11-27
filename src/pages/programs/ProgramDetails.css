@@ -81,31 +81,11 @@
   white-space: nowrap;
 }
 
-/* Segmented progress bar (shared with course rows) */
+/* Progress row: shared ProgressBar plus the % label */
 .pd-progress {
   display: flex;
   align-items: center;
   gap: var(--space-s);
-}
-
-.pd-progress__track {
-  display: flex;
-  flex: 1 0 0;
-  min-width: 0;
-  height: 8px;
-  border-radius: 20px;
-  overflow: hidden;
-}
-
-.pd-progress__seg {
-  flex: 1 0 0;
-  min-width: 0;
-  height: 100%;
-  background: var(--border);
-}
-
-.pd-progress__seg--primary {
-  background: var(--primary-600);
 }
 
 .pd-progress__pct {
@@ -219,15 +199,6 @@
   align-items: center;
   gap: var(--space-s);
   flex-wrap: wrap;
-}
-
-/* Inline progress bar (in-progress courses only) */
-.pd-course__track {
-  display: flex;
-  width: 120px;
-  height: 4px;
-  border-radius: 20px;
-  overflow: hidden;
 }
 
 .pd-course__cta {

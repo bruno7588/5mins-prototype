@@ -41,6 +41,7 @@ import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import Button from '@/components/Button/Button'
 import Tabs from '@/components/Tabs/Tabs'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import CompanyImageMotion from '@/components/CompanyImageMotion/CompanyImageMotion'
 import { useCompanyImage } from '@/data/companyImage'
 import CourseCertificateCard from './components/CourseCertificateCard/CourseCertificateCard'
@@ -56,13 +57,10 @@ import {
   useSignOff,
 } from '@/data/trainerSignOff'
 
-const SEGMENTS = 8
-
 function LessonCard({ lesson, onOpen }: { lesson: CourseLesson; onOpen?: () => void }) {
   const isLocked = lesson.state === 'locked'
   const companyImage = useCompanyImage()
   const resourceCount = lesson.resources?.length ?? 0
-  const filled = Math.max(0, Math.min(SEGMENTS, Math.round(((lesson.progress ?? 0) / 100) * SEGMENTS)))
   return (
     <article
       className={`pcd-lesson${isLocked ? ' pcd-lesson--locked' : ''}${onOpen ? ' pcd-lesson--openable' : ''}`}
@@ -106,11 +104,14 @@ function LessonCard({ lesson, onOpen }: { lesson: CourseLesson; onOpen?: () => v
           {isLocked ? (
             <Lock size={24} color="var(--text-disabled)" variant="Bold" />
           ) : (
-            <span className="pcd-lesson__track">
-              {Array.from({ length: SEGMENTS }).map((_, i) => (
-                <span key={i} className={`pcd-seg${i < filled ? ' pcd-seg--filled' : ''}`} />
-              ))}
-            </span>
+            <ProgressBar
+              value={lesson.progress ?? 0}
+              complete={lesson.state === 'done'}
+              surface="card"
+              height={4}
+              width={96}
+              label={`${lesson.title} progress`}
+            />
           )}
         </div>
       </div>
@@ -294,15 +295,7 @@ function ProgramCourseDetails() {
               </div>
 
               <div className="pcd-progress">
-                <div
-                  className="pcd-progress__track"
-                  role="progressbar"
-                  aria-valuenow={progress}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                >
-                  <div className="pcd-progress__fill" style={{ width: `${progress}%` }} />
-                </div>
+                <ProgressBar value={progress} surface="card" label="Course progress" />
                 <span className="pcd-progress__pct">{progress}%</span>
               </div>
             </header>

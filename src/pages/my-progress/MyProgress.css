@@ -275,23 +275,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Progress bar (Library "Progress bar", 7046:25097): 8px track with a rounded fill. */
-.mp-bar {
-  display: flex;
-  flex: 1 1 0;
-  min-width: 0;
-  height: var(--space-s);
-  border-radius: var(--radius-full);
-  background: var(--border-elevated);
-  overflow: hidden;
-}
-
-.mp-bar__fill {
-  height: 100%;
-  border-radius: var(--radius-full);
-  background: var(--primary-600);
-}
-
 /* ── Leaderboard ── */
 
 /* Team / Company and the period sit on the title's row, each as wide as its content.

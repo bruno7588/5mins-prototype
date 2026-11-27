@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import Button from '../../components/Button/Button'
 import SideDrawer from '@/components/SideDrawer/SideDrawer'
 import Avatar from '@/components/Avatar/Avatar'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import { formatRelativeShort } from './relativeTime'
 import { coursesTotal } from './memberStatus'
 import './ReminderDrawer.css'
@@ -35,8 +36,6 @@ export interface ReminderContent {
   count: number
   table: ReactNode
 }
-
-const SEGMENTS = 8
 
 function ReminderDrawer({ open, members, onClose, onSend }: Props) {
   const firstName = members[0]?.name.split(' ')[0] ?? ''
@@ -82,7 +81,6 @@ function MemberTable({ members }: { members: ReminderMember[] }) {
       </div>
 
       {members.slice(0, shown).map((m) => {
-        const filled = Math.round((m.overallProgress / 100) * SEGMENTS)
         return (
           <div className="rd-table__row" key={m.id}>
             <div className="rd-table__cell rd-table__cell--name">
@@ -103,12 +101,7 @@ function MemberTable({ members }: { members: ReminderMember[] }) {
               {coursesTotal(m) > 0 ? <span>{coursesTotal(m)}</span> : <span>–</span>}
             </div>
             <div className="rd-table__cell rd-table__cell--progress">
-              <div className="rd-progress" role="progressbar" aria-valuenow={m.overallProgress} aria-valuemin={0} aria-valuemax={100}>
-                {Array.from({ length: SEGMENTS }).map((_, i) => (
-                  <span key={i} className={`rd-progress__seg${i < filled ? ' rd-progress__seg--filled' : ''}`} />
-                ))}
-              </div>
-              <span className="rd-progress__pct">{m.overallProgress}%</span>
+              <ProgressBar value={m.overallProgress} showValue label={`${m.name} overall progress`} />
             </div>
           </div>
         )

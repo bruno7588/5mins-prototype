@@ -157,33 +157,6 @@
   color: var(--text-warning);
 }
 
-/* Progress bar */
-.rd-progress {
-  display: flex;
-  flex: 1 0 0;
-  min-width: 0;
-  height: 8px;
-  border-radius: var(--radius-ml);
-  overflow: hidden;
-  background: var(--border);
-}
-
-.rd-progress__seg {
-  flex: 1 0 0;
-  height: 100%;
-  background: var(--border);
-}
-.rd-progress__seg--filled {
-  background: var(--primary-600);
-}
-
-.rd-progress__pct {
-  font-size: var(--font-size-md);
-  color: var(--text-primary);
-  width: 33px;
-  flex-shrink: 0;
-  text-align: left;
-}
 
 /* Pagination */
 .rd-pagination {

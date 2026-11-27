@@ -21,11 +21,10 @@ import CloseButton from '@/components/CloseButton/CloseButton'
 import QuizHeader from '@/pages/quiz-lab/components/QuizHeader'
 import { QuizAdvanceContext } from '@/pages/quiz-lab/components/FeedbackFooter'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import LessonFeedScreen from './LessonFeedScreen'
 import { MobileSituationalQuestions } from './SituationalTestScreen'
 import './CourseFeedScreen.css'
-
-const SEGMENTS = 8
 
 /**
  * The course feed in the app (Figma "Course Feed V2", mobile block): the course's
@@ -112,7 +111,6 @@ function CourseFeedScreen({ courseId, startIndex = 0, onExit }: { courseId: stri
   const quizItem = quizLesson && quizLesson.kind === 'lesson' ? quizLesson : null
 
   const progress = Math.round(course.progress + (100 - course.progress) * (done.size / items.length))
-  const filled = Math.round((progress / 100) * SEGMENTS)
 
   const startAttempt = () => {
     setResults([])
@@ -353,18 +351,7 @@ function CourseFeedScreen({ courseId, startIndex = 0, onExit }: { courseId: stri
                 </span>
               </div>
               <div className="m-cfeed-sheet__progress">
-                <span
-                  className="m-cfeed-sheet__track"
-                  role="progressbar"
-                  aria-label="Course progress"
-                  aria-valuenow={progress}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                >
-                  {Array.from({ length: SEGMENTS }).map((_, i) => (
-                    <span key={i} className={`m-cfeed-sheet__seg${i < filled ? ' m-cfeed-sheet__seg--filled' : ''}`} />
-                  ))}
-                </span>
+                <ProgressBar value={progress} label="Course progress" />
                 <span className="m-cfeed-sheet__pct">{progress}%</span>
               </div>
             </div>

@@ -2,6 +2,7 @@ import { Fragment, useEffect, useLayoutEffect, useRef, useState, type CSSPropert
 import { gsap } from 'gsap'
 import { ArrowLeft2, ArrowRight2, Clock, PlayCircle, Routing } from 'iconsax-react'
 import Button from '@/components/Button/Button'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import CollectionPlayIcon from '@/components/icons/CollectionPlayIcon'
 import CourseIcon from '@/components/icons/CourseIcon'
 import { featuredPrograms, minutesLeft } from '@/pages/programs/featuredPrograms'
@@ -14,7 +15,6 @@ function trackGap(el: HTMLElement) {
   return parseFloat(getComputedStyle(el).columnGap) || 0
 }
 
-const SEGMENTS = 8
 const META_ICON = 'var(--text-secondary)'
 /** Dwell time per banner before it slides on to the next. */
 const SLIDE_MS = 5000
@@ -339,21 +339,9 @@ function ProgramSlide({
 
 /** Segmented completion bar with the percentage beside it. */
 function Progress({ value, label }: { value: number; label: string }) {
-  const filled = Math.max(0, Math.min(SEGMENTS, Math.round((value / 100) * SEGMENTS)))
   return (
     <div className="wsb__progress">
-      <span
-        className="wsb__bar"
-        role="progressbar"
-        aria-label={label}
-        aria-valuenow={value}
-        aria-valuemin={0}
-        aria-valuemax={100}
-      >
-        {Array.from({ length: SEGMENTS }).map((_, i) => (
-          <span key={i} className={`wsb__seg${i < filled ? ' wsb__seg--filled' : ''}`} />
-        ))}
-      </span>
+      <ProgressBar value={value} surface="media" height={6} label={label} />
       <span className="wsb__pct">{value}%</span>
     </div>
   )

@@ -65,31 +65,6 @@
   width: 100%;
 }
 
-.m-prog__track {
-  display: flex;
-  flex: 1 0 0;
-  min-width: 0;
-  height: 6px;
-  border-radius: var(--radius-ml);
-  overflow: hidden;
-}
-
-.m-prog__seg {
-  flex: 1 0 0;
-  min-width: 0;
-  height: 100%;
-  background: var(--border-elevated);
-}
-
-.m-prog__seg--filled {
-  background: var(--primary-600);
-}
-
-/* A finished program turns the whole bar green (100% is never primary). */
-.m-prog__seg--passed {
-  background: var(--success-500);
-}
-
 .m-prog__pct {
   font-size: var(--font-size-md);
   font-weight: 500;

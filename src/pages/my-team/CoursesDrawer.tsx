@@ -4,6 +4,7 @@ import SideDrawer from '@/components/SideDrawer/SideDrawer'
 import Avatar from '@/components/Avatar/Avatar'
 import Search from '../../components/Search/Search'
 import Dropdown, { type DropdownOption } from '../../components/Dropdown/Dropdown'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import StatusBadge from './StatusBadge'
 import { type CourseStatus, COURSE_STATUS_LABEL, COURSE_STATUS_ORDER } from './memberStatus'
 import './CoursesDrawer.css'
@@ -68,7 +69,6 @@ function CoursesDrawer(props: Props) {
     })
   }, [courses, query, statusFilter, sortDir])
 
-  const segments = 8
 
   return (
     <SideDrawer
@@ -132,7 +132,6 @@ function CoursesDrawer(props: Props) {
             <p className="cd-table__empty-subtext">Try a different search or status filter</p>
           </div>
         ) : filtered.map((c) => {
-          const filled = Math.round((c.progress / 100) * segments)
           return (
             <div className="cd-table__row" key={c.id}>
               <div className="cd-table__cell cd-table__cell--course">
@@ -143,12 +142,7 @@ function CoursesDrawer(props: Props) {
                 <StatusBadge status={c.status} />
               </div>
               <div className="cd-table__cell cd-table__cell--progress">
-                <div className="cd-table__progress" role="progressbar" aria-valuenow={c.progress} aria-valuemin={0} aria-valuemax={100}>
-                  {Array.from({ length: segments }).map((_, i) => (
-                    <span key={i} className={`cd-table__progress-seg${i < filled ? ' cd-table__progress-seg--filled' : ''}`} />
-                  ))}
-                </div>
-                <span className="cd-table__progress-pct">{c.progress}%</span>
+                <ProgressBar value={c.progress} width={72} showValue label={`${c.title} progress`} className="cd-table__progress" />
               </div>
             </div>
           )

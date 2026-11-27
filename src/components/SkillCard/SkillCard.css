@@ -55,30 +55,11 @@
   height: calc(1.5em * 3);
 }
 
-/* 8-segment progress bar (filled = primary, empty = border) */
+/* 20px row holding the shared ProgressBar, level with the pending row */
 .skill-card__progress {
   display: flex;
   align-items: center;
   height: 20px;
-}
-
-.skill-card__seg {
-  flex: 1 0 0;
-  min-width: 1px;
-  height: 8px;
-  background: var(--border);
-}
-
-.skill-card__seg:first-child {
-  border-radius: 20px 0 0 20px;
-}
-
-.skill-card__seg:last-child {
-  border-radius: 0 20px 20px 0;
-}
-
-.skill-card__seg--filled {
-  background: var(--primary-600);
 }
 
 .skill-card__pending {

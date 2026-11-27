@@ -1,10 +1,9 @@
 import type { KeyboardEvent } from 'react'
 import { PlayCircle, Lock, Danger } from 'iconsax-react'
 import CompanyImageMotion from '@/components/CompanyImageMotion/CompanyImageMotion'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import { useCompanyImage } from '@/data/companyImage'
 import './LessonCard.css'
-
-const SEGMENTS = 8
 
 export type MobileLessonQuizState = 'none' | 'pending' | 'completed'
 
@@ -38,9 +37,6 @@ function MobileLessonCard({
   onQuizClick,
 }: MobileLessonCardProps) {
   const companyImage = useCompanyImage()
-  const filledSegments = completed
-    ? SEGMENTS
-    : Math.max(0, Math.min(SEGMENTS, Math.round((progress / 100) * SEGMENTS)))
   const interactive = Boolean(onClick) && !disabled
 
   const quizButton = (() => {
@@ -102,22 +98,13 @@ function MobileLessonCard({
         {disabled ? <Lock size={20} color="var(--text-disabled)" variant="Bold" /> : null}
       </div>
       {!disabled ? (
-        <div
+        <ProgressBar
           className="m-lesson-card__progress"
-          role="progressbar"
-          aria-valuenow={completed ? 100 : progress}
-          aria-valuemin={0}
-          aria-valuemax={100}
-        >
-          {Array.from({ length: SEGMENTS }).map((_, i) => {
-            const cls = i < filledSegments
-              ? completed
-                ? 'm-lesson-card__segment m-lesson-card__segment--complete'
-                : 'm-lesson-card__segment m-lesson-card__segment--filled'
-              : 'm-lesson-card__segment'
-            return <span key={i} className={cls} />
-          })}
-        </div>
+          value={progress}
+          complete={completed}
+          height={2}
+          label="Lesson progress"
+        />
       ) : null}
     </article>
   )

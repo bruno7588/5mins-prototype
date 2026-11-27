@@ -6,6 +6,7 @@ Add new entries here, not in the docs.
 
 ## Library-wide
 
+- 2026-11-27: New shared `ProgressBar` (`src/components/ProgressBar`) and `progress-bar.md`. 25 hand-built bars replaced: all 8 segments (the 4 continuous bars became segmented), full radius, green at 100% everywhere, `role="progressbar"` with a name on every bar. Empty track by surface (Page `--border`, Card `--border-elevated`, Media `--neutral-25` @ 24%; the desktop banner was 50%). Library `Progress bar` (`7046:25097`) rebuilt to match: Progress 0-100% in eighths x Tone x Surface, Show value, named segments, component description in the house format. `.tbl-progress` removed from Table.css. Not migrated, not content progress: scenario video playback line, AI image loader, onboarding dots, AI generation bars, LessonFeed episode bars.
 - 2026-11-19: Square avatar radius is 8px (`--radius-s`) at every size, in code and Library (was 12px `--radius-sm` since 2026-11-18). 12px made the 24px avatar a circle and the 32px one nearly round, so companies and instructors read as people.
 - 2026-11-19: Focus rings are Primary-500 in both modes (were `Primary-Button-background`, Primary-700 in light). Library: every `Focus ring` layer and the Calendar Day focus border rebound. Code: new `--focus-ring` token (`var(--primary-500)`), used by every `:focus-visible` outline.
 - 2026-11-18: New `mobile.md`: mobile app foundations (dark only, no hover or tooltips, 16px body padding and gaps, compact type, button size per placement, map of mobile specs). Component mobile specs stay in their own docs.

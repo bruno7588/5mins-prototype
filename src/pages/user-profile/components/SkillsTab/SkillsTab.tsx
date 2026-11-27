@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Chip from '@/components/Chip/Chip'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import { getLevelIllustration, type SkillLevel } from '@/assets/level-illustrations'
 import '@/pages/my-progress/MyProgress.css'
 import './SkillsTab.css'
@@ -77,16 +78,7 @@ export function SkillProgressCard({ skill }: { skill: Skill }) {
           <span className="mp-skill__hint">Earn {target} points to complete this level.</span>
         </span>
         <span className="mp-skill__progress">
-          <span
-            className="mp-bar"
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={target}
-            aria-valuenow={skill.points}
-            aria-label={`${skill.name} points`}
-          >
-            <span className="mp-bar__fill" style={{ width: `${(skill.points / target) * 100}%` }} />
-          </span>
+          <ProgressBar value={(skill.points / target) * 100} surface="card" label={`${skill.name} points`} />
           <span className="mp-skill__points">{skill.points}/{target} pts</span>
         </span>
       </span>

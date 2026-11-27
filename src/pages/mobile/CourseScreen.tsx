@@ -19,9 +19,8 @@ import certificateIllustration from '@/assets/programs/certificate.svg'
 import penNib from '@/assets/sign-off/pen-nib.svg'
 import courseMedallion from '@/assets/sign-off/certificate-medallion.svg'
 import Tabs from '@/components/Tabs/Tabs'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import './CourseScreen.css'
-
-const SEGMENTS = 8
 
 /** "Lesson · Dr. Amara Okafor · 6 min" → ["Lesson", "Dr. Amara Okafor", "6 min"] */
 const metaParts = (meta: string) => meta.split(' · ')
@@ -58,10 +57,8 @@ function CourseScreen({ courseId, onBack, onStartSignOff, onGetCertificate, onOp
     : course.progress
   /* Two tones (Figma "Progress bar" 13760:212226): amber for steps completed,
      primary for the part still in progress, the rest the empty track. */
-  const filled = Math.round((progress / 100) * SEGMENTS)
   const doneSteps = items.filter((l) => l.state === 'done').length + (signOff ? 1 : 0)
   const totalSteps = items.length + (needsSignOff ? 1 : 0)
-  const done = Math.min(filled, Math.round((doneSteps / totalSteps) * SEGMENTS))
 
   const state = signOffState(course.progress, signOff)
   const certUnlocked = needsSignOff ? !!signOff : course.progress >= 100
@@ -109,21 +106,11 @@ function CourseScreen({ courseId, onBack, onStartSignOff, onGetCertificate, onOp
             <span className="m-course__helperitem">Pass score: {course.passScore}%</span>
           </div>
           <div className="m-course__progress">
-            <span
-              className="m-course__track"
-              role="progressbar"
-              aria-label="Course completion"
-              aria-valuenow={progress}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              {Array.from({ length: SEGMENTS }).map((_, i) => (
-                <span
-                  key={i}
-                  className={`m-course__seg${i < done ? ' m-course__seg--done' : i < filled ? ' m-course__seg--active' : ''}`}
-                />
-              ))}
-            </span>
+            <ProgressBar
+              value={progress}
+              doneValue={(doneSteps / totalSteps) * 100}
+              label="Course completion"
+            />
             <span className="m-course__pct">{progress}%</span>
           </div>
         </div>

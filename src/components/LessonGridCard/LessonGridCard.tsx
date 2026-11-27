@@ -1,9 +1,8 @@
 import { PlayCircle } from 'iconsax-react'
 import CompanyImageMotion from '@/components/CompanyImageMotion/CompanyImageMotion'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import { useCompanyImage } from '@/data/companyImage'
 import './LessonGridCard.css'
-
-const SEGMENTS = 8
 
 export interface LessonGridCardProps {
   title: string
@@ -51,20 +50,13 @@ function LessonGridCard({ title, instructor, thumbnail, durationLabel, filled, c
           <PlayCircle size={20} color="var(--text-secondary)" variant="Bold" />
         </span>
         <span className="lesson-grid-card__duration">{durationLabel}</span>
-        <div
+        <ProgressBar
           className="lesson-grid-card__progress"
-          role="progressbar"
-          aria-valuenow={completed ? 100 : Math.round((filled / SEGMENTS) * 100)}
-          aria-valuemin={0}
-          aria-valuemax={100}
-        >
-          {Array.from({ length: SEGMENTS }).map((_, i) => (
-            <span
-              key={i}
-              className={`lesson-grid-card__seg${i < filled ? ' lesson-grid-card__seg--filled' : ''}`}
-            />
-          ))}
-        </div>
+          value={(filled / 8) * 100}
+          complete={completed}
+          height={2}
+          label="Lesson progress"
+        />
       </div>
       <div className="lesson-grid-card__info">
         <h3 className="lesson-grid-card__title">{title}</h3>

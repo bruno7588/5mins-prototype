@@ -385,31 +385,6 @@
   display: flex;
   align-items: center;
 }
-
-.mt-cp__progress {
-  display: flex;
-  height: 8px;
-  width: 96px;
-  border-radius: var(--radius-ml);
-  overflow: hidden;
-  background: var(--border);
-  flex-shrink: 0;
-}
-.mt-cp__progress-seg {
-  flex: 1 0 0;
-  height: 100%;
-  background: var(--border);
-}
-.mt-cp__progress-seg--filled {
-  background: var(--primary-600);
-}
-/* 100% goes green — the completed signal the removed Status column carried. */
-.mt-cp__progress--complete .mt-cp__progress-seg--filled {
-  background: var(--success-500);
-}
-.mt-cp__progress--muted .mt-cp__progress-seg--filled {
-  background: var(--border);
-}
 .mt-cp__progress-pct {
   font-size: var(--font-size-md);
   color: var(--text-secondary);

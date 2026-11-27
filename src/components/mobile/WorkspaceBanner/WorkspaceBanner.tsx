@@ -2,6 +2,7 @@ import { Fragment, useEffect, useRef, useState, type CSSProperties, type ReactNo
 import { gsap } from 'gsap'
 import { Clock, PlayCircle, Routing } from 'iconsax-react'
 import Button from '@/components/Button/Button'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import CollectionPlayIcon from '@/components/icons/CollectionPlayIcon'
 import CourseIcon from '@/components/icons/CourseIcon'
 import { rgba, useThumbnailAccents } from '@/hooks/thumbnailAccents'
@@ -14,7 +15,6 @@ function trackGap(el: HTMLElement) {
   return parseFloat(getComputedStyle(el).columnGap) || 0
 }
 
-const SEGMENTS = 8
 const META_ICON = 'var(--text-secondary)'
 /** Dwell per banner. The pager fill is animated over the same span. */
 const SLIDE_MS = 5000
@@ -294,21 +294,9 @@ function ProgramSlide({ program, onOpen }: { program: WorkspaceProgram; onOpen: 
 
 /** Segmented completion bar with the percentage beside it. */
 function Progress({ value, label }: { value: number; label: string }) {
-  const filled = Math.max(0, Math.min(SEGMENTS, Math.round((value / 100) * SEGMENTS)))
   return (
     <div className="m-wsb__progress">
-      <span
-        className="m-wsb__bar"
-        role="progressbar"
-        aria-label={label}
-        aria-valuenow={value}
-        aria-valuemin={0}
-        aria-valuemax={100}
-      >
-        {Array.from({ length: SEGMENTS }).map((_, i) => (
-          <span key={i} className={`m-wsb__seg${i < filled ? ' m-wsb__seg--filled' : ''}`} />
-        ))}
-      </span>
+      <ProgressBar value={value} surface="media" height={6} label={label} />
       <span className="m-wsb__pct">{value}%</span>
     </div>
   )

@@ -153,25 +153,6 @@
   padding: var(--space-s) var(--space-sm);
 }
 
-.eng-skills__bar {
-  flex: 1;
-  height: 8px;
-  border-radius: var(--radius-ml);
-  background: var(--border);
-  display: flex;
-  overflow: hidden;
-}
-
-.eng-skills__bar-seg {
-  flex: 1;
-  height: 100%;
-  background: var(--border);
-}
-
-.eng-skills__bar-seg--filled {
-  background: var(--primary-600);
-}
-
 .eng-skills__score {
   font-size: var(--font-size-md);
   font-weight: 500;

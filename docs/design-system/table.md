@@ -92,7 +92,7 @@ The Figma table is four component sets; code is one data-driven `Table` whose ce
 | Avatar | false / true | `columns[].render` | `<Avatar>` / `<AvatarGroup>` in `.tbl-media` | |
 | Thumbnail | false / true | `columns[].render` | `.tbl-thumb` | |
 | Icon | false / true | `columns[].render` | text + trailing 20px icon | |
-| Progress bar | false / true | `columns[].render` | `.tbl-progress` | |
+| Progress bar | false / true | `columns[].render` | `<ProgressBar width={72} showValue />` | [progress-bar.md](progress-bar.md) |
 | Illustration | false / true | `columns[].render` | 24px illustration in `.tbl-media` | |
 | Button | false / true | `columns[].render` | `<Button>` | |
 | Badge | false / true | `columns[].render` | `<Badge>` | |
@@ -102,7 +102,7 @@ The Figma table is four component sets; code is one data-driven `Table` whose ce
 | Label (text) | "Text" | `columns[].render` | cell text | |
 | Supporting label (text) | "Supporting text" | `columns[].render` | `.supporting` line | Supporting text=true |
 | Date label (text) | "Jan 1, 2025" | `columns[].render` | `.tbl-date` | date=true |
-| Percentage (text) | "100%" | `columns[].render` | `.tbl-progress` label | Progress bar=true |
+| Percentage (text) | "100%" | `columns[].render` | `ProgressBar` `showValue` | Progress bar=true |
 | Icon glyph (instance swap) | Danger | `columns[].render` | trailing 20px Iconsax icon | Text + Icon cell |
 | Info icon (instance swap) | info | `columns[].render` | trailing icon | Illustration cells |
 | Action icon (instance swap) | More | `RowActionsMenu` | kebab in `.tbl-action` | action-icon cell |
@@ -194,7 +194,7 @@ Every cell is `flex: 1; display: flex; align-items: center; padding: 8px 12px; m
 | Avatar group | `<AvatarGroup size={32}>`: overlapping 32px avatars (`-12px` overlap, 1px `--page-background` ring); "+N" is a same-size 32px circle via `remaining` ([avatars.md](avatars.md)) |
 | Illustration | 24px skill / gamification icon + text |
 | Thumbnail | 72×44 rounded (`8px`) image + text (`.tbl-thumb`) |
-| Progress bar | 72px x 8px segmented bar (8 segments) + % label, `gap: 8px`; row height 56px; filled segments `--primary-600`, all `--success-500` at 100% (`.tbl-progress.is-complete`, Figma `Progress=100%` `7046:25170`) |
+| Progress bar | `<ProgressBar value={n} width={72} showValue />`: 72px x 8px, 8 segments, % label 8px after it; row height 56px. Green at 100% is built in ([progress-bar.md](progress-bar.md)) |
 | Action icon | centred 20px kebab in a 28px circular button; hover fills it with `--input-background-hover` |
 | Badge | status pill (e.g. success: tick + label on `rgba(24,169,87,0.16)`) |
 | Button | small outlined button (`12px` Bold label, `8px` radius) |
@@ -202,7 +202,7 @@ Every cell is `flex: 1; display: flex; align-items: center; padding: 8px 12px; m
 
 Checkboxes, radios and toggles in cells follow `selection-controls.md`. The 24px box with the amber checked fill comes from that spec; do not reinvent it here.
 
-Helper classes `Table.css` provides for cell content: `.tbl-media` (media + text, 12px gap), `.tbl-stack` with `.primary` / `.supporting` (two-line stack, 2px gap), `.tbl-date` with `.day` / `.year`, `.tbl-thumb` (72×44), `.tbl-progress`, `.tbl-action`, `.tbl-col-action` (`flex: 0 0 56px`), and `is-link` / `is-overflow` via `cellClassName`.
+Helper classes `Table.css` provides for cell content: `.tbl-media` (media + text, 12px gap), `.tbl-stack` with `.primary` / `.supporting` (two-line stack, 2px gap), `.tbl-date` with `.day` / `.year`, `.tbl-thumb` (72×44), `.tbl-action`, `.tbl-col-action` (`flex: 0 0 56px`), and `is-link` / `is-overflow` via `cellClassName`.
 
 ## States
 

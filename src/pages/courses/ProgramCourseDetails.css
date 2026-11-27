@@ -142,39 +142,13 @@
   height: 18px;
 }
 
-/* Segmented progress (shared by header + lesson rows via .pcd-seg) */
+/* Progress row: shared ProgressBar plus the % label */
 .pcd-progress {
   display: flex;
   align-items: center;
   gap: var(--space-s);
   background: unset;
   background-color: unset;
-}
-
-.pcd-progress__track {
-  flex: 1 0 0;
-  min-width: 0;
-  height: 8px;
-  border-radius: 24px;
-  background: var(--border-elevated);
-  overflow: hidden;
-}
-
-.pcd-progress__fill {
-  height: 100%;
-  border-radius: 24px;
-  background: var(--primary-600);
-}
-
-.pcd-seg {
-  flex: 1 0 0;
-  min-width: 0;
-  height: 100%;
-  background: var(--border-elevated);
-}
-
-.pcd-seg--filled {
-  background: var(--primary-600);
 }
 
 .pcd-progress__pct {
@@ -425,15 +399,6 @@
 
 .pcd-lesson--locked .pcd-lesson__metatext {
   color: var(--text-disabled);
-}
-
-.pcd-lesson__track {
-  display: flex;
-  flex: 0 0 auto;
-  width: 96px;
-  height: 4px;
-  border-radius: 20px;
-  overflow: hidden;
 }
 
 /* ---- Divider ---- */

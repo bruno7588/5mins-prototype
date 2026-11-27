@@ -1,12 +1,9 @@
 import { Clock, PlayCircle } from 'iconsax-react'
 import type { WorkspaceCourse } from '../../pages/workspace/mockItems'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import './WorkspaceCourseCard.css'
 
-const SEGMENTS = 8
-
 function WorkspaceCourseCard({ course, onOpen }: { course: WorkspaceCourse; onOpen?: () => void }) {
-  const filledSegments = Math.max(0, Math.min(SEGMENTS, Math.round((course.progress / 100) * SEGMENTS)))
-  const isComplete = course.progress >= 100
   const interactive = !!onOpen
   return (
     <article
@@ -33,17 +30,13 @@ function WorkspaceCourseCard({ course, onOpen }: { course: WorkspaceCourse; onOp
         />
         {course.isNew ? <span className="ws-course-card__newbadge">New</span> : null}
         {course.dueLabel ? <span className="ws-course-card__duepill">{course.dueLabel}</span> : null}
-        <div className="ws-course-card__progress" role="progressbar" aria-valuenow={course.progress} aria-valuemin={0} aria-valuemax={100}>
-          {Array.from({ length: SEGMENTS }).map((_, i) => {
-            const filled = i < filledSegments
-            const cls = filled
-              ? isComplete
-                ? 'ws-course-card__segment ws-course-card__segment--complete'
-                : 'ws-course-card__segment ws-course-card__segment--filled'
-              : 'ws-course-card__segment'
-            return <span key={i} className={cls} />
-          })}
-        </div>
+        <ProgressBar
+          className="ws-course-card__progress"
+          value={course.progress}
+          tone="selected"
+          height={2}
+          label="Course progress"
+        />
       </div>
       <div className="ws-course-card__body">
         <h3 className="ws-course-card__title">{course.title}</h3>

@@ -200,22 +200,3 @@
   height: 8px;
   background: var(--border);
 }
-
-/* Segmented progress */
-.email-preview__progress {
-  flex: 1;
-  display: flex;
-  height: 8px;
-  background: var(--border);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-}
-
-.email-preview__segment {
-  flex: 1;
-  background: var(--border);
-}
-
-.email-preview__segment--filled {
-  background: var(--primary-600);
-}

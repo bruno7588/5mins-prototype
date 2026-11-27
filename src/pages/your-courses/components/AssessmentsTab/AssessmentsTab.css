@@ -140,18 +140,6 @@
 }
 
 /* ── Result cell ────────────────────────────────────────────────────────── */
-/* DS .tbl-progress expects to be the flex cell itself; here it's nested in the
-   cell, so restore the row layout (bar + % side by side). */
-.asm-progress {
-  display: flex;
-  align-items: center;
-  height: auto;
-}
-
-.asm-progress .pct {
-  font-variant-numeric: tabular-nums;
-}
-
 .asm-result__none {
   font-size: var(--font-size-md);
   color: var(--text-tertiary);

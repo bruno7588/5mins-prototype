@@ -12,7 +12,7 @@ import emptyBoxIllustration from '@/assets/empty-state-illustrations/empty-box.s
 import searchIllustration from '@/assets/empty-state-illustrations/search.svg'
 import AssessmentList from './AssessmentList'
 import AssessmentGrid from './AssessmentGrid'
-import ProgressCell from './ProgressCell'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import InsightsCard from './InsightsCard'
 import {
   attentionRows,
@@ -45,7 +45,7 @@ function ResultCell({ a }: { a: AssessmentResult }) {
   if (a.responses.length === 0) {
     return <span className="asm-result__none">Nothing submitted yet</span>
   }
-  if (a.kind === 'graded' || a.kind === 'multi') return <ProgressCell value={correctPct(a) ?? 0} />
+  if (a.kind === 'graded' || a.kind === 'multi') return <ProgressBar value={correctPct(a) ?? 0} width={72} showValue label="Share correct" />
   return <span className="asm-result__none">—</span>
 }
 

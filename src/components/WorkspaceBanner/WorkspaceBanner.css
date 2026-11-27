@@ -147,25 +147,6 @@
   gap: var(--space-s);
 }
 
-.wsb__bar {
-  display: flex;
-  flex: 1 0 0;
-  min-width: 0;
-  height: 6px;
-  border-radius: var(--radius-l);
-  overflow: hidden;
-  background: color-mix(in srgb, var(--neutral-25) 50%, transparent); /* --neutral-25 @ 50% */
-}
-
-.wsb__seg {
-  flex: 1 0 0;
-  min-width: 0;
-  height: 100%;
-}
-
-.wsb__seg--filled {
-  background: var(--primary-600);
-}
 
 .wsb__pct {
   font-size: var(--font-size-md);

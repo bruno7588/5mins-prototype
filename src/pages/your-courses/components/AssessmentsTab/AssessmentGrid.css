@@ -465,19 +465,15 @@
   color: var(--text-primary);
 }
 
-/* ── V1's segmented result bar, stretched to the tile ──────────────────── */
+/* ── Segmented result bar (DS ProgressBar), stretched to the tile ───────── */
+/* The foot stacks in a column; stop the bar's row-flex basis from sizing its height. */
 .asg-tile .asg-progress {
-  height: auto;
-}
-
-.asg-tile .asg-progress .bar {
-  flex: 1 1 auto;
-  width: auto;
+  flex: none;
 }
 
 /* The bar here is the share correct, so it fills in the correct-answer green:
    Success-500 in both modes. */
-.asg-tile .asg-progress .seg.fill {
+.asg-tile .asg-progress .ds-progress__seg--filled {
   /* stylelint-disable-next-line -- the correct share is Success-500 in both modes */
   background: var(--success-500);
 }

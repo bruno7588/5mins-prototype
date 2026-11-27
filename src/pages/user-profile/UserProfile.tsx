@@ -10,6 +10,7 @@ import Button from '../../components/Button/Button'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import Table, { type Column } from '../../components/Table/Table'
 import Tabs from '@/components/Tabs/Tabs'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
@@ -181,8 +182,6 @@ function compareCourses(a: CourseProgress, b: CourseProgress, key: SortKey): num
   }
 }
 
-const SEGMENTS = 8
-
 const FILTER_KIND = Object.fromEntries(FILTER_DEFS.map((d) => [d.id, d.kind])) as Record<FilterId, FilterValue['kind']>
 
 /* Enrolment-level row actions — same set as the course enrolments page; each
@@ -287,19 +286,6 @@ function DateCell({ value }: { value: string | null }) {
   )
 }
 
-function ProgressCell({ value }: { value: number }) {
-  const filled = Math.round((value / 100) * SEGMENTS)
-  return (
-    <span className="tbl-progress up-progress">
-      <span className="bar">
-        {Array.from({ length: SEGMENTS }, (_, i) => (
-          <span key={i} className={`seg${i < filled ? ' fill' : ''}`} />
-        ))}
-      </span>
-      <span className="pct">{value}%</span>
-    </span>
-  )
-}
 
 function UserProfile() {
   const navigate = useNavigate()
@@ -656,7 +642,7 @@ function UserProfile() {
       ),
       sortable: true,
       width: '0 0 156px',
-      render: (row) => <ProgressCell value={row.progress} />,
+      render: (row) => <ProgressBar value={row.progress} width={72} showValue label={`${row.course} progress`} />,
     },
     {
       key: 'score',

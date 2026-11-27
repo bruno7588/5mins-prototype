@@ -5,7 +5,7 @@ import { OpenResponse, OptionBars } from '@/pages/chart-lab/components/Charts'
 import '@/pages/chart-lab/chart-lab.css'
 import Badge from '@/components/Badge/Badge'
 import StatTile from '@/components/StatTile/StatTile'
-import ProgressCell from './ProgressCell'
+import ProgressBar from '@/components/ProgressBar/ProgressBar'
 import '@/pages/my-team/MyTeam.css'
 import {
   correctPct,
@@ -279,7 +279,7 @@ function Tile({ a }: { a: AssessmentResult }) {
           <span className="asg-figure">{pct}%</span>
           {smallSample(a)}
         </span>
-        <ProgressCell value={pct ?? 0} showPct={false} className="asg-progress" />
+        <ProgressBar value={pct ?? 0} surface="card" label="Share correct" className="asg-progress" />
       </span>
     </>
   )

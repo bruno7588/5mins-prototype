@@ -59,6 +59,7 @@ Every component doc follows `_template.md`: Usage, then Figma to code. Read the 
 | `row-actions-menu.md` | Kebab row actions | Per-row or toolbar actions |
 | `bulk-action-bar.md` | Bulk action bar | Multi-select actions |
 | `stepper.md` | Wizard step bar | Multi-step flows |
+| `progress-bar.md` | Progress bar (`ProgressBar`) | Lesson, course, program or skill progress on cards, tables, headers |
 | `collapse.md` | Animated expand/collapse | Any accordion or revealed section |
 | `avatars.md` | Avatar and avatar group | Any person photo or stack |
 | `empty-state.md` | Empty state with illustration | Empty lists, tables, searches |

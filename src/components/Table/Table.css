@@ -319,44 +319,6 @@
   flex: 0 0 72px;
 }
 
-/* Progress bar */
-.tbl-progress {
-  gap: var(--space-s);
-  height: 56px;
-}
-
-.tbl-progress .bar {
-  display: flex;
-  width: 72px;
-  height: 8px;
-  border-radius: var(--space-s);
-  overflow: hidden;
-  flex: 0 0 72px;
-}
-
-.tbl-progress .seg {
-  flex: 1 1 0;
-  min-width: 0;
-  height: 100%;
-  background: var(--border);
-}
-
-.tbl-progress .seg.fill {
-  background: var(--primary-600);
-}
-
-/* Progress=100% (Figma 7046:25170): the full bar turns success green. */
-.tbl-progress.is-complete .seg.fill {
-  background: var(--success-500);
-}
-
-.tbl-progress .pct {
-  width: 33px;
-  flex: 0 0 33px;
-  color: var(--text-primary);
-  font: 400 14px/1.5 'Poppins', sans-serif;
-}
-
 /* Action icon */
 .tbl-action {
   justify-content: center;

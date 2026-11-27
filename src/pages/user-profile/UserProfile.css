@@ -159,13 +159,6 @@
   color: var(--text-tertiary);
 }
 
-/* DS .tbl-progress expects to be the flex cell itself; here it's nested in the
-   cell, so restore the row layout (bar + % side by side). */
-.up-progress {
-  display: flex;
-  align-items: center;
-}
-
 /* ── No-results empty state (DS empty-state.md; mirrors .audit-empty) ──
    Shown in place of the table when search/filters exclude every course.
    No card chrome — centered illustration + title + copy + one outlined CTA. */

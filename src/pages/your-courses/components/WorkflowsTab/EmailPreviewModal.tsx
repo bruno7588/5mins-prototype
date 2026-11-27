@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Profile2User, Book1, Diagram } from 'iconsax-react'
 import Avatar from '@/components/Avatar/Avatar'
+import ProgressBar, { PROGRESS_SEGMENTS } from '@/components/ProgressBar/ProgressBar'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import '../../../../components/ConfirmModal/ConfirmModal.css'
 import './EmailPreviewModal.css'
@@ -17,8 +18,6 @@ const SAMPLE_ROWS: { filled: number }[] = [
   { filled: 3 },
   { filled: 4 },
 ]
-
-const SEGMENTS = 8
 
 function EmailPreviewModal({ open, onClose }: Props) {
   useEffect(() => {
@@ -93,14 +92,7 @@ function EmailPreviewModal({ open, onClose }: Props) {
                   <span className="email-preview__bar email-preview__bar--due" />
                 </div>
                 <div className="email-preview__col email-preview__col--progress">
-                  <div className="email-preview__progress" aria-label={`${row.filled}/${SEGMENTS} segments filled`}>
-                    {Array.from({ length: SEGMENTS }).map((_, s) => (
-                      <span
-                        key={s}
-                        className={`email-preview__segment${s < row.filled ? ' email-preview__segment--filled' : ''}`}
-                      />
-                    ))}
-                  </div>
+                  <ProgressBar value={(row.filled / PROGRESS_SEGMENTS) * 100} label="Sample progress" />
                   <span className="email-preview__bar email-preview__bar--pct" />
                 </div>
               </div>
